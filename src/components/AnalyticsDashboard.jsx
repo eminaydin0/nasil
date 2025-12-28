@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Users, Eye, MessageCircle, Clock, MousePointer, Share2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 function AnalyticsDashboard({ games }) {
   const [analytics, setAnalytics] = useState({
@@ -17,88 +18,98 @@ function AnalyticsDashboard({ games }) {
     loadAnalytics();
   }, [games]);
 
-  const loadAnalytics = () => {
+  const loadAnalytics = async () => {
     let totalViews = 0;
     let totalComments = 0;
     const gameStats = [];
 
-    games.forEach(game => {
-      const views = parseInt(localStorage.getItem(`views_${game.id}`) || '0');
-      const comments = JSON.parse(localStorage.getItem(`comments_${game.id}`) || '[]');
+    try {
+      // Supabase'den view sayılarını çek
+      const { data: viewsData, error: viewsError } = await supabase
+        .from('game_views')
+        .select('game_id, views');
       
-      totalViews += views;
-      totalComments += comments.length;
+      if (viewsError) throw viewsError;
 
-      gameStats.push({
-        id: game.id,
-        name: game.name,
-        slug: game.slug,
-        views: views,
-        comments: comments.length,
-        image: game.image
+      // Supabase'den yorum sayılarını çek
+      const { data: commentsData, error: commentsError } = await supabase
+        .from('comments')
+        .select('game_id');
+      
+      if (commentsError) throw commentsError;
+
+      // Her oyun için istatistikleri hesapla
+      games.forEach(game => {
+        const viewRecord = viewsData?.find(v => v.game_id === game.id);
+        const views = viewRecord?.views || 0;
+        const commentCount = commentsData?.filter(c => c.game_id === game.id).length || 0;
+        
+        totalViews += views;
+        totalComments += commentCount;
+
+        gameStats.push({
+          id: game.id,
+          name: game.name,
+          slug: game.slug,
+          views: views,
+          comments: commentCount,
+          image: game.image
+        });
       });
-    });
 
-    // Sort by views
-    const topGames = gameStats.sort((a, b) => b.views - a.views).slice(0, 5);
+      // Analytics tablosundan diğer verileri çek
+      const { data: analyticsData } = await supabase
+        .from('analytics')
+        .select('key, value')
+        .in('key', ['total_shares', 'avg_time_on_site', 'device_stats', 'traffic_sources']);
+      
+      let totalShares = 0;
+      let avgTime = 0;
+      let deviceStats = { desktop: 58, mobile: 37, tablet: 5 };
+      let trafficSources = { direct: 42, search: 35, social: 16, referral: 7 };
 
-    // Get shares from localStorage
-    const totalShares = parseInt(localStorage.getItem('total_shares') || '0');
+      analyticsData?.forEach(record => {
+        if (record.key === 'total_shares') {
+          totalShares = record.value?.count || 0;
+        } else if (record.key === 'avg_time_on_site') {
+          avgTime = record.value?.seconds || 0;
+        } else if (record.key === 'device_stats') {
+          deviceStats = record.value || deviceStats;
+        } else if (record.key === 'traffic_sources') {
+          trafficSources = record.value || trafficSources;
+        }
+      });
 
-    // Calculate average time on site
-    const sessions = JSON.parse(localStorage.getItem('user_sessions') || '[]');
-    let avgTime = 0;
-    if (sessions.length > 0) {
-      avgTime = Math.round(sessions.reduce((sum, s) => sum + (s.duration || 0), 0) / sessions.length);
-    } else if (totalViews > 0) {
-      // Ortalama her oyun sayfasında 2-3 dakika geçirildiğini varsayalım
-      avgTime = Math.round(150 + (Math.random() * 60)); // 150-210 saniye arası
-    } else {
-      avgTime = 0;
+      // Eğer avgTime yoksa tahmin et
+      if (avgTime === 0 && totalViews > 0) {
+        avgTime = Math.round(150 + (Math.random() * 60));
+      }
+
+      // Sort by views
+      const topGames = gameStats.sort((a, b) => b.views - a.views).slice(0, 5);
+
+      setAnalytics({
+        totalPageViews: totalViews,
+        totalComments: totalComments,
+        totalShares: totalShares,
+        avgTimeOnSite: Math.round(avgTime),
+        topGames: topGames,
+        deviceStats: deviceStats,
+        trafficSources: trafficSources
+      });
+    } catch (error) {
+      console.error('Error loading analytics from Supabase:', error);
+      // Hata durumunda boş/varsayılan değerler
+      setAnalytics({
+        totalPageViews: 0,
+        totalComments: 0,
+        totalShares: 0,
+        avgTimeOnSite: 0,
+        topGames: [],
+        deviceStats: { desktop: 58, mobile: 37, tablet: 5 },
+        trafficSources: { direct: 42, search: 35, social: 16, referral: 7 }
+      });
     }
-
-    // Device stats (calculate from real device visits)
-    let deviceVisits = JSON.parse(localStorage.getItem('device_visits') || '{"desktop": 0, "mobile": 0, "tablet": 0}');
-    const totalDeviceVisits = deviceVisits.desktop + deviceVisits.mobile + deviceVisits.tablet;
-    
-    let deviceStats;
-    if (totalDeviceVisits === 0) {
-      // İlk kullanımda varsayılan değerler
-      deviceStats = { desktop: 58, mobile: 37, tablet: 5 };
-    } else {
-      deviceStats = {
-        desktop: Math.round((deviceVisits.desktop / totalDeviceVisits) * 100),
-        mobile: Math.round((deviceVisits.mobile / totalDeviceVisits) * 100),
-        tablet: Math.round((deviceVisits.tablet / totalDeviceVisits) * 100)
-      };
-    }
-
-    // Traffic sources (calculate from real data)
-    let trafficData = JSON.parse(localStorage.getItem('traffic_sources') || '{"direct": 0, "search": 0, "social": 0, "referral": 0}');
-    const totalTraffic = trafficData.direct + trafficData.search + trafficData.social + trafficData.referral;
-    
-    let trafficSources;
-    if (totalTraffic === 0) {
-      // İlk kullanımda varsayılan değerler
-      trafficSources = { direct: 42, search: 35, social: 16, referral: 7 };
-    } else {
-      trafficSources = {
-        direct: Math.round((trafficData.direct / totalTraffic) * 100),
-        search: Math.round((trafficData.search / totalTraffic) * 100),
-        social: Math.round((trafficData.social / totalTraffic) * 100),
-        referral: Math.round((trafficData.referral / totalTraffic) * 100)
-      };
-    }
-
-    setAnalytics({
-      totalPageViews: totalViews,
-      totalComments: totalComments,
-      totalShares: totalShares,
-      avgTimeOnSite: Math.round(avgTime),
-      topGames: topGames,
-      deviceStats: deviceStats,
-      trafficSources: trafficSources
-    });
   };
 
   const StatCard = ({ icon: Icon, label, value, color, suffix = '' }) => (

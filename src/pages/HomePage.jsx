@@ -1,33 +1,60 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, Sparkles, Trophy, Shield, Star } from 'lucide-react';
 import GameCard from '../components/GameCard';
-import TestimonialCard from '../components/TestimonialCard';
 import SkeletonLoader from '../components/SkeletonLoader';
-import { games as initialGames, categories } from '../data/games';
-import { trackPageView, trackCategoryFilter } from '../utils/analytics';
+import { trackPageView } from '../utils/analytics';
+import { supabase } from '../lib/supabase';
 
 function HomePage({ searchTerm, setSearchTerm }) {
   const [selectedCategory, setSelectedCategory] = useState('Tümü');
   const [games, setGames] = useState([]);
+  const [categories, setCategories] = useState(['Tümü']);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load games from localStorage or use initial data
-    const savedGames = localStorage.getItem('gamesData');
-    if (savedGames) {
-      const parsedGames = JSON.parse(savedGames);
-      // Check if we need to update with new games or if slug is missing
-      const needsUpdate = parsedGames.length !== initialGames.length || !parsedGames[0]?.slug;
-      if (needsUpdate) {
-        setGames(initialGames);
-        localStorage.setItem('gamesData', JSON.stringify(initialGames));
-      } else {
-        setGames(parsedGames);
-      }
-    } else {
-      setGames(initialGames);
-      localStorage.setItem('gamesData', JSON.stringify(initialGames));
+    loadGames();
+  }, []);
+
+  const loadGames = async () => {
+    try {
+      // Supabase'den oyunları çek
+      const { data, error } = await supabase
+        .from('games')
+        .select('*')
+        .order('id', { ascending: true });
+      
+      if (error) throw error;
+      
+      // Supabase field names'i JavaScript format'a çevir
+      const formattedGames = data.map(game => ({
+        id: game.id,
+        slug: game.slug,
+        name: game.name,
+        category: game.category,
+        players: game.players,
+        difficulty: game.difficulty,
+        image: game.image,
+        shortDescription: game.short_description,
+        description: game.description,
+        rules: game.rules,
+        tips: game.tips
+      }));
+      
+      setGames(formattedGames);
+      
+      // Kategorileri otomatik olarak oyunlardan çıkar
+      const uniqueCategories = ['Tümü', ...new Set(formattedGames.map(g => g.category))];
+      setCategories(uniqueCategories);
+    } catch (error) {
+      console.error('Error loading games from Supabase:', error);
+      setGames([]);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    loadGames();
     
     // Set homepage SEO
     document.title = 'Geleneksel Türk Oyunları - Nasıl Oynanır? Kuralları ve İpuçları';
@@ -55,11 +82,6 @@ function HomePage({ searchTerm, setSearchTerm }) {
     script.type = 'application/ld+json';
     script.text = JSON.stringify(structuredData);
     document.head.appendChild(script);
-    
-    // Simulate loading
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
     
     // Track page view
     trackPageView('/');
@@ -297,32 +319,48 @@ function HomePage({ searchTerm, setSearchTerm }) {
 // Testimonials Section Component
 function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState([]);
-
-  const loadTestimonials = () => {
-    const allTestimonials = [];
-    const games = initialGames;
-
-    games.forEach(game => {
-      const comments = localStorage.getItem(`comments_${game.id}`);
-      if (comments) {
-        const parsed = JSON.parse(comments);
-        const testimonialComments = parsed.filter(c => c.isTestimonial === true);
-        testimonialComments.forEach(comment => {
-          allTestimonials.push({
-            ...comment,
-            gameName: game.name
-          });
-        });
-      }
-    });
-
-    // En yeni 6 testimonial'ı al (veya varsa en fazla ne kadar varsa)
-    setTestimonials(allTestimonials.slice(0, 6));
-  };
+  const [games, setGames] = useState([]);
 
   useEffect(() => {
     loadTestimonials();
   }, []);
+
+  const loadTestimonials = async () => {
+    try {
+      // Önce oyunları çek (gameName için)
+      const { data: gamesData, error: gamesError } = await supabase
+        .from('games')
+        .select('id, name');
+      
+      if (gamesError) throw gamesError;
+      
+      // Testimonial yorumları çek
+      const { data: commentsData, error: commentsError } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('is_testimonial', true)
+        .order('created_at', { ascending: false })
+        .limit(6);
+      
+      if (commentsError) throw commentsError;
+      
+      // Yorumları formatla ve oyun isimlerini ekle
+      const formattedTestimonials = commentsData.map(comment => {
+        const game = gamesData.find(g => g.id === comment.game_id);
+        return {
+          name: comment.author_name,
+          comment: comment.content,
+          rating: comment.rating,
+          gameName: game?.name || 'Bilinmeyen Oyun'
+        };
+      });
+      
+      setTestimonials(formattedTestimonials);
+    } catch (error) {
+      console.error('Error loading testimonials from Supabase:', error);
+      setTestimonials([]);
+    }
+  };
 
   const getInitials = (name) => {
     return name

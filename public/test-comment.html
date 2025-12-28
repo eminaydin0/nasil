@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Comment Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; font-size: 16px; }
+        #output { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px; }
+        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Supabase Yorum Testi</h1>
+    <p>Bu sayfa Supabase bağlantısını ve yorum ekleme fonksiyonunu test eder.</p>
+    <button id="testBtn">Test Yorum Ekle</button>
+    <button id="loadBtn">Yorumları Listele</button>
+    <div id="output">Yükleniyor...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            const supabaseUrl = 'https://yjnipjcevnxrzlgfmeci.supabase.co';
+            const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqbmlwamNldm54cnpsZ2ZtZWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5NDMyMjUsImV4cCI6MjA4MjUxOTIyNX0.tuUrVzxDlZssFm3pwhB-fSsiL8DQUErHmGeqngvQohc';
+            const client = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+            async function testComment() {
+                const output = document.getElementById('output');
+                output.innerHTML = '<p>Test yorumu ekleniyor...</p>';
+                
+                try {
+                    const { data, error } = await client
+                        .from('comments')
+                        .insert([{
+                            game_id: 91, // Saklambaç
+                            author_name: 'Test Kullanıcı',
+                            content: 'Bu bir test yorumudur - ' + new Date().toLocaleString('tr-TR'),
+                            rating: 5,
+                            likes: 0,
+                            replies: [],
+                            is_testimonial: false
+                        }])
+                        .select()
+                        .single();
+                    
+                    if (error) {
+                        output.innerHTML = `<p style="color: red;">❌ Hata: ${error.message}</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>`;
+                    } else {
+                        output.innerHTML = `<p style="color: green;">✅ Yorum başarıyla eklendi!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                        loadComments(); // Yorumları tekrar yükle
+                    }
+                } catch (err) {
+                    output.innerHTML = `<p style="color: red;">❌ Beklenmeyen hata: ${err.message}</p>
+                    <pre>${err.stack}</pre>`;
+                }
+            }
+
+            async function loadComments() {
+                const output = document.getElementById('output');
+                output.innerHTML = '<p>Yorumlar yükleniyor...</p>';
+                
+                try {
+                    const { data, error } = await client
+                        .from('comments')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (error) {
+                        output.innerHTML = `<p style="color: red;">❌ Hata: ${error.message}</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>`;
+                    } else {
+                        output.innerHTML = `<p style="color: green;">✅ Toplam ${data.length} yorum bulundu</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    }
+                } catch (err) {
+                    output.innerHTML = `<p style="color: red;">❌ Beklenmeyen hata: ${err.message}</p>
+                    <pre>${err.stack}</pre>`;
+                }
+            }
+
+            // Event listeners
+            document.getElementById('testBtn').addEventListener('click', testComment);
+            document.getElementById('loadBtn').addEventListener('click', loadComments);
+            
+            // Sayfa yüklendiğinde mevcut yorumları göster
+            loadComments();
+        });
+    </script>
+</body>
+</html>

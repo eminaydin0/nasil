@@ -1,12 +1,12 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Users, MapPin, Target, Lightbulb, ChevronRight, Eye } from 'lucide-react';
-import { games as initialGames } from '../data/games';
 import CommentSection from '../components/CommentSection';
 import SocialShare from '../components/SocialShare';
 import GameRecommendations from '../components/GameRecommendations';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { trackPageView, trackGameView } from '../utils/analytics';
+import { supabase } from '../lib/supabase';
 
 function GameDetail() {
   const { slug } = useParams();
@@ -17,125 +17,211 @@ function GameDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading delay for smooth transition
+    loadGameAndViews();
+  }, [slug]);
+
+  const loadGameAndViews = async () => {
     setLoading(true);
     
-    // Load games from localStorage or use initial data
-    const savedGames = localStorage.getItem('gamesData');
-    const loadedGames = savedGames ? JSON.parse(savedGames) : initialGames;
-    setGames(loadedGames);
-    
-    const foundGame = loadedGames.find(g => g.slug === slug);
-    setGame(foundGame);
-    
-    // Track view count
-    if (foundGame) {
-      const viewKey = `views_${foundGame.id}`;
+    try {
+      // Oyunu Supabase'den çek
+      const { data: gameData, error: gameError } = await supabase
+        .from('games')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+      
+      if (gameError) throw gameError;
+      
+      // Format game data
+      const foundGame = {
+        id: gameData.id,
+        slug: gameData.slug,
+        name: gameData.name,
+        category: gameData.category,
+        players: gameData.players,
+        difficulty: gameData.difficulty,
+        image: gameData.image,
+        shortDescription: gameData.short_description,
+        description: gameData.description,
+        rules: gameData.rules,
+        tips: gameData.tips
+      };
+      
+      setGame(foundGame);
+      
+      // Tüm oyunları da yükle (recommendations için)
+      const { data: allGames } = await supabase
+        .from('games')
+        .select('*')
+        .order('id', { ascending: true });
+      
+      if (allGames) {
+        const formattedGames = allGames.map(g => ({
+          id: g.id,
+          slug: g.slug,
+          name: g.name,
+          category: g.category,
+          players: g.players,
+          difficulty: g.difficulty,
+          image: g.image,
+          shortDescription: g.short_description,
+          description: g.description,
+          rules: g.rules,
+          tips: g.tips
+        }));
+        setGames(formattedGames);
+      }
+      
+      // View count'u güncelle
+      await updateViewCount(gameData.id);
+      
+    } catch (error) {
+      console.error('Error loading game from Supabase:', error);
+      setGame(null);
+      setGames([]);
+    } finally {
+      setTimeout(() => setLoading(false), 300);
+    }
+  };
+
+  const updateViewCount = async (gameId) => {
+    try {
+      // Mevcut view count'u al
+      const { data: existingView } = await supabase
+        .from('game_views')
+        .select('view_count')
+        .eq('game_id', gameId)
+        .single();
+      
+      if (existingView) {
+        // Güncelle
+        const { data, error } = await supabase
+          .from('game_views')
+          .update({ view_count: existingView.view_count + 1 })
+          .eq('game_id', gameId)
+          .select()
+          .single();
+        
+        if (!error && data) {
+          setViewCount(data.view_count);
+        }
+      } else {
+        // Yeni kayıt oluştur
+        const { data, error } = await supabase
+          .from('game_views')
+          .insert([{ game_id: gameId, view_count: 1 }])
+          .select()
+          .single();
+        
+        if (!error && data) {
+          setViewCount(data.view_count);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating view count:', error);
+      // Fallback: localStorage
+      const viewKey = `views_${gameId}`;
       const currentViews = parseInt(localStorage.getItem(viewKey) || '0');
       const newViews = currentViews + 1;
       localStorage.setItem(viewKey, newViews.toString());
       setViewCount(newViews);
     }
-    
-    // Simulate loading delay
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
+  };
+
+  useEffect(() => {
+    if (!game) return;
     
     // Update SEO meta tags dynamically
-    if (foundGame) {
-      // Track game view
-      trackPageView(`/oyun/${foundGame.slug}`);
-      trackGameView(foundGame.name, foundGame.id);
+    // Track game view
+    trackPageView(`/oyun/${game.slug}`);
+    trackGameView(game.name, game.id);
+    
+    // Update page title
+    document.title = `${game.name} Nasıl Oynanır? Kuralları ve İpuçları | Nasıl Oynanır`;
       
-      // Update page title
-      document.title = `${foundGame.name} Nasıl Oynanır? Kuralları ve İpuçları | Nasıl Oynanır`;
-      
-      // Update meta description
-      const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription) {
-        metaDescription.setAttribute('content', 
-          `${foundGame.name} nasıl oynanır? ${foundGame.shortDescription}. Detaylı oyun kuralları, stratejiler ve püf noktaları. ${foundGame.players}, ${foundGame.difficulty} seviye. ${foundGame.category} oyunu.`
-        );
-      }
-      
-      // Update meta keywords for better SEO
-      const metaKeywords = document.querySelector('meta[name="keywords"]');
-      if (metaKeywords) {
-        metaKeywords.setAttribute('content', 
-          `${foundGame.name} nasıl oynanır, ${foundGame.name} kuralları, ${foundGame.name} stratejileri, ${foundGame.category}, ${foundGame.difficulty} oyun, ${foundGame.players}`
-        );
-      }
-      
-      // Update Open Graph tags
-      const ogTitle = document.querySelector('meta[property="og:title"]');
-      if (ogTitle) {
-        ogTitle.setAttribute('content', `${foundGame.name} Nasıl Oynanır? - Detaylı Rehber`);
-      }
-      
-      const ogDescription = document.querySelector('meta[property="og:description"]');
-      if (ogDescription) {
-        ogDescription.setAttribute('content', 
-          `${foundGame.name} oyununun kurallarını, stratejilerini ve ipuçlarını öğrenin. ${foundGame.shortDescription}`
-        );
-      }
-      
-      const ogImage = document.querySelector('meta[property="og:image"]');
-      if (ogImage) {
-        ogImage.setAttribute('content', foundGame.image);
-      }
-      
-      // Update canonical URL with slug
-      const canonical = document.querySelector('link[rel="canonical"]');
-      if (canonical) {
-        canonical.setAttribute('href', `https://nasiloynanir.com/oyun/${foundGame.slug}`);
-      } else {
-        const newCanonical = document.createElement('link');
-        newCanonical.rel = 'canonical';
-        newCanonical.href = `https://nasiloynanir.com/oyun/${foundGame.slug}`;
-        document.head.appendChild(newCanonical);
-      }
-      
-      // Add JSON-LD structured data for better SEO (HowTo schema)
-      const existingScript = document.querySelector('script[type="application/ld+json"]');
-      if (existingScript) {
-        existingScript.remove();
-      }
-      
-      const structuredData = {
-        "@context": "https://schema.org",
-        "@type": "HowTo",
-        "name": `${foundGame.name} Nasıl Oynanır`,
-        "description": foundGame.description,
-        "image": foundGame.image,
-        "step": foundGame.rules.map((rule, index) => ({
-          "@type": "HowToStep",
-          "position": index + 1,
-          "text": rule
-        })),
-        "totalTime": "PT30M",
-        "tool": [{
-          "@type": "HowToTool",
-          "name": foundGame.category
-        }],
-        "supply": [{
-          "@type": "HowToSupply",
-          "name": foundGame.players
-        }],
-        "about": {
-          "@type": "Thing",
-          "name": foundGame.category
-        }
-      };
-      
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.text = JSON.stringify(structuredData);
-      document.head.appendChild(script);
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 
+        `${game.name} nasıl oynanır? ${game.shortDescription}. Detaylı oyun kuralları, stratejiler ve püf noktaları. ${game.players}, ${game.difficulty} seviye. ${game.category} oyunu.`
+      );
     }
-  }, [slug]);
-
-  if (!game || loading) {
+    
+    // Update meta keywords for better SEO
+    const metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (metaKeywords) {
+      metaKeywords.setAttribute('content', 
+        `${game.name} nasıl oynanır, ${game.name} kuralları, ${game.name} stratejileri, ${game.category}, ${game.difficulty} oyun, ${game.players}`
+      );
+    }
+    
+    // Update Open Graph tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', `${game.name} Nasıl Oynanır? - Detaylı Rehber`);
+    }
+    
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', 
+        `${game.name} oyununun kurallarını, stratejilerini ve ipuçlarını öğrenin. ${game.shortDescription}`
+      );
+    }
+    
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    if (ogImage) {
+      ogImage.setAttribute('content', game.image);
+    }
+    
+    // Update canonical URL with slug
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute('href', `https://nasiloynanir.com/oyun/${game.slug}`);
+    } else {
+      const newCanonical = document.createElement('link');
+      newCanonical.rel = 'canonical';
+      newCanonical.href = `https://nasiloynanir.com/oyun/${game.slug}`;
+      document.head.appendChild(newCanonical);
+    }
+    
+    // Add JSON-LD structured data for better SEO (HowTo schema)
+    const existingScript = document.querySelector('script[type="application/ld+json"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+    
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": `${game.name} Nasıl Oynanır`,
+      "description": game.description,
+      "image": game.image,
+      "step": game.rules.map((rule, index) => ({
+        "@type": "HowToStep",
+        "position": index + 1,
+        "text": rule
+      })),
+      "totalTime": "PT30M",
+      "tool": [{
+        "@type": "HowToTool",
+        "name": game.category
+      }],
+      "supply": [{
+        "@type": "HowToSupply",
+        "name": game.players
+      }],
+      "about": {
+        "@type": "Thing",
+        "name": game.category
+      }
+    };
+    
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(structuredData);
+    document.head.appendChild(script);
+  }, [game]);  if (!game || loading) {
     return <SkeletonLoader type="game-detail" />;
   }
 

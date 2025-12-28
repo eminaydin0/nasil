@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Migration Tool</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #3ecf8e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #36b77a;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #log {
+            background: #1e1e1e;
+            color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .success {
+            color: #3ecf8e;
+        }
+        .error {
+            color: #ff4444;
+        }
+        .info {
+            color: #66b3ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Supabase Migration Tool</h1>
+        <p>Bu araç, mevcut oyunlarınızı Supabase'e aktaracak.</p>
+        
+        <button id="migrateBtn" onclick="migrateGames()">Oyunları Supabase'e Aktar</button>
+        <button onclick="clearLog()">Log Temizle</button>
+        <button onclick="checkConnection()">Bağlantıyı Test Et</button>
+        
+        <div id="log"></div>
+    </div>
+
+    <script type="module">
+        // Supabase client oluştur
+        const supabaseUrl = 'https://yjnipjcevnxrzlgfmeci.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqbmlwamNldm54cnpsZ2ZtZWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5NDMyMjUsImV4cCI6MjA4MjUxOTIyNX0.tuUrVzxDlZssFm3pwhB-fSsiL8DQUErHmGeqngvQohc';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Global olarak erişilebilir yap
+        window.supabase = supabase;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div class="${type}">[${time}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.clearLog = function() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        window.checkConnection = async function() {
+            log('Supabase bağlantısı test ediliyor...', 'info');
+            try {
+                const { data, error } = await supabase.from('games').select('count', { count: 'exact', head: true });
+                if (error) throw error;
+                log('✅ Bağlantı başarılı! Supabase hazır.', 'success');
+                log(`📊 Mevcut oyun sayısı: ${data || 0}`, 'info');
+            } catch (error) {
+                log('❌ Bağlantı hatası: ' + error.message, 'error');
+            }
+        }
+
+        window.migrateGames = async function() {
+            const btn = document.getElementById('migrateBtn');
+            btn.disabled = true;
+            
+            log('🚀 Migration başlatılıyor...', 'info');
+            
+            // games.js modülünü import et
+            try {
+                const module = await import('/src/data/games.js');
+                const games = module.games;
+                log(`📦 ${games.length} oyun bulundu`, 'info');
+                
+                // Her oyunu ekle
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (const game of games) {
+                    try {
+                        // Önce aynı slug var mı kontrol et
+                        const { data: existing } = await supabase
+                            .from('games')
+                            .select('id')
+                            .eq('slug', game.slug)
+                            .single();
+                        
+                        if (existing) {
+                            log(`⚠️  ${game.name} zaten var, atlanıyor...`, 'info');
+                            continue;
+                        }
+                        
+                        // Oyunu ekle
+                        const { error } = await supabase
+                            .from('games')
+                            .insert([{
+                                slug: game.slug,
+                                name: game.name,
+                                category: game.category,
+                                players: game.players,
+                                difficulty: game.difficulty,
+                                image: game.image,
+                                short_description: game.shortDescription,
+                                description: game.description,
+                                rules: game.rules,
+                                tips: game.tips
+                            }]);
+                        
+                        if (error) throw error;
+                        
+                        successCount++;
+                        log(`✅ ${game.name} eklendi`, 'success');
+                        
+                    } catch (error) {
+                        errorCount++;
+                        log(`❌ ${game.name} eklenemedi: ${error.message}`, 'error');
+                    }
+                }
+                
+                log(`\n🎉 Migration tamamlandı!`, 'success');
+                log(`✅ Başarılı: ${successCount}`, 'success');
+                if (errorCount > 0) {
+                    log(`❌ Hatalı: ${errorCount}`, 'error');
+                }
+                
+            } catch (error) {
+                log('❌ Genel hata: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Sayfa yüklendiğinde bağlantıyı test et
+        window.addEventListener('load', () => {
+            checkConnection();
+        });
+    </script>
+</body>
+</html>

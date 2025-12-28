@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, User, Calendar, ThumbsUp, Reply } from 'lucide-react';
 import StarRating from './StarRating';
+import { supabase } from '../lib/supabase';
 
 function CommentSection({ gameId }) {
   const [comments, setComments] = useState([]);
@@ -17,12 +18,44 @@ function CommentSection({ gameId }) {
   const [showForm, setShowForm] = useState(false);
 
   // Load comments specific to this game when component mounts or gameId changes
-  useEffect(() => {
-    const saved = localStorage.getItem(`comments_${gameId}`);
-    setComments(saved ? JSON.parse(saved) : []);
+  const loadComments = useCallback(async () => {
+    console.log('🔄 Loading comments for game:', gameId);
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('game_id', gameId)
+        .order('created_at', { ascending: false });
+      
+      console.log('📊 Supabase response:', { data, error });
+      
+      if (error) throw error;
+      
+      // Format comments to match UI structure
+      const formattedComments = data.map(c => ({
+        id: c.id,
+        name: c.author_name,
+        rating: c.rating,
+        comment: c.content,
+        date: new Date(c.created_at).toLocaleDateString('tr-TR'),
+        likes: c.likes || 0,
+        replies: c.replies || [],
+        isTestimonial: c.is_testimonial || false
+      }));
+      
+      console.log('✅ Formatted comments:', formattedComments);
+      setComments(formattedComments);
+    } catch (error) {
+      console.error('❌ Error loading comments from Supabase:', error);
+      setComments([]);
+    }
   }, [gameId]);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    loadComments();
+  }, [loadComments]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!newComment.name || !newComment.comment || newComment.rating === 0) {
@@ -30,23 +63,56 @@ function CommentSection({ gameId }) {
       return;
     }
 
-    const comment = {
-      id: Date.now(),
-      ...newComment,
-      date: new Date().toLocaleDateString('tr-TR'),
-      likes: 0,
-      replies: []
-    };
+    console.log('💾 Submitting comment for game:', gameId, newComment);
 
-    const updatedComments = [comment, ...comments];
-    setComments(updatedComments);
-    localStorage.setItem(`comments_${gameId}`, JSON.stringify(updatedComments));
-
-    setNewComment({ name: '', rating: 0, comment: '' });
-    setShowForm(false);
+    try {
+      const commentData = {
+        game_id: gameId,
+        author_name: newComment.name,
+        content: newComment.comment,
+        rating: newComment.rating,
+        likes: 0,
+        replies: [],
+        is_testimonial: false
+      };
+      
+      console.log('📤 Sending to Supabase:', commentData);
+      
+      const { data, error } = await supabase
+        .from('comments')
+        .insert([commentData])
+        .select()
+        .single();
+      
+      console.log('📥 Supabase response:', { data, error });
+      
+      if (error) throw error;
+      
+      // Add new comment to list
+      const formattedComment = {
+        id: data.id,
+        name: data.author_name,
+        rating: data.rating,
+        comment: data.content,
+        date: new Date(data.created_at).toLocaleDateString('tr-TR'),
+        likes: 0,
+        replies: [],
+        isTestimonial: false
+      };
+      
+      console.log('✅ Comment added successfully:', formattedComment);
+      setComments([formattedComment, ...comments]);
+      setNewComment({ name: '', rating: 0, comment: '' });
+      setShowForm(false);
+      
+      alert('✅ Yorumunuz başarıyla kaydedildi!');
+    } catch (error) {
+      console.error('❌ Error saving comment to Supabase:', error);
+      alert(`❌ Hata: ${error.message}`);
+    }
   };
 
-  const handleReplySubmit = (commentId, parentReplyId = null) => {
+  const handleReplySubmit = async (commentId, parentReplyId = null) => {
     if (!replyText.trim() || !replyName.trim()) {
       alert('Lütfen isminizi ve yanıtınızı yazın!');
       return;
@@ -100,13 +166,24 @@ function CommentSection({ gameId }) {
     });
 
     setComments(updatedComments);
-    localStorage.setItem(`comments_${gameId}`, JSON.stringify(updatedComments));
+    
+    // Update in Supabase
+    try {
+      const targetComment = updatedComments.find(c => c.id === commentId);
+      await supabase
+        .from('comments')
+        .update({ replies: targetComment.replies })
+        .eq('id', commentId);
+    } catch (error) {
+      console.error('Error saving reply to Supabase:', error);
+    }
+    
     setReplyText('');
     setReplyName('');
     setReplyingTo(null);
   };
 
-  const handleReplyLike = (commentId, replyId) => {
+  const handleReplyLike = async (commentId, replyId) => {
     const likeReplyInNested = (replies) => {
       return replies.map(r => {
         if (r.id === replyId) {
@@ -133,15 +210,35 @@ function CommentSection({ gameId }) {
     });
 
     setComments(updatedComments);
-    localStorage.setItem(`comments_${gameId}`, JSON.stringify(updatedComments));
+    
+    // Update in Supabase
+    try {
+      const targetComment = updatedComments.find(c => c.id === commentId);
+      await supabase
+        .from('comments')
+        .update({ replies: targetComment.replies })
+        .eq('id', commentId);
+    } catch (error) {
+      console.error('Error updating reply likes in Supabase:', error);
+    }
   };
 
-  const handleLike = (commentId) => {
+  const handleLike = async (commentId) => {
     const updatedComments = comments.map(c => 
       c.id === commentId ? { ...c, likes: c.likes + 1 } : c
     );
     setComments(updatedComments);
-    localStorage.setItem(`comments_${gameId}`, JSON.stringify(updatedComments));
+    
+    // Update in Supabase
+    try {
+      const targetComment = updatedComments.find(c => c.id === commentId);
+      await supabase
+        .from('comments')
+        .update({ likes: targetComment.likes })
+        .eq('id', commentId);
+    } catch (error) {
+      console.error('Error updating likes in Supabase:', error);
+    }
   };
 
   const averageRating = comments.length > 0

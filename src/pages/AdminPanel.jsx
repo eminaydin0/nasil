@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit2, Trash2, LogOut, Eye, MessageCircle, ThumbsUp, Star, TrendingUp, Users, BarChart3, Download, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
-import { games as initialGames } from '../data/games';
 import AnalyticsDashboard from '../components/AnalyticsDashboard';
+import { supabase } from '../lib/supabase';
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -17,6 +17,14 @@ function AdminPanel() {
   const [sortBy, setSortBy] = useState('name'); // 'name', 'views', 'rating', 'id', 'category', 'comments'
   const [sortDirection, setSortDirection] = useState('asc'); // 'asc' or 'desc'
   const [selectedGames, setSelectedGames] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState({
+    totalGames: 0,
+    totalViews: 0,
+    totalComments: 0,
+    avgRating: 0
+  });
+  const [sortedGames, setSortedGames] = useState([]);
   
   // Admin credentials (gerçek projede backend'de olmalı)
   const ADMIN_USERNAME = 'admin';
@@ -29,23 +37,136 @@ function AdminPanel() {
       setIsAuthenticated(true);
       loadGames();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const loadGames = () => {
-    const savedGames = localStorage.getItem('gamesData');
-    if (savedGames) {
-      const parsedGames = JSON.parse(savedGames);
-      // Check if we need to update with new games
-      if (parsedGames.length !== initialGames.length) {
-        setGames(initialGames);
-        localStorage.setItem('gamesData', JSON.stringify(initialGames));
-      } else {
-        setGames(parsedGames);
-      }
-    } else {
-      setGames(initialGames);
-      localStorage.setItem('gamesData', JSON.stringify(initialGames));
+  const loadGames = async () => {
+    setLoading(true);
+    try {
+      // Supabase'den oyunları çek
+      const { data, error } = await supabase
+        .from('games')
+        .select('*')
+        .order('id', { ascending: true });
+      
+      if (error) throw error;
+      
+      // Format games
+      const formattedGames = data.map(g => ({
+        id: g.id,
+        slug: g.slug,
+        name: g.name,
+        category: g.category,
+        players: g.players,
+        difficulty: g.difficulty,
+        image: g.image,
+        shortDescription: g.short_description,
+        description: g.description,
+        rules: g.rules,
+        tips: g.tips
+      }));
+      
+      setGames(formattedGames);
+      
+      // Stats hesapla
+      await calculateStats(formattedGames);
+      
+      // SortedGames'i de yükle
+      const gamesWithStats = await loadGamesWithStats(formattedGames);
+      setSortedGames(gamesWithStats);
+    } catch (error) {
+      console.error('Error loading games from Supabase:', error);
+      setGames([]);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const calculateStats = async (gamesList) => {
+    try {
+      // Toplam view sayısı
+      const { data: viewsData, error: viewsError } = await supabase
+        .from('game_views')
+        .select('view_count');
+      
+      if (viewsError) {
+        console.error('Error fetching views:', viewsError);
+      }
+      
+      console.log('Views data from Supabase:', viewsData);
+      
+      const totalViews = viewsData?.reduce((sum, v) => sum + (v.view_count || 0), 0) || 0;
+      
+      // Toplam yorum sayısı ve ortalama rating
+      const { data: commentsData, error: commentsError } = await supabase
+        .from('comments')
+        .select('rating');
+      
+      if (commentsError) {
+        console.error('Error fetching comments:', commentsError);
+      }
+      
+      const totalComments = commentsData?.length || 0;
+      const avgRating = totalComments > 0
+        ? commentsData.reduce((sum, c) => sum + c.rating, 0) / totalComments
+        : 0;
+      
+      console.log('Stats calculated:', {
+        totalGames: gamesList.length,
+        totalViews,
+        totalComments,
+        avgRating: avgRating.toFixed(1)
+      });
+      
+      setStats({
+        totalGames: gamesList.length,
+        totalViews: totalViews,
+        totalComments: totalComments,
+        avgRating: avgRating.toFixed(1)
+      });
+    } catch (error) {
+      console.error('Error calculating stats:', error);
+      setStats({
+        totalGames: gamesList.length,
+        totalViews: 0,
+        totalComments: 0,
+        avgRating: 0
+      });
+    }
+  };
+
+  const loadGamesWithStats = async (gamesList) => {
+    const gamesWithStats = await Promise.all(
+      gamesList.map(async (game) => {
+        try {
+          // Get view count
+          const { data: viewData } = await supabase
+            .from('game_views')
+            .select('view_count')
+            .eq('game_id', game.id)
+            .single();
+          
+          // Get comments
+          const { data: commentsData } = await supabase
+            .from('comments')
+            .select('rating')
+            .eq('game_id', game.id);
+          
+          const views = viewData?.view_count || 0;
+          const comments = commentsData || [];
+          const rating = comments.length > 0 
+            ? comments.reduce((sum, c) => sum + c.rating, 0) / comments.length 
+            : 0;
+          
+          return { ...game, views, commentCount: comments.length, rating };
+        } catch (error) {
+          console.error(`Error loading stats for game ${game.id}:`, error);
+          return { ...game, views: 0, commentCount: 0, rating: 0 };
+        }
+      })
+    );
+    
+    return gamesWithStats;
   };
 
   const handleLogin = (e) => {
@@ -133,8 +254,23 @@ function AdminPanel() {
     }
   };
 
-  const getFilteredAndSortedGames = () => {
-    return games.sort((a, b) => {
+  useEffect(() => {
+    if (games.length > 0) {
+      loadSortedGames();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [games, sortBy, sortDirection]);
+
+  const loadSortedGames = async () => {
+    const sorted = await getFilteredAndSortedGames();
+    setSortedGames(sorted);
+  };
+
+  const getFilteredAndSortedGames = async () => {
+    // Get games with stats from Supabase
+    const gamesWithStats = await loadGamesWithStats(games);
+    
+    return gamesWithStats.sort((a, b) => {
       let comparison = 0;
       
       if (sortBy === 'id') {
@@ -144,53 +280,16 @@ function AdminPanel() {
       } else if (sortBy === 'category') {
         comparison = a.category.localeCompare(b.category, 'tr');
       } else if (sortBy === 'views') {
-        const viewsA = parseInt(localStorage.getItem(`views_${a.id}`) || '0');
-        const viewsB = parseInt(localStorage.getItem(`views_${b.id}`) || '0');
-        comparison = viewsA - viewsB;
+        comparison = a.views - b.views;
       } else if (sortBy === 'rating') {
-        const commentsA = JSON.parse(localStorage.getItem(`comments_${a.id}`) || '[]');
-        const commentsB = JSON.parse(localStorage.getItem(`comments_${b.id}`) || '[]');
-        const ratingA = commentsA.length > 0 ? commentsA.reduce((sum, c) => sum + c.rating, 0) / commentsA.length : 0;
-        const ratingB = commentsB.length > 0 ? commentsB.reduce((sum, c) => sum + c.rating, 0) / commentsB.length : 0;
-        comparison = ratingA - ratingB;
+        comparison = a.rating - b.rating;
       } else if (sortBy === 'comments') {
-        const commentsA = JSON.parse(localStorage.getItem(`comments_${a.id}`) || '[]').length;
-        const commentsB = JSON.parse(localStorage.getItem(`comments_${b.id}`) || '[]').length;
-        comparison = commentsA - commentsB;
+        comparison = a.commentCount - b.commentCount;
       }
       
       return sortDirection === 'asc' ? comparison : -comparison;
     });
   };
-
-  const getStatistics = () => {
-    let totalViews = 0;
-    let totalComments = 0;
-    let totalRatings = 0;
-    let ratingSum = 0;
-
-    games.forEach(game => {
-      const views = parseInt(localStorage.getItem(`views_${game.id}`) || '0');
-      const comments = JSON.parse(localStorage.getItem(`comments_${game.id}`) || '[]');
-      totalViews += views;
-      totalComments += comments.length;
-      
-      comments.forEach(comment => {
-        totalRatings++;
-        ratingSum += comment.rating;
-      });
-    });
-
-    return {
-      totalGames: games.length,
-      totalViews,
-      totalComments,
-      averageRating: totalRatings > 0 ? (ratingSum / totalRatings).toFixed(1) : 0,
-      categories: [...new Set(games.map(g => g.category))].length
-    };
-  };
-
-  const stats = isAuthenticated ? getStatistics() : null;
 
   if (!isAuthenticated) {
     return (
@@ -344,7 +443,7 @@ function AdminPanel() {
                     <BarChart3 className="text-blue-600" size={24} />
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalGames}</div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalGames || 0}</div>
                 <div className="text-sm text-gray-600">Toplam Oyun</div>
               </div>
 
@@ -354,7 +453,7 @@ function AdminPanel() {
                     <Eye className="text-green-600" size={24} />
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalViews.toLocaleString('tr-TR')}</div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">{(stats.totalViews || 0).toLocaleString('tr-TR')}</div>
                 <div className="text-sm text-gray-600">Toplam Görüntülenme</div>
               </div>
 
@@ -364,7 +463,7 @@ function AdminPanel() {
                     <MessageCircle className="text-purple-600" size={24} />
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalComments}</div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalComments || 0}</div>
                 <div className="text-sm text-gray-600">Toplam Yorum</div>
               </div>
 
@@ -374,7 +473,7 @@ function AdminPanel() {
                     <Star className="text-yellow-600" size={24} />
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stats.averageRating}</div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">{stats.avgRating || '0.0'}</div>
                 <div className="text-sm text-gray-600">Ortalama Puan</div>
               </div>
             </div>
@@ -387,12 +486,8 @@ function AdminPanel() {
                   En Çok Görüntülenen Oyunlar
                 </h3>
                 <div className="space-y-3">
-                  {games
-                    .map(game => ({
-                      ...game,
-                      views: parseInt(localStorage.getItem(`views_${game.id}`) || '0')
-                    }))
-                    .sort((a, b) => b.views - a.views)
+                  {sortedGames
+                    .sort((a, b) => (b.views || 0) - (a.views || 0))
                     .slice(0, 5)
                     .map((game, index) => (
                       <div key={game.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -406,7 +501,7 @@ function AdminPanel() {
                         </div>
                         <div className="flex items-center space-x-1 text-green-600 font-semibold">
                           <Eye size={16} />
-                          <span>{game.views.toLocaleString('tr-TR')}</span>
+                          <span>{(game.views || 0).toLocaleString('tr-TR')}</span>
                         </div>
                       </div>
                     ))}
@@ -419,16 +514,9 @@ function AdminPanel() {
                   En Yüksek Puanlı Oyunlar
                 </h3>
                 <div className="space-y-3">
-                  {games
-                    .map(game => {
-                      const comments = JSON.parse(localStorage.getItem(`comments_${game.id}`) || '[]');
-                      const rating = comments.length > 0 
-                        ? comments.reduce((sum, c) => sum + c.rating, 0) / comments.length 
-                        : 0;
-                      return { ...game, rating, commentCount: comments.length };
-                    })
+                  {sortedGames
                     .filter(game => game.commentCount > 0)
-                    .sort((a, b) => b.rating - a.rating)
+                    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
                     .slice(0, 5)
                     .map((game, index) => (
                       <div key={game.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -437,12 +525,12 @@ function AdminPanel() {
                           <img src={game.image} alt={game.name} className="w-12 h-12 object-cover rounded" />
                           <div>
                             <div className="font-semibold text-gray-900">{game.name}</div>
-                            <div className="text-sm text-gray-500">{game.commentCount} yorum</div>
+                            <div className="text-sm text-gray-500">{game.commentCount || 0} yorum</div>
                           </div>
                         </div>
                         <div className="flex items-center space-x-1 text-yellow-600 font-semibold">
                           <Star size={16} className="fill-yellow-600" />
-                          <span>{game.rating.toFixed(1)}</span>
+                          <span>{(game.rating || 0).toFixed(1)}</span>
                         </div>
                       </div>
                     ))}
@@ -596,12 +684,7 @@ function AdminPanel() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {getFilteredAndSortedGames().map((game, index) => {
-                      const viewCount = parseInt(localStorage.getItem(`views_${game.id}`) || '0');
-                      const comments = JSON.parse(localStorage.getItem(`comments_${game.id}`) || '[]');
-                      const averageRating = comments.length > 0 
-                        ? (comments.reduce((sum, c) => sum + c.rating, 0) / comments.length).toFixed(1)
-                        : '-';
+                    {sortedGames.map((game) => {
                       return (
                         <tr key={game.id} className="hover:bg-orange-50/30 transition-all duration-200 group">
                           <td className="px-6 py-4">
@@ -640,10 +723,10 @@ function AdminPanel() {
                             </span>
                           </td>
                           <td className="px-6 py-4 text-sm">
-                            {averageRating !== '-' ? (
+                            {game.rating > 0 ? (
                               <div className="flex items-center space-x-1">
                                 <Star size={14} className="text-yellow-400 fill-yellow-400" />
-                                <span className="font-semibold text-gray-900">{averageRating}</span>
+                                <span className="font-semibold text-gray-900">{game.rating.toFixed(1)}</span>
                               </div>
                             ) : (
                               <span className="text-gray-400">-</span>
@@ -652,13 +735,13 @@ function AdminPanel() {
                           <td className="px-6 py-4 text-sm">
                             <div className="flex items-center space-x-1">
                               <MessageCircle size={14} className="text-blue-500" />
-                              <span className="font-semibold text-blue-600">{comments.length}</span>
+                              <span className="font-semibold text-blue-600">{game.commentCount || 0}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4 text-sm">
                             <div className="flex items-center space-x-1">
                               <Eye size={14} className="text-green-500" />
-                              <span className="font-semibold text-green-600">{viewCount.toLocaleString('tr-TR')}</span>
+                              <span className="font-semibold text-green-600">{(game.views || 0).toLocaleString('tr-TR')}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4">
@@ -954,6 +1037,7 @@ function GameModal({ game, onSave, onClose }) {
 function CommentsManager({ games }) {
   const [allComments, setAllComments] = useState([]);
   const [selectedGame, setSelectedGame] = useState('all');
+  const [loading, setLoading] = useState(true);
 
   const countReplies = (replies) => {
     let count = replies.length;
@@ -965,48 +1049,79 @@ function CommentsManager({ games }) {
     return count;
   };
 
-  const loadAllComments = () => {
-    const comments = [];
-    games.forEach(game => {
-      const gameComments = localStorage.getItem(`comments_${game.id}`);
-      if (gameComments) {
-        const parsed = JSON.parse(gameComments);
-        parsed.forEach(comment => {
-          comments.push({
-            ...comment,
-            gameId: game.id,
-            gameName: game.name,
-            totalReplies: countReplies(comment.replies || [])
-          });
-        });
-      }
-    });
-    // Sort by date (newest first)
-    comments.sort((a, b) => b.id - a.id);
-    setAllComments(comments);
+  const loadAllComments = async () => {
+    setLoading(true);
+    try {
+      // Supabase'den tüm yorumları çek
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      // Format comments with game info
+      const formattedComments = data.map(comment => {
+        const game = games.find(g => g.id === comment.game_id);
+        return {
+          id: comment.id,
+          name: comment.author_name,
+          comment: comment.content,
+          rating: comment.rating,
+          likes: comment.likes || 0,
+          replies: comment.replies || [],
+          isTestimonial: comment.is_testimonial || false,
+          date: new Date(comment.created_at).toLocaleDateString('tr-TR'),
+          gameId: comment.game_id,
+          gameName: game?.name || 'Bilinmeyen Oyun',
+          totalReplies: countReplies(comment.replies || [])
+        };
+      });
+      
+      setAllComments(formattedComments);
+    } catch (error) {
+      console.error('Error loading comments from Supabase:', error);
+      setAllComments([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    loadAllComments();
+    if (games.length > 0) {
+      loadAllComments();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [games]);
 
-  const handleDeleteComment = (commentId, gameId) => {
+  const handleDeleteComment = async (commentId, gameId) => {
     if (window.confirm('Bu yorumu ve tüm yanıtlarını silmek istediğinizden emin misiniz?')) {
-      const gameComments = localStorage.getItem(`comments_${gameId}`);
-      if (gameComments) {
-        const parsed = JSON.parse(gameComments);
-        const updated = parsed.filter(c => c.id !== commentId);
-        localStorage.setItem(`comments_${gameId}`, JSON.stringify(updated));
+      try {
+        const { error } = await supabase
+          .from('comments')
+          .delete()
+          .eq('id', commentId);
+        
+        if (error) throw error;
+        
         loadAllComments();
+      } catch (error) {
+        console.error('Error deleting comment from Supabase:', error);
       }
     }
   };
 
-  const handleDeleteReply = (commentId, replyId, gameId) => {
+  const handleDeleteReply = async (commentId, replyId, gameId) => {
     if (window.confirm('Bu yanıtı silmek istediğinizden emin misiniz?')) {
-      const gameComments = localStorage.getItem(`comments_${gameId}`);
-      if (gameComments) {
-        const parsed = JSON.parse(gameComments);
+      try {
+        // Get the comment
+        const { data: comment, error: fetchError } = await supabase
+          .from('comments')
+          .select('replies')
+          .eq('id', commentId)
+          .single();
+        
+        if (fetchError) throw fetchError;
         
         const deleteReplyRecursive = (replies) => {
           return replies.filter(r => {
@@ -1017,42 +1132,52 @@ function CommentsManager({ games }) {
             return true;
           });
         };
-
-        const updated = parsed.map(c => {
-          if (c.id === commentId) {
-            return {
-              ...c,
-              replies: deleteReplyRecursive(c.replies || [])
-            };
-          }
-          return c;
-        });
-
-        localStorage.setItem(`comments_${gameId}`, JSON.stringify(updated));
+        
+        const updatedReplies = deleteReplyRecursive(comment.replies || []);
+        
+        const { error: updateError } = await supabase
+          .from('comments')
+          .update({ replies: updatedReplies })
+          .eq('id', commentId);
+        
+        if (updateError) throw updateError;
+        
         loadAllComments();
+      } catch (error) {
+        console.error('Error deleting reply from Supabase:', error);
       }
     }
   };
 
-  const handleToggleTestimonial = (commentId, gameId, isTestimonial) => {
-    const gameComments = localStorage.getItem(`comments_${gameId}`);
-    if (gameComments) {
-      const parsed = JSON.parse(gameComments);
-      const updated = parsed.map(c => {
-        if (c.id === commentId) {
-          return { ...c, isTestimonial };
-        }
-        return c;
-      });
-      localStorage.setItem(`comments_${gameId}`, JSON.stringify(updated));
+  const handleToggleTestimonial = async (commentId, gameId, isTestimonial) => {
+    try {
+      const { error } = await supabase
+        .from('comments')
+        .update({ is_testimonial: isTestimonial })
+        .eq('id', commentId);
+      
+      if (error) throw error;
+      
       loadAllComments();
+    } catch (error) {
+      console.error('Error updating testimonial in Supabase:', error);
     }
   };
 
-  const handleDeleteAllGameComments = (gameId) => {
+  const handleDeleteAllGameComments = async (gameId) => {
     if (window.confirm('Bu oyunun tüm yorumlarını silmek istediğinizden emin misiniz?')) {
-      localStorage.removeItem(`comments_${gameId}`);
-      loadAllComments();
+      try {
+        const { error } = await supabase
+          .from('comments')
+          .delete()
+          .eq('game_id', gameId);
+        
+        if (error) throw error;
+        
+        loadAllComments();
+      } catch (error) {
+        console.error('Error deleting game comments from Supabase:', error);
+      }
     }
   };
 
@@ -1088,14 +1213,20 @@ function CommentsManager({ games }) {
         </select>
       </div>
 
-      {/* Comments List */}
-      <div className="space-y-4">
-        {filteredComments.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-            <MessageCircle size={48} className="mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-500">Henüz yorum yok</p>
-          </div>
-        ) : (
+      {/* Loading State */}
+      {loading ? (
+        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-500">Yorumlar yükleniyor...</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredComments.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+              <MessageCircle size={48} className="mx-auto text-gray-300 mb-4" />
+              <p className="text-gray-500">Henüz yorum yok</p>
+            </div>
+          ) : (
           filteredComments.map(comment => (
             <div key={`${comment.gameId}-${comment.id}`} className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-start justify-between">
@@ -1171,17 +1302,6 @@ function CommentsManager({ games }) {
             </div>
           ))
         )}
-      </div>
-
-      {/* Game-specific actions */}
-      {selectedGame !== 'all' && filteredComments.length > 0 && (
-        <div className="mt-6 flex justify-end">
-          <button
-            onClick={() => handleDeleteAllGameComments(parseInt(selectedGame))}
-            className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-          >
-            Bu Oyunun Tüm Yorumlarını Sil
-          </button>
         </div>
       )}
     </div>

@@ -1,0 +1,215 @@
+import { createClient } from '@supabase/supabase-js';
+
+// Supabase proje bilgileri
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://yjnipjcevnxrzlgfmeci.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqbmlwamNldm54cnpsZ2ZtZWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5NDMyMjUsImV4cCI6MjA4MjUxOTIyNX0.tuUrVzxDlZssFm3pwhB-fSsiL8DQUErHmGeqngvQohc';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Veritabanı fonksiyonları
+
+// Oyunları getir
+export const getGames = async () => {
+  const { data, error } = await supabase
+    .from('games')
+    .select('*')
+    .order('id', { ascending: true });
+  
+  if (error) {
+    console.error('Error fetching games:', error);
+    return [];
+  }
+  return data;
+};
+
+// Tek bir oyun getir
+export const getGameBySlug = async (slug) => {
+  const { data, error } = await supabase
+    .from('games')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  
+  if (error) {
+    console.error('Error fetching game:', error);
+    return null;
+  }
+  return data;
+};
+
+// Oyun ekle
+export const addGame = async (gameData) => {
+  const { data, error } = await supabase
+    .from('games')
+    .insert([gameData])
+    .select();
+  
+  if (error) {
+    console.error('Error adding game:', error);
+    return null;
+  }
+  return data[0];
+};
+
+// Oyun güncelle
+export const updateGame = async (id, gameData) => {
+  const { data, error } = await supabase
+    .from('games')
+    .update(gameData)
+    .eq('id', id)
+    .select();
+  
+  if (error) {
+    console.error('Error updating game:', error);
+    return null;
+  }
+  return data[0];
+};
+
+// Oyun sil
+export const deleteGame = async (id) => {
+  const { error } = await supabase
+    .from('games')
+    .delete()
+    .eq('id', id);
+  
+  if (error) {
+    console.error('Error deleting game:', error);
+    return false;
+  }
+  return true;
+};
+
+// Görüntülenme sayısını artır
+export const incrementViews = async (gameId) => {
+  const { error } = await supabase.rpc('increment_game_views', { game_id: gameId });
+  
+  if (error) {
+    console.error('Error incrementing views:', error);
+    return false;
+  }
+  return true;
+};
+
+// Yorumları getir
+export const getComments = async (gameId) => {
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*')
+    .eq('game_id', gameId)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching comments:', error);
+    return [];
+  }
+  return data;
+};
+
+// Yorum ekle
+export const addComment = async (commentData) => {
+  const { data, error } = await supabase
+    .from('comments')
+    .insert([commentData])
+    .select();
+  
+  if (error) {
+    console.error('Error adding comment:', error);
+    return null;
+  }
+  return data[0];
+};
+
+// Yorum sil
+export const deleteComment = async (commentId) => {
+  const { error } = await supabase
+    .from('comments')
+    .delete()
+    .eq('id', commentId);
+  
+  if (error) {
+    console.error('Error deleting comment:', error);
+    return false;
+  }
+  return true;
+};
+
+// Yorum güncelle (testimonial toggle için)
+export const updateComment = async (commentId, updates) => {
+  const { data, error } = await supabase
+    .from('comments')
+    .update(updates)
+    .eq('id', commentId)
+    .select();
+  
+  if (error) {
+    console.error('Error updating comment:', error);
+    return null;
+  }
+  return data[0];
+};
+
+// Testimonial yorumları getir
+export const getTestimonials = async () => {
+  const { data, error } = await supabase
+    .from('comments')
+    .select(`
+      *,
+      games (name)
+    `)
+    .eq('is_testimonial', true)
+    .order('created_at', { ascending: false })
+    .limit(6);
+  
+  if (error) {
+    console.error('Error fetching testimonials:', error);
+    return [];
+  }
+  return data;
+};
+
+// En yüksek puanlı yorumları getir
+export const getTopRatedComments = async (limit = 3) => {
+  const { data, error } = await supabase
+    .from('comments')
+    .select(`
+      *,
+      games (name)
+    `)
+    .gte('rating', 4)
+    .order('rating', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  
+  if (error) {
+    console.error('Error fetching top rated comments:', error);
+    return [];
+  }
+  return data;
+};
+
+// Analytics: Toplam görüntülenmeleri getir
+export const getTotalViews = async () => {
+  const { data, error } = await supabase
+    .from('games')
+    .select('views');
+  
+  if (error) {
+    console.error('Error fetching total views:', error);
+    return 0;
+  }
+  return data.reduce((sum, game) => sum + (game.views || 0), 0);
+};
+
+// Analytics: Toplam yorum sayısı
+export const getTotalComments = async () => {
+  const { count, error } = await supabase
+    .from('comments')
+    .select('*', { count: 'exact', head: true });
+  
+  if (error) {
+    console.error('Error fetching total comments:', error);
+    return 0;
+  }
+  return count;
+};
