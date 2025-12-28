@@ -1,0 +1,8 @@
+﻿// PİŞTİ comments
+    comments: [
+      { id: 1, user: "Tarık F.", rating: 5, date: "2024-12-21", text: "Türkiye'nin en sevilen kağıt oyunu! Aile toplantılarında mutlaka oynarız." },
+      { id: 2, user: "Dilek S.", rating: 5, date: "2024-12-15", text: "Basit kuralları ve hızlı oynanışı harika. Her yaştan insan oynayabiliyor." },
+      { id: 3, user: "Yusuf B.", rating: 4, date: "2024-12-09", text: "Pişti yapmak için strateji lazım. Şansa bırakmayın!" },
+      { id: 4, user: "Esra M.", rating: 5, date: "2024-12-03", text: "Valeyi doğru zamanda kullanmak oyunun anahtarı. Çok eğlenceli!" },
+      { id: 5, user: "Kadir L.", rating: 5, date: "2024-11-27", text: "50 yıldır oynanıyor ailemizde. Geleneksel bir oyun!" }
+    ]

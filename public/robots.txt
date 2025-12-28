@@ -1,0 +1,29 @@
+# Allow all search engines to index all pages
+User-agent: *
+Allow: /
+
+# Disallow admin panel
+Disallow: /admin-panel
+
+# Sitemap location
+Sitemap: https://nasiloynanir.com/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Common search engine bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Rate limit aggressive crawlers
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10

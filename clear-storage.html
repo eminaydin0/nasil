@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalStorage Temizle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f97316, #dc2626);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        button {
+            background: linear-gradient(135deg, #f97316, #dc2626);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 LocalStorage Temizle</h1>
+        <p>Oyun verilerini sıfırlamak için butona tıklayın</p>
+        <button onclick="clearStorage()">Oyun Verilerini Temizle</button>
+        <button onclick="clearAll()">Tüm Verileri Temizle</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        function clearStorage() {
+            localStorage.removeItem('gamesData');
+            document.getElementById('message').innerHTML = '<p class="success">✅ Oyun verileri temizlendi! Sayfayı yenileyebilirsiniz.</p>';
+        }
+
+        function clearAll() {
+            localStorage.clear();
+            document.getElementById('message').innerHTML = '<p class="success">✅ Tüm veriler temizlendi! Admin girişi de sıfırlandı.</p>';
+        }
+    </script>
+</body>
+</html>
