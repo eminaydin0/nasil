@@ -57,43 +57,39 @@ function Header({ searchTerm, setSearchTerm }) {
     )
   ).slice(0, 5);
 
-  console.log('Search term:', searchTerm);
-  console.log('Filtered games:', filteredGames);
-  console.log('Search focused:', searchFocused);
-
   return (
-    <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-orange-100">
-      <nav className="container mx-auto px-6 py-5">
+    <header className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-orange-100">
+      <nav className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-              <span className="text-white font-bold text-xl">N</span>
+            <div className="w-9 h-9 bg-linear-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+              <span className="text-white font-bold text-lg">N</span>
             </div>
-            <div className="text-2xl font-black text-gray-900 tracking-tight">
-              NASIL <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">OYNANIR</span>
+            <div className="text-xl font-black text-gray-900 tracking-tight leading-none">
+              NASIL <span className="text-transparent bg-clip-text bg-linear-to-r from-orange-500 to-red-600">OYNANIR</span>
             </div>
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="px-4 py-2 text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-bold uppercase tracking-wide">
+          <div className="hidden md:flex items-center space-x-2">
+            <Link to="/" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Ana Sayfa
             </Link>
-            <a href="#oyunlar" className="px-4 py-2 text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-bold uppercase tracking-wide">
+            <a href="#oyunlar" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Oyunlar
             </a>
-            <a href="#hakkinda" className="px-4 py-2 text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-bold uppercase tracking-wide">
+            <a href="#hakkinda" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Hakkında
             </a>
             <div className="relative" ref={searchRef}>
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
               <input
                 type="text"
                 placeholder="Oyun ara..."
                 value={searchTerm || ''}
                 onChange={(e) => setSearchTerm && setSearchTerm(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
-                className="w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-sm"
+                className="w-56 pl-10 pr-3 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-sm"
               />
               
               {/* Search Dropdown */}
@@ -103,13 +99,13 @@ function Header({ searchTerm, setSearchTerm }) {
                     <a
                       key={game.id}
                       href={`/oyun/${game.slug}`}
-                      className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                      className="flex items-center gap-3 p-2 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                       onClick={() => {
                         setSearchFocused(false);
                         setSearchTerm('');
                       }}
                     >
-                      <img src={game.image} alt={game.name} className="w-12 h-12 rounded-lg object-cover" />
+                      <img src={game.image} alt={game.name} className="w-10 h-10 rounded-lg object-cover" />
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-semibold text-gray-900 truncate">{game.name}</h4>
                         <p className="text-xs text-gray-500 truncate">{game.shortDescription}</p>
@@ -132,16 +128,16 @@ function Header({ searchTerm, setSearchTerm }) {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-6 pb-4 space-y-2 border-t border-orange-100 pt-6">
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+          <div className="md:hidden mt-4 pb-3 space-y-2 border-t border-orange-100 pt-4">
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
               <input
                 type="text"
                 placeholder="Oyun ara..."
                 value={searchTerm || ''}
                 onChange={(e) => setSearchTerm && setSearchTerm(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-sm"
+                className="w-full pl-10 pr-3 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-sm"
               />
               
               {/* Mobile Search Dropdown */}
@@ -151,14 +147,14 @@ function Header({ searchTerm, setSearchTerm }) {
                     <a
                       key={game.id}
                       href={`/oyun/${game.slug}`}
-                      className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                      className="flex items-center gap-3 p-2 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
                       onClick={() => {
                         setSearchFocused(false);
                         setSearchTerm('');
                         setMobileMenuOpen(false);
                       }}
                     >
-                      <img src={game.image} alt={game.name} className="w-12 h-12 rounded-lg object-cover" />
+                      <img src={game.image} alt={game.name} className="w-10 h-10 rounded-lg object-cover" />
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-semibold text-gray-900 truncate">{game.name}</h4>
                         <p className="text-xs text-gray-500 truncate">{game.shortDescription}</p>
@@ -170,21 +166,21 @@ function Header({ searchTerm, setSearchTerm }) {
             </div>
             <Link
               to="/"
-              className="block px-4 py-3 text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-bold"
+              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
               onClick={() => setMobileMenuOpen(false)}
             >
               Ana Sayfa
             </Link>
             <a
               href="#oyunlar"
-              className="block px-4 py-3 text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-bold"
+              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
               onClick={() => setMobileMenuOpen(false)}
             >
               Oyunlar
             </a>
             <a
               href="#hakkinda"
-              className="block px-4 py-3 text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-bold"
+              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
               onClick={() => setMobileMenuOpen(false)}
             >
               Hakkında
