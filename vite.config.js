@@ -14,7 +14,7 @@ export default defineConfig({
     }
   },
   server: {
-    port: 5156,
+    port: 5159,
     headers: {
       'Service-Worker-Allowed': '/'
     }
