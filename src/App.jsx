@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 import HomePage from './pages/HomePage';
 import GameDetail from './pages/GameDetail';
 import AdminPanel from './pages/AdminPanel';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
 import { initSession } from './utils/analytics';
 
 function App() {

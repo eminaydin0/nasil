@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, MessageCircle, TrendingUp } from 'lucide-react';
-import AnalyticsDashboard from '../components/AnalyticsDashboard';
-import AdminLogin from '../components/admin/AdminLogin';
-import AdminHeader from '../components/admin/AdminHeader';
-import AdminStats from '../components/admin/AdminStats';
-import TopGames from '../components/admin/TopGames';
-import GamesTable from '../components/admin/GamesTable';
-import GameModal from '../components/admin/GameModal';
-import CommentsManager from '../components/admin/CommentsManager';
-import { supabase } from '../lib/supabase';
+import AnalyticsDashboard from '../../components/admin/AnalyticsDashboard';
+import AdminLogin from '../../components/admin/AdminLogin';
+import AdminHeader from '../../components/admin/AdminHeader';
+import AdminStats from '../../components/admin/AdminStats';
+import TopGames from '../../components/admin/TopGames';
+import GamesTable from '../../components/admin/GamesTable';
+import GameModal from '../../components/admin/GameModal';
+import CommentsManager from '../../components/admin/CommentsManager';
+import { supabase } from '../../lib/supabase';
 
 function AdminPanel() {
   const navigate = useNavigate();

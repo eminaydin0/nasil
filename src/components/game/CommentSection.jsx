@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, User, Calendar, ThumbsUp, Reply } from 'lucide-react';
-import StarRating from './StarRating';
-import { supabase } from '../lib/supabase';
+import StarRating from '../common/StarRating';
+import { supabase } from '../../lib/supabase';
 
 function CommentSection({ gameId }) {
   const [comments, setComments] = useState([]);

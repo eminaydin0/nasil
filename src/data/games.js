@@ -1,5 +1,3 @@
-// Bu dosya artık kullanılmıyor - Tüm veriler Supabase'den çekiliyor
-// Mock data kaldırıldı - Production'da sadece Supabase kullanılıyor
 
 export const games = [];
 

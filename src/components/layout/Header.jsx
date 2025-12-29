@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Menu, X, Search } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 function Header({ searchTerm, setSearchTerm }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

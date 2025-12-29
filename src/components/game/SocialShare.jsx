@@ -1,6 +1,6 @@
 import { Share2, Facebook, Twitter, Link as LinkIcon, MessageCircle, Check } from 'lucide-react';
 import { useState } from 'react';
-import { trackShare } from '../utils/analytics';
+import { trackShare } from '../../utils/analytics';
 
 function SocialShare({ game }) {
   const [copied, setCopied] = useState(false);

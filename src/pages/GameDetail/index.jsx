@@ -1,12 +1,12 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Users, MapPin, Target, Lightbulb, ChevronRight, Eye } from 'lucide-react';
-import CommentSection from '../components/CommentSection';
-import SocialShare from '../components/SocialShare';
-import GameRecommendations from '../components/GameRecommendations';
-import SkeletonLoader from '../components/SkeletonLoader';
-import { trackPageView, trackGameView } from '../utils/analytics';
-import { supabase } from '../lib/supabase';
+import CommentSection from '../../components/game/CommentSection';
+import SocialShare from '../../components/game/SocialShare';
+import GameRecommendations from '../../components/home/GameRecommendations';
+import SkeletonLoader from '../../components/common/SkeletonLoader';
+import { trackPageView, trackGameView } from '../../utils/analytics';
+import { supabase } from '../../lib/supabase';
 
 function GameDetail() {
   const { slug } = useParams();

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Users, Clock, Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 function GameCard({ game }) {
   const [averageRating, setAverageRating] = useState(0);

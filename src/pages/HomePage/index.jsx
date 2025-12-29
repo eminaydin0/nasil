@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, Sparkles, Trophy, Shield, Star } from 'lucide-react';
-import GameCard from '../components/GameCard';
-import SkeletonLoader from '../components/SkeletonLoader';
-import { trackPageView } from '../utils/analytics';
-import { supabase } from '../lib/supabase';
+import GameCard from '../../components/home/GameCard';
+import SkeletonLoader from '../../components/common/SkeletonLoader';
+import { trackPageView } from '../../utils/analytics';
+import { supabase } from '../../lib/supabase';
 
 function HomePage({ searchTerm, setSearchTerm }) {
   const [selectedCategory, setSelectedCategory] = useState('Tümü');
