@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Menu, X, Search } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { games as initialGames } from '../data/games';
+import { supabase } from '../lib/supabase';
 
 function Header({ searchTerm, setSearchTerm }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -10,13 +10,33 @@ function Header({ searchTerm, setSearchTerm }) {
   const searchRef = useRef(null);
 
   useEffect(() => {
-    const savedGames = localStorage.getItem('gamesData');
-    if (savedGames) {
-      setGames(JSON.parse(savedGames));
-    } else {
-      setGames(initialGames);
-    }
+    loadGames();
   }, []);
+
+  const loadGames = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('games')
+        .select('id, slug, name, category, short_description, image');
+      
+      if (error) throw error;
+      
+      // Format data
+      const formattedGames = (data || []).map(game => ({
+        id: game.id,
+        slug: game.slug,
+        name: game.name,
+        category: game.category,
+        shortDescription: game.short_description,
+        image: game.image
+      }));
+      
+      setGames(formattedGames);
+    } catch (error) {
+      console.error('Error loading games:', error);
+      setGames([]);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -32,9 +52,14 @@ function Header({ searchTerm, setSearchTerm }) {
   const filteredGames = games.filter(game =>
     searchTerm && (
       game.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      game.shortDescription.toLowerCase().includes(searchTerm.toLowerCase())
+      game.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (game.shortDescription && game.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()))
     )
   ).slice(0, 5);
+
+  console.log('Search term:', searchTerm);
+  console.log('Filtered games:', filteredGames);
+  console.log('Search focused:', searchFocused);
 
   return (
     <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-orange-100">

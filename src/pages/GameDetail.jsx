@@ -120,12 +120,6 @@ function GameDetail() {
       }
     } catch (error) {
       console.error('Error updating view count:', error);
-      // Fallback: localStorage
-      const viewKey = `views_${gameId}`;
-      const currentViews = parseInt(localStorage.getItem(viewKey) || '0');
-      const newViews = currentViews + 1;
-      localStorage.setItem(viewKey, newViews.toString());
-      setViewCount(newViews);
     }
   };
 

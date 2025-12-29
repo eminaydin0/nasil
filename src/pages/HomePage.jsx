@@ -89,7 +89,11 @@ function HomePage({ searchTerm, setSearchTerm }) {
 
   const filteredGames = games.filter(game => {
     const matchesCategory = selectedCategory === 'Tümü' || game.category === selectedCategory;
-    return matchesCategory;
+    const matchesSearch = !searchTerm || 
+      game.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      game.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      game.category.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
   });
 
   if (loading) {
@@ -342,10 +346,15 @@ function TestimonialsSection() {
         .order('created_at', { ascending: false })
         .limit(6);
       
-      if (commentsError) throw commentsError;
+      if (commentsError) {
+        console.error('Error fetching testimonials:', commentsError);
+        throw commentsError;
+      }
+      
+      console.log('Testimonials from Supabase:', commentsData);
       
       // Yorumları formatla ve oyun isimlerini ekle
-      const formattedTestimonials = commentsData.map(comment => {
+      const formattedTestimonials = (commentsData || []).map(comment => {
         const game = gamesData.find(g => g.id === comment.game_id);
         return {
           name: comment.author_name,
@@ -355,9 +364,11 @@ function TestimonialsSection() {
         };
       });
       
+      console.log('Formatted testimonials:', formattedTestimonials);
       setTestimonials(formattedTestimonials);
     } catch (error) {
       console.error('Error loading testimonials from Supabase:', error);
+      // Hata durumunda bile boş array set et, default'ları kullanacak
       setTestimonials([]);
     }
   };
@@ -371,29 +382,7 @@ function TestimonialsSection() {
       .slice(0, 2);
   };
 
-  // Eğer testimonial yoksa varsayılan göster
-  const defaultTestimonials = [
-    {
-      name: 'Ayşe Yılmaz',
-      comment: 'Çocuklarıma geleneksel oyunları öğretmek için harika bir kaynak. Her oyun çok detaylı anlatılmış!',
-      rating: 5,
-      gameName: 'Platform'
-    },
-    {
-      name: 'Mehmet Demir',
-      comment: 'Okulumuzda beden eğitimi derslerinde bu oyunları oynuyoruz. Çocuklar çok eğleniyor!',
-      rating: 5,
-      gameName: 'Platform'
-    },
-    {
-      name: 'Zeynep Kaya',
-      comment: 'Çocukluğumun oyunlarını yeniden keşfettim. Şimdi kendi çocuklarıma öğretiyorum!',
-      rating: 5,
-      gameName: 'Platform'
-    }
-  ];
-
-  const displayTestimonials = testimonials.length > 0 ? testimonials : defaultTestimonials;
+  const displayTestimonials = testimonials.length > 0 ? testimonials : [];
 
   return (
     <section className="py-20 bg-gray-50">
@@ -406,29 +395,35 @@ function TestimonialsSection() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {displayTestimonials.slice(0, 3).map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-start space-x-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                    {getInitials(testimonial.name)}
+            {displayTestimonials.length > 0 ? (
+              displayTestimonials.slice(0, 3).map((testimonial, index) => (
+                <div key={index} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                  <div className="flex items-start space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      {getInitials(testimonial.name)}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                      <p className="text-sm text-gray-500">{testimonial.gameName}</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                    <p className="text-sm text-gray-500">{testimonial.gameName}</p>
+                  <p className="text-gray-700 leading-relaxed">"{testimonial.comment}"</p>
+                  <div className="flex mt-4 text-yellow-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        className={i < testimonial.rating ? 'fill-yellow-400' : 'fill-gray-300 text-gray-300'}
+                      />
+                    ))}
                   </div>
                 </div>
-                <p className="text-gray-700 leading-relaxed">"{testimonial.comment}"</p>
-                <div className="flex mt-4 text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      size={16}
-                      className={i < testimonial.rating ? 'fill-yellow-400' : 'fill-gray-300 text-gray-300'}
-                    />
-                  ))}
-                </div>
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-12">
+                <p className="text-gray-500">Henüz testimonial yorum bulunmuyor.</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

@@ -188,61 +188,156 @@ function AdminPanel() {
     setPassword('');
   };
 
-  const handleDeleteGame = (id) => {
+  const handleDeleteGame = async (id) => {
     if (window.confirm('Bu oyunu silmek istediğinizden emin misiniz?')) {
-      const updatedGames = games.filter(g => g.id !== id);
-      setGames(updatedGames);
-      localStorage.setItem('gamesData', JSON.stringify(updatedGames));
+      try {
+        const { error } = await supabase
+          .from('games')
+          .delete()
+          .eq('id', id);
+        
+        if (error) throw error;
+        
+        const updatedGames = games.filter(g => g.id !== id);
+        setGames(updatedGames);
+      } catch (error) {
+        console.error('Error deleting game:', error);
+        alert('Oyun silinirken hata oluştu!');
+      }
     }
   };
 
-  const handleSaveGame = (gameData) => {
-    let updatedGames;
-    if (editingGame) {
-      // Edit existing game
-      updatedGames = games.map(g => g.id === editingGame.id ? { ...gameData, id: editingGame.id } : g);
-    } else {
-      // Add new game
-      const newId = games.length > 0 ? Math.max(...games.map(g => g.id)) + 1 : 1;
-      updatedGames = [...games, { ...gameData, id: newId }];
+  const handleSaveGame = async (gameData) => {
+    try {
+      if (editingGame) {
+        // Edit existing game
+        const { error } = await supabase
+          .from('games')
+          .update({
+            slug: gameData.slug,
+            name: gameData.name,
+            category: gameData.category,
+            players: gameData.players,
+            difficulty: gameData.difficulty,
+            image: gameData.image,
+            short_description: gameData.shortDescription,
+            description: gameData.description,
+            rules: gameData.rules,
+            tips: gameData.tips
+          })
+          .eq('id', editingGame.id);
+        
+        if (error) throw error;
+        
+        const updatedGames = games.map(g => g.id === editingGame.id ? { ...gameData, id: editingGame.id } : g);
+        setGames(updatedGames);
+      } else {
+        // Add new game
+        const { data, error } = await supabase
+          .from('games')
+          .insert([{
+            slug: gameData.slug,
+            name: gameData.name,
+            category: gameData.category,
+            players: gameData.players,
+            difficulty: gameData.difficulty,
+            image: gameData.image,
+            short_description: gameData.shortDescription,
+            description: gameData.description,
+            rules: gameData.rules,
+            tips: gameData.tips
+          }])
+          .select()
+          .single();
+        
+        if (error) throw error;
+        
+        const newGame = {
+          id: data.id,
+          slug: data.slug,
+          name: data.name,
+          category: data.category,
+          players: data.players,
+          difficulty: data.difficulty,
+          image: data.image,
+          shortDescription: data.short_description,
+          description: data.description,
+          rules: data.rules,
+          tips: data.tips
+        };
+        setGames([...games, newGame]);
+      }
+      setShowAddModal(false);
+      setEditingGame(null);
+      loadGames();
+    } catch (error) {
+      console.error('Error saving game:', error);
+      alert('Oyun kaydedilirken hata oluştu!');
     }
-    setGames(updatedGames);
-    localStorage.setItem('gamesData', JSON.stringify(updatedGames));
-    setShowAddModal(false);
-    setEditingGame(null);
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
     if (selectedGames.length === 0) return;
     if (window.confirm(`Seçili ${selectedGames.length} oyunu silmek istediğinizden emin misiniz?`)) {
-      const updatedGames = games.filter(g => !selectedGames.includes(g.id));
-      setGames(updatedGames);
-      localStorage.setItem('gamesData', JSON.stringify(updatedGames));
-      setSelectedGames([]);
+      try {
+        const { error } = await supabase
+          .from('games')
+          .delete()
+          .in('id', selectedGames);
+        
+        if (error) throw error;
+        
+        const updatedGames = games.filter(g => !selectedGames.includes(g.id));
+        setGames(updatedGames);
+        setSelectedGames([]);
+      } catch (error) {
+        console.error('Error deleting games:', error);
+        alert('Oyunlar silinirken hata oluştu!');
+      }
     }
   };
 
-  const handleExportData = () => {
-    const exportData = {
-      games: games,
-      comments: {},
-      views: {}
-    };
-    
-    games.forEach(game => {
-      const comments = localStorage.getItem(`comments_${game.id}`);
-      const views = localStorage.getItem(`views_${game.id}`);
-      if (comments) exportData.comments[game.id] = JSON.parse(comments);
-      if (views) exportData.views[game.id] = parseInt(views);
-    });
+  const handleExportData = async () => {
+    try {
+      // Fetch all data from Supabase
+      const { data: commentsData } = await supabase
+        .from('comments')
+        .select('*');
+      
+      const { data: viewsData } = await supabase
+        .from('game_views')
+        .select('*');
+      
+      const exportData = {
+        games: games,
+        comments: {},
+        views: {}
+      };
+      
+      // Group comments by game_id
+      commentsData?.forEach(comment => {
+        if (!exportData.comments[comment.game_id]) {
+          exportData.comments[comment.game_id] = [];
+        }
+        exportData.comments[comment.game_id].push(comment);
+      });
+      
+      // Group views by game_id
+      viewsData?.forEach(view => {
+        exportData.views[view.game_id] = view.view_count;
+      });
 
-    const dataStr = JSON.stringify(exportData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `oyunlar-yedek-${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `oyunlar-yedek-${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      alert('Veriler dışa aktarılırken hata oluştu!');
+    }
   };
 
   const handleSort = (column) => {

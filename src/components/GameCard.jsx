@@ -1,22 +1,40 @@
 import { Link } from 'react-router-dom';
 import { Users, Clock, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 function GameCard({ game }) {
+  const [averageRating, setAverageRating] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
 
-  // Calculate average rating from comments
-  const getAverageRating = () => {
-    const comments = localStorage.getItem(`comments_${game.id}`);
-    if (!comments) return 0;
-    
-    const parsedComments = JSON.parse(comments);
-    if (parsedComments.length === 0) return 0;
-    
-    const totalRating = parsedComments.reduce((sum, comment) => sum + comment.rating, 0);
-    return (totalRating / parsedComments.length).toFixed(1);
+  useEffect(() => {
+    loadRating();
+  }, [game.id]);
+
+  const loadRating = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('rating')
+        .eq('game_id', game.id);
+      
+      if (error) throw error;
+      
+      const comments = data || [];
+      setCommentCount(comments.length);
+      
+      if (comments.length > 0) {
+        const totalRating = comments.reduce((sum, comment) => sum + comment.rating, 0);
+        setAverageRating((totalRating / comments.length).toFixed(1));
+      } else {
+        setAverageRating(0);
+      }
+    } catch (error) {
+      console.error('Error loading rating:', error);
+      setAverageRating(0);
+      setCommentCount(0);
+    }
   };
-
-  const averageRating = getAverageRating();
-  const commentCount = JSON.parse(localStorage.getItem(`comments_${game.id}`) || '[]').length;
 
   return (
     <Link to={`/oyun/${game.slug}`} className="group block">
