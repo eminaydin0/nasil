@@ -276,3 +276,72 @@ export const initSession = () => {
     }, 30000);
   }
 };
+
+// Admin Analytics - Get all analytics data
+export const getAnalyticsData = () => {
+  if (typeof window === 'undefined') return null;
+  
+  return {
+    deviceVisits: JSON.parse(localStorage.getItem('device_visits') || '{"desktop": 0, "mobile": 0, "tablet": 0}'),
+    trafficSources: JSON.parse(localStorage.getItem('traffic_sources') || '{"direct": 0, "search": 0, "social": 0, "referral": 0}'),
+    userSessions: JSON.parse(localStorage.getItem('user_sessions') || '[]'),
+    currentSessionStart: localStorage.getItem('current_session_start'),
+    sessionStart: localStorage.getItem('session_start')
+  };
+};
+
+// Admin Analytics - Export analytics data as JSON
+export const exportAnalyticsData = () => {
+  const data = getAnalyticsData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `analytics-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+// Admin Analytics - Clear all analytics data
+export const clearAnalyticsData = () => {
+  if (typeof window === 'undefined') return;
+  
+  localStorage.removeItem('device_visits');
+  localStorage.removeItem('traffic_sources');
+  localStorage.removeItem('user_sessions');
+  localStorage.removeItem('current_session_start');
+  localStorage.removeItem('session_start');
+  
+  console.log('Analytics data cleared');
+};
+
+// Admin Analytics - Calculate engagement score (0-100)
+export const calculateEngagementScore = () => {
+  const data = getAnalyticsData();
+  if (!data) return 0;
+  
+  const sessions = data.userSessions;
+  if (sessions.length === 0) return 0;
+  
+  // Factors for engagement:
+  // 1. Average session duration (max 300s = 5 min)
+  const avgDuration = sessions.reduce((sum, s) => sum + s.duration, 0) / sessions.length;
+  const durationScore = Math.min(avgDuration / 300, 1) * 40; // 40 points max
+  
+  // 2. Number of sessions (max 50 sessions)
+  const sessionScore = Math.min(sessions.length / 50, 1) * 30; // 30 points max
+  
+  // 3. Bounce rate (inverse - lower is better)
+  const bounceCount = sessions.filter(s => s.duration < 5).length;
+  const bounceRate = sessions.length > 0 ? bounceCount / sessions.length : 1;
+  const bounceScore = (1 - bounceRate) * 30; // 30 points max
+  
+  return Math.round(durationScore + sessionScore + bounceScore);
+};
+
+// Track when user interacts with admin panel
+export const trackAdminAction = (action, details) => {
+  trackEvent('admin_action', 'Admin Panel', `${action} - ${details}`);
+};

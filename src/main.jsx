@@ -2,10 +2,13 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import { initGA, initScrollTracking, trackPerformance, trackSession } from './utils/analytics'
+import { initGA, initScrollTracking, trackPerformance, trackSession, initSession } from './utils/analytics'
 
 // Initialize Google Analytics
 initGA();
+
+// Initialize session tracking
+initSession();
 
 // Initialize tracking
 initScrollTracking();

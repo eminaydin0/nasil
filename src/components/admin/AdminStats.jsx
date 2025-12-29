@@ -1,8 +1,11 @@
-import { BarChart3, Eye, MessageCircle, Star } from 'lucide-react';
+import { BarChart3, Eye, MessageCircle, Star, TrendingUp } from 'lucide-react';
+import { calculateEngagementScore } from '../../utils/analytics';
 
 function AdminStats({ stats }) {
+  const engagementScore = calculateEngagementScore();
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
       <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <div className="p-3 bg-blue-100 rounded-lg">
@@ -41,6 +44,22 @@ function AdminStats({ stats }) {
         </div>
         <div className="text-3xl font-bold text-gray-900 mb-1">{stats.avgRating || '0.0'}</div>
         <div className="text-sm text-gray-600">Ortalama Puan</div>
+      </div>
+
+      <div className="bg-gradient-to-br from-orange-500 to-pink-500 rounded-xl shadow-sm p-6 border border-orange-200">
+        <div className="flex items-center justify-between mb-4">
+          <div className="p-3 bg-white/20 rounded-lg">
+            <TrendingUp className="text-white" size={24} />
+          </div>
+        </div>
+        <div className="text-3xl font-bold text-white mb-1">{engagementScore}/100</div>
+        <div className="text-sm text-white/90">Engagement Score</div>
+        <div className="mt-2 w-full bg-white/20 rounded-full h-2">
+          <div 
+            className="bg-white h-2 rounded-full transition-all duration-500"
+            style={{ width: `${engagementScore}%` }}
+          ></div>
+        </div>
       </div>
     </div>
   );
