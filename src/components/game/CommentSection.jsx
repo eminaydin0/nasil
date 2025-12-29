@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, User, Calendar, ThumbsUp, Reply } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StarRating from '../common/StarRating';
 import { supabase } from '../../lib/supabase';
 
@@ -59,7 +60,7 @@ function CommentSection({ gameId }) {
     e.preventDefault();
     
     if (!newComment.name || !newComment.comment || newComment.rating === 0) {
-      alert('Lütfen tüm alanları doldurun ve puan verin!');
+      toast.error('Lütfen tüm alanları doldurun ve puan verin!');
       return;
     }
 
@@ -105,16 +106,18 @@ function CommentSection({ gameId }) {
       setNewComment({ name: '', rating: 0, comment: '' });
       setShowForm(false);
       
-      alert('✅ Yorumunuz başarıyla kaydedildi!');
+      toast.success('Yorumunuz başarıyla kaydedildi!', {
+        icon: '✅',
+      });
     } catch (error) {
       console.error('❌ Error saving comment to Supabase:', error);
-      alert(`❌ Hata: ${error.message}`);
+      toast.error(`Yorum kaydedilirken hata oluştu: ${error.message}`);
     }
   };
 
   const handleReplySubmit = async (commentId, parentReplyId = null) => {
     if (!replyText.trim() || !replyName.trim()) {
-      alert('Lütfen isminizi ve yanıtınızı yazın!');
+      toast.error('Lütfen isminizi ve yanıtınızı yazın!');
       return;
     }
 
@@ -176,11 +179,15 @@ function CommentSection({ gameId }) {
         .eq('id', commentId);
     } catch (error) {
       console.error('Error saving reply to Supabase:', error);
+      toast.error('Yanıt kaydedilirken hata oluştu!');
     }
     
     setReplyText('');
     setReplyName('');
     setReplyingTo(null);
+    toast.success('Yanıtınız başarıyla eklendi!', {
+      icon: '💬',
+    });
   };
 
   const handleReplyLike = async (commentId, replyId) => {
@@ -228,6 +235,11 @@ function CommentSection({ gameId }) {
       c.id === commentId ? { ...c, likes: c.likes + 1 } : c
     );
     setComments(updatedComments);
+    
+    toast.success('Beğendiniz!', {
+      icon: '👍',
+      duration: 2000,
+    });
     
     // Update in Supabase
     try {

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Şifre Hash Oluşturucu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .hash-box {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #d63031;
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .copy-btn.copied {
+            background: #27ae60;
+        }
+
+        .sql-example {
+            margin-top: 20px;
+            padding: 15px;
+            background: #2d3436;
+            border-radius: 6px;
+            color: #dfe6e9;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        .sql-example .keyword {
+            color: #74b9ff;
+        }
+
+        .sql-example .string {
+            color: #55efc4;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .warning-icon {
+            color: #ffc107;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+
+        .warning-text {
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Admin Şifre Hash Oluşturucu</h1>
+        <p class="subtitle">Supabase admin kullanıcısı için güvenli şifre hash'i oluşturun</p>
+
+        <div class="form-group">
+            <label for="password">Şifrenizi Girin:</label>
+            <input type="password" id="password" placeholder="Güçlü bir şifre girin">
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Şifreyi Tekrar Girin:</label>
+            <input type="password" id="confirmPassword" placeholder="Şifrenizi tekrar girin">
+        </div>
+
+        <button class="btn" onclick="generateHash()">
+            🔒 Hash Oluştur
+        </button>
+
+        <div id="result" class="result">
+            <h3>✅ Şifre Hash'i Oluşturuldu</h3>
+            <div class="hash-box">
+                <span id="hashOutput"></span>
+                <button class="copy-btn" onclick="copyHash()">Kopyala</button>
+            </div>
+
+            <div class="sql-example">
+<span class="keyword">INSERT INTO</span> admin_users (username, password_hash, email, full_name)
+<span class="keyword">VALUES</span> (
+  <span class="string">'admin'</span>,
+  <span class="string" id="hashInSQL"></span>,
+  <span class="string">'admin@nasiloynanir.com'</span>,
+  <span class="string">'Admin User'</span>
+);
+            </div>
+        </div>
+
+        <div class="warning">
+            <div style="display: flex; align-items: start;">
+                <span class="warning-icon">⚠️</span>
+                <div class="warning-text">
+                    <strong>Güvenlik Uyarısı:</strong><br>
+                    • Bu hash'i Supabase SQL Editor'de kullanın<br>
+                    • Şifrenizi güvende tutun ve kimseyle paylaşmayın<br>
+                    • Hash'i oluşturduktan sonra bu sayfayı kapatın<br>
+                    • Production'da mutlaka HTTPS kullanın
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function generateHash() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const resultDiv = document.getElementById('result');
+
+            // Şifre kontrolü
+            if (!password) {
+                alert('Lütfen bir şifre girin!');
+                return;
+            }
+
+            if (password.length < 8) {
+                alert('Şifre en az 8 karakter olmalıdır!');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Şifreler eşleşmiyor!');
+                return;
+            }
+
+            try {
+                // SHA-256 hash oluştur
+                const encoder = new TextEncoder();
+                const data = encoder.encode(password);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+                // Sonucu göster
+                document.getElementById('hashOutput').textContent = hashHex;
+                document.getElementById('hashInSQL').textContent = `'${hashHex}'`;
+                resultDiv.classList.add('show');
+
+                // Şifre alanlarını temizle
+                document.getElementById('password').value = '';
+                document.getElementById('confirmPassword').value = '';
+
+                console.log('Hash oluşturuldu:', hashHex);
+            } catch (error) {
+                console.error('Hash oluşturulurken hata:', error);
+                alert('Hash oluşturulurken bir hata oluştu!');
+            }
+        }
+
+        function copyHash() {
+            const hash = document.getElementById('hashOutput').textContent;
+            const btn = event.target;
+
+            navigator.clipboard.writeText(hash).then(() => {
+                btn.textContent = 'Kopyalandı!';
+                btn.classList.add('copied');
+
+                setTimeout(() => {
+                    btn.textContent = 'Kopyala';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Kopyalama hatası:', err);
+                alert('Hash kopyalanamadı! Lütfen manuel olarak seçip kopyalayın.');
+            });
+        }
+
+        // Enter tuşu ile hash oluşturma
+        document.getElementById('confirmPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                generateHash();
+            }
+        });
+    </script>
+</body>
+</html>

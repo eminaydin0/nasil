@@ -16,7 +16,29 @@ function GameModal({ game, onSave, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData);
+    
+    // Slug oluştur (oyun adından)
+    const generateSlug = (name) => {
+      const turkishMap = {
+        'ç': 'c', 'Ç': 'C',
+        'ğ': 'g', 'Ğ': 'G',
+        'ı': 'i', 'İ': 'I',
+        'ö': 'o', 'Ö': 'O',
+        'ş': 's', 'Ş': 'S',
+        'ü': 'u', 'Ü': 'U'
+      };
+      
+      return name
+        .split('')
+        .map(char => turkishMap[char] || char)
+        .join('')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    };
+    
+    const slug = formData.slug || generateSlug(formData.name);
+    onSave({ ...formData, slug });
   };
 
   const handleRuleChange = (index, value) => {

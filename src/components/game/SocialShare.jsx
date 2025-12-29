@@ -1,5 +1,6 @@
 import { Share2, Facebook, Twitter, Link as LinkIcon, MessageCircle, Check } from 'lucide-react';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { trackShare } from '../../utils/analytics';
 
 function SocialShare({ game }) {
@@ -21,6 +22,11 @@ function SocialShare({ game }) {
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      
+      toast.success('Link kopyalandı!', {
+        icon: '🔗',
+        duration: 2000,
+      });
       
       // Track copy action
       trackShare('copy_link', game.name);

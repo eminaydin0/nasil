@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, MessageCircle, TrendingUp } from 'lucide-react';
+import toast from 'react-hot-toast';
 import AnalyticsDashboard from '../../components/admin/AnalyticsDashboard';
 import AdminLogin from '../../components/admin/AdminLogin';
 import AdminHeader from '../../components/admin/AdminHeader';
@@ -28,15 +29,11 @@ function AdminPanel() {
     avgRating: 0
   });
   const [sortedGames, setSortedGames] = useState([]);
-  
-  // Admin credentials (gerçek projede backend'de olmalı)
-  const ADMIN_USERNAME = 'admin';
-  const ADMIN_PASSWORD = 'admin123';
 
   useEffect(() => {
     // Check if already logged in
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
+    const adminData = localStorage.getItem('adminData') || sessionStorage.getItem('adminData');
+    if (adminData) {
       setIsAuthenticated(true);
       loadGames();
     }
@@ -169,20 +166,16 @@ function AdminPanel() {
     return gamesWithStats;
   };
 
-  const handleLogin = (username, password, setError) => {
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      localStorage.setItem('adminAuth', 'true');
-      loadGames();
-      setError('');
-    } else {
-      setError('Kullanıcı adı veya şifre hatalı!');
-    }
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    loadGames();
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('adminAuth');
+    localStorage.removeItem('adminData');
+    sessionStorage.removeItem('adminData');
+    toast.success('Başarıyla çıkış yaptınız!');
   };
 
   const handleDeleteGame = async (id) => {
@@ -197,9 +190,10 @@ function AdminPanel() {
         
         const updatedGames = games.filter(g => g.id !== id);
         setGames(updatedGames);
+        toast.success('Oyun başarıyla silindi!');
       } catch (error) {
         console.error('Error deleting game:', error);
-        alert('Oyun silinirken hata oluştu!');
+        toast.error('Oyun silinirken hata oluştu!');
       }
     }
   };
@@ -267,9 +261,10 @@ function AdminPanel() {
       setShowAddModal(false);
       setEditingGame(null);
       loadGames();
+      toast.success(editingGame ? 'Oyun başarıyla güncellendi!' : 'Oyun başarıyla eklendi!');
     } catch (error) {
       console.error('Error saving game:', error);
-      alert('Oyun kaydedilirken hata oluştu!');
+      toast.error('Oyun kaydedilirken hata oluştu!');
     }
   };
 
@@ -287,9 +282,10 @@ function AdminPanel() {
         const updatedGames = games.filter(g => !selectedGames.includes(g.id));
         setGames(updatedGames);
         setSelectedGames([]);
+        toast.success(`${selectedGames.length} oyun başarıyla silindi!`);
       } catch (error) {
         console.error('Error deleting games:', error);
-        alert('Oyunlar silinirken hata oluştu!');
+        toast.error('Oyunlar silinirken hata oluştu!');
       }
     }
   };
@@ -331,9 +327,12 @@ function AdminPanel() {
       link.href = url;
       link.download = `oyunlar-yedek-${new Date().toISOString().split('T')[0]}.json`;
       link.click();
+      toast.success('Veriler başarıyla dışa aktarıldı!', {
+        icon: '💾',
+      });
     } catch (error) {
       console.error('Error exporting data:', error);
-      alert('Veriler dışa aktarılırken hata oluştu!');
+      toast.error('Veriler dışa aktarılırken hata oluştu!');
     }
   };
 
