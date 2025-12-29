@@ -40,7 +40,7 @@ function GameCard({ game }) {
     <Link to={`/oyun/${game.slug}`} className="group block">
       <article className="bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border border-gray-100">
         {/* Image Section */}
-        <div className="relative aspect-4/3 bg-gray-100 overflow-hidden">
+        <div className="relative aspect-video bg-gray-100 overflow-hidden">
           <img 
             src={game.image} 
             alt={game.name}

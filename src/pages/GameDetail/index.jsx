@@ -17,6 +17,7 @@ function GameDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     loadGameAndViews();
   }, [slug]);
 
@@ -239,11 +240,13 @@ function GameDetail() {
           <div className="grid md:grid-cols-3 gap-6">
             {/* Image */}
             <div className="md:col-span-1">
-              <img 
-                src={game.image} 
-                alt={game.name}
-                className="w-full h-64 md:h-full object-cover rounded-xl"
-              />
+              <div className="aspect-video w-full bg-gray-100 rounded-xl overflow-hidden">
+                <img 
+                  src={game.image} 
+                  alt={game.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
 
             {/* Content */}
@@ -344,11 +347,13 @@ function GameDetail() {
                   className="block group"
                 >
                   <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                    <img 
-                      src={prevGame.image} 
-                      alt={prevGame.name}
-                      className="w-14 h-14 rounded-lg object-cover"
-                    />
+                    <div className="w-14 h-14 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                      <img 
+                        src={prevGame.image} 
+                        alt={prevGame.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs text-gray-500 mb-0.5">Önceki</p>
                       <p className="font-medium text-gray-900 group-hover:text-gray-700 transition-colors truncate text-sm">
@@ -364,11 +369,13 @@ function GameDetail() {
                   className="block group"
                 >
                   <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                    <img 
-                      src={nextGame.image} 
-                      alt={nextGame.name}
-                      className="w-14 h-14 rounded-lg object-cover"
-                    />
+                    <div className="w-14 h-14 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                      <img 
+                        src={nextGame.image} 
+                        alt={nextGame.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs text-gray-500 mb-0.5">Sonraki</p>
                       <p className="font-medium text-gray-900 group-hover:text-gray-700 transition-colors truncate text-sm">
