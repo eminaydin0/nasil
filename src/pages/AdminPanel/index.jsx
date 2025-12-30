@@ -11,7 +11,7 @@ import GamesTable from '../../components/admin/GamesTable';
 import GameModal from '../../components/admin/GameModal';
 import CommentsManager from '../../components/admin/CommentsManager';
 import { supabase } from '../../lib/supabase';
-import { exportAnalyticsData, calculateEngagementScore, trackAdminAction } from '../../utils/analytics';
+import { exportAnalyticsData } from '../../utils/analytics';
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -502,13 +502,20 @@ function AdminPanel() {
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-blue-600">
-                  {calculateEngagementScore()}/100
+                  {Math.round(
+                    Math.min(
+                      ((stats.totalComments / Math.max(stats.totalViews, 1)) * 100 * 0.2) +
+                      ((parseFloat(stats.avgRating || 0) / 5) * 30) +
+                      (Math.min((stats.totalViews / 1000) * 30, 30)) +
+                      (Math.min((stats.totalGames / 50) * 20, 20)),
+                      100
+                    )
+                  )}/100
                 </div>
               </div>
               <button
                 onClick={() => {
                   exportAnalyticsData();
-                  trackAdminAction('export_analytics', 'CSV/JSON export');
                   toast.success('Analytics verileri dışa aktarıldı!', { icon: '📊' });
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"

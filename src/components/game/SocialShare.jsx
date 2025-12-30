@@ -29,7 +29,7 @@ function SocialShare({ game }) {
       });
       
       // Track copy action
-      trackShare('copy_link', game.name);
+      trackShare('copy_link', game.name, game.id);
       
       // Increment total shares
       const currentShares = parseInt(localStorage.getItem('total_shares') || '0');
@@ -43,7 +43,7 @@ function SocialShare({ game }) {
     window.open(shareLinks[platform], '_blank', 'width=600,height=400');
     
     // Track share event
-    trackShare(platform, game.name);
+    trackShare(platform, game.name, game.id);
     
     // Increment total shares counter
     const currentShares = parseInt(localStorage.getItem('total_shares') || '0');

@@ -392,7 +392,7 @@ function GameDetail() {
 
         {/* Comments Section */}
         <div className="mt-6">
-          <CommentSection gameId={game.id} />
+          <CommentSection gameId={game.id} gameName={game.name} />
         </div>
       </div>
     </div>

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, Filter, Sparkles, Trophy, Shield, Star } from 'lucide-react';
 import GameCard from '../../components/home/GameCard';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
-import { trackPageView } from '../../utils/analytics';
+import { trackPageView, trackGameSearch } from '../../utils/analytics';
 import { supabase } from '../../lib/supabase';
 
 function HomePage({ searchTerm, setSearchTerm }) {
@@ -10,10 +10,30 @@ function HomePage({ searchTerm, setSearchTerm }) {
   const [games, setGames] = useState([]);
   const [categories, setCategories] = useState(['Tümü']);
   const [loading, setLoading] = useState(true);
+  const searchTimeoutRef = useRef(null);
 
   useEffect(() => {
     loadGames();
   }, []);
+
+  // Track search with debounce
+  useEffect(() => {
+    if (searchTerm && searchTerm.length > 2) {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      
+      searchTimeoutRef.current = setTimeout(() => {
+        trackGameSearch(searchTerm);
+      }, 1000); // Track after 1 second of no typing
+    }
+    
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchTerm]);
 
   const loadGames = async () => {
     try {

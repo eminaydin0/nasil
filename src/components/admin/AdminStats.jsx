@@ -1,8 +1,33 @@
 import { BarChart3, Eye, MessageCircle, Star, TrendingUp } from 'lucide-react';
-import { calculateEngagementScore } from '../../utils/analytics';
+import { useState, useEffect } from 'react';
 
 function AdminStats({ stats }) {
-  const engagementScore = calculateEngagementScore();
+  const [engagementScore, setEngagementScore] = useState(0);
+  
+  useEffect(() => {
+    // Calculate engagement score based on stats
+    const calculateScore = () => {
+      if (!stats || !stats.totalViews) return 0;
+      
+      // Factors for engagement:
+      // 1. Comments per view (max 20%)
+      const commentRatio = stats.totalComments / Math.max(stats.totalViews, 1);
+      const commentScore = Math.min(commentRatio * 100, 20);
+      
+      // 2. Average rating (max 30%)
+      const ratingScore = (parseFloat(stats.avgRating || 0) / 5) * 30;
+      
+      // 3. Total activity (max 30%)
+      const activityScore = Math.min((stats.totalViews / 1000) * 30, 30);
+      
+      // 4. Games count (max 20%)
+      const gamesScore = Math.min((stats.totalGames / 50) * 20, 20);
+      
+      return Math.round(commentScore + ratingScore + activityScore + gamesScore);
+    };
+    
+    setEngagementScore(calculateScore());
+  }, [stats]);
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">

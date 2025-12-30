@@ -1,160 +1,129 @@
-// Google Analytics 4 Integration
+// Supabase Analytics Integration
+import { supabase } from '../lib/supabase';
 
-export const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // Buraya gerçek GA4 ID'nizi yazın
+// Session Management
+let sessionId = null;
 
-// Initialize Google Analytics
+// Generate or get session ID
+const getSessionId = () => {
+  if (sessionId) return sessionId;
+  
+  // Check if session exists in sessionStorage (lasts for browser tab)
+  sessionId = sessionStorage.getItem('analytics_session_id');
+  
+  if (!sessionId) {
+    // Create new session ID
+    sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    sessionStorage.setItem('analytics_session_id', sessionId);
+    sessionStorage.setItem('session_start', Date.now().toString());
+  }
+  
+  return sessionId;
+};
+
+// Track analytics event to Supabase
+const trackToSupabase = async (eventType, eventData = {}, gameId = null) => {
+  try {
+    const sessionId = getSessionId();
+    const userAgent = navigator.userAgent;
+    const referrer = document.referrer || null;
+    
+    // Insert event to Supabase
+    const { error } = await supabase
+      .from('analytics_events')
+      .insert([{
+        event_type: eventType,
+        event_data: eventData,
+        game_id: gameId,
+        session_id: sessionId,
+        user_agent: userAgent,
+        referrer: referrer
+      }]);
+    
+    if (error) {
+      console.error('Analytics tracking error:', error);
+    }
+  } catch (error) {
+    console.error('Failed to track event:', error);
+  }
+};
+
+// Initialize Analytics
 export const initGA = () => {
   if (typeof window !== 'undefined') {
-    // Google Analytics script
-    const script1 = document.createElement('script');
-    script1.async = true;
-    script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    document.head.appendChild(script1);
-
-    // GA configuration
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      window.dataLayer.push(arguments);
-    }
-    window.gtag = gtag;
-    gtag('js', new Date());
-    gtag('config', GA_MEASUREMENT_ID, {
-      page_path: window.location.pathname,
-    });
+    getSessionId();
+    trackDeviceType();
+    trackTrafficSource();
+    
+    // Track page view on init
+    trackPageView(window.location.pathname);
   }
 };
 
 // Track page views
 export const trackPageView = (url) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', GA_MEASUREMENT_ID, {
-      page_path: url,
-    });
-  }
+  trackToSupabase('page_view', { 
+    page: url,
+    timestamp: new Date().toISOString()
+  });
 };
 
 // Track custom events
 export const trackEvent = (action, category, label, value) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', action, {
-      event_category: category,
-      event_label: label,
-      value: value,
-    });
-  }
+  trackToSupabase(action, {
+    category,
+    label,
+    value
+  });
 };
 
 // Specific tracking functions
 export const trackGameView = (gameName, gameId) => {
-  trackEvent('view_game', 'Games', gameName, gameId);
+  trackToSupabase('game_view', {
+    game_name: gameName,
+    timestamp: new Date().toISOString()
+  }, gameId);
 };
 
 export const trackGameSearch = (searchTerm) => {
-  trackEvent('search', 'Search', searchTerm);
+  trackToSupabase('search', {
+    search_term: searchTerm,
+    timestamp: new Date().toISOString()
+  });
 };
 
-export const trackCommentSubmit = (gameName) => {
-  trackEvent('submit_comment', 'Engagement', gameName);
+export const trackCommentSubmit = (gameName, gameId, rating = null) => {
+  trackToSupabase('comment_submit', {
+    game_name: gameName,
+    rating: rating,
+    timestamp: new Date().toISOString()
+  }, gameId);
 };
 
-export const trackShare = (platform, gameName) => {
-  trackEvent('share', 'Social', `${platform} - ${gameName}`);
-};
-
-export const trackFavoriteAdd = (gameName) => {
-  trackEvent('add_favorite', 'Engagement', gameName);
-};
-
-export const trackCategoryFilter = (category) => {
-  trackEvent('filter_category', 'Navigation', category);
-};
-
-// User behavior tracking for heatmap
-export const trackClick = (elementName, elementType) => {
-  trackEvent('click', 'Interaction', `${elementType} - ${elementName}`);
-};
-
-export const trackScroll = (scrollDepth) => {
-  trackEvent('scroll', 'Engagement', 'Scroll Depth', scrollDepth);
-};
-
-// A/B Testing helpers
-export const getABTestVariant = (testName) => {
-  // Check if variant is already stored
-  let variant = localStorage.getItem(`ab_test_${testName}`);
-  
-  if (!variant) {
-    // Randomly assign variant (50/50 split)
-    variant = Math.random() < 0.5 ? 'A' : 'B';
-    localStorage.setItem(`ab_test_${testName}`, variant);
-    
-    // Track variant assignment
-    trackEvent('ab_test_assigned', 'Testing', `${testName} - Variant ${variant}`);
-  }
-  
-  return variant;
-};
-
-export const trackABTestConversion = (testName, variant) => {
-  trackEvent('ab_test_conversion', 'Testing', `${testName} - Variant ${variant}`);
-};
-
-// Performance tracking
-export const trackPerformance = () => {
-  if (typeof window !== 'undefined' && window.performance) {
-    const perfData = window.performance.timing;
-    const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
-    const connectTime = perfData.responseEnd - perfData.requestStart;
-    const renderTime = perfData.domComplete - perfData.domLoading;
-
-    trackEvent('performance', 'Metrics', 'Page Load Time', Math.round(pageLoadTime));
-    trackEvent('performance', 'Metrics', 'Connect Time', Math.round(connectTime));
-    trackEvent('performance', 'Metrics', 'Render Time', Math.round(renderTime));
-  }
+export const trackShare = (platform, gameName, gameId = null) => {
+  trackToSupabase('share_click', {
+    platform: platform,
+    game_name: gameName,
+    timestamp: new Date().toISOString()
+  }, gameId);
 };
 
 // Session tracking
 export const trackSession = () => {
-  const sessionStart = localStorage.getItem('session_start');
+  const sessionStart = sessionStorage.getItem('session_start');
   const now = Date.now();
   
   if (!sessionStart) {
-    localStorage.setItem('session_start', now);
-    trackEvent('session_start', 'Session', 'New Session');
+    sessionStorage.setItem('session_start', now.toString());
   } else {
     const sessionDuration = Math.round((now - parseInt(sessionStart)) / 1000); // seconds
-    if (sessionDuration > 1800) { // 30 minutes
-      localStorage.setItem('session_start', now);
-      trackEvent('session_end', 'Session', 'Session Duration', sessionDuration);
-      trackEvent('session_start', 'Session', 'New Session');
-    }
-  }
-};
-
-// Track scroll depth (for heatmap)
-let maxScrollDepth = 0;
-export const initScrollTracking = () => {
-  if (typeof window !== 'undefined') {
-    window.addEventListener('scroll', () => {
-      const scrollPercentage = Math.round(
-        (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
-      );
-      
-      if (scrollPercentage > maxScrollDepth) {
-        maxScrollDepth = scrollPercentage;
-        
-        // Track at 25%, 50%, 75%, 100% milestones
-        if ([25, 50, 75, 100].includes(scrollPercentage)) {
-          trackScroll(scrollPercentage);
-        }
-      }
+    
+    // Track session with duration
+    trackToSupabase('session_activity', {
+      duration: sessionDuration,
+      timestamp: new Date().toISOString()
     });
   }
-};
-
-// Error tracking
-export const trackError = (error, errorInfo) => {
-  trackEvent('error', 'Error', error.toString(), errorInfo);
 };
 
 // Device tracking
@@ -169,10 +138,17 @@ export const trackDeviceType = () => {
       deviceType = 'tablet';
     }
     
-    // Get current device stats
+    // Get current device stats for local display
     const deviceVisits = JSON.parse(localStorage.getItem('device_visits') || '{"desktop": 0, "mobile": 0, "tablet": 0}');
     deviceVisits[deviceType] = (deviceVisits[deviceType] || 0) + 1;
     localStorage.setItem('device_visits', JSON.stringify(deviceVisits));
+    
+    // Track to Supabase
+    trackToSupabase('device_info', {
+      device_type: deviceType,
+      screen_width: width,
+      screen_height: window.innerHeight
+    });
     
     return deviceType;
   }
@@ -220,10 +196,17 @@ export const trackTrafficSource = () => {
       }
     }
     
-    // Update traffic sources
+    // Update traffic sources for local display
     const trafficSources = JSON.parse(localStorage.getItem('traffic_sources') || '{"direct": 0, "search": 0, "social": 0, "referral": 0}');
     trafficSources[source] = (trafficSources[source] || 0) + 1;
     localStorage.setItem('traffic_sources', JSON.stringify(trafficSources));
+    
+    // Track to Supabase
+    trackToSupabase('traffic_source', {
+      source: source,
+      referrer: referrer || 'direct',
+      utm_source: utmSource
+    });
     
     return source;
   }
@@ -233,10 +216,10 @@ export const trackTrafficSource = () => {
 // Session duration tracking
 export const updateSessionDuration = () => {
   if (typeof window !== 'undefined') {
-    const sessionStart = parseInt(localStorage.getItem('current_session_start') || Date.now());
+    const sessionStart = parseInt(sessionStorage.getItem('session_start') || Date.now());
     const duration = Math.round((Date.now() - sessionStart) / 1000); // seconds
     
-    // Save session data
+    // Save session data locally for admin dashboard
     const sessions = JSON.parse(localStorage.getItem('user_sessions') || '[]');
     const currentSessionIndex = sessions.findIndex(s => s.start === sessionStart);
     
@@ -252,6 +235,12 @@ export const updateSessionDuration = () => {
     }
     
     localStorage.setItem('user_sessions', JSON.stringify(sessions));
+    
+    // Track to Supabase
+    trackToSupabase('session_duration', {
+      duration: duration,
+      timestamp: new Date().toISOString()
+    });
   }
 };
 
@@ -259,7 +248,7 @@ export const updateSessionDuration = () => {
 export const initSession = () => {
   if (typeof window !== 'undefined') {
     const sessionStart = Date.now();
-    localStorage.setItem('current_session_start', sessionStart);
+    sessionStorage.setItem('session_start', sessionStart.toString());
     
     // Track device and traffic source on session start
     trackDeviceType();
@@ -304,44 +293,117 @@ export const exportAnalyticsData = () => {
   URL.revokeObjectURL(url);
 };
 
-// Admin Analytics - Clear all analytics data
+// Admin Analytics - Clear local analytics data (keep session ID)
 export const clearAnalyticsData = () => {
   if (typeof window === 'undefined') return;
   
   localStorage.removeItem('device_visits');
   localStorage.removeItem('traffic_sources');
   localStorage.removeItem('user_sessions');
-  localStorage.removeItem('current_session_start');
-  localStorage.removeItem('session_start');
+  // Don't clear sessionStorage as it's needed for current session
   
-  console.log('Analytics data cleared');
+  console.log('Local analytics data cleared');
 };
 
-// Admin Analytics - Calculate engagement score (0-100)
-export const calculateEngagementScore = () => {
-  const data = getAnalyticsData();
-  if (!data) return 0;
-  
-  const sessions = data.userSessions;
-  if (sessions.length === 0) return 0;
-  
-  // Factors for engagement:
-  // 1. Average session duration (max 300s = 5 min)
-  const avgDuration = sessions.reduce((sum, s) => sum + s.duration, 0) / sessions.length;
-  const durationScore = Math.min(avgDuration / 300, 1) * 40; // 40 points max
-  
-  // 2. Number of sessions (max 50 sessions)
-  const sessionScore = Math.min(sessions.length / 50, 1) * 30; // 30 points max
-  
-  // 3. Bounce rate (inverse - lower is better)
-  const bounceCount = sessions.filter(s => s.duration < 5).length;
-  const bounceRate = sessions.length > 0 ? bounceCount / sessions.length : 1;
-  const bounceScore = (1 - bounceRate) * 30; // 30 points max
-  
-  return Math.round(durationScore + sessionScore + bounceScore);
+// Fetch analytics data from Supabase
+export const fetchAnalyticsFromSupabase = async (timeRange = '7days') => {
+  try {
+    let startDate = new Date();
+    
+    switch (timeRange) {
+      case '24hours':
+        startDate.setHours(startDate.getHours() - 24);
+        break;
+      case '7days':
+        startDate.setDate(startDate.getDate() - 7);
+        break;
+      case '30days':
+        startDate.setDate(startDate.getDate() - 30);
+        break;
+      default:
+        startDate.setDate(startDate.getDate() - 7);
+    }
+    
+    // Get events
+    const { data: events, error } = await supabase
+      .from('analytics_events')
+      .select('*')
+      .gte('created_at', startDate.toISOString())
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    return events || [];
+  } catch (error) {
+    console.error('Failed to fetch analytics:', error);
+    return [];
+  }
 };
 
-// Track when user interacts with admin panel
-export const trackAdminAction = (action, details) => {
-  trackEvent('admin_action', 'Admin Panel', `${action} - ${details}`);
+// Get top games from analytics
+export const getTopGames = async (limit = 10) => {
+  try {
+    const { data, error } = await supabase
+      .from('top_games_weekly')
+      .select('*')
+      .limit(limit);
+    
+    if (error) throw error;
+    
+    return data || [];
+  } catch (error) {
+    console.error('Failed to fetch top games:', error);
+    return [];
+  }
+};
+
+// Get hourly traffic data
+export const getHourlyTraffic = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('hourly_traffic')
+      .select('*')
+      .limit(24);
+    
+    if (error) throw error;
+    
+    return data || [];
+  } catch (error) {
+    console.error('Failed to fetch hourly traffic:', error);
+    return [];
+  }
+};
+
+// Get recent activity
+export const getRecentActivity = async (limit = 50) => {
+  try {
+    const { data, error } = await supabase
+      .from('recent_activity')
+      .select('*')
+      .limit(limit);
+    
+    if (error) throw error;
+    
+    return data || [];
+  } catch (error) {
+    console.error('Failed to fetch recent activity:', error);
+    return [];
+  }
+};
+
+// Get daily analytics
+export const getDailyAnalytics = async (days = 7) => {
+  try {
+    const { data, error } = await supabase
+      .from('daily_analytics')
+      .select('*')
+      .limit(days);
+    
+    if (error) throw error;
+    
+    return data || [];
+  } catch (error) {
+    console.error('Failed to fetch daily analytics:', error);
+    return [];
+  }
 };

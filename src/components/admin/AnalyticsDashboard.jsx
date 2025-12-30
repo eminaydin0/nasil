@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, Users, Eye, MessageCircle, Clock, MousePointer, Share2, Monitor, Smartphone, Tablet } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, Eye, MessageCircle, Clock, MousePointer, Share2, Monitor, Smartphone, Tablet, Activity, Search } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 function AnalyticsDashboard({ games }) {
@@ -7,6 +7,7 @@ function AnalyticsDashboard({ games }) {
     totalPageViews: 0,
     totalComments: 0,
     totalShares: 0,
+    totalSearches: 0,
     avgTimeOnSite: 0,
     topGames: [],
     recentActivity: [],
@@ -14,22 +15,182 @@ function AnalyticsDashboard({ games }) {
     trafficSources: { direct: 0, search: 0, social: 0, referral: 0 },
     userSessions: [],
     bounceRate: 0,
-    avgPagePerSession: 0
+    avgPagePerSession: 0,
+    uniqueSessions: 0,
+    hourlyData: []
   });
+  const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState('7days'); // 24hours, 7days, 30days
 
   useEffect(() => {
     loadAnalytics();
-    // localStorage'dan cihaz ve trafik verilerini senkronize et
-    syncLocalStorageData();
-  }, [games]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [games, timeRange]);
+
+  const loadAnalytics = async () => {
+    setLoading(true);
+    try {
+      // Calculate date range
+      let startDate = new Date();
+      switch (timeRange) {
+        case '24hours':
+          startDate.setHours(startDate.getHours() - 24);
+          break;
+        case '7days':
+          startDate.setDate(startDate.getDate() - 7);
+          break;
+        case '30days':
+          startDate.setDate(startDate.getDate() - 30);
+          break;
+        default:
+          startDate.setDate(startDate.getDate() - 7);
+      }
+
+      // Fetch all events from analytics_events
+      const { data: events, error: eventsError } = await supabase
+        .from('analytics_events')
+        .select('*')
+        .gte('created_at', startDate.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (eventsError) {
+        console.error('Error loading events:', eventsError);
+        throw eventsError;
+      }
+
+      // Calculate stats from events
+      const totalPageViews = events?.filter(e => e.event_type === 'page_view').length || 0;
+      const totalComments = events?.filter(e => e.event_type === 'comment_submit').length || 0;
+      const totalShares = events?.filter(e => e.event_type === 'share_click').length || 0;
+      const totalSearches = events?.filter(e => e.event_type === 'search').length || 0;
+      const uniqueSessions = new Set(events?.map(e => e.session_id)).size;
+
+      // Calculate device stats
+      const deviceEvents = events?.filter(e => e.event_type === 'device_info') || [];
+      const deviceCounts = { desktop: 0, mobile: 0, tablet: 0 };
+      deviceEvents.forEach(e => {
+        const deviceType = e.event_data?.device_type;
+        if (deviceType && Object.prototype.hasOwnProperty.call(deviceCounts, deviceType)) {
+          deviceCounts[deviceType]++;
+        }
+      });
+      const totalDevices = Object.values(deviceCounts).reduce((a, b) => a + b, 0);
+      const deviceStats = totalDevices > 0 ? {
+        desktop: Math.round((deviceCounts.desktop / totalDevices) * 100),
+        mobile: Math.round((deviceCounts.mobile / totalDevices) * 100),
+        tablet: Math.round((deviceCounts.tablet / totalDevices) * 100)
+      } : { desktop: 0, mobile: 0, tablet: 0 };
+
+      // Calculate traffic sources
+      const trafficEvents = events?.filter(e => e.event_type === 'traffic_source') || [];
+      const trafficCounts = { direct: 0, search: 0, social: 0, referral: 0 };
+      trafficEvents.forEach(e => {
+        const source = e.event_data?.source;
+        if (source && Object.prototype.hasOwnProperty.call(trafficCounts, source)) {
+          trafficCounts[source]++;
+        }
+      });
+      const totalTraffic = Object.values(trafficCounts).reduce((a, b) => a + b, 0);
+      const trafficSources = totalTraffic > 0 ? {
+        direct: Math.round((trafficCounts.direct / totalTraffic) * 100),
+        search: Math.round((trafficCounts.search / totalTraffic) * 100),
+        social: Math.round((trafficCounts.social / totalTraffic) * 100),
+        referral: Math.round((trafficCounts.referral / totalTraffic) * 100)
+      } : { direct: 0, search: 0, social: 0, referral: 0 };
+
+      // Calculate average session duration
+      const durationEvents = events?.filter(e => e.event_type === 'session_duration') || [];
+      const avgTime = durationEvents.length > 0
+        ? Math.round(durationEvents.reduce((sum, e) => sum + (e.event_data?.duration || 0), 0) / durationEvents.length)
+        : 0;
+
+      // Get top games from game_analytics view
+      const { data: topGamesData } = await supabase
+        .from('top_games_weekly')
+        .select('*')
+        .limit(5);
+
+      const topGames = (topGamesData || []).map(gameData => {
+        const game = games.find(g => g.id === gameData.game_id);
+        return {
+          id: gameData.game_id,
+          name: game?.name || `Oyun #${gameData.game_id}`,
+          slug: game?.slug || '',
+          views: gameData.views || 0,
+          comments: gameData.comments || 0,
+          shares: gameData.shares || 0,
+          image: game?.image || '/default-game.png',
+          engagementScore: gameData.engagement_score || 0
+        };
+      });
+
+      // Get recent activity
+      const { data: recentActivityData } = await supabase
+        .from('recent_activity')
+        .select('*')
+        .limit(20);
+
+      const recentActivity = (recentActivityData || []).map(activity => {
+        const game = games.find(g => g.id === activity.game_id);
+        return {
+          ...activity,
+          game_name: game?.name || `Oyun #${activity.game_id}`,
+          game_slug: game?.slug || ''
+        };
+      });
+
+      // Get hourly traffic
+      const { data: hourlyData } = await supabase
+        .from('hourly_traffic')
+        .select('*')
+        .limit(24);
+
+      // Calculate bounce rate (sessions < 5 seconds)
+      const shortSessions = durationEvents.filter(e => (e.event_data?.duration || 0) < 5).length;
+      const bounceRate = durationEvents.length > 0 
+        ? Math.round((shortSessions / durationEvents.length) * 100)
+        : 0;
+
+      // Calculate pages per session
+      const avgPagePerSession = uniqueSessions > 0 
+        ? (totalPageViews / uniqueSessions).toFixed(1)
+        : 0;
+
+      setAnalytics({
+        totalPageViews,
+        totalComments,
+        totalShares,
+        totalSearches,
+        avgTimeOnSite: avgTime,
+        topGames,
+        recentActivity,
+        deviceStats,
+        trafficSources,
+        userSessions: durationEvents,
+        bounceRate,
+        avgPagePerSession,
+        uniqueSessions,
+        hourlyData: hourlyData || []
+      });
+    } catch (error) {
+      console.error('Error loading analytics:', error);
+      // Fallback to localStorage data
+      const localData = syncLocalStorageData();
+      setAnalytics(prev => ({
+        ...prev,
+        ...localData
+      }));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const syncLocalStorageData = () => {
-    // localStorage'dan gerçek kullanıcı verilerini al
+    // localStorage'dan gerçek kullanıcı verilerini al (fallback için)
     const deviceVisits = JSON.parse(localStorage.getItem('device_visits') || '{"desktop": 0, "mobile": 0, "tablet": 0}');
     const trafficSources = JSON.parse(localStorage.getItem('traffic_sources') || '{"direct": 0, "search": 0, "social": 0, "referral": 0}');
     const userSessions = JSON.parse(localStorage.getItem('user_sessions') || '[]');
     
-    // Yüzdeleri hesapla
     const totalDeviceVisits = deviceVisits.desktop + deviceVisits.mobile + deviceVisits.tablet;
     const deviceStats = totalDeviceVisits > 0 ? {
       desktop: Math.round((deviceVisits.desktop / totalDeviceVisits) * 100),
@@ -45,120 +206,22 @@ function AnalyticsDashboard({ games }) {
       referral: Math.round((trafficSources.referral / totalTraffic) * 100)
     } : { direct: 0, search: 0, social: 0, referral: 0 };
     
-    // Ortalama ziyaret süresini hesapla
     const avgTime = userSessions.length > 0 
       ? Math.round(userSessions.reduce((sum, s) => sum + s.duration, 0) / userSessions.length)
       : 0;
     
-    // Bounce rate hesapla (5 saniyeden az kalan oturumlar)
     const bounceCount = userSessions.filter(s => s.duration < 5).length;
     const bounceRate = userSessions.length > 0 
       ? Math.round((bounceCount / userSessions.length) * 100)
       : 0;
     
-    return { deviceStats, trafficStats, avgTime, bounceRate, userSessions };
-  };
-
-  const loadAnalytics = async () => {
-    let totalViews = 0;
-    let totalComments = 0;
-    const gameStats = [];
-
-    try {
-      // Supabase'den view sayılarını çek
-      const { data: viewsData, error: viewsError } = await supabase
-        .from('game_views')
-        .select('game_id, views');
-      
-      if (viewsError) throw viewsError;
-
-      // Supabase'den yorum sayılarını çek
-      const { data: commentsData, error: commentsError } = await supabase
-        .from('comments')
-        .select('game_id');
-      
-      if (commentsError) throw commentsError;
-
-      // Her oyun için istatistikleri hesapla
-      games.forEach(game => {
-        const viewRecord = viewsData?.find(v => v.game_id === game.id);
-        const views = viewRecord?.views || 0;
-        const commentCount = commentsData?.filter(c => c.game_id === game.id).length || 0;
-        
-        totalViews += views;
-        totalComments += commentCount;
-
-        gameStats.push({
-          id: game.id,
-          name: game.name,
-          slug: game.slug,
-          views: views,
-          comments: commentCount,
-          image: game.image
-        });
-      });
-
-      // Analytics tablosundan diğer verileri çek
-      const { data: analyticsData } = await supabase
-        .from('analytics')
-        .select('key, value')
-        .in('key', ['total_shares', 'avg_time_on_site', 'device_stats', 'traffic_sources']);
-      
-      let totalShares = 0;
-      let avgTime = 0;
-      let deviceStats = { desktop: 58, mobile: 37, tablet: 5 };
-      let trafficSources = { direct: 42, search: 35, social: 16, referral: 7 };
-
-      analyticsData?.forEach(record => {
-        if (record.key === 'total_shares') {
-          totalShares = record.value?.count || 0;
-        } else if (record.key === 'avg_time_on_site') {
-          avgTime = record.value?.seconds || 0;
-        } else if (record.key === 'device_stats') {
-          deviceStats = record.value || deviceStats;
-        } else if (record.key === 'traffic_sources') {
-          trafficSources = record.value || trafficSources;
-        }
-      });
-
-      // Eğer avgTime yoksa localStorage'dan al
-      const localData = syncLocalStorageData();
-      if (avgTime === 0) {
-        avgTime = localData.avgTime;
-      }
-
-      // Sort by views
-      const topGames = gameStats.sort((a, b) => b.views - a.views).slice(0, 5);
-
-      setAnalytics({
-        totalPageViews: totalViews,
-        totalComments: totalComments,
-        totalShares: totalShares,
-        avgTimeOnSite: avgTime || Math.round(avgTime),
-        topGames: topGames,
-        deviceStats: localData.deviceStats.desktop > 0 ? localData.deviceStats : deviceStats,
-        trafficSources: localData.trafficStats.direct > 0 ? localData.trafficStats : trafficSources,
-        bounceRate: localData.bounceRate,
-        avgPagePerSession: localData.userSessions.length > 0 ? (totalViews / localData.userSessions.length).toFixed(1) : 0,
-        userSessions: localData.userSessions
-      });
-    } catch (error) {
-      console.error('Error loading analytics from Supabase:', error);
-      // Hata durumunda localStorage'dan veri al
-      const localData = syncLocalStorageData();
-      setAnalytics({
-        totalPageViews: 0,
-        totalComments: 0,
-        totalShares: 0,
-        avgTimeOnSite: localData.avgTime,
-        topGames: [],
-        deviceStats: localData.deviceStats,
-        trafficSources: localData.trafficStats,
-        bounceRate: localData.bounceRate,
-        avgPagePerSession: 0,
-        userSessions: localData.userSessions
-      });
-    }
+    return { 
+      deviceStats, 
+      trafficSources: trafficStats, 
+      avgTimeOnSite: avgTime, 
+      bounceRate, 
+      userSessions 
+    };
   };
 
   const StatCard = ({ icon: Icon, label, value, color, suffix = '' }) => (
@@ -175,76 +238,135 @@ function AnalyticsDashboard({ games }) {
 
   return (
     <div className="space-y-6">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          icon={Eye}
-          label="Toplam Görüntülenme"
-          value={analytics.totalPageViews}
-          color="bg-blue-500"
-        />
-        <StatCard 
-          icon={MessageCircle}
-          label="Toplam Yorum"
-          value={analytics.totalComments}
-          color="bg-green-500"
-        />
-        <StatCard 
-          icon={Clock}
-          label="Ort. Ziyaret Süresi"
-          value={analytics.avgTimeOnSite}
-          color="bg-orange-500"
-          suffix="sn"
-        />
-        <StatCard 
-          icon={TrendingUp}
-          label="Sayfa/Oturum"
-          value={analytics.avgPagePerSession}
-          color="bg-purple-500"
-        />
-      </div>
-
-      {/* Additional Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="text-red-600" size={20} />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{analytics.bounceRate}%</div>
-              <div className="text-sm text-gray-600">Bounce Rate</div>
-            </div>
+      {/* Time Range Filter */}
+      <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-gray-900">Analytics Dashboard</h3>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setTimeRange('24hours')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                timeRange === '24hours'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Son 24 Saat
+            </button>
+            <button
+              onClick={() => setTimeRange('7days')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                timeRange === '7days'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Son 7 Gün
+            </button>
+            <button
+              onClick={() => setTimeRange('30days')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                timeRange === '30days'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Son 30 Gün
+            </button>
           </div>
-          <div className="text-xs text-gray-500">5 saniyeden az kalan ziyaretçiler</div>
-        </div>
-        
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="text-blue-600" size={20} />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{analytics.userSessions.length}</div>
-              <div className="text-sm text-gray-600">Toplam Oturum</div>
-            </div>
-          </div>
-          <div className="text-xs text-gray-500">Son 50 kullanıcı oturumu</div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <Share2 className="text-green-600" size={20} />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{analytics.totalShares}</div>
-              <div className="text-sm text-gray-600">Sosyal Paylaşım</div>
-            </div>
-          </div>
-          <div className="text-xs text-gray-500">Tüm platformlardaki paylaşımlar</div>
         </div>
       </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      ) : (
+        <>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard 
+              icon={Eye}
+              label="Toplam Görüntülenme"
+              value={analytics.totalPageViews}
+              color="bg-blue-500"
+            />
+            <StatCard 
+              icon={Users}
+              label="Benzersiz Oturum"
+              value={analytics.uniqueSessions}
+              color="bg-purple-500"
+            />
+            <StatCard 
+              icon={MessageCircle}
+              label="Toplam Yorum"
+              value={analytics.totalComments}
+              color="bg-green-500"
+            />
+            <StatCard 
+              icon={Search}
+              label="Arama Sayısı"
+              value={analytics.totalSearches}
+              color="bg-orange-500"
+            />
+          </div>
+
+          {/* Additional Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Clock className="text-blue-600" size={20} />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-gray-900">{analytics.avgTimeOnSite}sn</div>
+                  <div className="text-sm text-gray-600">Ort. Süre</div>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500">Ortalama ziyaret süresi</div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="text-red-600" size={20} />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-gray-900">{analytics.bounceRate}%</div>
+                  <div className="text-sm text-gray-600">Bounce Rate</div>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500">5 saniyeden az kalan ziyaretçiler</div>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Activity className="text-purple-600" size={20} />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-gray-900">{analytics.avgPagePerSession}</div>
+                  <div className="text-sm text-gray-600">Sayfa/Oturum</div>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500">Oturum başına sayfa görüntüleme</div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <Share2 className="text-green-600" size={20} />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-gray-900">{analytics.totalShares}</div>
+                  <div className="text-sm text-gray-600">Paylaşım</div>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500">Sosyal medya paylaşımları</div>
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Games */}
@@ -366,45 +488,42 @@ function AnalyticsDashboard({ games }) {
         </div>
       </div>
 
-      {/* Recent Sessions */}
-      {analytics.userSessions.length > 0 && (
+      {/* Recent Activity */}
+      {analytics.recentActivity.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Son Kullanıcı Oturumları</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left text-xs font-semibold text-gray-600 pb-3">Oturum</th>
-                  <th className="text-left text-xs font-semibold text-gray-600 pb-3">Tarih</th>
-                  <th className="text-right text-xs font-semibold text-gray-600 pb-3">Süre</th>
-                </tr>
-              </thead>
-              <tbody>
-                {analytics.userSessions.slice(-10).reverse().map((session, index) => (
-                  <tr key={index} className="border-b border-gray-100">
-                    <td className="py-3 text-sm text-gray-900">#{analytics.userSessions.length - index}</td>
-                    <td className="py-3 text-sm text-gray-600">
-                      {new Date(session.start).toLocaleString('tr-TR', { 
-                        day: 'numeric', 
-                        month: 'short', 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}
-                    </td>
-                    <td className="py-3 text-sm text-right">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        session.duration < 5 ? 'bg-red-100 text-red-700' :
-                        session.duration < 30 ? 'bg-yellow-100 text-yellow-700' :
-                        session.duration < 120 ? 'bg-green-100 text-green-700' :
-                        'bg-blue-100 text-blue-700'
-                      }`}>
-                        {session.duration}sn
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Son Aktiviteler</h3>
+          <div className="space-y-3">
+            {analytics.recentActivity.slice(0, 10).map((activity, index) => (
+              <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                  activity.event_type === 'game_view' ? 'bg-blue-100' :
+                  activity.event_type === 'comment_submit' ? 'bg-green-100' :
+                  activity.event_type === 'share_click' ? 'bg-purple-100' :
+                  activity.event_type === 'search' ? 'bg-orange-100' :
+                  'bg-gray-100'
+                }`}>
+                  {activity.event_type === 'game_view' && <Eye className="text-blue-600" size={18} />}
+                  {activity.event_type === 'comment_submit' && <MessageCircle className="text-green-600" size={18} />}
+                  {activity.event_type === 'share_click' && <Share2 className="text-purple-600" size={18} />}
+                  {activity.event_type === 'search' && <Search className="text-orange-600" size={18} />}
+                  {!['game_view', 'comment_submit', 'share_click', 'search'].includes(activity.event_type) && (
+                    <Activity className="text-gray-600" size={18} />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 truncate">
+                    {activity.event_type === 'game_view' && `Oyun görüntülendi: ${activity.game_name}`}
+                    {activity.event_type === 'comment_submit' && `Yorum yapıldı: ${activity.game_name}`}
+                    {activity.event_type === 'share_click' && `Paylaşıldı: ${activity.game_name}`}
+                    {activity.event_type === 'search' && `Arama: ${activity.event_data?.search_term || ''}`}
+                    {activity.event_type === 'page_view' && `Sayfa: ${activity.event_data?.page || '/'}`}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(activity.created_at).toLocaleString('tr-TR')}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -416,12 +535,14 @@ function AnalyticsDashboard({ games }) {
             <BarChart3 className="text-white" size={20} />
           </div>
           <div>
-            <h4 className="font-bold text-gray-900 mb-2">Google Analytics Entegrasyonu</h4>
+            <h4 className="font-bold text-gray-900 mb-2">Supabase Analytics</h4>
             <p className="text-gray-600 text-sm mb-3">
-              Detaylı kullanıcı davranış analizi, gerçek zamanlı raporlar ve gelişmiş segmentasyon için Google Analytics 4 entegre edilmiştir.
+              Tüm kullanıcı etkinlikleri gerçek zamanlı olarak Supabase'e kaydediliyor. 
+              Analytics views üzerinden detaylı raporlara erişebilirsiniz.
             </p>
             <p className="text-gray-500 text-xs">
-              <strong>Not:</strong> <code className="bg-white px-2 py-1 rounded text-orange-600">src/utils/analytics.js</code> dosyasındaki <code className="bg-white px-2 py-1 rounded text-orange-600">GA_MEASUREMENT_ID</code> değişkenini kendi Google Analytics ID'nizle değiştirin.
+              <strong>Özellikler:</strong> Gerçek zamanlı tracking, oturum takibi, 
+              cihaz analizi, trafik kaynakları, engagement metrikleri ve daha fazlası.
             </p>
           </div>
         </div>

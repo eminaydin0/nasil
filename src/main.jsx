@@ -2,26 +2,16 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import { initGA, initScrollTracking, trackPerformance, trackSession, initSession } from './utils/analytics'
+import { initGA, trackSession, initSession } from './utils/analytics'
 
-// Initialize Google Analytics
+// Initialize Analytics
 initGA();
 
 // Initialize session tracking
 initSession();
 
-// Initialize tracking
-initScrollTracking();
+// Track session
 trackSession();
-
-// Track performance after load
-if (typeof window !== 'undefined') {
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      trackPerformance();
-    }, 0);
-  });
-}
 
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {

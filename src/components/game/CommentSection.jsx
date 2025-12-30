@@ -3,8 +3,9 @@ import { MessageCircle, User, Calendar, ThumbsUp, Reply } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StarRating from '../common/StarRating';
 import { supabase } from '../../lib/supabase';
+import { trackCommentSubmit } from '../../utils/analytics';
 
-function CommentSection({ gameId }) {
+function CommentSection({ gameId, gameName }) {
   const [comments, setComments] = useState([]);
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
@@ -105,6 +106,9 @@ function CommentSection({ gameId }) {
       setComments([formattedComment, ...comments]);
       setNewComment({ name: '', rating: 0, comment: '' });
       setShowForm(false);
+      
+      // Track comment submission
+      trackCommentSubmit(gameName || 'Unknown', gameId, newComment.rating);
       
       toast.success('Yorumunuz başarıyla kaydedildi!', {
         icon: '✅',
