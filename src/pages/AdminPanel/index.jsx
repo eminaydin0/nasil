@@ -10,8 +10,15 @@ import TopGames from '../../components/admin/TopGames';
 import GamesTable from '../../components/admin/GamesTable';
 import GameModal from '../../components/admin/GameModal';
 import CommentsManager from '../../components/admin/CommentsManager';
+import CarouselManager from '../../components/admin/CarouselManager';
 import { supabase } from '../../lib/supabase';
 import { exportAnalyticsData } from '../../utils/analytics';
+
+// Admin action tracking fonksiyonu
+const trackAdminAction = (action, details) => {
+  console.log(`[Admin Action] ${action}:`, details);
+  // İsterseniz buraya analytics tracking ekleyebilirsiniz
+};
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -19,7 +26,7 @@ function AdminPanel() {
   const [games, setGames] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingGame, setEditingGame] = useState(null);
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'games', 'comments', or 'analytics'
+  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'games', 'comments', 'analytics', 'carousel'
   const [sortBy, setSortBy] = useState('name'); // 'name', 'views', 'rating', 'id', 'category', 'comments'
   const [sortDirection, setSortDirection] = useState('asc'); // 'asc' or 'desc'
   const [selectedGames, setSelectedGames] = useState([]);
@@ -448,6 +455,17 @@ function AdminPanel() {
               <TrendingUp size={18} />
               <span>Analytics</span>
             </button>
+            <button
+              onClick={() => setActiveTab('carousel')}
+              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+                activeTab === 'carousel'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <Download size={18} className="rotate-180" />
+              <span>Carousel</span>
+            </button>
           </nav>
         </div>
 
@@ -527,6 +545,10 @@ function AdminPanel() {
             
             <AnalyticsDashboard games={games} />
           </div>
+        )}
+
+        {activeTab === 'carousel' && (
+          <CarouselManager />
         )}
       </main>
 

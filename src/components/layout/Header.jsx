@@ -3,7 +3,8 @@ import { Menu, X, Search } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 
-function Header({ searchTerm, setSearchTerm }) {
+function Header() {
+  const [searchTerm, setSearchTerm] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [games, setGames] = useState([]);
@@ -75,12 +76,15 @@ function Header({ searchTerm, setSearchTerm }) {
             <Link to="/" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Ana Sayfa
             </Link>
-            <a href="#oyunlar" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
+            <a href="/#oyunlar" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Oyunlar
             </a>
-            <a href="#hakkinda" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
-              Hakkında
-            </a>
+            <Link to="/hakkimizda" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
+              Hakkımızda
+            </Link>
+            <Link to="/iletisim" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
+              İletişim
+            </Link>
             <div className="relative" ref={searchRef}>
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
               <input
@@ -172,19 +176,26 @@ function Header({ searchTerm, setSearchTerm }) {
               Ana Sayfa
             </Link>
             <a
-              href="#oyunlar"
+              href="/#oyunlar"
               className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
               onClick={() => setMobileMenuOpen(false)}
             >
               Oyunlar
             </a>
-            <a
-              href="#hakkinda"
+            <Link
+              to="/hakkimizda"
               className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Hakkında
-            </a>
+              Hakkımızda
+            </Link>
+            <Link
+              to="/iletisim"
+              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              İletişim
+            </Link>
           </div>
         )}
       </nav>

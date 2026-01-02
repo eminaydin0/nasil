@@ -6,5 +6,6 @@ export const categories = [
   "Dış Mekan",
   "İç Mekan",
   "Masa Oyunları",
-  "Kağıt Oyunları"
+  "Kağıt Oyunları",
+  "Kutu Oyunları"
 ];

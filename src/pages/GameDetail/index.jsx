@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Users, MapPin, Target, Lightbulb, ChevronRight, Eye } from 'lucide-react';
+import { ArrowLeft, Users, MapPin, Target, Lightbulb, ChevronRight, Eye, Image as ImageIcon } from 'lucide-react';
 import CommentSection from '../../components/game/CommentSection';
 import SocialShare from '../../components/game/SocialShare';
 import GameRecommendations from '../../components/home/GameRecommendations';
@@ -15,6 +15,7 @@ function GameDetail() {
   const [game, setGame] = useState(null);
   const [viewCount, setViewCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,6 +44,7 @@ function GameDetail() {
         players: gameData.players,
         difficulty: gameData.difficulty,
         image: gameData.image,
+        gallery: gameData.gallery || [],
         shortDescription: gameData.short_description,
         description: gameData.description,
         rules: gameData.rules,
@@ -228,7 +230,7 @@ function GameDetail() {
     <div className="min-h-screen bg-gray-50">
       {/* Compact Header with Image */}
       <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 py-12">
           <button
             onClick={() => navigate('/')}
             className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors group text-sm"
@@ -238,15 +240,59 @@ function GameDetail() {
           </button>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {/* Image */}
+            {/* Image & Gallery */}
             <div className="md:col-span-1">
-              <div className="aspect-video w-full bg-gray-100 rounded-xl overflow-hidden">
+              {/* Ana Resim */}
+              <div className="aspect-video w-full bg-gray-100 rounded-xl overflow-hidden mb-3 cursor-pointer group relative">
                 <img 
-                  src={game.image} 
+                  src={selectedImage || game.image} 
                   alt={game.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onClick={() => setSelectedImage(selectedImage || game.image)}
                 />
+                {game.gallery && game.gallery.length > 0 && (
+                  <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                    <ImageIcon size={14} />
+                    {game.gallery.length + 1}
+                  </div>
+                )}
               </div>
+
+              {/* Galeri Küçük Resimleri */}
+              {game.gallery && game.gallery.length > 0 && (
+                <div className="grid grid-cols-4 gap-2">
+                  {/* Ana resim küçük hali */}
+                  <button
+                    onClick={() => setSelectedImage(null)}
+                    className={`aspect-video rounded-lg overflow-hidden border-2 transition-all ${
+                      !selectedImage ? 'border-orange-500 ring-2 ring-orange-200' : 'border-gray-200 hover:border-orange-300'
+                    }`}
+                  >
+                    <img 
+                      src={game.image} 
+                      alt={`${game.name} ana`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                  
+                  {/* Galeri resimleri */}
+                  {game.gallery.slice(0, 3).map((img, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(img)}
+                      className={`aspect-video rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImage === img ? 'border-orange-500 ring-2 ring-orange-200' : 'border-gray-200 hover:border-orange-300'
+                      }`}
+                    >
+                      <img 
+                        src={img} 
+                        alt={`${game.name} ${index + 2}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Content */}
@@ -270,7 +316,7 @@ function GameDetail() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-12">
         {/* Quick Info */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
           <div className="flex flex-wrap gap-6">

@@ -3,14 +3,15 @@ import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/HomePage';
 import GameDetail from './pages/GameDetail';
+import CategoryPage from './pages/Categories';
 import AdminPanel from './pages/AdminPanel';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import { initSession } from './utils/analytics';
 
 function App() {
-  const [searchTerm, setSearchTerm] = useState('');
-
   useEffect(() => {
     // Initialize session tracking on app load
     initSession();
@@ -51,11 +52,14 @@ function App() {
         {/* Main Site Routes - With Header/Footer */}
         <Route path="/*" element={
           <div className="min-h-screen flex flex-col bg-white">
-            <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+            <Header />
             <main className="grow page-transition">
               <Routes>
-                <Route path="/" element={<HomePage searchTerm={searchTerm} setSearchTerm={setSearchTerm} />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/kategori/:categoryName" element={<CategoryPage />} />
                 <Route path="/oyun/:slug" element={<GameDetail />} />
+                <Route path="/hakkimizda" element={<About />} />
+                <Route path="/iletisim" element={<Contact />} />
               </Routes>
             </main>
             <Footer />

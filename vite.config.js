@@ -14,7 +14,8 @@ export default defineConfig({
     }
   },
   server: {
-    port: 5055,
+    port: 3023,
+    strictPort: true, // Port kullanımdaysa hata ver, otomatik değiştirme
     headers: {
       'Service-Worker-Allowed': '/'
     }

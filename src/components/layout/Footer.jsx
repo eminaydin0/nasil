@@ -30,13 +30,18 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#oyunlar" className="text-gray-600 hover:text-gray-900 transition-colors inline-block">
+                <a href="/#oyunlar" className="text-gray-600 hover:text-gray-900 transition-colors inline-block">
                   Oyunlar
                 </a>
               </li>
               <li>
-                <a href="#hakkinda" className="text-gray-600 hover:text-gray-900 transition-colors inline-block">
+                <a href="/hakkimizda" className="text-gray-600 hover:text-gray-900 transition-colors inline-block">
                   Hakkımızda
+                </a>
+              </li>
+              <li>
+                <a href="/iletisim" className="text-gray-600 hover:text-gray-900 transition-colors inline-block">
+                  İletişim
                 </a>
               </li>
             </ul>
@@ -45,25 +50,35 @@ function Footer() {
           {/* Contact */}
           <div>
             <h3 className="text-xs font-black uppercase tracking-wider mb-4 text-gray-900">İletişim</h3>
-            <a href="mailto:info@nasiloynanir.com" className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group text-sm">
-              <Mail size={16} className="text-orange-600 transition-colors" />
-              <span className="font-medium">info@nasiloynanir.com</span>
-            </a>
+            <div className="space-y-3">
+              <a href="mailto:eminaydinyazilim@gmail.com" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group text-sm">
+                <Mail size={16} className="text-orange-600 transition-colors" />
+                <span className="font-medium">eminaydinyazilim@gmail.com</span>
+              </a>
+              <a href="tel:5538827646" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group text-sm">
+                <span className="w-4 h-4 flex items-center justify-center text-orange-600 font-bold text-xs">📞</span>
+                <span className="font-medium">0553 882 76 46</span>
+              </a>
+            </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-orange-100 pt-6 mt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">
-            <p className="text-gray-500 text-sm">
-              © {new Date().getFullYear()} Nasıl Oynanır. Tüm hakları saklıdır.
-            </p>
+            <div className="flex flex-col md:flex-row items-center gap-2 text-sm text-gray-500">
+              <p>© {new Date().getFullYear()} Nasıl Oynanır. Tüm hakları saklıdır.</p>
+              <span className="hidden md:inline text-gray-300">|</span>
+              <p>
+                Geliştirici: <a href="mailto:eminaydinyazilim@gmail.com" className="text-orange-600 hover:text-orange-700 font-medium transition-colors">Emin Aydın</a>
+              </p>
+            </div>
             <div className="flex items-center space-x-6">
-              <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
-                Gizlilik Politikası
+              <a href="/hakkimizda" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
+                Hakkımızda
               </a>
-              <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
-                Kullanım Koşulları
+              <a href="/iletisim" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
+                İletişim
               </a>
             </div>
           </div>

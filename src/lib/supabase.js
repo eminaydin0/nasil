@@ -213,3 +213,73 @@ export const getTotalComments = async () => {
   }
   return count;
 };
+
+// Storage: Resim yükleme
+export const uploadGameImage = async (file, gameSlug) => {
+  try {
+    // Dosya adı oluştur (benzersiz)
+    const timestamp = Date.now();
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${gameSlug}-${timestamp}.${fileExt}`;
+    const filePath = `games/${fileName}`;
+
+    // Dosyayı yükle
+    const { data, error } = await supabase.storage
+      .from('game-images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
+
+    // Public URL'i al
+    const { data: urlData } = supabase.storage
+      .from('game-images')
+      .getPublicUrl(filePath);
+
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Failed to upload image:', error);
+    return null;
+  }
+};
+
+// Storage: Birden fazla resim yükleme
+export const uploadMultipleGameImages = async (files, gameSlug) => {
+  try {
+    const uploadPromises = files.map(file => uploadGameImage(file, gameSlug));
+    const urls = await Promise.all(uploadPromises);
+    return urls.filter(url => url !== null);
+  } catch (error) {
+    console.error('Failed to upload multiple images:', error);
+    return [];
+  }
+};
+
+// Storage: Resim silme
+export const deleteGameImage = async (imageUrl) => {
+  try {
+    // URL'den dosya yolunu çıkar
+    const urlParts = imageUrl.split('/game-images/');
+    if (urlParts.length < 2) return false;
+    
+    const filePath = urlParts[1];
+    
+    const { error } = await supabase.storage
+      .from('game-images')
+      .remove([filePath]);
+
+    if (error) {
+      console.error('Error deleting image:', error);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error('Failed to delete image:', error);
+    return false;
+  }
+};

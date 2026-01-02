@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { uploadGameImage, uploadMultipleGameImages, deleteGameImage } from '../../lib/supabase';
+import toast from 'react-hot-toast';
 
 function GameModal({ game, onSave, onClose }) {
   const [formData, setFormData] = useState(game || {
@@ -8,34 +10,128 @@ function GameModal({ game, onSave, onClose }) {
     players: '',
     difficulty: 'Kolay',
     image: '',
+    gallery: [],
     shortDescription: '',
     description: '',
     rules: [''],
     tips: ['']
   });
+  
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(formData.image || '');
+
+  // Ana resim yükleme
+  const handleMainImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Dosya boyutu kontrolü (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Dosya boyutu 5MB\'dan küçük olmalıdır!');
+      return;
+    }
+
+    // Dosya tipi kontrolü
+    if (!file.type.startsWith('image/')) {
+      toast.error('Sadece resim dosyaları yüklenebilir!');
+      return;
+    }
+
+    setUploading(true);
+    const slug = formData.slug || generateSlug(formData.name);
+    
+    try {
+      const imageUrl = await uploadGameImage(file, slug);
+      if (imageUrl) {
+        setFormData({ ...formData, image: imageUrl });
+        setImagePreview(imageUrl);
+        toast.success('Resim başarıyla yüklendi!');
+      } else {
+        toast.error('Resim yüklenemedi!');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Resim yüklenirken hata oluştu!');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Galeri resimleri yükleme
+  const handleGalleryUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    // Maksimum 5 resim kontrolü
+    const currentGalleryCount = (formData.gallery || []).length;
+    if (currentGalleryCount + files.length > 5) {
+      toast.error('En fazla 5 galeri resmi ekleyebilirsiniz!');
+      return;
+    }
+
+    // Dosya boyutu kontrolü
+    const invalidFiles = files.filter(f => f.size > 5 * 1024 * 1024);
+    if (invalidFiles.length > 0) {
+      toast.error('Bazı dosyalar 5MB\'dan büyük!');
+      return;
+    }
+
+    setUploading(true);
+    const slug = formData.slug || generateSlug(formData.name);
+    
+    try {
+      const imageUrls = await uploadMultipleGameImages(files, slug);
+      if (imageUrls.length > 0) {
+        const newGallery = [...(formData.gallery || []), ...imageUrls];
+        setFormData({ ...formData, gallery: newGallery });
+        toast.success(`${imageUrls.length} resim yüklendi!`);
+      } else {
+        toast.error('Resimler yüklenemedi!');
+      }
+    } catch (error) {
+      console.error('Gallery upload error:', error);
+      toast.error('Resimler yüklenirken hata oluştu!');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Galeri resmini silme
+  const handleRemoveGalleryImage = async (imageUrl, index) => {
+    if (window.confirm('Bu resmi silmek istediğinizden emin misiniz?')) {
+      const newGallery = formData.gallery.filter((_, i) => i !== index);
+      setFormData({ ...formData, gallery: newGallery });
+      
+      // Storage'dan da sil (opsiyonel)
+      if (imageUrl.includes('supabase')) {
+        await deleteGameImage(imageUrl);
+      }
+      toast.success('Resim silindi!');
+    }
+  };
+
+  // Slug oluşturma fonksiyonu
+  const generateSlug = (name) => {
+    const turkishMap = {
+      'ç': 'c', 'Ç': 'C',
+      'ğ': 'g', 'Ğ': 'G',
+      'ı': 'i', 'İ': 'I',
+      'ö': 'o', 'Ö': 'O',
+      'ş': 's', 'Ş': 'S',
+      'ü': 'u', 'Ü': 'U'
+    };
+    
+    return name
+      .split('')
+      .map(char => turkishMap[char] || char)
+      .join('')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Slug oluştur (oyun adından)
-    const generateSlug = (name) => {
-      const turkishMap = {
-        'ç': 'c', 'Ç': 'C',
-        'ğ': 'g', 'Ğ': 'G',
-        'ı': 'i', 'İ': 'I',
-        'ö': 'o', 'Ö': 'O',
-        'ş': 's', 'Ş': 'S',
-        'ü': 'u', 'Ü': 'U'
-      };
-      
-      return name
-        .split('')
-        .map(char => turkishMap[char] || char)
-        .join('')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    };
     
     const slug = formData.slug || generateSlug(formData.name);
     onSave({ ...formData, slug });
@@ -106,6 +202,7 @@ function GameModal({ game, onSave, onClose }) {
                 <option value="İç Mekan / Dış Mekan">İç Mekan / Dış Mekan</option>
                 <option value="Masa Oyunları">Masa Oyunları</option>
                 <option value="Kağıt Oyunları">Kağıt Oyunları</option>
+                <option value="Kutu Oyunları">Kutu Oyunları</option>
               </select>
             </div>
 
@@ -137,17 +234,100 @@ function GameModal({ game, onSave, onClose }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Görsel URL *</label>
-            <input
-              type="url"
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-              placeholder="https://example.com/image.jpg"
-              required
-            />
-            {formData.image && (
-              <img src={formData.image} alt="Preview" className="mt-2 w-32 h-24 object-cover rounded" />
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ana Görsel * 
+              <span className="text-xs text-gray-500 ml-2">(Maks. 5MB)</span>
+            </label>
+            
+            {/* URL Girişi */}
+            <div className="space-y-3">
+              <input
+                type="url"
+                value={formData.image}
+                onChange={(e) => {
+                  setFormData({ ...formData, image: e.target.value });
+                  setImagePreview(e.target.value);
+                }}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                placeholder="https://example.com/image.jpg veya dosya yükleyin"
+              />
+
+              {/* Dosya Yükleme */}
+              <div className="flex items-center gap-3">
+                <label className="flex-1 cursor-pointer">
+                  <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 transition-colors">
+                    <Upload size={20} className="text-gray-500" />
+                    <span className="text-sm text-gray-600">
+                      {uploading ? 'Yükleniyor...' : 'Bilgisayardan Yükle'}
+                    </span>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleMainImageUpload}
+                    className="hidden"
+                    disabled={uploading}
+                  />
+                </label>
+              </div>
+
+              {/* Önizleme */}
+              {imagePreview && (
+                <div className="relative inline-block">
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    className="w-40 h-32 object-cover rounded-lg border-2 border-gray-200" 
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Galeri Resimleri */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Galeri Resimleri
+              <span className="text-xs text-gray-500 ml-2">(İsteğe bağlı, maks. 5 resim)</span>
+            </label>
+            
+            <label className="cursor-pointer block">
+              <div className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 transition-colors">
+                <ImageIcon size={24} className="text-gray-400" />
+                <span className="text-sm text-gray-600">
+                  {uploading ? 'Yükleniyor...' : 'Birden fazla resim seçin (Maks. 5)'}
+                </span>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleGalleryUpload}
+                className="hidden"
+                disabled={uploading || (formData.gallery || []).length >= 5}
+              />
+            </label>
+
+            {/* Galeri Önizlemeleri */}
+            {formData.gallery && formData.gallery.length > 0 && (
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mt-4">
+                {formData.gallery.map((imgUrl, index) => (
+                  <div key={index} className="relative group">
+                    <img 
+                      src={imgUrl} 
+                      alt={`Gallery ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg border-2 border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveGalleryImage(imgUrl, index)}
+                      className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
