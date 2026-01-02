@@ -1,23 +1,70 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, TrendingUp, Sparkles } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 function GameOfTheDay({ games }) {
-  // Günün oyununu seç (günlük değişen deterministik algoritma)
-  const getGameOfTheDay = () => {
-    if (games.length === 0) return null;
+  const [gameOfTheDay, setGameOfTheDay] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchGameOfTheDay();
+  }, [games]);
+
+  const fetchGameOfTheDay = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('daily_game_selection')
+        .select(`
+          custom_title,
+          custom_description,
+          game:games (
+            *
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (data && data.game) {
+        setGameOfTheDay({
+          id: data.game.id,
+          slug: data.game.slug,
+          name: data.custom_title || data.game.name,
+          category: data.game.category,
+          players: data.game.players,
+          difficulty: data.game.difficulty,
+          image: data.game.image,
+          shortDescription: data.custom_description || data.game.short_description,
+          description: data.game.description,
+          rules: data.game.rules,
+          tips: data.game.tips
+        });
+      } else {
+        fallbackToDeterministic();
+      }
+    } catch (error) {
+      fallbackToDeterministic();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fallbackToDeterministic = () => {
+    if (!games || games.length === 0) {
+      setGameOfTheDay(null);
+      return;
+    }
     
-    // Bugünün tarihini kullanarak seed oluştur
     const today = new Date();
     const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
     const seed = dayOfYear + today.getFullYear() * 365;
-    
-    // Deterministik rastgele seçim (her gün aynı oyun)
     const index = seed % games.length;
-    return games[index];
+    setGameOfTheDay(games[index]);
   };
 
-  const gameOfTheDay = getGameOfTheDay();
-
+  if (loading) return null;
   if (!gameOfTheDay) return null;
 
   return (
