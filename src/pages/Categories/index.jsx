@@ -21,7 +21,7 @@ function CategoryPage() {
       const { data, error } = await supabase
         .from('games')
         .select('*')
-        .eq('category', categoryName)
+        .ilike('category', categoryName)
         .order('id', { ascending: true });
       
       if (error) throw error;

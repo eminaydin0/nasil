@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/HomePage';
 import GameDetail from './pages/GameDetail';
 import CategoryPage from './pages/Categories';
+import AllGames from './pages/AllGames';
 import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -56,6 +57,7 @@ function App() {
             <main className="grow page-transition">
               <Routes>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/oyunlar" element={<AllGames />} />
                 <Route path="/kategori/:categoryName" element={<CategoryPage />} />
                 <Route path="/oyun/:slug" element={<GameDetail />} />
                 <Route path="/hakkimizda" element={<About />} />

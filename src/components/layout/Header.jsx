@@ -76,9 +76,9 @@ function Header() {
             <Link to="/" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Ana Sayfa
             </Link>
-            <a href="/#oyunlar" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
+            <Link to="/oyunlar" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Oyunlar
-            </a>
+            </Link>
             <Link to="/hakkimizda" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Hakkımızda
             </Link>
@@ -175,13 +175,13 @@ function Header() {
             >
               Ana Sayfa
             </Link>
-            <a
-              href="/#oyunlar"
+            <Link
+              to="/oyunlar"
               className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
               onClick={() => setMobileMenuOpen(false)}
             >
               Oyunlar
-            </a>
+            </Link>
             <Link
               to="/hakkimizda"
               className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"

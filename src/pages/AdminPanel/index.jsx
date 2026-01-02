@@ -54,7 +54,7 @@ function AdminPanel() {
       // Supabase'den oyunları çek
       const { data, error } = await supabase
         .from('games')
-        .select('*')
+        .select('*, gallery:game_gallery_images(image_url)')
         .order('id', { ascending: true });
       
       if (error) throw error;
@@ -68,6 +68,7 @@ function AdminPanel() {
         players: g.players,
         difficulty: g.difficulty,
         image: g.image,
+        gallery: g.gallery ? g.gallery.map(item => item.image_url) : [],
         shortDescription: g.short_description,
         description: g.description,
         rules: g.rules,
@@ -212,6 +213,8 @@ function AdminPanel() {
 
   const handleSaveGame = async (gameData) => {
     try {
+      let gameId;
+
       if (editingGame) {
         // Edit existing game
         const { error } = await supabase
@@ -231,9 +234,7 @@ function AdminPanel() {
           .eq('id', editingGame.id);
         
         if (error) throw error;
-        
-        const updatedGames = games.map(g => g.id === editingGame.id ? { ...gameData, id: editingGame.id } : g);
-        setGames(updatedGames);
+        gameId = editingGame.id;
       } else {
         // Add new game
         const { data, error } = await supabase
@@ -254,22 +255,35 @@ function AdminPanel() {
           .single();
         
         if (error) throw error;
-        
-        const newGame = {
-          id: data.id,
-          slug: data.slug,
-          name: data.name,
-          category: data.category,
-          players: data.players,
-          difficulty: data.difficulty,
-          image: data.image,
-          shortDescription: data.short_description,
-          description: data.description,
-          rules: data.rules,
-          tips: data.tips
-        };
-        setGames([...games, newGame]);
+        gameId = data.id;
       }
+
+      // Handle Gallery Images
+      if (gameData.gallery) {
+        // 1. Delete existing gallery images for this game
+        const { error: deleteError } = await supabase
+          .from('game_gallery_images')
+          .delete()
+          .eq('game_id', gameId);
+        
+        if (deleteError) console.error('Error clearing gallery:', deleteError);
+
+        // 2. Insert new gallery images
+        if (gameData.gallery.length > 0) {
+          const galleryInserts = gameData.gallery.map((url, index) => ({
+            game_id: gameId,
+            image_url: url,
+            order_index: index
+          }));
+
+          const { error: insertError } = await supabase
+            .from('game_gallery_images')
+            .insert(galleryInserts);
+          
+          if (insertError) console.error('Error inserting gallery:', insertError);
+        }
+      }
+
       setShowAddModal(false);
       setEditingGame(null);
       loadGames();

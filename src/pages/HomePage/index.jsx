@@ -101,8 +101,9 @@ function HomePage() {
   }, []);
 
   const filteredGames = games.filter(game => {
-    const matchesCategory = selectedCategory === 'Tümü' || game.category === selectedCategory;
-    return matchesCategory;
+    if (selectedCategory === 'Tümü') return true;
+    // Case-insensitive comparison for better robustness
+    return game.category?.toLowerCase().trim() === selectedCategory?.toLowerCase().trim();
   });
 
   const categoryConfig = {

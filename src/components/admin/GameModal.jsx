@@ -62,13 +62,6 @@ function GameModal({ game, onSave, onClose }) {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
-    // Maksimum 5 resim kontrolü
-    const currentGalleryCount = (formData.gallery || []).length;
-    if (currentGalleryCount + files.length > 5) {
-      toast.error('En fazla 5 galeri resmi ekleyebilirsiniz!');
-      return;
-    }
-
     // Dosya boyutu kontrolü
     const invalidFiles = files.filter(f => f.size > 5 * 1024 * 1024);
     if (invalidFiles.length > 0) {
@@ -191,19 +184,27 @@ function GameModal({ game, onSave, onClose }) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Kategori *</label>
-              <select
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                required
-              >
-                <option value="Dış Mekan">Dış Mekan</option>
-                <option value="İç Mekan">İç Mekan</option>
-                <option value="İç Mekan / Dış Mekan">İç Mekan / Dış Mekan</option>
-                <option value="Masa Oyunları">Masa Oyunları</option>
-                <option value="Kağıt Oyunları">Kağıt Oyunları</option>
-                <option value="Kutu Oyunları">Kutu Oyunları</option>
-              </select>
+              <div className="relative">
+                <input
+                  type="text"
+                  list="category-options"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                  placeholder="Kategori seçin veya yeni yazın"
+                  required
+                />
+                <datalist id="category-options">
+                  <option value="Dış Mekan" />
+                  <option value="İç Mekan" />
+                  <option value="Masa Oyunları" />
+                  <option value="Kağıt Oyunları" />
+                  <option value="Kutu Oyunları" />
+                  <option value="Zeka Oyunları" />
+                  <option value="Parti Oyunları" />
+                </datalist>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Listeden seçebilir veya yeni bir kategori ismi yazabilirsiniz.</p>
             </div>
 
             <div>
@@ -295,7 +296,7 @@ function GameModal({ game, onSave, onClose }) {
               <div className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 transition-colors">
                 <ImageIcon size={24} className="text-gray-400" />
                 <span className="text-sm text-gray-600">
-                  {uploading ? 'Yükleniyor...' : 'Birden fazla resim seçin (Maks. 5)'}
+                  {uploading ? 'Yükleniyor...' : 'Birden fazla resim seçin (Sınırsız)'}
                 </span>
               </div>
               <input
@@ -304,7 +305,7 @@ function GameModal({ game, onSave, onClose }) {
                 multiple
                 onChange={handleGalleryUpload}
                 className="hidden"
-                disabled={uploading || (formData.gallery || []).length >= 5}
+                disabled={uploading}
               />
             </label>
 

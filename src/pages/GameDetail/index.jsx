@@ -29,7 +29,7 @@ function GameDetail() {
       // Oyunu Supabase'den çek
       const { data: gameData, error: gameError } = await supabase
         .from('games')
-        .select('*')
+        .select('*, gallery:game_gallery_images(image_url)')
         .eq('slug', slug)
         .single();
       
@@ -44,7 +44,7 @@ function GameDetail() {
         players: gameData.players,
         difficulty: gameData.difficulty,
         image: gameData.image,
-        gallery: gameData.gallery || [],
+        gallery: gameData.gallery ? gameData.gallery.map(item => item.image_url) : [],
         shortDescription: gameData.short_description,
         description: gameData.description,
         rules: gameData.rules,
@@ -276,7 +276,7 @@ function GameDetail() {
                   </button>
                   
                   {/* Galeri resimleri */}
-                  {game.gallery.slice(0, 3).map((img, index) => (
+                  {game.gallery.map((img, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(img)}
