@@ -15,6 +15,11 @@ function HomePage() {
   const [games, setGames] = useState([]);
   const [categories, setCategories] = useState(['Tümü']);
   const [loading, setLoading] = useState(true);
+  const [culturalContent, setCulturalContent] = useState({
+    title: 'Kültürel Mirasımız',
+    subtitle: 'Geleneksel Oyunlarımızı Yaşatıyoruz',
+    content: 'Geleneksel Türk oyunları, yüzyıllardır nesilden nesile aktarılan kültürel mirasımızın önemli bir parçasıdır.\n\nTeknolojinin hızla geliştiği günümüzde, bu geleneksel oyunları dijital ortamda belgeleyerek gelecek nesillere aktarmak ve yaşatmak istiyoruz.'
+  });
 
   useEffect(() => {
     const category = searchParams.get('kategori');
@@ -34,7 +39,28 @@ function HomePage() {
 
   useEffect(() => {
     loadGames();
+    loadContent();
   }, []);
+
+  const loadContent = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_content')
+        .select('*')
+        .eq('section_key', 'cultural_heritage')
+        .single();
+
+      if (!error && data) {
+        setCulturalContent({
+          title: data.title,
+          subtitle: data.subtitle,
+          content: data.content
+        });
+      }
+    } catch (error) {
+      console.error('Error loading content:', error);
+    }
+  };
 
   const loadGames = async () => {
     try {
@@ -303,19 +329,15 @@ function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-bold mb-6">
                 <Award size={18} />
-                Kültürel Mirasımız
+                {culturalContent.title}
               </div>
               <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Geleneksel Oyunlarımızı Yaşatıyoruz
+                {culturalContent.subtitle}
               </h2>
               <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
-                <p>
-                  Geleneksel Türk oyunları, yüzyıllardır nesilden nesile aktarılan kültürel mirasımızın önemli bir parçasıdır.
-                </p>
-                <p>
-                  Teknolojinin hızla geliştiği günümüzde, bu geleneksel oyunları dijital ortamda belgeleyerek gelecek
-                  nesillere aktarmak ve yaşatmak istiyoruz.
-                </p>
+                {culturalContent.content.split('\n').map((paragraph, index) => (
+                  paragraph.trim() && <p key={index}>{paragraph}</p>
+                ))}
               </div>
               <div className="mt-8 flex items-center gap-4">
                 <div className="flex -space-x-4">

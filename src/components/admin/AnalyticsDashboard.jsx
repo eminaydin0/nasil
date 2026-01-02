@@ -289,264 +289,307 @@ function AnalyticsDashboard({ games }) {
               icon={Eye}
               label="Toplam Görüntülenme"
               value={analytics.totalPageViews}
-              color="bg-blue-500"
+              color="bg-orange-500"
+              suffix=""
             />
             <StatCard 
               icon={Users}
-              label="Benzersiz Oturum"
+              label="Benzersiz Ziyaretçi"
               value={analytics.uniqueSessions}
-              color="bg-purple-500"
+              color="bg-orange-600"
+              suffix=""
             />
             <StatCard 
               icon={MessageCircle}
               label="Toplam Yorum"
               value={analytics.totalComments}
-              color="bg-green-500"
+              color="bg-amber-500"
+              suffix=""
             />
             <StatCard 
               icon={Search}
-              label="Arama Sayısı"
+              label="Yapılan Aramalar"
               value={analytics.totalSearches}
-              color="bg-orange-500"
+              color="bg-red-500"
+              suffix=""
             />
           </div>
 
-          {/* Additional Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Clock className="text-blue-600" size={20} />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">{analytics.avgTimeOnSite}sn</div>
-                  <div className="text-sm text-gray-600">Ort. Süre</div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column: Engagement & Content */}
+            <div className="lg:col-span-2 space-y-6">
+              
+              {/* Engagement Stats */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <Activity className="text-orange-600" size={20} />
+                  Etkileşim Analizi
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className="text-orange-600" size={18} />
+                      <span className="text-sm font-medium text-gray-600">Ort. Süre</span>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900">{analytics.avgTimeOnSite}sn</div>
+                    <div className="text-xs text-gray-500 mt-1">Sitede geçirilen süre</div>
+                  </div>
+
+                  <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendingUp className="text-red-600" size={18} />
+                      <span className="text-sm font-medium text-gray-600">Hemen Çıkma</span>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900">%{analytics.bounceRate}</div>
+                    <div className="text-xs text-gray-500 mt-1">5sn altı ziyaretler</div>
+                  </div>
+
+                  <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <MousePointer className="text-amber-600" size={18} />
+                      <span className="text-sm font-medium text-gray-600">Sayfa/Oturum</span>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900">{analytics.avgPagePerSession}</div>
+                    <div className="text-xs text-gray-500 mt-1">Gezilen sayfa sayısı</div>
+                  </div>
+
+                  <div className="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Share2 className="text-orange-600" size={18} />
+                      <span className="text-sm font-medium text-gray-600">Paylaşımlar</span>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900">{analytics.totalShares}</div>
+                    <div className="text-xs text-gray-500 mt-1">Sosyal medya</div>
+                  </div>
                 </div>
               </div>
-              <div className="text-xs text-gray-500">Ortalama ziyaret süresi</div>
+
+              {/* Top Games */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <BarChart3 className="text-orange-600" size={20} />
+                    En Popüler Oyunlar
+                  </h3>
+                </div>
+                <div className="space-y-4">
+                  {analytics.topGames.length > 0 ? (
+                    analytics.topGames.map((game, index) => (
+                      <div key={game.id} className="flex items-center gap-4 p-3 hover:bg-orange-50 rounded-lg transition-colors border border-transparent hover:border-orange-100">
+                        <div className={`flex items-center justify-center w-8 h-8 rounded-lg font-bold text-sm ${
+                          index === 0 ? 'bg-yellow-100 text-yellow-700' :
+                          index === 1 ? 'bg-gray-200 text-gray-700' :
+                          index === 2 ? 'bg-orange-100 text-orange-800' :
+                          'bg-gray-100 text-gray-600'
+                        }`}>
+                          #{index + 1}
+                        </div>
+                        <img src={game.image} alt={game.name} className="w-12 h-12 rounded-lg object-cover shadow-sm" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-gray-900 truncate">{game.name}</p>
+                          <div className="flex items-center gap-3 text-sm text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <Eye size={14} /> {game.views.toLocaleString('tr-TR')}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <MessageCircle size={14} /> {game.comments}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="w-24 bg-gray-100 rounded-full h-2 mb-1">
+                            <div 
+                              className="bg-orange-500 h-2 rounded-full" 
+                              style={{ width: `${Math.min((game.views / (analytics.topGames[0]?.views || 1)) * 100, 100)}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">Henüz veri yok</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Recent Activity */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <Clock className="text-orange-600" size={20} />
+                  Son Aktiviteler
+                </h3>
+                <div className="space-y-3">
+                  {analytics.recentActivity.length > 0 ? (
+                    analytics.recentActivity.slice(0, 8).map((activity, index) => (
+                      <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                          activity.event_type === 'game_view' ? 'bg-orange-100' :
+                          activity.event_type === 'comment_submit' ? 'bg-amber-100' :
+                          activity.event_type === 'share_click' ? 'bg-red-100' :
+                          activity.event_type === 'search' ? 'bg-yellow-100' :
+                          'bg-gray-100'
+                        }`}>
+                          {activity.event_type === 'game_view' && <Eye className="text-orange-600" size={18} />}
+                          {activity.event_type === 'comment_submit' && <MessageCircle className="text-amber-600" size={18} />}
+                          {activity.event_type === 'share_click' && <Share2 className="text-red-600" size={18} />}
+                          {activity.event_type === 'search' && <Search className="text-yellow-600" size={18} />}
+                          {!['game_view', 'comment_submit', 'share_click', 'search'].includes(activity.event_type) && (
+                            <Activity className="text-gray-600" size={18} />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 truncate text-sm">
+                            {activity.event_type === 'game_view' && <span className="text-orange-700">Oyun Görüntülendi:</span>}
+                            {activity.event_type === 'comment_submit' && <span className="text-amber-700">Yeni Yorum:</span>}
+                            {activity.event_type === 'share_click' && <span className="text-red-700">Paylaşım:</span>}
+                            {activity.event_type === 'search' && <span className="text-yellow-700">Arama:</span>}
+                            {' '}
+                            <span className="text-gray-700">
+                              {activity.game_name || activity.event_data?.search_term || activity.event_data?.page || 'Bilinmeyen'}
+                            </span>
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {new Date(activity.created_at).toLocaleString('tr-TR')}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">Henüz aktivite yok</div>
+                  )}
+                </div>
+              </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="text-red-600" size={20} />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">{analytics.bounceRate}%</div>
-                  <div className="text-sm text-gray-600">Bounce Rate</div>
+            {/* Right Column: Audience Stats */}
+            <div className="space-y-6">
+              
+              {/* Device Stats */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <Monitor className="text-orange-600" size={20} />
+                  Cihaz Dağılımı
+                </h3>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Monitor size={18} className="text-gray-500" />
+                        <span className="text-sm font-medium text-gray-700">Masaüstü</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">%{analytics.deviceStats.desktop}</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-orange-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${analytics.deviceStats.desktop}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Smartphone size={18} className="text-gray-500" />
+                        <span className="text-sm font-medium text-gray-700">Mobil</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">%{analytics.deviceStats.mobile}</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-amber-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${analytics.deviceStats.mobile}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Tablet size={18} className="text-gray-500" />
+                        <span className="text-sm font-medium text-gray-700">Tablet</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">%{analytics.deviceStats.tablet}</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-red-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${analytics.deviceStats.tablet}%` }}
+                      ></div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="text-xs text-gray-500">5 saniyeden az kalan ziyaretçiler</div>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Activity className="text-purple-600" size={20} />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">{analytics.avgPagePerSession}</div>
-                  <div className="text-sm text-gray-600">Sayfa/Oturum</div>
-                </div>
-              </div>
-              <div className="text-xs text-gray-500">Oturum başına sayfa görüntüleme</div>
-            </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Share2 className="text-green-600" size={20} />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">{analytics.totalShares}</div>
-                  <div className="text-sm text-gray-600">Paylaşım</div>
+              {/* Traffic Sources */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <Share2 className="text-orange-600" size={20} />
+                  Trafik Kaynakları
+                </h3>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Doğrudan (Direct)</span>
+                      <span className="text-sm font-bold text-gray-900">%{analytics.trafficSources.direct}</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-orange-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${analytics.trafficSources.direct}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Arama (Google)</span>
+                      <span className="text-sm font-bold text-gray-900">%{analytics.trafficSources.search}</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-amber-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${analytics.trafficSources.search}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Sosyal Medya</span>
+                      <span className="text-sm font-bold text-gray-900">%{analytics.trafficSources.social}</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-red-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${analytics.trafficSources.social}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Diğer (Referral)</span>
+                      <span className="text-sm font-bold text-gray-900">%{analytics.trafficSources.referral}</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-yellow-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${analytics.trafficSources.referral}%` }}
+                      ></div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="text-xs text-gray-500">Sosyal medya paylaşımları</div>
+
+              {/* Info Box */}
+              <div className="bg-orange-50 rounded-xl p-6 border border-orange-100">
+                <h4 className="font-bold text-orange-900 mb-2 text-sm">Bilgilendirme</h4>
+                <p className="text-orange-800 text-xs leading-relaxed">
+                  Veriler son {timeRange === '24hours' ? '24 saat' : timeRange === '7days' ? '7 gün' : '30 gün'} içindeki kullanıcı etkileşimlerine dayanmaktadır. 
+                  İstatistikler her sayfa yenilendiğinde güncellenir.
+                </p>
+              </div>
+
             </div>
           </div>
         </>
       )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Games */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-gray-900">En Popüler Oyunlar</h3>
-            <BarChart3 className="text-gray-400" size={20} />
-          </div>
-          <div className="space-y-4">
-            {analytics.topGames.map((game, index) => (
-              <div key={game.id} className="flex items-center gap-4">
-                <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-lg font-bold text-gray-700 text-sm">
-                  #{index + 1}
-                </div>
-                <img src={game.image} alt={game.name} className="w-12 h-12 rounded-lg object-cover" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 truncate">{game.name}</p>
-                  <p className="text-sm text-gray-500">{game.views.toLocaleString('tr-TR')} görüntülenme</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-blue-600">{game.comments}</div>
-                  <div className="text-xs text-gray-500">yorum</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Device Stats */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Cihaz Dağılımı</h3>
-            <MousePointer className="text-gray-400" size={20} />
-          </div>
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Monitor size={16} className="text-blue-600" />
-                  <span className="text-sm font-medium text-gray-700">Masaüstü</span>
-                </div>
-                <span className="text-sm font-bold text-gray-900">{analytics.deviceStats.desktop}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div 
-                  className="bg-blue-500 h-3 rounded-full transition-all duration-500"
-                  style={{ width: `${analytics.deviceStats.desktop}%` }}
-                ></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Smartphone size={16} className="text-green-600" />
-                  <span className="text-sm font-medium text-gray-700">Mobil</span>
-                </div>
-                <span className="text-sm font-bold text-gray-900">{analytics.deviceStats.mobile}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div 
-                  className="bg-green-500 h-3 rounded-full transition-all duration-500"
-                  style={{ width: `${analytics.deviceStats.mobile}%` }}
-                ></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Tablet size={16} className="text-purple-600" />
-                  <span className="text-sm font-medium text-gray-700">Tablet</span>
-                </div>
-                <span className="text-sm font-bold text-gray-900">{analytics.deviceStats.tablet}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div 
-                  className="bg-purple-500 h-3 rounded-full transition-all duration-500"
-                  style={{ width: `${analytics.deviceStats.tablet}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <p className="text-xs text-gray-500">
-              Gerçek kullanıcı verilerinden hesaplanmıştır
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Traffic Sources */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h3 className="text-lg font-bold text-gray-900 mb-6">Trafik Kaynakları</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
-            <div className="text-3xl font-bold text-blue-600 mb-1">{analytics.trafficSources.direct}%</div>
-            <div className="text-sm text-gray-600">Doğrudan</div>
-            <div className="text-xs text-gray-400 mt-1">Direct visits</div>
-          </div>
-          <div className="text-center p-4 bg-green-50 rounded-lg border border-green-100">
-            <div className="text-3xl font-bold text-green-600 mb-1">{analytics.trafficSources.search}%</div>
-            <div className="text-sm text-gray-600">Arama Motoru</div>
-            <div className="text-xs text-gray-400 mt-1">Google, Bing, etc.</div>
-          </div>
-          <div className="text-center p-4 bg-purple-50 rounded-lg border border-purple-100">
-            <div className="text-3xl font-bold text-purple-600 mb-1">{analytics.trafficSources.social}%</div>
-            <div className="text-sm text-gray-600">Sosyal Medya</div>
-            <div className="text-xs text-gray-400 mt-1">FB, Twitter, etc.</div>
-          </div>
-          <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-100">
-            <div className="text-3xl font-bold text-orange-600 mb-1">{analytics.trafficSources.referral}%</div>
-            <div className="text-sm text-gray-600">Yönlendirme</div>
-            <div className="text-xs text-gray-400 mt-1">Other websites</div>
-          </div>
-        </div>
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <p className="text-xs text-gray-500">
-            Trafik verileri kullanıcı referrer'ı ve UTM parametrelerinden analiz edilmiştir
-          </p>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      {analytics.recentActivity.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Son Aktiviteler</h3>
-          <div className="space-y-3">
-            {analytics.recentActivity.slice(0, 10).map((activity, index) => (
-              <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                  activity.event_type === 'game_view' ? 'bg-blue-100' :
-                  activity.event_type === 'comment_submit' ? 'bg-green-100' :
-                  activity.event_type === 'share_click' ? 'bg-purple-100' :
-                  activity.event_type === 'search' ? 'bg-orange-100' :
-                  'bg-gray-100'
-                }`}>
-                  {activity.event_type === 'game_view' && <Eye className="text-blue-600" size={18} />}
-                  {activity.event_type === 'comment_submit' && <MessageCircle className="text-green-600" size={18} />}
-                  {activity.event_type === 'share_click' && <Share2 className="text-purple-600" size={18} />}
-                  {activity.event_type === 'search' && <Search className="text-orange-600" size={18} />}
-                  {!['game_view', 'comment_submit', 'share_click', 'search'].includes(activity.event_type) && (
-                    <Activity className="text-gray-600" size={18} />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 truncate">
-                    {activity.event_type === 'game_view' && `Oyun görüntülendi: ${activity.game_name}`}
-                    {activity.event_type === 'comment_submit' && `Yorum yapıldı: ${activity.game_name}`}
-                    {activity.event_type === 'share_click' && `Paylaşıldı: ${activity.game_name}`}
-                    {activity.event_type === 'search' && `Arama: ${activity.event_data?.search_term || ''}`}
-                    {activity.event_type === 'page_view' && `Sayfa: ${activity.event_data?.page || '/'}`}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(activity.created_at).toLocaleString('tr-TR')}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Info Box */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
-        <div className="flex items-start gap-4">
-          <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-            <BarChart3 className="text-white" size={20} />
-          </div>
-          <div>
-            <h4 className="font-bold text-gray-900 mb-2">Supabase Analytics</h4>
-            <p className="text-gray-600 text-sm mb-3">
-              Tüm kullanıcı etkinlikleri gerçek zamanlı olarak Supabase'e kaydediliyor. 
-              Analytics views üzerinden detaylı raporlara erişebilirsiniz.
-            </p>
-            <p className="text-gray-500 text-xs">
-              <strong>Özellikler:</strong> Gerçek zamanlı tracking, oturum takibi, 
-              cihaz analizi, trafik kaynakları, engagement metrikleri ve daha fazlası.
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

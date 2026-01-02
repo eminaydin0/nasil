@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart3, MessageCircle, TrendingUp, Download, Sparkles } from 'lucide-react';
+import { BarChart3, MessageCircle, TrendingUp, Download, Sparkles, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AnalyticsDashboard from '../../components/admin/AnalyticsDashboard';
 import AdminLogin from '../../components/admin/AdminLogin';
@@ -12,6 +12,7 @@ import GameModal from '../../components/admin/GameModal';
 import CommentsManager from '../../components/admin/CommentsManager';
 import CarouselManager from '../../components/admin/CarouselManager';
 import GameOfTheDayManager from '../../components/admin/GameOfTheDayManager';
+import ContentManager from '../../components/admin/ContentManager';
 import { supabase } from '../../lib/supabase';
 import { exportAnalyticsData } from '../../utils/analytics';
 
@@ -492,6 +493,17 @@ function AdminPanel() {
               <Sparkles size={18} />
               <span>Günün Oyunu</span>
             </button>
+            <button
+              onClick={() => setActiveTab('content')}
+              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+                activeTab === 'content'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <FileText size={18} />
+              <span>İçerik Yönetimi</span>
+            </button>
           </nav>
         </div>
 
@@ -579,6 +591,10 @@ function AdminPanel() {
 
         {activeTab === 'gameoftheday' && (
           <GameOfTheDayManager />
+        )}
+
+        {activeTab === 'content' && (
+          <ContentManager />
         )}
       </main>
 
