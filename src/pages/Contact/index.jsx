@@ -1,7 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 function Contact() {
+  const [contactInfo, setContactInfo] = useState({
+    email: 'eminaydinyazilim@gmail.com',
+    phone: '0553 882 76 46',
+    address: 'İstanbul, Türkiye'
+  });
+
+  useEffect(() => {
+    loadContactInfo();
+  }, []);
+
+  const loadContactInfo = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_content')
+        .select('content')
+        .eq('section_key', 'contact_info')
+        .single();
+
+      if (!error && data) {
+        const parsed = JSON.parse(data.content);
+        setContactInfo({
+          email: parsed.email || 'eminaydinyazilim@gmail.com',
+          phone: parsed.phone || '0553 882 76 46',
+          address: parsed.address || 'İstanbul, Türkiye'
+        });
+      }
+    } catch (error) {
+      console.error('Error loading contact info:', error);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-4xl mx-auto">
@@ -24,8 +56,8 @@ function Contact() {
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-900 mb-1">E-posta</h3>
-                  <a href="mailto:eminaydinyazilim@gmail.com" className="text-gray-600 hover:text-orange-600 transition-colors">
-                    eminaydinyazilim@gmail.com
+                  <a href={`mailto:${contactInfo.email}`} className="text-gray-600 hover:text-orange-600 transition-colors">
+                    {contactInfo.email}
                   </a>
                 </div>
               </div>
@@ -36,8 +68,8 @@ function Contact() {
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-900 mb-1">Telefon</h3>
-                  <a href="tel:5538827646" className="text-gray-600 hover:text-orange-600 transition-colors">
-                    0553 882 76 46
+                  <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="text-gray-600 hover:text-orange-600 transition-colors">
+                    {contactInfo.phone}
                   </a>
                 </div>
               </div>
@@ -49,7 +81,7 @@ function Contact() {
                 <div>
                   <h3 className="font-bold text-gray-900 mb-1">Konum</h3>
                   <p className="text-gray-600">
-                    İstanbul, Türkiye
+                    {contactInfo.address}
                   </p>
                 </div>
               </div>

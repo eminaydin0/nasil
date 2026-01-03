@@ -125,28 +125,50 @@ export default function GameOfTheDayManager() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Oyun Seçin
               </label>
-              <div className="relative">
+              
+              {/* Arama Kutusu */}
+              <div className="relative mb-3">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 <input
                   type="text"
-                  placeholder="Oyun ara..."
+                  placeholder="Listede oyun ara..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent mb-2"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all text-sm"
                 />
               </div>
-              <select
-                value={selectedGameId}
-                onChange={(e) => setSelectedGameId(e.target.value)}
-                className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                size={5}
-              >
-                {filteredGames.map(game => (
-                  <option key={game.id} value={game.id}>
-                    {game.name} ({game.category})
-                  </option>
-                ))}
-              </select>
+
+              {/* Oyun Listesi */}
+              <div className="border border-gray-200 rounded-xl overflow-hidden max-h-60 overflow-y-auto bg-white shadow-inner">
+                {filteredGames.length > 0 ? (
+                  <div className="divide-y divide-gray-100">
+                    {filteredGames.map(game => (
+                      <button
+                        key={game.id}
+                        onClick={() => setSelectedGameId(game.id)}
+                        className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors hover:bg-orange-50 ${
+                          selectedGameId == game.id ? 'bg-orange-50 border-l-4 border-orange-500' : ''
+                        }`}
+                      >
+                        <span className={`font-medium ${selectedGameId == game.id ? 'text-orange-900' : 'text-gray-700'}`}>
+                          {game.name}
+                        </span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                          {game.category}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    Oyun bulunamadı
+                  </div>
+                )}
+              </div>
+              <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                <Sparkles size={12} />
+                Listeden bir oyun seçerek günün oyunu olarak ayarlayabilirsiniz.
+              </p>
             </div>
 
             <div>

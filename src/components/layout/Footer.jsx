@@ -1,6 +1,37 @@
+import { useState, useEffect } from 'react';
 import { Mail } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 function Footer() {
+  const [contactInfo, setContactInfo] = useState({
+    email: 'eminaydinyazilim@gmail.com',
+    phone: '0553 882 76 46'
+  });
+
+  useEffect(() => {
+    loadContactInfo();
+  }, []);
+
+  const loadContactInfo = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_content')
+        .select('content')
+        .eq('section_key', 'contact_info')
+        .single();
+
+      if (!error && data) {
+        const parsed = JSON.parse(data.content);
+        setContactInfo({
+          email: parsed.email || 'eminaydinyazilim@gmail.com',
+          phone: parsed.phone || '0553 882 76 46'
+        });
+      }
+    } catch (error) {
+      console.error('Error loading contact info:', error);
+    }
+  };
+
   return (
     <footer className="bg-white border-t border-orange-100">
       <div className="container mx-auto px-4 py-10">
@@ -51,13 +82,13 @@ function Footer() {
           <div>
             <h3 className="text-xs font-black uppercase tracking-wider mb-4 text-gray-900">İletişim</h3>
             <div className="space-y-3">
-              <a href="mailto:eminaydinyazilim@gmail.com" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group text-sm">
+              <a href={`mailto:${contactInfo.email}`} className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group text-sm">
                 <Mail size={16} className="text-orange-600 transition-colors" />
-                <span className="font-medium">eminaydinyazilim@gmail.com</span>
+                <span className="font-medium">{contactInfo.email}</span>
               </a>
-              <a href="tel:5538827646" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group text-sm">
+              <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group text-sm">
                 <span className="w-4 h-4 flex items-center justify-center text-orange-600 font-bold text-xs">📞</span>
-                <span className="font-medium">0553 882 76 46</span>
+                <span className="font-medium">{contactInfo.phone}</span>
               </a>
             </div>
           </div>
@@ -70,7 +101,7 @@ function Footer() {
               <p>© {new Date().getFullYear()} Nasıl Oynanır. Tüm hakları saklıdır.</p>
               <span className="hidden md:inline text-gray-300">|</span>
               <p>
-                Geliştirici: <a href="mailto:eminaydinyazilim@gmail.com" className="text-orange-600 hover:text-orange-700 font-medium transition-colors">Emin Aydın</a>
+                Geliştirici: <a href={`mailto:${contactInfo.email}`} className="text-orange-600 hover:text-orange-700 font-medium transition-colors">Emin Aydın</a>
               </p>
             </div>
             <div className="flex items-center space-x-6">

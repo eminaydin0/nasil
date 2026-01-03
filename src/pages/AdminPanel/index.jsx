@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart3, MessageCircle, TrendingUp, Download, Sparkles, FileText } from 'lucide-react';
+import { BarChart3, MessageCircle, TrendingUp, Download, Sparkles, FileText, Phone } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AnalyticsDashboard from '../../components/admin/AnalyticsDashboard';
 import AdminLogin from '../../components/admin/AdminLogin';
@@ -13,6 +13,7 @@ import CommentsManager from '../../components/admin/CommentsManager';
 import CarouselManager from '../../components/admin/CarouselManager';
 import GameOfTheDayManager from '../../components/admin/GameOfTheDayManager';
 import ContentManager from '../../components/admin/ContentManager';
+import ContactManager from '../../components/admin/ContactManager';
 import { supabase } from '../../lib/supabase';
 import { exportAnalyticsData } from '../../utils/analytics';
 
@@ -504,6 +505,17 @@ function AdminPanel() {
               <FileText size={18} />
               <span>İçerik Yönetimi</span>
             </button>
+            <button
+              onClick={() => setActiveTab('contact')}
+              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+                activeTab === 'contact'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <Phone size={18} />
+              <span>İletişim</span>
+            </button>
           </nav>
         </div>
 
@@ -586,7 +598,7 @@ function AdminPanel() {
         )}
 
         {activeTab === 'carousel' && (
-          <CarouselManager />
+          <CarouselManager games={games} />
         )}
 
         {activeTab === 'gameoftheday' && (
@@ -595,6 +607,10 @@ function AdminPanel() {
 
         {activeTab === 'content' && (
           <ContentManager />
+        )}
+
+        {activeTab === 'contact' && (
+          <ContactManager />
         )}
       </main>
 

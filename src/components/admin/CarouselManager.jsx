@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Save, X, Upload, Image as ImageIcon, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, X, Upload, Image as ImageIcon, ArrowUp, ArrowDown, Search, Gamepad2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 
-function CarouselManager() {
+function CarouselManager({ games = [] }) {
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(null);
   const [uploading, setUploading] = useState(false);
+  
+  // Game selector state
+  const [showGameSelector, setShowGameSelector] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const initialSlideState = {
     title: '',
@@ -160,6 +164,19 @@ function CarouselManager() {
     }
   };
 
+  const handleGameSelect = (game) => {
+    setCurrentSlide(prev => ({
+      ...prev,
+      title: game.name,
+      description: game.shortDescription || (game.description ? game.description.substring(0, 150) + '...' : ''),
+      image_url: game.image,
+      button_link: `/oyun/${game.slug}`,
+      button_text: 'Nasıl Oynanır?'
+    }));
+    setShowGameSelector(false);
+    toast.success(`${game.name} bilgileri aktarıldı`);
+  };
+
   if (isEditing) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -171,6 +188,7 @@ function CarouselManager() {
             onClick={() => {
               setIsEditing(false);
               setCurrentSlide(null);
+              setShowGameSelector(false);
             }}
             className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
           >
@@ -179,6 +197,66 @@ function CarouselManager() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Game Selector Helper */}
+          <div className="bg-orange-50 rounded-xl border border-orange-100 overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setShowGameSelector(!showGameSelector)}
+              className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-orange-100/50 transition-colors"
+            >
+              <div className="flex items-center gap-2 text-orange-800 font-medium">
+                <Gamepad2 size={20} />
+                <span>Mevcut bir oyundan bilgi çek</span>
+              </div>
+              <span className="text-xs font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded-full">
+                {showGameSelector ? 'Gizle' : 'Oyun Seç'}
+              </span>
+            </button>
+
+            {showGameSelector && (
+              <div className="p-4 border-t border-orange-100 bg-white">
+                <div className="relative mb-3">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <input
+                    type="text"
+                    placeholder="Oyun ara..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                    autoFocus
+                  />
+                </div>
+                <div className="max-h-48 overflow-y-auto border border-gray-100 rounded-lg">
+                  {games.filter(g => g.name.toLowerCase().includes(searchTerm.toLowerCase())).length > 0 ? (
+                    <div className="divide-y divide-gray-50">
+                      {games
+                        .filter(g => g.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .map(game => (
+                          <button
+                            key={game.id}
+                            type="button"
+                            onClick={() => handleGameSelect(game)}
+                            className="w-full px-3 py-2 text-left hover:bg-orange-50 flex items-center gap-3 transition-colors group"
+                          >
+                            <img src={game.image} alt={game.name} className="w-8 h-8 rounded object-cover bg-gray-100" />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-gray-900 group-hover:text-orange-700">{game.name}</div>
+                              <div className="text-xs text-gray-500 truncate">{game.category}</div>
+                            </div>
+                            <span className="text-xs text-orange-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                              Seç
+                            </span>
+                          </button>
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-sm text-gray-500">Oyun bulunamadı</div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
