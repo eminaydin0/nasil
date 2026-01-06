@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, Filter, Sparkles, Trophy, Shield, Star, Flame, Clock, Award } from 'lucide-react';
+import SEO from '../../components/common/SEO';
 import GameCard from '../../components/home/GameCard';
 import CategoryCard from '../../components/home/CategoryCard';
 import HeroCarousel from '../../components/home/HeroCarousel';
@@ -202,6 +203,7 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 page-transition">
+      <SEO />
       
       <div className="container mx-auto px-4 py-8 space-y-16">
         

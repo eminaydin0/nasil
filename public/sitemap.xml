@@ -1,198 +1,322 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  <!-- Homepage -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://nasiloynanir.com/</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://nasiloynanir.com</loc>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  
-  <!-- Game Pages - Using slug URLs -->
   <url>
-    <loc>https://nasiloynanir.com/oyun/saklambaç</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyunlar</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/hakkimizda</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/iletisim</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/emin</loc>
+    <lastmod>2026-01-02T16:54:40.653Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/test</loc>
+    <lastmod>2026-01-02T17:34:25.847Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/bilye</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/düz-okey</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/birdirbir</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://nasiloynanir.com/oyun/körebe</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/3</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/beş-taş</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/4</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/tavla</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/5</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/saklambaç</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/6</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/istop</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/7</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/yakan-top</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/8</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/mendil-kapmaca</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/9</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/sek-sek</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/10</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Okey Games -->
-  <url>
-    <loc>https://nasiloynanir.com/game/11</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/uzun-eşek</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/12</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/köşe-kapmaca</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/13</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/alman-kale</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/14</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Card Games -->
-  <url>
-    <loc>https://nasiloynanir.com/game/15</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/101-okey</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/16</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/51-okey</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/17</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/perişan-okey</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/18</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/satranç</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/19</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/dama</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/20</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/mangala</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/21</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/pişti</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/22</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/batak</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/23</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/eşli-batak</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/24</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/ihaleli-batak</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/25</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Board Games -->
-  <url>
-    <loc>https://nasiloynanir.com/game/26</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/ihalesiz-batak</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/27</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/gömmeli-batak</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/28</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/king</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/29</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/dost-kazığı</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://nasiloynanir.com/game/30</loc>
-    <lastmod>2025-12-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://nasiloynanir.com/oyun/çanak</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/papaz-kaçtı</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/activity</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/jenga</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/uno</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/tabu</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/catan</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/ticket-to-ride</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/codenames</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/dixit</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/risk</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/twister</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/monopoly</loc>
+    <lastmod>2026-01-02T16:51:46.101Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/oyun/scrabble</loc>
+    <lastmod>2026-01-02T17:23:44.518Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/kategori/D%C4%B1%C5%9F%20Mekan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/kategori/D%C4%B1%C5%9F%20Mekan%20%2F%20%C4%B0%C3%A7%20Mekan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/kategori/%C4%B0%C3%A7%20Mekan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/kategori/%C4%B0%C3%A7%20Mekan%20%2F%20D%C4%B1%C5%9F%20Mekan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/kategori/Ka%C4%9F%C4%B1t%20Oyunlar%C4%B1</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/kategori/Kutu%20Oyunlar%C4%B1</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nasiloynanir.com/kategori/Masa%20Oyunlar%C4%B1</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

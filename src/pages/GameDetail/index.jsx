@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ArrowLeft, Users, MapPin, Target, Lightbulb, ChevronRight, Eye, Image as ImageIcon } from 'lucide-react';
+import SEO from '../../components/common/SEO';
 import CommentSection from '../../components/game/CommentSection';
 import SocialShare from '../../components/game/SocialShare';
 import GameRecommendations from '../../components/home/GameRecommendations';
@@ -127,68 +128,16 @@ function GameDetail() {
   };
 
   useEffect(() => {
-    if (!game) return;
-    
-    // Update SEO meta tags dynamically
-    // Track game view
-    trackPageView(`/oyun/${game.slug}`);
-    trackGameView(game.name, game.id);
-    
-    // Update page title
-    document.title = `${game.name} Nasıl Oynanır? Kuralları ve İpuçları | Nasıl Oynanır`;
-      
-    // Update meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 
-        `${game.name} nasıl oynanır? ${game.shortDescription}. Detaylı oyun kuralları, stratejiler ve püf noktaları. ${game.players}, ${game.difficulty} seviye. ${game.category} oyunu.`
-      );
+    if (game) {
+      trackPageView(`/oyun/${game.slug}`);
+      trackGameView(game.name, game.id);
     }
-    
-    // Update meta keywords for better SEO
-    const metaKeywords = document.querySelector('meta[name="keywords"]');
-    if (metaKeywords) {
-      metaKeywords.setAttribute('content', 
-        `${game.name} nasıl oynanır, ${game.name} kuralları, ${game.name} stratejileri, ${game.category}, ${game.difficulty} oyun, ${game.players}`
-      );
-    }
-    
-    // Update Open Graph tags
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) {
-      ogTitle.setAttribute('content', `${game.name} Nasıl Oynanır? - Detaylı Rehber`);
-    }
-    
-    const ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription) {
-      ogDescription.setAttribute('content', 
-        `${game.name} oyununun kurallarını, stratejilerini ve ipuçlarını öğrenin. ${game.shortDescription}`
-      );
-    }
-    
-    const ogImage = document.querySelector('meta[property="og:image"]');
-    if (ogImage) {
-      ogImage.setAttribute('content', game.image);
-    }
-    
-    // Update canonical URL with slug
-    const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) {
-      canonical.setAttribute('href', `https://nasiloynanir.com/oyun/${game.slug}`);
-    } else {
-      const newCanonical = document.createElement('link');
-      newCanonical.rel = 'canonical';
-      newCanonical.href = `https://nasiloynanir.com/oyun/${game.slug}`;
-      document.head.appendChild(newCanonical);
-    }
-    
-    // Add JSON-LD structured data for better SEO (HowTo schema)
-    const existingScript = document.querySelector('script[type="application/ld+json"]');
-    if (existingScript) {
-      existingScript.remove();
-    }
-    
-    const structuredData = {
+  }, [game]);
+
+  const structuredData = useMemo(() => {
+    if (!game) return null;
+
+    return {
       "@context": "https://schema.org",
       "@type": "HowTo",
       "name": `${game.name} Nasıl Oynanır`,
@@ -213,12 +162,9 @@ function GameDetail() {
         "name": game.category
       }
     };
-    
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(structuredData);
-    document.head.appendChild(script);
-  }, [game]);  if (!game || loading) {
+  }, [game]);
+
+  if (!game || loading) {
     return <SkeletonLoader type="game-detail" />;
   }
 
@@ -228,6 +174,15 @@ function GameDetail() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO 
+        title={`${game.name} Nasıl Oynanır?`}
+        description={`${game.name} nasıl oynanır? ${game.shortDescription}. Detaylı oyun kuralları, stratejiler ve püf noktaları.`}
+        keywords={`${game.name} nasıl oynanır, ${game.name} kuralları, ${game.name} stratejileri, ${game.category}, ${game.difficulty} oyun, ${game.players}`}
+        image={game.image}
+        url={`/oyun/${game.slug}`}
+        type="article"
+        structuredData={structuredData}
+      />
       {/* Compact Header with Image */}
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-12">

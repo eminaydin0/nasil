@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { games } from './src/data/games.js';
+import { games } from '../src/data/games.js';
 
 const supabaseUrl = 'https://yjnipjcevnxrzlgfmeci.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqbmlwamNldm54cnpsZ2ZtZWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5NDMyMjUsImV4cCI6MjA4MjUxOTIyNX0.tuUrVzxDlZssFm3pwhB-fSsiL8DQUErHmGeqngvQohc';
