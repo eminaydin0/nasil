@@ -42,67 +42,117 @@ function AnalyticsDashboard({ games }) {
         case '30days':
           startDate.setDate(startDate.getDate() - 30);
           break;
+        case 'all':
+          startDate = new Date(0); // 1970 
+          break;
         default:
           startDate.setDate(startDate.getDate() - 7);
       }
 
-      // Fetch all events from analytics_events
-      const { data: events, error: eventsError } = await supabase
-        .from('analytics_events')
-        .select('*')
-        .gte('created_at', startDate.toISOString())
-        .order('created_at', { ascending: false });
+      let newAnalytics = {};
 
-      if (eventsError) {
-        console.error('Error loading events:', eventsError);
-        throw eventsError;
+      // Fetch stats from RPC to avoid 1000 row limit and ensure accuracy
+      const { data: stats, error: statsError } = await supabase.rpc('get_dashboard_stats', { 
+        p_start_date: startDate.toISOString() 
+      });
+
+      if (!statsError && stats) {
+         newAnalytics = {
+            totalPageViews: stats.totalPageViews || 0,
+            totalComments: stats.totalComments || 0,
+            totalShares: stats.totalShares || 0,
+            totalSearches: stats.totalSearches || 0,
+            uniqueSessions: stats.uniqueSessions || 0,
+            avgTimeOnSite: stats.avgTimeOnSite || 0,
+            bounceRate: stats.bounceRate || 0,
+            deviceStats: stats.deviceStats || { desktop: 0, mobile: 0, tablet: 0 },
+            trafficSources: stats.trafficSources || { direct: 0, search: 0, social: 0, referral: 0 },
+            avgPagePerSession: stats.uniqueSessions > 0 
+              ? ((stats.totalPageViews || 0) / stats.uniqueSessions).toFixed(1)
+              : 0
+         };
+      } else {
+        // Fallback: Fetch all events from analytics_events (Client-side calculation)
+        console.warn('RPC failed, falling back to client-side calc:', statsError);
+        
+        const { data: events, error: eventsError } = await supabase
+          .from('analytics_events')
+          .select('*')
+          .gte('created_at', startDate.toISOString())
+          .order('created_at', { ascending: false });
+
+        if (eventsError) throw eventsError;
+
+        // Calculate stats from events
+        const totalPageViews = events?.filter(e => e.event_type === 'page_view').length || 0;
+        const totalComments = events?.filter(e => e.event_type === 'comment_submit').length || 0;
+        const totalShares = events?.filter(e => e.event_type === 'share_click').length || 0;
+        const totalSearches = events?.filter(e => e.event_type === 'search').length || 0;
+        const uniqueSessions = new Set(events?.map(e => e.session_id)).size;
+
+        // Calculate device stats
+        const deviceEvents = events?.filter(e => e.event_type === 'device_info') || [];
+        const deviceCounts = { desktop: 0, mobile: 0, tablet: 0 };
+        deviceEvents.forEach(e => {
+          const deviceType = e.event_data?.device_type;
+          if (deviceType && Object.prototype.hasOwnProperty.call(deviceCounts, deviceType)) {
+            deviceCounts[deviceType]++;
+          }
+        });
+        const totalDevices = Object.values(deviceCounts).reduce((a, b) => a + b, 0);
+        const deviceStats = totalDevices > 0 ? {
+          desktop: Math.round((deviceCounts.desktop / totalDevices) * 100),
+          mobile: Math.round((deviceCounts.mobile / totalDevices) * 100),
+          tablet: Math.round((deviceCounts.tablet / totalDevices) * 100)
+        } : { desktop: 0, mobile: 0, tablet: 0 };
+
+        // Calculate traffic sources
+        const trafficEvents = events?.filter(e => e.event_type === 'traffic_source') || [];
+        const trafficCounts = { direct: 0, search: 0, social: 0, referral: 0 };
+        trafficEvents.forEach(e => {
+          const source = e.event_data?.source;
+          if (source && Object.prototype.hasOwnProperty.call(trafficCounts, source)) {
+            trafficCounts[source]++;
+          }
+        });
+        const totalTraffic = Object.values(trafficCounts).reduce((a, b) => a + b, 0);
+        const trafficSources = totalTraffic > 0 ? {
+          direct: Math.round((trafficCounts.direct / totalTraffic) * 100),
+          search: Math.round((trafficCounts.search / totalTraffic) * 100),
+          social: Math.round((trafficCounts.social / totalTraffic) * 100),
+          referral: Math.round((trafficCounts.referral / totalTraffic) * 100)
+        } : { direct: 0, search: 0, social: 0, referral: 0 };
+
+        // Calculate average session duration
+        const durationEvents = events?.filter(e => e.event_type === 'session_duration') || [];
+        const avgTime = durationEvents.length > 0
+          ? Math.round(durationEvents.reduce((sum, e) => sum + (e.event_data?.duration || 0), 0) / durationEvents.length)
+          : 0;
+
+        // Calculate bounce rate
+        const shortSessions = durationEvents.filter(e => (e.event_data?.duration || 0) < 5).length;
+        const bounceRate = durationEvents.length > 0 
+          ? Math.round((shortSessions / durationEvents.length) * 100)
+          : 0;
+            
+        // Calculate pages per session
+        const avgPagePerSession = uniqueSessions > 0 
+          ? (totalPageViews / uniqueSessions).toFixed(1)
+          : 0;
+
+        newAnalytics = {
+          totalPageViews,
+          totalComments,
+          totalShares,
+          totalSearches,
+          uniqueSessions,
+          deviceStats,
+          trafficSources,
+          avgTimeOnSite: avgTime,
+          bounceRate,
+          avgPagePerSession
+        };
       }
-
-      // Calculate stats from events
-      const totalPageViews = events?.filter(e => e.event_type === 'page_view').length || 0;
-      const totalComments = events?.filter(e => e.event_type === 'comment_submit').length || 0;
-      const totalShares = events?.filter(e => e.event_type === 'share_click').length || 0;
-      const totalSearches = events?.filter(e => e.event_type === 'search').length || 0;
-      const uniqueSessions = new Set(events?.map(e => e.session_id)).size;
-
-      // Calculate device stats
-      const deviceEvents = events?.filter(e => e.event_type === 'device_info') || [];
-      const deviceCounts = { desktop: 0, mobile: 0, tablet: 0 };
-      deviceEvents.forEach(e => {
-        const deviceType = e.event_data?.device_type;
-        if (deviceType && Object.prototype.hasOwnProperty.call(deviceCounts, deviceType)) {
-          deviceCounts[deviceType]++;
-        }
-      });
-      const totalDevices = Object.values(deviceCounts).reduce((a, b) => a + b, 0);
-      const deviceStats = totalDevices > 0 ? {
-        desktop: Math.round((deviceCounts.desktop / totalDevices) * 100),
-        mobile: Math.round((deviceCounts.mobile / totalDevices) * 100),
-        tablet: Math.round((deviceCounts.tablet / totalDevices) * 100)
-      } : { desktop: 0, mobile: 0, tablet: 0 };
-
-      // Calculate traffic sources
-      const trafficEvents = events?.filter(e => e.event_type === 'traffic_source') || [];
-      const trafficCounts = { direct: 0, search: 0, social: 0, referral: 0 };
-      trafficEvents.forEach(e => {
-        const source = e.event_data?.source;
-        if (source && Object.prototype.hasOwnProperty.call(trafficCounts, source)) {
-          trafficCounts[source]++;
-        }
-      });
-      const totalTraffic = Object.values(trafficCounts).reduce((a, b) => a + b, 0);
-      const trafficSources = totalTraffic > 0 ? {
-        direct: Math.round((trafficCounts.direct / totalTraffic) * 100),
-        search: Math.round((trafficCounts.search / totalTraffic) * 100),
-        social: Math.round((trafficCounts.social / totalTraffic) * 100),
-        referral: Math.round((trafficCounts.referral / totalTraffic) * 100)
-      } : { direct: 0, search: 0, social: 0, referral: 0 };
-
-      // Calculate average session duration
-      const durationEvents = events?.filter(e => e.event_type === 'session_duration') || [];
-      const avgTime = durationEvents.length > 0
-        ? Math.round(durationEvents.reduce((sum, e) => sum + (e.event_data?.duration || 0), 0) / durationEvents.length)
-        : 0;
 
       // Get top games from game_analytics view
       const { data: topGamesData } = await supabase
@@ -139,39 +189,13 @@ function AnalyticsDashboard({ games }) {
         };
       });
 
-      // Get hourly traffic
-      const { data: hourlyData } = await supabase
-        .from('hourly_traffic')
-        .select('*')
-        .limit(24);
-
-      // Calculate bounce rate (sessions < 5 seconds)
-      const shortSessions = durationEvents.filter(e => (e.event_data?.duration || 0) < 5).length;
-      const bounceRate = durationEvents.length > 0 
-        ? Math.round((shortSessions / durationEvents.length) * 100)
-        : 0;
-
-      // Calculate pages per session
-      const avgPagePerSession = uniqueSessions > 0 
-        ? (totalPageViews / uniqueSessions).toFixed(1)
-        : 0;
-
-      setAnalytics({
-        totalPageViews,
-        totalComments,
-        totalShares,
-        totalSearches,
-        avgTimeOnSite: avgTime,
+      setAnalytics(prev => ({
+        ...prev,
+        ...newAnalytics,
         topGames,
         recentActivity,
-        deviceStats,
-        trafficSources,
-        userSessions: durationEvents,
-        bounceRate,
-        avgPagePerSession,
-        uniqueSessions,
-        hourlyData: hourlyData || []
-      });
+        hourlyData: []
+      }));
     } catch (error) {
       console.error('Error loading analytics:', error);
       // Fallback to localStorage data
@@ -272,6 +296,16 @@ function AnalyticsDashboard({ games }) {
               }`}
             >
               Son 30 Gün
+            </button>
+            <button
+              onClick={() => setTimeRange('all')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                timeRange === 'all'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Tümü
             </button>
           </div>
         </div>
@@ -581,7 +615,7 @@ function AnalyticsDashboard({ games }) {
               <div className="bg-orange-50 rounded-xl p-6 border border-orange-100">
                 <h4 className="font-bold text-orange-900 mb-2 text-sm">Bilgilendirme</h4>
                 <p className="text-orange-800 text-xs leading-relaxed">
-                  Veriler son {timeRange === '24hours' ? '24 saat' : timeRange === '7days' ? '7 gün' : '30 gün'} içindeki kullanıcı etkileşimlerine dayanmaktadır. 
+                  Veriler {timeRange === '24hours' ? 'son 24 saat' : timeRange === '7days' ? 'son 7 gün' : timeRange === '30days' ? 'son 30 gün' : 'toplam süre'} içindeki kullanıcı etkileşimlerine dayanmaktadır. 
                   İstatistikler her sayfa yenilendiğinde güncellenir.
                 </p>
               </div>
