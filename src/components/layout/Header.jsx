@@ -79,6 +79,9 @@ function Header() {
             <Link to="/oyunlar" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Oyunlar
             </Link>
+            <Link to="/araclar" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
+              Araçlar
+            </Link>
             <Link to="/hakkimizda" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
               Hakkımızda
             </Link>
@@ -181,6 +184,13 @@ function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Oyunlar
+            </Link>
+            <Link
+              to="/araclar"
+              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Araçlar
             </Link>
             <Link
               to="/hakkimizda"

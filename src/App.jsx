@@ -5,6 +5,13 @@ import HomePage from './pages/HomePage';
 import GameDetail from './pages/GameDetail';
 import CategoryPage from './pages/Categories';
 import AllGames from './pages/AllGames';
+import ToolsPage from './pages/Tools/ToolsPage';
+import OkeyPage from './pages/Tools/OkeyPage';
+import Okey101Page from './pages/Tools/Okey101Page';
+import BatakPage from './pages/Tools/BatakPage';
+import TeamGeneratorPage from './pages/Tools/TeamGeneratorPage';
+import DicePage from './pages/Tools/DicePage';
+import ScoreBoardPage from './pages/Tools/ScoreBoardPage';
 import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -58,6 +65,13 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/oyunlar" element={<AllGames />} />
+                <Route path="/araclar" element={<ToolsPage />} />
+                <Route path="/araclar/okey-sayaci" element={<OkeyPage />} />
+                <Route path="/araclar/101-yazboz" element={<Okey101Page />} />
+                <Route path="/araclar/batak-yazboz" element={<BatakPage />} />
+                <Route path="/araclar/takim-olusturucu" element={<TeamGeneratorPage />} />
+                <Route path="/araclar/zar-at" element={<DicePage />} />
+                <Route path="/araclar/skor-tablosu" element={<ScoreBoardPage />} />
                 <Route path="/kategori/:categoryName" element={<CategoryPage />} />
                 <Route path="/oyun/:slug" element={<GameDetail />} />
                 <Route path="/hakkimizda" element={<About />} />
