@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { User, Search, RefreshCw, Trash2, Shield, Calendar } from 'lucide-react';
+import { User, Search, RefreshCw, Trash2, Shield, Calendar, Ban, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 function UserManager() {
@@ -29,6 +29,27 @@ function UserManager() {
   useEffect(() => {
     loadUsers();
   }, []);
+
+  const handleBanUser = async (userId, currentStatus) => {
+    try {
+      if (!window.confirm(currentStatus ? 'Bu kullanıcının engelini kaldırmak istediğinize emin misiniz?' : 'Bu kullanıcıyı engellemek istediğinize emin misiniz?')) {
+        return;
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_banned: !currentStatus })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast.success(currentStatus ? 'Kullanıcı engeli kaldırıldı' : 'Kullanıcı engellendi');
+      loadUsers(); // Refresh list
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      toast.error('İşlem yapılırken hata oluştu');
+    }
+  };
 
   // Filter users based on search
   const filteredUsers = users.filter(user => 
@@ -83,6 +104,9 @@ function UserManager() {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Kayıt Tarihi
                 </th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  İşlemler
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -136,6 +160,29 @@ function UserManager() {
                         month: 'long',
                         year: 'numeric'
                       })}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button
+                          onClick={() => handleBanUser(user.id, user.is_banned)}
+                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                            user.is_banned 
+                              ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                              : 'bg-red-100 text-red-700 hover:bg-red-200'
+                          }`}
+                          title={user.is_banned ? 'Engeli Kaldır' : 'Kullanıcıyı Engelle'}
+                        >
+                          {user.is_banned ? (
+                            <>
+                              <CheckCircle size={14} />
+                              <span>Engeli Aç</span>
+                            </>
+                          ) : (
+                            <>
+                              <Ban size={14} />
+                              <span>Engelle</span>
+                            </>
+                          )}
+                        </button>
                     </td>
                   </tr>
                 ))

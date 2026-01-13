@@ -83,7 +83,9 @@ function HomePage() {
         shortDescription: game.short_description,
         description: game.description,
         rules: game.rules,
-        tips: game.tips
+        tips: game.tips,
+        views: game.views || 0,
+        createdAt: game.created_at
       }));
       
       setGames(formattedGames);
@@ -195,11 +197,15 @@ function HomePage() {
     );
   }
 
-  // Popular Games (Simulated by taking slice)
-  const popularGames = games.slice(1, 5);
+  // Popular Games: Sort by views (descending)
+  const popularGames = [...games]
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 4);
   
-  // New Arrivals (Simulated by taking another slice)
-  const newGames = games.slice(5, 9);
+  // New Arrivals: Sort by created date (descending)
+  const newGames = [...games]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4);
 
   return (
     <div className="min-h-screen bg-gray-50 page-transition">
