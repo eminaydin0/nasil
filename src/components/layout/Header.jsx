@@ -130,10 +130,20 @@ function Header() {
             {user ? (
               <Link 
                 to="/profil" 
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors overflow-hidden border border-orange-200 shadow-sm"
                 title="Profilim"
               >
-                <User size={18} />
+                {user.user_metadata?.avatar_url ? (
+                  <img 
+                    src={user.user_metadata.avatar_url} 
+                    alt="Profil" 
+                    className="w-full h-full object-cover" 
+                  />
+                ) : (
+                  <span className="font-bold text-sm">
+                    {user.user_metadata?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+                  </span>
+                )}
               </Link>
             ) : (
               <Link 
@@ -235,8 +245,16 @@ function Header() {
                 className="flex items-center gap-2 px-3 py-2 text-sm text-orange-600 bg-orange-50 rounded-lg font-semibold mt-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <User size={18} />
-                Profilim ({user.email})
+                {user.user_metadata?.avatar_url ? (
+                  <img 
+                    src={user.user_metadata.avatar_url} 
+                    alt="Profil" 
+                    className="w-5 h-5 rounded-full object-cover border border-orange-200" 
+                  />
+                ) : (
+                  <User size={18} />
+                )}
+                Profilim ({user.user_metadata?.full_name || user.email?.split('@')[0]})
               </Link>
             ) : (
               <Link

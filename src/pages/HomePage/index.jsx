@@ -409,7 +409,8 @@ function TestimonialsSection() {
           name: comment.author_name,
           comment: comment.content,
           rating: comment.rating,
-          gameName: game?.name || 'Bilinmeyen Oyun'
+          gameName: game?.name || 'Bilinmeyen Oyun',
+          avatarUrl: comment.avatar_url
         };
       });
       
@@ -453,8 +454,18 @@ function TestimonialsSection() {
             </div>
             <p className="text-gray-700 leading-relaxed mb-6 min-h-[80px]">"{testimonial.comment}"</p>
             <div className="flex items-center space-x-3 pt-6 border-t border-gray-50">
-              <div className="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                {getInitials(testimonial.name)}
+              <div className="shrink-0 w-10 h-10">
+                {testimonial.avatarUrl ? (
+                  <img 
+                    src={testimonial.avatarUrl} 
+                    alt={testimonial.name} 
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center text-white font-bold text-xs ring-2 ring-gray-100">
+                    {getInitials(testimonial.name)}
+                  </div>
+                )}
               </div>
               <div>
                 <p className="font-bold text-gray-900 text-sm">{testimonial.name}</p>

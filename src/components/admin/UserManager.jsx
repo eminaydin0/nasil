@@ -128,9 +128,17 @@ function UserManager() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
-                            {user.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
-                          </div>
+                          {user.avatar_url ? (
+                            <img
+                              className="h-10 w-10 rounded-full object-cover"
+                              src={user.avatar_url}
+                              alt={user.full_name}
+                            />
+                          ) : (
+                            <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
+                              {user.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+                            </div>
+                          )}
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">

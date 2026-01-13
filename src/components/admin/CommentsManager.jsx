@@ -40,7 +40,8 @@ function CommentsManager({ games }) {
           date: new Date(comment.created_at).toLocaleDateString('tr-TR'),
           gameId: comment.game_id,
           gameName: game?.name || 'Bilinmeyen Oyun',
-          totalReplies: countReplies(comment.replies || [])
+          totalReplies: countReplies(comment.replies || []),
+          avatarUrl: comment.avatar_url
         };
       });
       
@@ -179,6 +180,19 @@ function CommentsManager({ games }) {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
+                      <div className="flex-shrink-0">
+                        {comment.avatarUrl ? (
+                          <img
+                            className="h-8 w-8 rounded-full object-cover"
+                            src={comment.avatarUrl}
+                            alt={comment.name}
+                          />
+                        ) : (
+                          <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-xs">
+                            {comment.name?.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
                       <span className="font-semibold text-gray-900">{comment.name}</span>
                       <span className="text-sm text-gray-500">{comment.date}</span>
                       <div className="flex items-center">
@@ -260,6 +274,19 @@ function ReplyDisplay({ reply, commentId, onDelete, depth }) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
+              <div className="flex-shrink-0">
+                {reply.avatar ? (
+                  <img
+                    className="h-6 w-6 rounded-full object-cover"
+                    src={reply.avatar}
+                    alt={reply.name}
+                  />
+                ) : (
+                  <div className="h-6 w-6 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-[10px]">
+                    {reply.name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
               <span className="font-semibold text-gray-900 text-sm">{reply.name}</span>
               <span className="text-xs text-gray-500">{reply.date} {reply.time}</span>
             </div>
