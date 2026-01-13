@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
-import { Menu, X, Search } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X, Search, User } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
 
 function Header() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -9,6 +10,8 @@ function Header() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [games, setGames] = useState([]);
   const searchRef = useRef(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadGames();
@@ -122,6 +125,24 @@ function Header() {
                 </div>
               )}
             </div>
+
+            {/* User Menu - Desktop */}
+            {user ? (
+              <Link 
+                to="/profil" 
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors"
+                title="Profilim"
+              >
+                <User size={18} />
+              </Link>
+            ) : (
+              <Link 
+                to="/auth" 
+                className="px-4 py-1.5 bg-gray-900 text-white hover:bg-gray-800 rounded-lg transition-all text-sm font-medium shadow-sm"
+              >
+                Giriş Yap
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -206,6 +227,26 @@ function Header() {
             >
               İletişim
             </Link>
+             
+            {/* User Menu - Mobile */}
+            {user ? (
+              <Link
+                to="/profil"
+                className="flex items-center gap-2 px-3 py-2 text-sm text-orange-600 bg-orange-50 rounded-lg font-semibold mt-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <User size={18} />
+                Profilim ({user.email})
+              </Link>
+            ) : (
+              <Link
+                to="/auth"
+                className="block text-center mt-4 px-3 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Giriş Yap / Kayıt Ol
+              </Link>
+            )}
           </div>
         )}
       </nav>

@@ -7,3 +7,4 @@ export { default as CommentsManager } from './CommentsManager';
 export { default as GameModal } from './GameModal';
 export { default as GamesTable } from './GamesTable';
 export { default as TopGames } from './TopGames';
+export { default as UserManager } from './UserManager';

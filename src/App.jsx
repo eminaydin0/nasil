@@ -18,6 +18,9 @@ import Contact from './pages/Contact';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import { initSession } from './utils/analytics';
+import { AuthProvider } from './context/AuthContext';
+import AuthPage from './pages/Auth/AuthPage';
+import ProfilePage from './pages/Profile/ProfilePage';
 
 function App() {
   useEffect(() => {
@@ -26,63 +29,67 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Toaster 
-        position="top-right"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#fff',
-            color: '#363636',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            borderRadius: '12px',
-            padding: '16px',
-            fontSize: '14px',
-          },
-          success: {
-            iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
+    <AuthProvider>
+      <Router>
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#fff',
+              color: '#363636',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              borderRadius: '12px',
+              padding: '16px',
+              fontSize: '14px',
             },
-          },
-          error: {
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
+            success: {
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
             },
-          },
-        }}
-      />
-      <Routes>
-        {/* Admin Panel Route - No Header/Footer */}
-        <Route path="/admin-panel" element={<AdminPanel />} />
-        
-        {/* Main Site Routes - With Header/Footer */}
-        <Route path="/*" element={
-          <div className="min-h-screen flex flex-col bg-white">
-            <Header />
-            <main className="grow page-transition">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/oyunlar" element={<AllGames />} />
-                <Route path="/araclar" element={<ToolsPage />} />
-                <Route path="/araclar/okey-sayaci" element={<OkeyPage />} />
-                <Route path="/araclar/101-yazboz" element={<Okey101Page />} />
-                <Route path="/araclar/batak-yazboz" element={<BatakPage />} />
-                <Route path="/araclar/takim-olusturucu" element={<TeamGeneratorPage />} />
-                <Route path="/araclar/zar-at" element={<DicePage />} />
-                <Route path="/araclar/skor-tablosu" element={<ScoreBoardPage />} />
-                <Route path="/kategori/:categoryName" element={<CategoryPage />} />
-                <Route path="/oyun/:slug" element={<GameDetail />} />
-                <Route path="/hakkimizda" element={<About />} />
-                <Route path="/iletisim" element={<Contact />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        } />
-      </Routes>
-    </Router>
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
+        <Routes>
+          {/* Admin Panel Route - No Header/Footer */}
+          <Route path="/admin-panel" element={<AdminPanel />} />
+          
+          {/* Main Site Routes - With Header/Footer */}
+          <Route path="/*" element={
+            <div className="min-h-screen flex flex-col bg-white">
+              <Header />
+              <main className="grow page-transition">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/oyunlar" element={<AllGames />} />
+                  <Route path="/araclar" element={<ToolsPage />} />
+                  <Route path="/araclar/okey-sayaci" element={<OkeyPage />} />
+                  <Route path="/araclar/101-yazboz" element={<Okey101Page />} />
+                  <Route path="/araclar/batak-yazboz" element={<BatakPage />} />
+                  <Route path="/araclar/takim-olusturucu" element={<TeamGeneratorPage />} />
+                  <Route path="/araclar/zar-at" element={<DicePage />} />
+                  <Route path="/araclar/skor-tablosu" element={<ScoreBoardPage />} />
+                  <Route path="/kategori/:categoryName" element={<CategoryPage />} />
+                  <Route path="/oyun/:slug" element={<GameDetail />} />
+                  <Route path="/hakkimizda" element={<About />} />
+                  <Route path="/iletisim" element={<Contact />} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/profil" element={<ProfilePage />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          } />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

@@ -14,6 +14,7 @@ import CarouselManager from '../../components/admin/CarouselManager';
 import GameOfTheDayManager from '../../components/admin/GameOfTheDayManager';
 import ContentManager from '../../components/admin/ContentManager';
 import ContactManager from '../../components/admin/ContactManager';
+import UserManager from '../../components/admin/UserManager';
 import { supabase } from '../../lib/supabase';
 import { exportAnalyticsData } from '../../utils/analytics';
 
@@ -495,6 +496,17 @@ function AdminPanel() {
               <span>Günün Oyunu</span>
             </button>
             <button
+              onClick={() => setActiveTab('users')}
+              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+                activeTab === 'users'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <FileText size={18} />
+              <span>Kullanıcılar</span>
+            </button>
+            <button
               onClick={() => setActiveTab('content')}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
                 activeTab === 'content'
@@ -611,6 +623,10 @@ function AdminPanel() {
 
         {activeTab === 'contact' && (
           <ContactManager />
+        )}
+
+        {activeTab === 'users' && (
+          <UserManager />
         )}
       </main>
 

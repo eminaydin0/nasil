@@ -4,8 +4,10 @@ import toast from 'react-hot-toast';
 import StarRating from '../common/StarRating';
 import { supabase } from '../../lib/supabase';
 import { trackCommentSubmit } from '../../utils/analytics';
+import { useAuth } from '../../context/AuthContext';
 
 function CommentSection({ gameId, gameName }) {
+  const { user } = useAuth();
   const [comments, setComments] = useState([]);
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
@@ -18,6 +20,15 @@ function CommentSection({ gameId, gameName }) {
   });
 
   const [showForm, setShowForm] = useState(false);
+
+  // Automatically fill name if user is logged in
+  useEffect(() => {
+    if (user) {
+      const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Misafir Kullanıcı';
+      setNewComment(prev => ({ ...prev, name: displayName }));
+      setReplyName(displayName);
+    }
+  }, [user]);
 
   // Load comments specific to this game when component mounts or gameId changes
   const loadComments = useCallback(async () => {
@@ -60,8 +71,17 @@ function CommentSection({ gameId, gameName }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!newComment.name || !newComment.comment || newComment.rating === 0) {
-      toast.error('Lütfen tüm alanları doldurun ve puan verin!');
+    if (!newComment.name) {
+       // Should not happen for logged in users, but safety check
+       if (user) {
+         setNewComment({ ...newComment, name: user.user_metadata?.full_name || 'Misafir Kullanıcı' });
+       } else {
+          setNewComment({...newComment, name: 'Misafir Kullanıcı'});
+       }
+    }
+
+    if (!newComment.comment || newComment.rating === 0) {
+      toast.error('Lütfen yorumunuzu yazın ve puan verin!');
       return;
     }
 
@@ -120,12 +140,17 @@ function CommentSection({ gameId, gameName }) {
   };
 
   const handleReplySubmit = async (commentId, parentReplyId = null) => {
-    if (!replyText.trim() || !replyName.trim()) {
-      toast.error('Lütfen isminizi ve yanıtınızı yazın!');
+    let finalReplyName = replyName;
+    if (!finalReplyName.trim()) {
+         finalReplyName = user ? (user.user_metadata?.full_name || 'Misafir Kullanıcı') : 'Misafir Kullanıcı';
+    }
+
+    if (!replyText.trim()) {
+      toast.error('Lütfen yanıtınızı yazın!');
       return;
     }
 
-    const reply = {
+    const refinalRly = {
       id: Date.now(),
       text: replyText,
       date: new Date().toLocaleDateString('tr-TR'),
