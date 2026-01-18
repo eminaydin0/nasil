@@ -91,6 +91,56 @@ function SkeletonLoader({ type = 'game-detail' }) {
     );
   }
 
+  if (type === 'category-grid') {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
+              <div>
+                <div className="h-5 w-24 bg-gray-200 rounded mb-2"></div>
+                <div className="h-3 w-32 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+            <div className="h-16 bg-gray-200 rounded-lg"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (type === 'home-hero') {
+    return (
+      <div className="h-[500px] w-full bg-gray-900 rounded-3xl shadow-2xl animate-pulse flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="h-12 w-64 bg-gray-700 rounded mx-auto"></div>
+          <div className="h-6 w-96 bg-gray-700 rounded mx-auto"></div>
+          <div className="h-10 w-32 bg-orange-600 rounded-lg mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === 'comment-list') {
+    return (
+      <div className="space-y-4 animate-pulse">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="bg-white rounded-lg p-4 border border-gray-100">
+            <div className="flex items-start space-x-3">
+              <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+              <div className="flex-1">
+                <div className="h-4 w-24 bg-gray-200 rounded mb-2"></div>
+                <div className="h-3 w-full bg-gray-200 rounded mb-1"></div>
+                <div className="h-3 w-3/4 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return null;
 }
 

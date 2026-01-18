@@ -1,9 +1,13 @@
+import { useEffect } from 'react';
 import SEO from '../../components/common/SEO';
 import OkeyScore from '../../components/tools/OkeyScore';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
 export default function OkeyPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <SEO 

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function CategoryCard({ category, count, icon, image }) {
+function CategoryCard({ category, count, icon: IconComponent, image }) {
   return (
     <Link to={`/kategori/${category}`} className="group block h-full relative">
       <div className="relative h-40 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1">
@@ -23,7 +23,7 @@ function CategoryCard({ category, count, icon, image }) {
           <div className="flex items-end justify-between gap-2">
             <div>
               <div className="text-3xl mb-2 transform group-hover:scale-110 transition-transform duration-300 origin-left filter drop-shadow-lg">
-                {icon}
+                <IconComponent className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-lg font-bold text-white leading-tight group-hover:text-orange-300 transition-colors">
                 {category}

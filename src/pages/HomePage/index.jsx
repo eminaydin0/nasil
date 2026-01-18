@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Search, Filter, Sparkles, Trophy, Shield, Star, Flame, Clock, Award } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Search, Filter, Sparkles, Trophy, Shield, Star, Flame, Clock, Award, Users, Heart, Zap, Target, Gamepad2, Crown, Medal, TreePine, Home, Dice6, Spade, Package, Brain, Dices, Grid3X3, PencilLine } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import GameCard from '../../components/home/GameCard';
 import CategoryCard from '../../components/home/CategoryCard';
@@ -11,8 +11,6 @@ import { trackPageView } from '../../utils/analytics';
 import { supabase } from '../../lib/supabase';
 
 function HomePage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('kategori') || 'Tümü');
   const [games, setGames] = useState([]);
   const [categories, setCategories] = useState(['Tümü']);
   const [loading, setLoading] = useState(true);
@@ -21,22 +19,6 @@ function HomePage() {
     subtitle: 'Geleneksel Oyunlarımızı Yaşatıyoruz',
     content: 'Geleneksel Türk oyunları, yüzyıllardır nesilden nesile aktarılan kültürel mirasımızın önemli bir parçasıdır.\n\nTeknolojinin hızla geliştiği günümüzde, bu geleneksel oyunları dijital ortamda belgeleyerek gelecek nesillere aktarmak ve yaşatmak istiyoruz.'
   });
-
-  useEffect(() => {
-    const category = searchParams.get('kategori');
-    if (category) {
-      setSelectedCategory(category);
-      // Scroll to games section if a category is selected via URL
-      setTimeout(() => {
-        const gamesSection = document.getElementById('oyunlar');
-        if (gamesSection) {
-          gamesSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    } else {
-      setSelectedCategory('Tümü');
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     loadGames();
@@ -129,51 +111,45 @@ function HomePage() {
     trackPageView('/');
   }, []);
 
-  const filteredGames = games.filter(game => {
-    if (selectedCategory === 'Tümü') return true;
-    // Case-insensitive comparison for better robustness
-    return game.category?.toLowerCase().trim() === selectedCategory?.toLowerCase().trim();
-  });
-
   const categoryConfig = {
     'Dış Mekan': { 
-      icon: '🌳', 
+      icon: TreePine, 
       color: 'green', 
       bgColor: 'bg-green-50',
       image: 'https://images.unsplash.com/photo-1551966775-a4ddc8df052b?q=80&w=2070&auto=format&fit=crop'
     },
     'İç Mekan': { 
-      icon: '🏠', 
+      icon: Home, 
       color: 'blue', 
       bgColor: 'bg-blue-50',
       image: 'https://images.unsplash.com/photo-1560420025-9a327c4418d4?q=80&w=1974&auto=format&fit=crop'
     },
     'Masa Oyunları': { 
-      icon: '🎲', 
+      icon: Dice6, 
       color: 'purple', 
       bgColor: 'bg-purple-50',
       image: 'https://images.unsplash.com/photo-1611195974226-a6a9be9dd763?q=80&w=2000&auto=format&fit=crop'
     },
     'Kağıt Oyunları': { 
-      icon: '🃏', 
+      icon: Spade, 
       color: 'red', 
       bgColor: 'bg-red-50',
       image: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?q=80&w=2070&auto=format&fit=crop'
     },
     'Kutu Oyunları': { 
-      icon: '📦', 
+      icon: Package, 
       color: 'orange', 
       bgColor: 'bg-orange-50',
       image: 'https://images.unsplash.com/photo-1563906267088-b029e7101114?q=80&w=2070&auto=format&fit=crop'
     },
     'Zeka Oyunları': { 
-      icon: '🧠', 
+      icon: Brain, 
       color: 'indigo', 
       bgColor: 'bg-indigo-50',
       image: 'https://images.unsplash.com/photo-1580541832626-2a7131ee809f?q=80&w=2070&auto=format&fit=crop'
     },
     'default': { 
-      icon: '🎮', 
+      icon: Gamepad2, 
       color: 'gray', 
       bgColor: 'bg-gray-50',
       image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000&auto=format&fit=crop'
@@ -281,50 +257,71 @@ function HomePage() {
             </div>
           </section>
 
-        {/* All Games / Search Results */}
-        <section id="oyunlar">
+        {/* Tools Section */}
+        <section>
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              Tüm Oyunlar
+              <PencilLine className="text-purple-500" />
+              Oyun Araçları
             </h2>
-            
-            {/* Category Filter Tabs */}
-            <div className="hidden md:flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-200 shadow-sm">
-              {categories.map(category => (
-                <button
-                  key={category}
-                  onClick={() => {
-                    if (category === 'Tümü') {
-                      setSearchParams({});
-                    } else {
-                      setSearchParams({ kategori: category });
-                    }
-                  }}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    selectedCategory === category
-                      ? 'bg-gray-900 text-white shadow-md'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+            <a href="/araclar" className="text-sm font-semibold text-purple-600 hover:text-purple-700">
+              Tüm Araçları Gör →
+            </a>
           </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Link 
+              to="/araclar/101-yazboz"
+              className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-pink-100 rounded-lg">
+                  <Grid3X3 className="text-pink-600 w-6 h-6" />
+                </div>
+                <span className="bg-pink-100 text-pink-700 text-xs font-bold px-2 py-1 rounded-full">Yeni</span>
+              </div>
+              <h3 className="font-bold text-gray-900 mb-2 group-hover:text-pink-600 transition-colors">101 Okey Yazboz</h3>
+              <p className="text-gray-600 text-sm">Yüzbir oyunu için otomatik ceza hesaplama</p>
+            </Link>
 
-          {filteredGames.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredGames.map(game => (
-                <GameCard key={game.id} game={game} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
-              <div className="text-6xl mb-6">🔍</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Oyun bulunamadı</h3>
-              <p className="text-gray-500">Aramanızla eşleşen oyun bulunamadı. Farklı bir arama yapın.</p>
-            </div>
-          )}
+            <Link 
+              to="/araclar/okey-puan-sayaci"
+              className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Trophy className="text-red-600 w-6 h-6" />
+                </div>
+              </div>
+              <h3 className="font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors">Okey Puan Sayacı</h3>
+              <p className="text-gray-600 text-sm">Düşmeli okey için otomatik puan hesaplama</p>
+            </Link>
+
+            <Link 
+              to="/araclar/zar-at"
+              className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Dices className="text-blue-600 w-6 h-6" />
+                </div>
+              </div>
+              <h3 className="font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Zar Atma Aracı</h3>
+              <p className="text-gray-600 text-sm">Çoklu zar atma ve sonuç görüntüleme</p>
+            </Link>
+
+            <Link 
+              to="/araclar/takim-olusturucu"
+              className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Users className="text-green-600 w-6 h-6" />
+                </div>
+              </div>
+              <h3 className="font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">Takım Oluşturucu</h3>
+              <p className="text-gray-600 text-sm">Oyuncuları rastgele takımlara ayırma</p>
+            </Link>
+          </div>
         </section>
 
         {/* Testimonials Section */}

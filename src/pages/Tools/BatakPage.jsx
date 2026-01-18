@@ -1,9 +1,13 @@
+import { useEffect } from 'react';
 import SEO from '../../components/common/SEO';
 import BatakScore from '../../components/tools/BatakScore';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
 export default function BatakPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <SEO 
