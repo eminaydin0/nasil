@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { PencilLine, RotateCcw, Plus, Calculator } from 'lucide-react';
+import { PencilLine, Plus } from 'lucide-react';
+import GameTableContainer from '../common/GameTableContainer';
+import { showSuccess } from '../../utils/toast';
 
 export default function BatakScore() {
   const [players, setPlayers] = useState(['Oyuncu 1', 'Oyuncu 2', 'Oyuncu 3', 'Oyuncu 4']);
@@ -41,92 +43,84 @@ export default function BatakScore() {
   const totals = calculateTotals();
 
   const resetGame = () => {
-    if (window.confirm('Tüm tablo temizlenecek. Emin misiniz?')) {
-      setRounds([]);
-      setCurrentRound(['', '', '', '']);
-    }
+    setRounds([]);
+    setCurrentRound(['', '', '', '']);
+    showSuccess('Tablo temizlendi');
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-indigo-100 rounded-xl">
-            <PencilLine className="text-indigo-600 w-6 h-6" />
-          </div>
-          <h3 className="text-xl font-bold text-gray-900">Batak/King Yazboz</h3>
-        </div>
-        <button 
-          onClick={resetGame}
-          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-          title="Temizle"
-        >
-          <RotateCcw size={20} />
-        </button>
-      </div>
+    <GameTableContainer
+      title="Batak/King Yazboz"
+      icon={PencilLine}
+      iconColor="indigo"
+      onReset={resetGame}
+      className="h-full"
+    >
+      <div className="p-6">
 
-      <div className="overflow-x-auto grow">
-        <table className="w-full text-sm text-center">
-          <thead>
-            <tr>
-              {players.map((player, idx) => (
-                <th key={idx} className="p-1 pb-3">
-                  <input
-                    type="text"
-                    value={player}
-                    onChange={(e) => updatePlayerName(idx, e.target.value)}
-                    className="w-full text-center font-bold text-gray-700 bg-gray-50 rounded p-1 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                  />
-                </th>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-center">
+            <thead>
+              <tr className="border-b border-gray-200">
+                {players.map((player, idx) => (
+                  <th key={idx} className="p-3 pb-4">
+                    <input
+                      type="text"
+                      value={player}
+                      onChange={(e) => updatePlayerName(idx, e.target.value)}
+                      className="w-full text-center font-bold text-gray-700 bg-gray-50 rounded-lg px-3 py-2 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none border border-gray-200"
+                    />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="text-gray-600">
+              {rounds.map((round, roundIdx) => (
+                <tr key={roundIdx} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  {round.map((score, scoreIdx) => (
+                    <td key={scoreIdx} className="py-3 px-2">
+                      {score}
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          </thead>
-          <tbody className="text-gray-600">
-            {rounds.map((round, roundIdx) => (
-              <tr key={roundIdx} className="border-t border-gray-100 hover:bg-gray-50">
-                {round.map((score, scoreIdx) => (
-                  <td key={scoreIdx} className="py-2 px-1">
-                    {score}
+              
+              {/* Input Row */}
+              <tr className="border-t-2 border-indigo-200 bg-indigo-50/50">
+                {currentRound.map((val, idx) => (
+                  <td key={idx} className="p-2">
+                    <input
+                      type="number"
+                      value={val}
+                      placeholder="0"
+                      onChange={(e) => updateCurrentRound(idx, e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && addRound()}
+                      className="w-full p-2 text-center border border-indigo-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 bg-white"
+                    />
                   </td>
                 ))}
               </tr>
-            ))}
-            
-            {/* Input Row */}
-            <tr className="border-t-2 border-indigo-100 bg-indigo-50/30">
-              {currentRound.map((val, idx) => (
-                <td key={idx} className="p-1">
-                  <input
-                    type="number"
-                    value={val}
-                    placeholder="0"
-                    onChange={(e) => updateCurrentRound(idx, e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && addRound()}
-                    className="w-full p-2 text-center border border-indigo-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                  />
-                </td>
-              ))}
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr className="border-t-2 border-gray-800">
-              {totals.map((total, idx) => (
-                <td key={idx} className="pt-3 pb-1 font-black text-lg text-gray-900">
-                  {total}
-                </td>
-              ))}
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+            </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-gray-300 bg-gray-50">
+                {totals.map((total, idx) => (
+                  <td key={idx} className="py-4 font-black text-lg text-gray-900">
+                    {total}
+                  </td>
+                ))}
+              </tr>
+            </tfoot>
+          </table>
+        </div>
 
-      <button
-        onClick={addRound}
-        className="w-full mt-4 py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-2"
-      >
-        <Plus size={18} />
-        Turu Ekle
-      </button>
-    </div>
+        <button
+          onClick={addRound}
+          className="w-full mt-6 py-3 bg-indigo-600 text-white rounded-lg font-bold shadow-sm hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-2"
+        >
+          <Plus size={18} />
+          Turu Ekle
+        </button>
+      </div>
+    </GameTableContainer>
   );
 }

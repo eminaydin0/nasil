@@ -1,21 +1,26 @@
 import { useEffect } from 'react';
-import SEO from '../../components/common/SEO';
+import { Dices } from 'lucide-react';
 import DiceRoller from '../../components/tools/DiceRoller';
-import { Link } from 'react-router-dom';
-import { ChevronLeft, Dices } from 'lucide-react';
+import ToolLayout from '../../components/layout/ToolLayout';
 
 export default function DicePage() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
   return (
-    <div className="w-full h-screen min-h-screen bg-white">
-      <SEO 
-        title="Online Zar At - Tek ve Çift Zar Atma Aracı" 
-        description="Kaybolan zarlar için dijital çözüm. Tek tıkla tek veya çift zar atın. Tavla ve diğer kutu oyunları için ideal online zar atma aracı."
-        url="/araclar/zar-at"
-      />
-      <DiceRoller />
-    </div>
+    <ToolLayout
+      title="Zar At"
+      description="Kaybolan zarlar için dijital çözüm. Tek tıkla tek veya çift zar atın. Tavla ve diğer kutu oyunları için ideal online zar atma aracı."
+      icon={Dices}
+      iconColor="orange"
+      seoTitle="Online Zar At - Tek ve Çift Zar Atma Aracı"
+      seoDescription="Kaybolan zarlar için dijital çözüm. Tek tıkla tek veya çift zar atın. Tavla ve diğer kutu oyunları için ideal online zar atma aracı."
+      seoUrl="/araclar/zar-at"
+    >
+      <div className="p-8">
+        <DiceRoller />
+      </div>
+    </ToolLayout>
   );
 }

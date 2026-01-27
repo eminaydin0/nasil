@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Users, Shuffle, UserPlus, X } from 'lucide-react';
+import { showError } from '../../utils/toast';
 
 export default function TeamGenerator() {
   const [names, setNames] = useState('');
@@ -11,7 +12,7 @@ export default function TeamGenerator() {
     const nameList = names.split('\n').filter(n => n.trim().length > 0);
     
     if (nameList.length < 2) {
-      alert('Lütfen en az 2 isim giriniz.');
+      showError('Lütfen en az 2 isim giriniz.');
       return;
     }
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Users, Shuffle, RefreshCw } from 'lucide-react';
+import { showError } from '../../utils/toast';
 
 const formations = {
   5: [
@@ -56,7 +57,7 @@ export default function HalisahaGenerator() {
     const list = names.split('\n').map(s => s.trim()).filter(Boolean);
     const playersNeeded = format * 2;
     if (list.length < playersNeeded) {
-      alert(`Lütfen en az ${playersNeeded} oyuncu giriniz (format: ${format}v${format}).`);
+      showError(`Lütfen en az ${playersNeeded} oyuncu giriniz (format: ${format}v${format}).`);
       return;
     }
 
