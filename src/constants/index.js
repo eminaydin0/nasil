@@ -1,0 +1,1 @@
+export { categoryConfig } from './categoryConfig';

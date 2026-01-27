@@ -16,22 +16,36 @@ export default function Okey101Page() {
         url="/araclar/101-yazboz"
       />
 
-      <div className="bg-gray-900 py-8 px-4">
-        <div className="container mx-auto">
-          <Link to="/araclar" className="inline-flex items-center text-gray-400 hover:text-white mb-4 transition-colors">
-            <ChevronLeft size={20} />
-            Araçlara Dön
+      {/* Oyun Detayı Stili Başlık ve Kısa Bilgi */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 py-12">
+          <Link to="/araclar" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors group text-sm">
+            <ChevronLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+            <span>Araçlara Dön</span>
           </Link>
-          <h1 className="text-3xl font-black text-white">
-            101 Okey Yazboz
-          </h1>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Simgesel Görsel Alanı */}
+            <div className="md:col-span-1 flex items-center justify-center">
+              <div className="aspect-square w-28 h-28 bg-gradient-to-br from-orange-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
+                <span className="text-4xl font-black text-white drop-shadow-lg">101</span>
+              </div>
+            </div>
+            {/* Başlık ve Kısa Açıklama */}
+            <div className="md:col-span-2 flex flex-col justify-center">
+              <div className="flex items-center space-x-2 mb-2">
+                <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-[11px] font-medium rounded-lg">Kağıt Oyunu</span>
+              </div>
+              <h1 className="text-base md:text-lg font-bold text-gray-900 mb-1">101 Okey <span className="text-orange-600">Yazboz</span></h1>
+              <p className="text-gray-600 text-sm font-normal mt-1">Dijital yazboz ile ceza puanlarını ve bitişleri kolayca hesaplayın.</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 -mt-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-            <div className="p-8">
+      <div className="container mx-auto px-6 md:px-8 mt-8">
+        <div className="w-full max-w-5xl mx-auto">
+          <div className="bg-gradient-to-br from-orange-50 to-pink-50 rounded-2xl shadow-xl border border-orange-100 overflow-hidden ring-2 ring-orange-200">
+            <div className="p-4 sm:p-8 md:p-10 lg:p-12">
               <Okey101Score />
             </div>
           </div>

@@ -2,11 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, MessageCircle, TrendingUp, Download, Sparkles, FileText, Phone } from 'lucide-react';
 import toast from 'react-hot-toast';
-import AnalyticsDashboard from '../../components/admin/AnalyticsDashboard';
 import AdminLogin from '../../components/admin/AdminLogin';
 import AdminHeader from '../../components/admin/AdminHeader';
-import AdminStats from '../../components/admin/AdminStats';
-import TopGames from '../../components/admin/TopGames';
 import GamesTable from '../../components/admin/GamesTable';
 import GameModal from '../../components/admin/GameModal';
 import CommentsManager from '../../components/admin/CommentsManager';
@@ -15,8 +12,9 @@ import GameOfTheDayManager from '../../components/admin/GameOfTheDayManager';
 import ContentManager from '../../components/admin/ContentManager';
 import ContactManager from '../../components/admin/ContactManager';
 import UserManager from '../../components/admin/UserManager';
+import AdminDashboardTab from '../../components/admin/tabs/AdminDashboardTab';
+import AdminAnalyticsTab from '../../components/admin/tabs/AdminAnalyticsTab';
 import { supabase } from '../../lib/supabase';
-import { exportAnalyticsData } from '../../utils/analytics';
 
 // Admin action tracking fonksiyonu
 const trackAdminAction = (action, details) => {
@@ -533,10 +531,7 @@ function AdminPanel() {
 
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
-          <div className="space-y-8">
-            <AdminStats stats={stats} />
-            <TopGames sortedGames={sortedGames} />
-          </div>
+          <AdminDashboardTab stats={stats} sortedGames={sortedGames} />
         )}
 
         {/* Games Tab */}
@@ -568,66 +563,23 @@ function AdminPanel() {
         
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (
-          <div className="space-y-6">
-            {/* Analytics Actions */}
-            <div className="flex items-center justify-between bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="text-blue-600" size={20} />
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-gray-900">Engagement Score</div>
-                    <div className="text-xs text-gray-500">Kullanıcı etkileşim puanı</div>
-                  </div>
-                </div>
-                <div className="text-3xl font-bold text-blue-600">
-                  {Math.round(
-                    Math.min(
-                      ((stats.totalComments / Math.max(stats.totalViews, 1)) * 100 * 0.2) +
-                      ((parseFloat(stats.avgRating || 0) / 5) * 30) +
-                      (Math.min((stats.totalViews / 1000) * 30, 30)) +
-                      (Math.min((stats.totalGames / 50) * 20, 20)),
-                      100
-                    )
-                  )}/100
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  exportAnalyticsData();
-                  toast.success('Analytics verileri dışa aktarıldı!', { icon: '📊' });
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-              >
-                <Download size={18} />
-                <span>Analytics İndir</span>
-              </button>
-            </div>
-            
-            <AnalyticsDashboard games={games} />
-          </div>
+          <AdminAnalyticsTab games={games} stats={stats} />
         )}
 
-        {activeTab === 'carousel' && (
-          <CarouselManager games={games} />
-        )}
+        {/* Carousel Tab */}
+        {activeTab === 'carousel' && <CarouselManager games={games} />}
 
-        {activeTab === 'gameoftheday' && (
-          <GameOfTheDayManager />
-        )}
+        {/* Game of the Day Tab */}
+        {activeTab === 'gameoftheday' && <GameOfTheDayManager />}
 
-        {activeTab === 'content' && (
-          <ContentManager />
-        )}
+        {/* Content Tab */}
+        {activeTab === 'content' && <ContentManager />}
 
-        {activeTab === 'contact' && (
-          <ContactManager />
-        )}
+        {/* Contact Tab */}
+        {activeTab === 'contact' && <ContactManager />}
 
-        {activeTab === 'users' && (
-          <UserManager />
-        )}
+        {/* Users Tab */}
+        {activeTab === 'users' && <UserManager />}
       </main>
 
       {/* Add/Edit Modal */}

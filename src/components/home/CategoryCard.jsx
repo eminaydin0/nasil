@@ -1,44 +1,59 @@
 import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 
 function CategoryCard({ category, count, icon: IconComponent, image }) {
+  // URL'de kategori ismini encode et
+  const categoryUrl = encodeURIComponent(category);
+  
   return (
-    <Link to={`/kategori/${category}`} className="group block h-full relative">
-      <div className="relative h-40 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group-hover:-translate-y-1">
-        {/* Background Image */}
-        <div className="absolute inset-0">
+    <Link to={`/kategori/${categoryUrl}`} className="group block w-full">
+      <div className="relative aspect-[4/5] md:aspect-[3/4] rounded-xl overflow-hidden bg-[#121212] transition-all duration-300">
+        
+        {/* Arka Plan Görseli - Keskin ve Net */}
+        <div className="absolute inset-0 z-0">
           <img 
             src={image} 
             alt={category} 
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000&auto=format&fit=crop';
+              e.target.src = 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=800';
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90"></div>
+          {/* Görseldeki gibi çok katmanlı karartma */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-black/20"></div>
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
         </div>
 
-        {/* Content */}
-        <div className="absolute inset-0 p-5 flex flex-col justify-end">
-          <div className="flex items-end justify-between gap-2">
-            <div>
-              <div className="text-3xl mb-2 transform group-hover:scale-110 transition-transform duration-300 origin-left filter drop-shadow-lg">
-                <IconComponent className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-white leading-tight group-hover:text-orange-300 transition-colors">
-                {category}
-              </h3>
-            </div>
+        {/* İçerik - Minimalist ve Şık */}
+        <div className="absolute inset-0 z-10 p-5 flex flex-col justify-end">
+          
+          {/* İkon - Sol Üstte Küçük ve Zarif */}
+          <div className="absolute top-4 left-4 p-2.5 bg-black/60 backdrop-blur-md rounded-lg border border-white/5 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+            <IconComponent size={18} className="text-white" />
+          </div>
+
+          <div className="space-y-1 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+            <h3 className="text-lg font-bold text-white tracking-tight leading-none">
+              {category}
+            </h3>
             
-            <span className="text-xs font-medium text-white/80 bg-white/10 px-2 py-1 rounded-lg backdrop-blur-sm border border-white/10">
-              {count} Oyun
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                {count} Oyun Mevcut
+              </span>
+              
+              {/* İnce Ok İşareti */}
+              <ChevronRight size={16} className="text-white opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-300" />
+            </div>
           </div>
         </div>
+
+        {/* Aktif Kenarlık - Sadece Hover'da */}
+        <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/10 rounded-xl transition-all duration-300"></div>
       </div>
     </Link>
   );
 }
 
 export default CategoryCard;
-

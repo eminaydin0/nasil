@@ -1,58 +1,40 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Gamepad2, Search } from 'lucide-react';
 import GameCard from '../../components/home/GameCard';
-import { supabase } from '../../lib/supabase';
+import { useGames } from '../../hooks/useGames';
 
 function AllGames() {
-  const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { games, loading } = useGames();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Tümü');
   const [categories, setCategories] = useState(['Tümü']);
 
   useEffect(() => {
-    loadGames();
     window.scrollTo(0, 0);
   }, []);
 
-  const loadGames = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('games')
-        .select('*')
-        .order('name', { ascending: true });
+  useEffect(() => {
+    if (games.length > 0) {
+      // Standart kategoriler - gereksiz kombinasyonları filtrele
+      const standardCategories = [
+        'Dış Mekan',
+        'İç Mekan',
+        'Masa Oyunları',
+        'Kağıt Oyunları',
+        'Kutu Oyunları',
+        'Zeka Oyunları'
+      ];
       
-      if (error) throw error;
+      // Sadece standart kategorileri göster
+      const uniqueCats = ['Tümü', ...new Set(
+        games
+          .map(g => g.category)
+          .filter(cat => standardCategories.includes(cat))
+      )];
       
-      const formattedGames = data.map(game => ({
-        id: game.id,
-        slug: game.slug,
-        name: game.name,
-        category: game.category,
-        players: game.players,
-        difficulty: game.difficulty,
-        image: game.image,
-        shortDescription: game.short_description,
-        description: game.description,
-        rules: game.rules,
-        tips: game.tips
-      }));
-      
-      setGames(formattedGames);
-      
-      // Extract unique categories
-      const uniqueCats = ['Tümü', ...new Set(formattedGames.map(g => g.category))];
       setCategories(uniqueCats);
-      
-    } catch (error) {
-      console.error('Error loading games:', error);
-      setGames([]);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [games]);
 
   const filteredGames = games.filter(game => {
     const matchesSearch = game.name.toLowerCase().includes(searchTerm.toLowerCase());

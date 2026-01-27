@@ -12,6 +12,8 @@ import BatakPage from './pages/Tools/BatakPage';
 import TeamGeneratorPage from './pages/Tools/TeamGeneratorPage';
 import DicePage from './pages/Tools/DicePage';
 import ScoreBoardPage from './pages/Tools/ScoreBoardPage';
+import HalisahaPage from './pages/Tools/HalisahaPage';
+import Okey101ScorePage from './pages/GameDetail/Okey101ScorePage';
 import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -74,10 +76,12 @@ function App() {
                   <Route path="/araclar/101-yazboz" element={<Okey101Page />} />
                   <Route path="/araclar/batak-yazboz" element={<BatakPage />} />
                   <Route path="/araclar/takim-olusturucu" element={<TeamGeneratorPage />} />
+                  <Route path="/araclar/halisaha-takim-olusturucu" element={<HalisahaPage />} />
                   <Route path="/araclar/zar-at" element={<DicePage />} />
                   <Route path="/araclar/skor-tablosu" element={<ScoreBoardPage />} />
                   <Route path="/kategori/:categoryName" element={<CategoryPage />} />
                   <Route path="/oyun/:slug" element={<GameDetail />} />
+                   <Route path="/oyun/:slug/101-skor-tablosu" element={<Okey101ScorePage />} />
                   <Route path="/hakkimizda" element={<About />} />
                   <Route path="/iletisim" element={<Contact />} />
                   <Route path="/auth" element={<AuthPage />} />

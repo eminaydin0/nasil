@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Filter, ArrowLeft } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Filter, ArrowLeft, Eye } from 'lucide-react';
 import GameCard from '../../components/home/GameCard';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
+import SEO from '../../components/common/SEO';
 import { supabase } from '../../lib/supabase';
+import { categoryConfig } from '../../constants';
 
 function CategoryPage() {
   const { categoryName } = useParams();
+  const navigate = useNavigate();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,10 +21,31 @@ function CategoryPage() {
   const loadGames = async () => {
     setLoading(true);
     try {
+      // URL'den gelen kategori ismini decode et
+      const decodedCategoryName = decodeURIComponent(categoryName);
+      
+      // Standart kategoriler listesi - gereksiz kombinasyonları filtrele
+      const standardCategories = [
+        'Dış Mekan',
+        'İç Mekan',
+        'Masa Oyunları',
+        'Kağıt Oyunları',
+        'Kutu Oyunları',
+        'Zeka Oyunları'
+      ];
+
+      // Eğer kategori standart kategorilerden biri değilse, boş sonuç döndür
+      if (!standardCategories.includes(decodedCategoryName)) {
+        setGames([]);
+        setLoading(false);
+        return;
+      }
+
+      // Tam eşleşme ile kategoriye göre oyunları getir
       const { data, error } = await supabase
         .from('games')
         .select('*')
-        .ilike('category', categoryName)
+        .eq('category', decodedCategoryName)
         .order('id', { ascending: true });
       
       if (error) throw error;
@@ -49,59 +73,42 @@ function CategoryPage() {
     }
   };
 
-  const categoryConfig = {
-    'Dış Mekan': { 
-      icon: '🌳', 
-      color: 'green', 
-      bgColor: 'bg-green-50',
-      description: 'Açık havada, parkta veya bahçede oynayabileceğiniz en eğlenceli oyunlar.'
-    },
-    'İç Mekan': { 
-      icon: '🏠', 
-      color: 'blue', 
-      bgColor: 'bg-blue-50',
-      description: 'Evde, sınıfta veya kapalı alanlarda oynanabilecek keyifli oyunlar.'
-    },
-    'Masa Oyunları': { 
-      icon: '🎲', 
-      color: 'purple', 
-      bgColor: 'bg-purple-50',
-      description: 'Masa başında arkadaşlarınızla veya ailenizle oynayabileceğiniz strateji ve şans oyunları.'
-    },
-    'Kağıt Oyunları': { 
-      icon: '🃏', 
-      color: 'red', 
-      bgColor: 'bg-red-50',
-      description: 'İskambil kağıtlarıyla oynanan klasik ve modern kart oyunları.'
-    },
-    'Kutu Oyunları': { 
-      icon: '📦', 
-      color: 'orange', 
-      bgColor: 'bg-orange-50',
-      description: 'Zar, piyon ve kartlarla oynanan eğlenceli kutu oyunları.'
-    },
-    'Zeka Oyunları': { 
-      icon: '🧠', 
-      color: 'indigo', 
-      bgColor: 'bg-indigo-50',
-      description: 'Zihninizi zorlayacak, düşünme becerilerinizi geliştirecek oyunlar.'
-    },
-    'default': { 
-      icon: '🎮', 
-      color: 'gray', 
-      bgColor: 'bg-gray-50',
-      description: 'Keyifli vakit geçirebileceğiniz oyunlar.'
-    }
+  // URL'den gelen kategori ismini decode et
+  const decodedCategoryName = decodeURIComponent(categoryName || '');
+  const config = categoryConfig[decodedCategoryName] || categoryConfig['default'];
+  
+  const categoryDescriptions = {
+    'Dış Mekan': 'Açık havada, parkta veya bahçede oynayabileceğiniz en eğlenceli oyunlar.',
+    'İç Mekan': 'Evde, sınıfta veya kapalı alanlarda oynanabilecek keyifli oyunlar.',
+    'Masa Oyunları': 'Masa başında arkadaşlarınızla veya ailenizle oynayabileceğiniz strateji ve şans oyunları.',
+    'Kağıt Oyunları': 'İskambil kağıtlarıyla oynanan klasik ve modern kart oyunları.',
+    'Kutu Oyunları': 'Zar, piyon ve kartlarla oynanan eğlenceli kutu oyunları.',
+    'Zeka Oyunları': 'Zihninizi zorlayacak, düşünme becerilerinizi geliştirecek oyunlar.'
   };
-
-  const config = categoryConfig[categoryName] || categoryConfig['default'];
+  
+  const description = categoryDescriptions[decodedCategoryName] || 'Keyifli vakit geçirebileceğiniz oyunlar.';
+  const IconComponent = config.icon;
+  
+  // Renk class mapping - Tailwind için
+  const colorClasses = {
+    green: { bg: 'bg-green-100', text: 'text-green-700', icon: 'text-green-600' },
+    blue: { bg: 'bg-blue-100', text: 'text-blue-700', icon: 'text-blue-600' },
+    purple: { bg: 'bg-purple-100', text: 'text-purple-700', icon: 'text-purple-600' },
+    red: { bg: 'bg-red-100', text: 'text-red-700', icon: 'text-red-600' },
+    orange: { bg: 'bg-orange-100', text: 'text-orange-700', icon: 'text-orange-600' },
+    indigo: { bg: 'bg-indigo-100', text: 'text-indigo-700', icon: 'text-indigo-600' },
+    gray: { bg: 'bg-gray-100', text: 'text-gray-700', icon: 'text-gray-600' }
+  };
+  
+  const colorClass = colorClasses[config.color] || colorClasses.gray;
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-12">
           <div className="h-48 bg-gray-200 rounded-2xl animate-shimmer mb-8"></div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <SkeletonLoader type="game-card" />
             <SkeletonLoader type="game-card" />
             <SkeletonLoader type="game-card" />
             <SkeletonLoader type="game-card" />
@@ -113,34 +120,64 @@ function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <div className={`${config.bgColor} border-b border-${config.color}-100`}>
+      <SEO 
+        title={`${decodedCategoryName} Oyunları - Nasıl Oynanır?`}
+        description={description}
+        url={`/kategori/${categoryName}`}
+      />
+      
+      {/* Header Section - GameDetail Style */}
+      <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-12">
-          <Link 
-            to="/" 
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-colors group"
+          <button
+            onClick={() => navigate('/')}
+            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-colors group text-sm"
           >
-            <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-            Ana Sayfaya Dön
-          </Link>
-          
-          <div className="flex items-center gap-4 mb-4">
-            <span className="text-5xl">{config.icon}</span>
-            <h1 className={`text-4xl font-black text-${config.color}-900`}>
-              {categoryName}
-            </h1>
+            <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+            <span>Geri Dön</span>
+          </button>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Category Icon/Image */}
+            <div className="md:col-span-1">
+              <div className="aspect-video w-full bg-gray-100 rounded-xl overflow-hidden relative">
+                <img 
+                  src={config.image} 
+                  alt={decodedCategoryName}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                <div className="absolute bottom-4 left-4">
+                  <div className={`p-3 ${config.bgColor} rounded-lg backdrop-blur-sm border border-white/20`}>
+                    <IconComponent className={colorClass.icon} size={32} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="md:col-span-2 flex flex-col justify-center">
+              <div className="flex items-center space-x-2 mb-3">
+                <span className={`px-3 py-1 ${colorClass.bg} ${colorClass.text} text-xs font-medium rounded-lg`}>
+                  {decodedCategoryName}
+                </span>
+                <span className="flex items-center text-gray-500 text-xs">
+                  <Eye size={14} className="mr-1" />
+                  {games.length} oyun
+                </span>
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{decodedCategoryName} Oyunları</h1>
+              <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
+            </div>
           </div>
-          <p className={`text-lg text-${config.color}-800 max-w-2xl`}>
-            {config.description}
-          </p>
         </div>
       </div>
 
-      {/* Games Grid */}
+      {/* Games Grid - HomePage Style */}
       <div className="container mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Filter className={`text-${config.color}-600`} />
+            <Filter className="text-orange-600" />
             {games.length} Oyun Listeleniyor
           </h2>
         </div>

@@ -1,86 +1,44 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, Filter, Sparkles, Trophy, Shield, Star, Flame, Clock, Award, Users, Heart, Zap, Target, Gamepad2, Crown, Medal, TreePine, Home, Dice6, Spade, Package, Brain, Dices, Grid3X3, PencilLine } from 'lucide-react';
+import { Filter, Flame, Clock } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import GameCard from '../../components/home/GameCard';
 import CategoryCard from '../../components/home/CategoryCard';
 import HeroCarousel from '../../components/home/HeroCarousel';
 import GameOfTheDay from '../../components/home/GameOfTheDay';
+import TestimonialsSection from '../../components/home/TestimonialsSection';
+import ToolsSection from '../../components/home/ToolsSection';
+import AboutSection from '../../components/home/AboutSection';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import { trackPageView } from '../../utils/analytics';
-import { supabase } from '../../lib/supabase';
+import { useGames } from '../../hooks/useGames';
+import { categoryConfig } from '../../constants';
 
 function HomePage() {
-  const [games, setGames] = useState([]);
+  const { games, loading } = useGames();
   const [categories, setCategories] = useState(['Tümü']);
-  const [loading, setLoading] = useState(true);
-  const [culturalContent, setCulturalContent] = useState({
-    title: 'Kültürel Mirasımız',
-    subtitle: 'Geleneksel Oyunlarımızı Yaşatıyoruz',
-    content: 'Geleneksel Türk oyunları, yüzyıllardır nesilden nesile aktarılan kültürel mirasımızın önemli bir parçasıdır.\n\nTeknolojinin hızla geliştiği günümüzde, bu geleneksel oyunları dijital ortamda belgeleyerek gelecek nesillere aktarmak ve yaşatmak istiyoruz.'
-  });
 
   useEffect(() => {
-    loadGames();
-    loadContent();
-  }, []);
-
-  const loadContent = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('site_content')
-        .select('*')
-        .eq('section_key', 'cultural_heritage')
-        .single();
-
-      if (!error && data) {
-        setCulturalContent({
-          title: data.title,
-          subtitle: data.subtitle,
-          content: data.content
-        });
-      }
-    } catch (error) {
-      console.error('Error loading content:', error);
-    }
-  };
-
-  const loadGames = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('games')
-        .select('*')
-        .order('id', { ascending: true });
+    if (games.length > 0) {
+      // Standart kategoriler - gereksiz kombinasyonları filtrele
+      const standardCategories = [
+        'Dış Mekan',
+        'İç Mekan',
+        'Masa Oyunları',
+        'Kağıt Oyunları',
+        'Kutu Oyunları',
+        'Zeka Oyunları'
+      ];
       
-      if (error) throw error;
+      // Sadece standart kategorileri göster
+      const uniqueCategories = ['Tümü', ...new Set(
+        games
+          .map(g => g.category)
+          .filter(cat => standardCategories.includes(cat))
+      )];
       
-      const formattedGames = data.map(game => ({
-        id: game.id,
-        slug: game.slug,
-        name: game.name,
-        category: game.category,
-        players: game.players,
-        difficulty: game.difficulty,
-        image: game.image,
-        shortDescription: game.short_description,
-        description: game.description,
-        rules: game.rules,
-        tips: game.tips,
-        views: game.views || 0,
-        createdAt: game.created_at
-      }));
-      
-      setGames(formattedGames);
-      
-      const uniqueCategories = ['Tümü', ...new Set(formattedGames.map(g => g.category))];
       setCategories(uniqueCategories);
-    } catch (error) {
-      console.error('Error loading games from Supabase:', error);
-      setGames([]);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [games]);
 
   useEffect(() => {
     document.title = 'Geleneksel Türk Oyunları - Nasıl Oynanır? Kuralları ve İpuçları';
@@ -111,50 +69,6 @@ function HomePage() {
     trackPageView('/');
   }, []);
 
-  const categoryConfig = {
-    'Dış Mekan': { 
-      icon: TreePine, 
-      color: 'green', 
-      bgColor: 'bg-green-50',
-      image: 'https://images.unsplash.com/photo-1551966775-a4ddc8df052b?q=80&w=2070&auto=format&fit=crop'
-    },
-    'İç Mekan': { 
-      icon: Home, 
-      color: 'blue', 
-      bgColor: 'bg-blue-50',
-      image: 'https://images.unsplash.com/photo-1560420025-9a327c4418d4?q=80&w=1974&auto=format&fit=crop'
-    },
-    'Masa Oyunları': { 
-      icon: Dice6, 
-      color: 'purple', 
-      bgColor: 'bg-purple-50',
-      image: 'https://images.unsplash.com/photo-1611195974226-a6a9be9dd763?q=80&w=2000&auto=format&fit=crop'
-    },
-    'Kağıt Oyunları': { 
-      icon: Spade, 
-      color: 'red', 
-      bgColor: 'bg-red-50',
-      image: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?q=80&w=2070&auto=format&fit=crop'
-    },
-    'Kutu Oyunları': { 
-      icon: Package, 
-      color: 'orange', 
-      bgColor: 'bg-orange-50',
-      image: 'https://images.unsplash.com/photo-1563906267088-b029e7101114?q=80&w=2070&auto=format&fit=crop'
-    },
-    'Zeka Oyunları': { 
-      icon: Brain, 
-      color: 'indigo', 
-      bgColor: 'bg-indigo-50',
-      image: 'https://images.unsplash.com/photo-1580541832626-2a7131ee809f?q=80&w=2070&auto=format&fit=crop'
-    },
-    'default': { 
-      icon: Gamepad2, 
-      color: 'gray', 
-      bgColor: 'bg-gray-50',
-      image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000&auto=format&fit=crop'
-    }
-  };
 
   if (loading) {
     return (
@@ -258,221 +172,16 @@ function HomePage() {
           </section>
 
         {/* Tools Section */}
-        <section>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <PencilLine className="text-purple-500" />
-              Oyun Araçları
-            </h2>
-            <a href="/araclar" className="text-sm font-semibold text-purple-600 hover:text-purple-700">
-              Tüm Araçları Gör →
-            </a>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Link 
-              to="/araclar/101-yazboz"
-              className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-pink-100 rounded-lg">
-                  <Grid3X3 className="text-pink-600 w-6 h-6" />
-                </div>
-                <span className="bg-pink-100 text-pink-700 text-xs font-bold px-2 py-1 rounded-full">Yeni</span>
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2 group-hover:text-pink-600 transition-colors">101 Okey Yazboz</h3>
-              <p className="text-gray-600 text-sm">Yüzbir oyunu için otomatik ceza hesaplama</p>
-            </Link>
-
-            <Link 
-              to="/araclar/okey-puan-sayaci"
-              className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <Trophy className="text-red-600 w-6 h-6" />
-                </div>
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors">Okey Puan Sayacı</h3>
-              <p className="text-gray-600 text-sm">Düşmeli okey için otomatik puan hesaplama</p>
-            </Link>
-
-            <Link 
-              to="/araclar/zar-at"
-              className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Dices className="text-blue-600 w-6 h-6" />
-                </div>
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Zar Atma Aracı</h3>
-              <p className="text-gray-600 text-sm">Çoklu zar atma ve sonuç görüntüleme</p>
-            </Link>
-
-            <Link 
-              to="/araclar/takim-olusturucu"
-              className="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Users className="text-green-600 w-6 h-6" />
-                </div>
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">Takım Oluşturucu</h3>
-              <p className="text-gray-600 text-sm">Oyuncuları rastgele takımlara ayırma</p>
-            </Link>
-          </div>
-        </section>
+        <ToolsSection />
 
         {/* Testimonials Section */}
         <TestimonialsSection />
 
         {/* About Section */}
-        <section id="hakkinda" className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-orange-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-          <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-bold mb-6">
-                <Award size={18} />
-                {culturalContent.title}
-              </div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                {culturalContent.subtitle}
-              </h2>
-              <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
-                {culturalContent.content.split('\n').map((paragraph, index) => (
-                  paragraph.trim() && <p key={index}>{paragraph}</p>
-                ))}
-              </div>
-              <div className="mt-8 flex items-center gap-4">
-                <div className="flex -space-x-4">
-                  {[1,2,3,4].map(i => (
-                    <div key={i} className="w-12 h-12 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500">
-                      User
-                    </div>
-                  ))}
-                </div>
-                <div className="text-sm">
-                  <p className="font-bold text-gray-900">500+ Oyuncu</p>
-                  <p className="text-gray-500">Topluluğumuza katılın</p>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="aspect-square rounded-2xl bg-gray-100 overflow-hidden rotate-3 hover:rotate-0 transition-transform duration-500 shadow-2xl">
-                <img 
-                  src="https://images.unsplash.com/photo-1606167668584-78701c57f13d?q=80&w=2070&auto=format&fit=crop" 
-                  alt="Traditional Games" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
+        <AboutSection />
 
       </div>
     </div>
-  );
-}
-
-// Testimonials Section Component
-function TestimonialsSection() {
-  const [testimonials, setTestimonials] = useState([]);
-
-  useEffect(() => {
-    loadTestimonials();
-  }, []);
-
-  const loadTestimonials = async () => {
-    try {
-      const { data: gamesData, error: gamesError } = await supabase
-        .from('games')
-        .select('id, name');
-      
-      if (gamesError) throw gamesError;
-      
-      const { data: commentsData, error: commentsError } = await supabase
-        .from('comments')
-        .select('*')
-        .eq('is_testimonial', true)
-        .order('created_at', { ascending: false })
-        .limit(3);
-      
-      if (commentsError) throw commentsError;
-      
-      const formattedTestimonials = (commentsData || []).map(comment => {
-        const game = gamesData.find(g => g.id === comment.game_id);
-        return {
-          name: comment.author_name,
-          comment: comment.content,
-          rating: comment.rating,
-          gameName: game?.name || 'Bilinmeyen Oyun',
-          avatarUrl: comment.avatar_url
-        };
-      });
-      
-      setTestimonials(formattedTestimonials);
-    } catch (error) {
-      console.error('Error loading testimonials:', error);
-      setTestimonials([]);
-    }
-  };
-
-  const getInitials = (name) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
-  if (testimonials.length === 0) return null;
-
-  return (
-    <section className="py-12">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Oyuncu Yorumları</h2>
-        <p className="text-gray-600">
-          Platformumuzu kullanan oyun severlerin deneyimleri
-        </p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {testimonials.map((testimonial, index) => (
-          <div key={index} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-1 text-yellow-400 mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={18}
-                  className={i < testimonial.rating ? 'fill-yellow-400' : 'fill-gray-200 text-gray-200'}
-                />
-              ))}
-            </div>
-            <p className="text-gray-700 leading-relaxed mb-6 min-h-[80px]">"{testimonial.comment}"</p>
-            <div className="flex items-center space-x-3 pt-6 border-t border-gray-50">
-              <div className="shrink-0 w-10 h-10">
-                {testimonial.avatarUrl ? (
-                  <img 
-                    src={testimonial.avatarUrl} 
-                    alt={testimonial.name} 
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center text-white font-bold text-xs ring-2 ring-gray-100">
-                    {getInitials(testimonial.name)}
-                  </div>
-                )}
-              </div>
-              <div>
-                <p className="font-bold text-gray-900 text-sm">{testimonial.name}</p>
-                <p className="text-xs text-gray-500">{testimonial.gameName}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }
 

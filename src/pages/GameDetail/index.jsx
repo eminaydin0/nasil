@@ -1,60 +1,29 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
-import { ArrowLeft, Users, MapPin, Target, Lightbulb, ChevronRight, Eye, Image as ImageIcon } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import CommentSection from '../../components/game/CommentSection';
-import SocialShare from '../../components/game/SocialShare';
-import GameRecommendations from '../../components/home/GameRecommendations';
+import GameHeader from '../../components/game/GameHeader';
+import GameInfo from '../../components/game/GameInfo';
+import GameContent from '../../components/game/GameContent';
+import GameSidebar from '../../components/game/GameSidebar';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import { trackPageView, trackGameView } from '../../utils/analytics';
+import { useGame } from '../../hooks/useGame';
 import { supabase } from '../../lib/supabase';
 
 function GameDetail() {
   const { slug } = useParams();
-  const navigate = useNavigate();
+  const { game, loading, viewCount } = useGame(slug);
   const [games, setGames] = useState([]);
-  const [game, setGame] = useState(null);
-  const [viewCount, setViewCount] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    loadGameAndViews();
-  }, [slug]);
+    loadAllGames();
+  }, []);
 
-  const loadGameAndViews = async () => {
-    setLoading(true);
-    
+  const loadAllGames = async () => {
     try {
-      // Oyunu Supabase'den çek
-      const { data: gameData, error: gameError } = await supabase
-        .from('games')
-        .select('*, gallery:game_gallery_images(image_url)')
-        .eq('slug', slug)
-        .single();
-      
-      if (gameError) throw gameError;
-      
-      // Format game data
-      const foundGame = {
-        id: gameData.id,
-        slug: gameData.slug,
-        name: gameData.name,
-        category: gameData.category,
-        players: gameData.players,
-        difficulty: gameData.difficulty,
-        image: gameData.image,
-        gallery: gameData.gallery ? gameData.gallery.map(item => item.image_url) : [],
-        shortDescription: gameData.short_description,
-        description: gameData.description,
-        rules: gameData.rules,
-        tips: gameData.tips
-      };
-      
-      setGame(foundGame);
-      
-      // Tüm oyunları da yükle (recommendations için)
       const { data: allGames } = await supabase
         .from('games')
         .select('*')
@@ -76,54 +45,8 @@ function GameDetail() {
         }));
         setGames(formattedGames);
       }
-      
-      // View count'u güncelle
-      await updateViewCount(gameData.id);
-      
     } catch (error) {
-      console.error('Error loading game from Supabase:', error);
-      setGame(null);
-      setGames([]);
-    } finally {
-      setTimeout(() => setLoading(false), 300);
-    }
-  };
-
-  const updateViewCount = async (gameId) => {
-    try {
-      // Mevcut view count'u al
-      const { data: existingView } = await supabase
-        .from('game_views')
-        .select('view_count')
-        .eq('game_id', gameId)
-        .single();
-      
-      if (existingView) {
-        // Güncelle
-        const { data, error } = await supabase
-          .from('game_views')
-          .update({ view_count: existingView.view_count + 1 })
-          .eq('game_id', gameId)
-          .select()
-          .single();
-        
-        if (!error && data) {
-          setViewCount(data.view_count);
-        }
-      } else {
-        // Yeni kayıt oluştur
-        const { data, error } = await supabase
-          .from('game_views')
-          .insert([{ game_id: gameId, view_count: 1 }])
-          .select()
-          .single();
-        
-        if (!error && data) {
-          setViewCount(data.view_count);
-        }
-      }
-    } catch (error) {
-      console.error('Error updating view count:', error);
+      console.error('Error loading games:', error);
     }
   };
 
@@ -168,10 +91,6 @@ function GameDetail() {
     return <SkeletonLoader type="game-detail" />;
   }
 
-  const currentIndex = games.findIndex(g => g.id === game.id);
-  const nextGame = games[(currentIndex + 1) % games.length];
-  const prevGame = games[(currentIndex - 1 + games.length) % games.length];
-
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO 
@@ -183,212 +102,20 @@ function GameDetail() {
         type="article"
         structuredData={structuredData}
       />
-      {/* Compact Header with Image */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-12">
-          <button
-            onClick={() => navigate('/')}
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors group text-sm"
-          >
-            <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-            <span>Geri Dön</span>
-          </button>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Image & Gallery */}
-            <div className="md:col-span-1">
-              {/* Ana Resim */}
-              <div className="aspect-video w-full bg-gray-100 rounded-xl overflow-hidden mb-3 cursor-pointer group relative">
-                <img 
-                  src={selectedImage || game.image} 
-                  alt={game.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  onClick={() => setSelectedImage(selectedImage || game.image)}
-                />
-                {game.gallery && game.gallery.length > 0 && (
-                  <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
-                    <ImageIcon size={14} />
-                    {game.gallery.length + 1}
-                  </div>
-                )}
-              </div>
-
-              {/* Galeri Küçük Resimleri */}
-              {game.gallery && game.gallery.length > 0 && (
-                <div className="grid grid-cols-4 gap-2">
-                  {/* Ana resim küçük hali */}
-                  <button
-                    onClick={() => setSelectedImage(null)}
-                    className={`aspect-video rounded-lg overflow-hidden border-2 transition-all ${
-                      !selectedImage ? 'border-orange-500 ring-2 ring-orange-200' : 'border-gray-200 hover:border-orange-300'
-                    }`}
-                  >
-                    <img 
-                      src={game.image} 
-                      alt={`${game.name} ana`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                  
-                  {/* Galeri resimleri */}
-                  {game.gallery.map((img, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedImage(img)}
-                      className={`aspect-video rounded-lg overflow-hidden border-2 transition-all ${
-                        selectedImage === img ? 'border-orange-500 ring-2 ring-orange-200' : 'border-gray-200 hover:border-orange-300'
-                      }`}
-                    >
-                      <img 
-                        src={img} 
-                        alt={`${game.name} ${index + 2}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="md:col-span-2 flex flex-col justify-center">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-2">
-                  <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg">
-                    {game.category}
-                  </span>
-                  <span className="flex items-center text-gray-500 text-xs">
-                    <Eye size={14} className="mr-1" />
-                    {viewCount.toLocaleString('tr-TR')} görüntülenme
-                  </span>
-                </div>
-                <SocialShare game={game} />
-              </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{game.name}</h1>
-              <p className="text-gray-600 text-sm">{game.shortDescription}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      
+      <GameHeader 
+        game={game} 
+        viewCount={viewCount} 
+        selectedImage={selectedImage}
+        setSelectedImage={setSelectedImage}
+      />
 
       <div className="container mx-auto px-4 py-12">
-        {/* Quick Info */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
-          <div className="flex flex-wrap gap-6">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                <Users className="text-gray-700" size={20} />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Oyuncu Sayısı</p>
-                <p className="font-semibold text-gray-900 text-sm">{game.players}</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                <MapPin className="text-gray-700" size={20} />
-              </div>
-              <div>
-                <p className="text-xs text-gray-500">Kategori</p>
-                <p className="font-semibold text-gray-900 text-sm">{game.category}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <GameInfo game={game} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Description */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 mb-3">Oyun Hakkında</h2>
-              <p className="text-gray-600 text-sm leading-relaxed">{game.description}</p>
-            </div>
-
-            {/* Rules */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Oyun Kuralları</h2>
-              <div className="space-y-3">
-                {game.rules.map((rule, index) => (
-                  <div key={index} className="flex gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 bg-gray-900 text-white rounded-lg flex items-center justify-center font-semibold text-xs">
-                      {index + 1}
-                    </span>
-                    <p className="text-gray-600 text-sm pt-0.5">{rule}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Tips */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">İpuçları</h2>
-              <div className="space-y-2">
-                {game.tips.map((tip, index) => (
-                  <div key={index} className="flex gap-2 p-3 bg-gray-50 rounded-lg">
-                    <Lightbulb className="flex-shrink-0 text-gray-700" size={18} />
-                    <p className="text-gray-700 text-sm">{tip}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Game Recommendations */}
-            <GameRecommendations currentGame={game} allGames={games} />
-            
-            {/* Next/Previous Games */}
-            <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
-              <h3 className="font-semibold text-gray-900 mb-3 text-sm">Diğer Oyunlar</h3>
-              <div className="space-y-2">
-                <Link
-                  to={`/oyun/${prevGame.slug}`}
-                  className="block group"
-                >
-                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="w-14 h-14 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                      <img 
-                        src={prevGame.image} 
-                        alt={prevGame.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-500 mb-0.5">Önceki</p>
-                      <p className="font-medium text-gray-900 group-hover:text-gray-700 transition-colors truncate text-sm">
-                        {prevGame.name}
-                      </p>
-                    </div>
-                    <ChevronRight className="text-gray-400 transform rotate-180 flex-shrink-0" size={18} />
-                  </div>
-                </Link>
-
-                <Link
-                  to={`/oyun/${nextGame.slug}`}
-                  className="block group"
-                >
-                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="w-14 h-14 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                      <img 
-                        src={nextGame.image} 
-                        alt={nextGame.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-500 mb-0.5">Sonraki</p>
-                      <p className="font-medium text-gray-900 group-hover:text-gray-700 transition-colors truncate text-sm">
-                        {nextGame.name}
-                      </p>
-                    </div>
-                    <ChevronRight className="text-gray-400 flex-shrink-0" size={18} />
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <GameContent game={game} />
+          <GameSidebar game={game} games={games} />
         </div>
 
         {/* Comments Section */}
