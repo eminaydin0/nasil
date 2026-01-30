@@ -30,60 +30,50 @@ function AdminStats({ stats }) {
   }, [stats]);
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-blue-100 rounded-lg">
-            <BarChart3 className="text-blue-600" size={24} />
-          </div>
+    <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
+      <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
+        <div className="p-2.5 sm:p-3 bg-blue-50 rounded-xl w-fit mb-3 sm:mb-4">
+          <BarChart3 className="text-blue-600" size={22} />
         </div>
-        <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalGames || 0}</div>
-        <div className="text-sm text-gray-600">Toplam Oyun</div>
+        <div className="text-2xl sm:text-3xl font-bold text-gray-900">{stats.totalGames || 0}</div>
+        <div className="text-xs sm:text-sm text-gray-500 mt-0.5">Toplam Oyun</div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-green-100 rounded-lg">
-            <Eye className="text-green-600" size={24} />
-          </div>
+      <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
+        <div className="p-2.5 sm:p-3 bg-green-50 rounded-xl w-fit mb-3 sm:mb-4">
+          <Eye className="text-green-600" size={22} />
         </div>
-        <div className="text-3xl font-bold text-gray-900 mb-1">{(stats.totalViews || 0).toLocaleString('tr-TR')}</div>
-        <div className="text-sm text-gray-600">Toplam Görüntülenme</div>
+        <div className="text-2xl sm:text-3xl font-bold text-gray-900">{(stats.totalViews || 0).toLocaleString('tr-TR')}</div>
+        <div className="text-xs sm:text-sm text-gray-500 mt-0.5">Görüntülenme</div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-purple-100 rounded-lg">
-            <MessageCircle className="text-purple-600" size={24} />
-          </div>
+      <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
+        <div className="p-2.5 sm:p-3 bg-purple-50 rounded-xl w-fit mb-3 sm:mb-4">
+          <MessageCircle className="text-purple-600" size={22} />
         </div>
-        <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalComments || 0}</div>
-        <div className="text-sm text-gray-600">Toplam Yorum</div>
+        <div className="text-2xl sm:text-3xl font-bold text-gray-900">{stats.totalComments || 0}</div>
+        <div className="text-xs sm:text-sm text-gray-500 mt-0.5">Toplam Yorum</div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-yellow-100 rounded-lg">
-            <Star className="text-yellow-600" size={24} />
-          </div>
+      <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
+        <div className="p-2.5 sm:p-3 bg-amber-50 rounded-xl w-fit mb-3 sm:mb-4">
+          <Star className="text-amber-600" size={22} />
         </div>
-        <div className="text-3xl font-bold text-gray-900 mb-1">{stats.avgRating || '0.0'}</div>
-        <div className="text-sm text-gray-600">Ortalama Puan</div>
+        <div className="text-2xl sm:text-3xl font-bold text-gray-900">{stats.avgRating || '0.0'}</div>
+        <div className="text-xs sm:text-sm text-gray-500 mt-0.5">Ortalama Puan</div>
       </div>
 
-      <div className="bg-gradient-to-br from-orange-500 to-pink-500 rounded-xl shadow-sm p-6 border border-orange-200">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-white/20 rounded-lg">
-            <TrendingUp className="text-white" size={24} />
-          </div>
+      <div className="col-span-2 lg:col-span-1 bg-gradient-to-br from-orange-500 to-rose-500 rounded-2xl shadow-md p-5 sm:p-6 border-0 hover:shadow-lg transition-shadow">
+        <div className="p-2.5 sm:p-3 bg-white/20 rounded-xl w-fit mb-3 sm:mb-4">
+          <TrendingUp className="text-white" size={22} />
         </div>
-        <div className="text-3xl font-bold text-white mb-1">{engagementScore}/100</div>
-        <div className="text-sm text-white/90">Engagement Score</div>
-        <div className="mt-2 w-full bg-white/20 rounded-full h-2">
-          <div 
+        <div className="text-2xl sm:text-3xl font-bold text-white">{engagementScore}/100</div>
+        <div className="text-xs sm:text-sm text-white/90 mt-0.5">Engagement</div>
+        <div className="mt-3 w-full bg-white/20 rounded-full h-2 overflow-hidden">
+          <div
             className="bg-white h-2 rounded-full transition-all duration-500"
-            style={{ width: `${engagementScore}%` }}
-          ></div>
+            style={{ width: `${Math.min(engagementScore, 100)}%` }}
+          />
         </div>
       </div>
     </div>

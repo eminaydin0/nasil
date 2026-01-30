@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { MessageCircle, User, ThumbsUp, Reply, ArrowDownWideNarrow, Star, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StarRating from '../common/StarRating';
@@ -331,45 +331,38 @@ function CommentSection({ gameId, gameName }) {
   const myAvatarColor = getAvatarColor(currentUserName);
   const myInitials = getInitials(currentUserName);
 
+  const formRef = useRef(null);
+
+  const handleOpenForm = () => {
+    setShowForm(true);
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  };
+
+  const handleCloseForm = () => setShowForm(false);
+
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
-      {/* Header Section */}
+      {/* Header Section - Sadece başlık ve istatistikler */}
       <div className="p-8 bg-gradient-to-br from-orange-50 to-white border-b border-orange-100">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          
-          {/* Title & Overall Stat */}
-          <div>
-             <h2 className="text-2xl font-bold text-gray-900 flex items-center mb-2">
-               <MessageCircle className="mr-3 text-orange-600 fill-orange-100" size={32} />
-               Oyuncu Yorumları
-             </h2>
-             <div className="flex items-center space-x-4">
-               <div className="flex items-baseline space-x-2">
-                  <span className="text-4xl font-extrabold text-gray-900">{averageRating}</span>
-                  <span className="text-gray-500 font-medium">/ 5</span>
-               </div>
-               <div className="h-8 w-px bg-gray-300"></div>
-               <div className="flex flex-col">
-                  <StarRating rating={Math.round(averageRating)} readOnly size={18} />
-                  <span className="text-sm text-gray-500 mt-1">{comments.length} değerlendirme</span>
-               </div>
+        <div>
+           <h2 className="text-2xl font-bold text-gray-900 flex items-center mb-2">
+             <MessageCircle className="mr-3 text-orange-600 fill-orange-100" size={32} />
+             Oyuncu Yorumları
+           </h2>
+           <div className="flex items-center space-x-4">
+             <div className="flex items-baseline space-x-2">
+                <span className="text-4xl font-extrabold text-gray-900">{averageRating}</span>
+                <span className="text-gray-500 font-medium">/ 5</span>
              </div>
-          </div>
-
-          {/* Action Button */}
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className={`px-8 py-3 rounded-xl font-bold transition-all transform hover:scale-105 shadow-md flex items-center gap-2
-              ${showForm 
-                ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' 
-                : 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-200'
-              }`}
-          >
-             {showForm ? 'Vazgeç' : 'Yorum Yaz'}
-          </button>
+             <div className="h-8 w-px bg-gray-300"></div>
+             <div className="flex flex-col">
+                <StarRating rating={Math.round(averageRating)} readOnly size={18} />
+                <span className="text-sm text-gray-500 mt-1">{comments.length} değerlendirme</span>
+             </div>
+           </div>
         </div>
 
-        {/* Rating Bars - Mobile hidden if space constraints, but good for "Effective" UI */}
+        {/* Rating Bars */}
         {comments.length > 0 && (
           <div className="mt-8 grid grid-cols-1 gap-2 max-w-md">
             {ratingCounts.map(({ star, count, percentage }) => (
@@ -390,15 +383,41 @@ function CommentSection({ gameId, gameName }) {
         )}
       </div>
 
-      {/* Main Comment Area */}
+      {/* Main Comment Area - Buton ve form aynı blokta */}
       <div className="p-8">
         
-        {/* Comment Form */}
-        {showForm && (
-          <div className="mb-10 animate-fade-in">
-            <div className="bg-gray-50 p-6 rounded-2xl border-2 border-orange-100">
-               <h3 className="text-lg font-bold text-gray-900 mb-4">Deneyimini Paylaş</h3>
-               
+        {/* Yorum Yaz Bloğu - Buton ve form bir arada */}
+        <div ref={formRef} className="mb-8">
+          {!showForm ? (
+            <button
+              type="button"
+              onClick={handleOpenForm}
+              className="w-full py-4 px-6 rounded-xl border-2 border-dashed border-gray-200 hover:border-orange-300 hover:bg-orange-50/50 transition-all flex items-center justify-center gap-3 group text-left"
+            >
+              <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                <MessageCircle className="text-orange-600" size={24} />
+              </div>
+              <div className="flex-1">
+                <span className="font-semibold text-gray-900 block">Deneyimini paylaş</span>
+                <span className="text-sm text-gray-500">Bu oyun hakkında ne düşünüyorsun?</span>
+              </div>
+              <span className="px-4 py-2 bg-orange-600 text-white rounded-lg font-medium text-sm group-hover:bg-orange-700 transition-colors">
+                Yorum Yaz
+              </span>
+            </button>
+          ) : (
+            <div className="animate-fade-in rounded-xl border-2 border-orange-200 bg-orange-50/30 overflow-hidden">
+              <div className="p-4 bg-white border-b border-gray-100 flex items-center justify-between">
+                <h3 className="font-bold text-gray-900">Yorumunu yaz</h3>
+                <button
+                  type="button"
+                  onClick={handleCloseForm}
+                  className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+                >
+                  Vazgeç
+                </button>
+              </div>
+              <div className="p-6">
                {/* Identity Display */}
                <div className="flex items-center gap-3 mb-6 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold overflow-hidden ${!currentUserAvatar && myAvatarColor} shadow-sm border border-gray-100`}>
@@ -454,9 +473,10 @@ function CommentSection({ gameId, gameName }) {
                     </button>
                  </div>
                </form>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Filter / Sort Bar */}
         {comments.length > 0 && (
@@ -488,7 +508,7 @@ function CommentSection({ gameId, gameName }) {
                 <MessageCircle size={48} className="mx-auto mb-4 text-gray-300" />
                 <h3 className="text-lg font-bold text-gray-900 mb-2">Henüz yorum yok</h3>
                 <p className="text-gray-500 mb-6">Bu oyun hakkında ilk görüş bildiren sen ol!</p>
-                <button onClick={() => setShowForm(true)} className="text-orange-600 font-semibold hover:underline">
+                <button type="button" onClick={handleOpenForm} className="text-orange-600 font-semibold hover:underline">
                    Yorum Yazmaya Başla
                 </button>
              </div>

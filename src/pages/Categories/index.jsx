@@ -1,41 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Filter, ArrowLeft, Eye } from 'lucide-react';
 import GameCard from '../../components/home/GameCard';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import SEO from '../../components/common/SEO';
+import Breadcrumb, { BREADCRUMB_TEMPLATES } from '../../components/common/Breadcrumb';
 import { supabase } from '../../lib/supabase';
-import { categoryConfig } from '../../constants';
+import { CATEGORY_NAMES, getCategoryConfig, getCategoryDescription } from '../../constants';
+import { useCategories } from '../../hooks/useCategories';
+import { trackPageView } from '../../utils/analytics';
+import { 
+  CATEGORY_SEO, 
+  generateCollectionPageSchema,
+  generateItemListSchema 
+} from '../../constants/seo';
 
 function CategoryPage() {
   const { categoryName } = useParams();
   const navigate = useNavigate();
+  const { categories: dbCategories } = useCategories();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadGames();
-    window.scrollTo(0, 0);
-  }, [categoryName]);
+  const decodedCategoryName = decodeURIComponent(categoryName || '');
 
-  const loadGames = async () => {
+  const loadGames = useCallback(async () => {
     setLoading(true);
     try {
-      // URL'den gelen kategori ismini decode et
-      const decodedCategoryName = decodeURIComponent(categoryName);
-      
-      // Standart kategoriler listesi - gereksiz kombinasyonları filtrele
-      const standardCategories = [
-        'Dış Mekan',
-        'İç Mekan',
-        'Masa Oyunları',
-        'Kağıt Oyunları',
-        'Kutu Oyunları',
-        'Zeka Oyunları'
-      ];
-
-      // Eğer kategori standart kategorilerden biri değilse, boş sonuç döndür
-      if (!standardCategories.includes(decodedCategoryName)) {
+      // Sadece aktif kategorileri kontrol et
+      const validNames = dbCategories?.length > 0
+        ? dbCategories.filter((c) => c.isActive !== false).map((c) => c.name)
+        : CATEGORY_NAMES;
+      if (!validNames.includes(decodedCategoryName)) {
         setGames([]);
         setLoading(false);
         return;
@@ -71,22 +67,16 @@ function CategoryPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [decodedCategoryName, dbCategories]);
 
-  // URL'den gelen kategori ismini decode et
-  const decodedCategoryName = decodeURIComponent(categoryName || '');
-  const config = categoryConfig[decodedCategoryName] || categoryConfig['default'];
-  
-  const categoryDescriptions = {
-    'Dış Mekan': 'Açık havada, parkta veya bahçede oynayabileceğiniz en eğlenceli oyunlar.',
-    'İç Mekan': 'Evde, sınıfta veya kapalı alanlarda oynanabilecek keyifli oyunlar.',
-    'Masa Oyunları': 'Masa başında arkadaşlarınızla veya ailenizle oynayabileceğiniz strateji ve şans oyunları.',
-    'Kağıt Oyunları': 'İskambil kağıtlarıyla oynanan klasik ve modern kart oyunları.',
-    'Kutu Oyunları': 'Zar, piyon ve kartlarla oynanan eğlenceli kutu oyunları.',
-    'Zeka Oyunları': 'Zihninizi zorlayacak, düşünme becerilerinizi geliştirecek oyunlar.'
-  };
-  
-  const description = categoryDescriptions[decodedCategoryName] || 'Keyifli vakit geçirebileceğiniz oyunlar.';
+  useEffect(() => {
+    loadGames();
+    window.scrollTo(0, 0);
+    trackPageView(`/kategori/${categoryName}`);
+  }, [loadGames, categoryName]);
+
+  const config = getCategoryConfig(decodedCategoryName, dbCategories);
+  const description = getCategoryDescription(decodedCategoryName, dbCategories);
   const IconComponent = config.icon;
   
   // Renk class mapping - Tailwind için
@@ -101,6 +91,28 @@ function CategoryPage() {
   };
   
   const colorClass = colorClasses[config.color] || colorClasses.gray;
+
+  // SEO Meta
+  const seoMeta = useMemo(() => {
+    const categoryData = CATEGORY_SEO[decodedCategoryName] || {};
+    return {
+      title: categoryData.title || `${decodedCategoryName} Oyunları - Nasıl Oynanır?`,
+      description: categoryData.description || description,
+      keywords: categoryData.keywords || `${decodedCategoryName}, ${decodedCategoryName.toLowerCase()} oyunları, nasıl oynanır`,
+    };
+  }, [decodedCategoryName, description]);
+
+  // Structured Data
+  const structuredData = useMemo(() => {
+    if (!games.length) return null;
+    return [
+      generateCollectionPageSchema(decodedCategoryName, games),
+      generateItemListSchema(games, `${decodedCategoryName} Oyunları`),
+    ];
+  }, [decodedCategoryName, games]);
+
+  // Breadcrumb
+  const breadcrumbs = BREADCRUMB_TEMPLATES.category(decodedCategoryName);
 
   if (loading) {
     return (
@@ -121,21 +133,19 @@ function CategoryPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO 
-        title={`${decodedCategoryName} Oyunları - Nasıl Oynanır?`}
-        description={description}
+        title={seoMeta.title}
+        description={seoMeta.description}
+        keywords={seoMeta.keywords}
         url={`/kategori/${categoryName}`}
+        structuredData={structuredData}
+        breadcrumbs={breadcrumbs}
       />
       
       {/* Header Section - GameDetail Style */}
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-12">
-          <button
-            onClick={() => navigate('/')}
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-colors group text-sm"
-          >
-            <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-            <span>Geri Dön</span>
-          </button>
+          {/* Breadcrumb */}
+          <Breadcrumb items={breadcrumbs} className="mb-6" />
 
           <div className="grid md:grid-cols-3 gap-6">
             {/* Category Icon/Image */}
@@ -143,13 +153,14 @@ function CategoryPage() {
               <div className="aspect-video w-full bg-gray-100 rounded-xl overflow-hidden relative">
                 <img 
                   src={config.image} 
-                  alt={decodedCategoryName}
+                  alt={`${decodedCategoryName} Oyunları`}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                 <div className="absolute bottom-4 left-4">
                   <div className={`p-3 ${config.bgColor} rounded-lg backdrop-blur-sm border border-white/20`}>
-                    <IconComponent className={colorClass.icon} size={32} />
+                    <IconComponent className={colorClass.icon} size={32} aria-hidden="true" />
                   </div>
                 </div>
               </div>
@@ -162,7 +173,7 @@ function CategoryPage() {
                   {decodedCategoryName}
                 </span>
                 <span className="flex items-center text-gray-500 text-xs">
-                  <Eye size={14} className="mr-1" />
+                  <Eye size={14} className="mr-1" aria-hidden="true" />
                   {games.length} oyun
                 </span>
               </div>
@@ -177,7 +188,7 @@ function CategoryPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Filter className="text-orange-600" />
+            <Filter className="text-orange-600" aria-hidden="true" />
             {games.length} Oyun Listeleniyor
           </h2>
         </div>
@@ -190,9 +201,15 @@ function CategoryPage() {
           </div>
         ) : (
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
-            <div className="text-6xl mb-6">🔍</div>
+            <div className="text-6xl mb-6" role="img" aria-label="Arama">🔍</div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Oyun bulunamadı</h3>
             <p className="text-gray-500">Bu kategoride henüz oyun eklenmemiş.</p>
+            <button
+              onClick={() => navigate('/oyunlar')}
+              className="mt-6 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+            >
+              Tüm Oyunları Gör
+            </button>
           </div>
         )}
       </div>

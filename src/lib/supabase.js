@@ -217,10 +217,11 @@ export const getTotalComments = async () => {
 // Storage: Resim yükleme
 export const uploadGameImage = async (file, gameSlug) => {
   try {
-    // Dosya adı oluştur (benzersiz)
+    // Slug temizle (boş veya geçersiz karakterler için)
+    const slug = (gameSlug && String(gameSlug).replace(/[^a-z0-9-]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')) || 'game';
     const timestamp = Date.now();
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${gameSlug}-${timestamp}.${fileExt}`;
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const fileName = `${slug}-${timestamp}.${fileExt}`;
     const filePath = `games/${fileName}`;
 
     // Dosyayı yükle

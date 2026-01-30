@@ -1,8 +1,16 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Search, User } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
+
+const navItems = [
+  { to: '/', label: 'Ana Sayfa', exact: true },
+  { to: '/oyunlar', label: 'Oyunlar', exact: false },
+  { to: '/araclar', label: 'Araçlar', exact: false },
+  { to: '/hakkimizda', label: 'Hakkımızda', exact: true },
+  { to: '/iletisim', label: 'İletişim', exact: true },
+];
 
 function Header() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,6 +20,31 @@ function Header() {
   const searchRef = useRef(null);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  const isActive = (to, exact) => {
+    if (exact) return pathname === to;
+    if (to === '/oyunlar') return pathname === '/oyunlar' || pathname.startsWith('/oyun/') || pathname.startsWith('/kategori/');
+    if (to === '/araclar') return pathname === '/araclar' || pathname.startsWith('/araclar/');
+    return pathname.startsWith(to);
+  };
+
+  const navLinkClass = (to, exact) => {
+    const active = isActive(to, exact);
+    const base = 'px-3 py-1.5 rounded-lg transition-all text-sm font-semibold tracking-wide';
+    return active
+      ? `${base} text-white bg-gradient-to-r from-orange-500 to-red-600`
+      : `${base} text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600`;
+  };
+
+  const mobileNavLinkClass = (to, exact) => {
+    const active = isActive(to, exact);
+    const base = 'block px-3 py-2 text-sm rounded-lg transition-all font-semibold';
+    return active
+      ? `${base} text-white bg-gradient-to-r from-orange-500 to-red-600`
+      : `${base} text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-600`;
+  };
 
   useEffect(() => {
     loadGames();
@@ -76,21 +109,11 @@ function Header() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-2">
-            <Link to="/" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
-              Ana Sayfa
-            </Link>
-            <Link to="/oyunlar" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
-              Oyunlar
-            </Link>
-            <Link to="/araclar" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
-              Araçlar
-            </Link>
-            <Link to="/hakkimizda" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
-              Hakkımızda
-            </Link>
-            <Link to="/iletisim" className="px-3 py-1.5 text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all text-sm font-semibold tracking-wide">
-              İletişim
-            </Link>
+            {navItems.map(({ to, label, exact }) => (
+              <Link key={to} to={to} className={navLinkClass(to, exact)}>
+                {label}
+              </Link>
+            ))}
             <div className="relative" ref={searchRef}>
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
               <input
@@ -130,7 +153,11 @@ function Header() {
             {user ? (
               <Link 
                 to="/profil" 
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-orange-100 text-orange-600 hover:bg-orange-200 transition-colors overflow-hidden border border-orange-200 shadow-sm"
+                className={`w-9 h-9 flex items-center justify-center rounded-full overflow-hidden border shadow-sm transition-colors ${
+                  pathname === '/profil' 
+                    ? 'bg-gradient-to-r from-orange-500 to-red-600 border-orange-500 text-white ring-2 ring-orange-200' 
+                    : 'bg-orange-100 text-orange-600 hover:bg-orange-200 border-orange-200'
+                }`}
                 title="Profilim"
               >
                 {user.user_metadata?.avatar_url ? (
@@ -148,7 +175,11 @@ function Header() {
             ) : (
               <Link 
                 to="/auth" 
-                className="px-4 py-1.5 bg-gray-900 text-white hover:bg-gray-800 rounded-lg transition-all text-sm font-medium shadow-sm"
+                className={`px-4 py-1.5 rounded-lg transition-all text-sm font-medium shadow-sm ${
+                  pathname === '/auth'
+                    ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white'
+                    : 'bg-gray-900 text-white hover:bg-gray-800'
+                }`}
               >
                 Giriş Yap
               </Link>
@@ -202,47 +233,26 @@ function Header() {
                 </div>
               )}
             </div>
-            <Link
-              to="/"
-              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Ana Sayfa
-            </Link>
-            <Link
-              to="/oyunlar"
-              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Oyunlar
-            </Link>
-            <Link
-              to="/araclar"
-              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Araçlar
-            </Link>
-            <Link
-              to="/hakkimizda"
-              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Hakkımızda
-            </Link>
-            <Link
-              to="/iletisim"
-              className="block px-3 py-2 text-sm text-gray-700 hover:text-white hover:bg-linear-to-r hover:from-orange-500 hover:to-red-600 rounded-lg transition-all font-semibold"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              İletişim
-            </Link>
+            {navItems.map(({ to, label, exact }) => (
+              <Link
+                key={to}
+                to={to}
+                className={mobileNavLinkClass(to, exact)}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {label}
+              </Link>
+            ))}
              
             {/* User Menu - Mobile */}
             {user ? (
               <Link
                 to="/profil"
-                className="flex items-center gap-2 px-3 py-2 text-sm text-orange-600 bg-orange-50 rounded-lg font-semibold mt-2"
+                className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg font-semibold mt-2 ${
+                  pathname === '/profil'
+                    ? 'text-white bg-gradient-to-r from-orange-500 to-red-600'
+                    : 'text-orange-600 bg-orange-50 hover:bg-orange-100'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {user.user_metadata?.avatar_url ? (
@@ -259,7 +269,11 @@ function Header() {
             ) : (
               <Link
                 to="/auth"
-                className="block text-center mt-4 px-3 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium"
+                className={`block text-center mt-4 px-3 py-2.5 rounded-lg text-sm font-medium ${
+                  pathname === '/auth'
+                    ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white'
+                    : 'bg-gray-900 text-white hover:bg-gray-800'
+                }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Giriş Yap / Kayıt Ol

@@ -1,29 +1,89 @@
-# Allow all search engines to index all pages
+# Nasıl Oynanır - Robots.txt
+# https://nasiloynanir.com
+
+# Allow all search engines to index all public pages
 User-agent: *
 Allow: /
+Allow: /oyunlar
+Allow: /oyun/
+Allow: /kategori/
+Allow: /araclar
+Allow: /hakkimizda
+Allow: /iletisim
 
-# Disallow admin panel
+# Disallow admin and private areas
 Disallow: /admin-panel
+Disallow: /admin-panel/
+Disallow: /profil
+Disallow: /auth
 
-# Sitemap location
-Sitemap: https://nasiloynanir.com/sitemap.xml
+# Disallow query parameters that might cause duplicate content
+Disallow: /*?*search=
+Disallow: /*?*page=
+Disallow: /*?*sort=
+Disallow: /*?*filter=
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1
 
-# Common search engine bots
+# Google specific rules
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 0
 
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+# Bing specific rules
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
+# Yahoo specific rules
 User-agent: Slurp
 Allow: /
+Crawl-delay: 2
 
-# Rate limit aggressive crawlers
+# Yandex specific rules
+User-agent: Yandex
+Allow: /
+Crawl-delay: 2
+
+# DuckDuckGo specific rules
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 1
+
+# Rate limit aggressive SEO tool crawlers
 User-agent: AhrefsBot
 Crawl-delay: 10
 
 User-agent: SemrushBot
 Crawl-delay: 10
+
+User-agent: MJ12bot
+Crawl-delay: 10
+
+User-agent: DotBot
+Crawl-delay: 10
+
+# Block bad bots
+User-agent: MauiBot
+Disallow: /
+
+User-agent: SeznamBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+# Sitemap locations
+Sitemap: https://nasiloynanir.com/sitemap.xml
+Sitemap: https://nasiloynanir.com/sitemap-index.xml
+Sitemap: https://nasiloynanir.com/sitemap-games.xml
+
+# Host directive (some crawlers use this)
+Host: https://nasiloynanir.com

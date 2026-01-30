@@ -1,24 +1,95 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Trash2, Upload, X, Image as ImageIcon } from 'lucide-react';
 import { uploadGameImage, uploadMultipleGameImages, deleteGameImage } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 
-function GameModal({ game, onSave, onClose }) {
-  const [formData, setFormData] = useState(game || {
-    name: '',
-    category: 'Dış Mekan',
-    players: '',
-    difficulty: 'Kolay',
-    image: '',
-    gallery: [],
-    shortDescription: '',
-    description: '',
-    rules: [''],
-    tips: ['']
-  });
-  
+// Slug oluşturma (Türkçe karakterleri normalize eder)
+function generateSlug(name) {
+  if (!name || typeof name !== 'string') return 'game';
+  const turkishMap = {
+    'ç': 'c', 'Ç': 'C', 'ğ': 'g', 'Ğ': 'G', 'ı': 'i', 'İ': 'I',
+    'ö': 'o', 'Ö': 'O', 'ş': 's', 'Ş': 'S', 'ü': 'u', 'Ü': 'U'
+  };
+  return name
+    .split('')
+    .map(char => turkishMap[char] || char)
+    .join('')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'game';
+}
+
+// Oyun verisini form formatına normalleştir (eski oyunlar için uyumluluk)
+function normalizeGameToFormData(game, defaultCategory) {
+  if (!game) {
+    return {
+      id: null,
+      name: '',
+      slug: '',
+      category: defaultCategory,
+      players: '',
+      difficulty: 'Kolay',
+      image: '',
+      gallery: [],
+      shortDescription: '',
+      description: '',
+      rules: [''],
+      tips: ['']
+    };
+  }
+
+  // gallery: [{image_url}] veya ['url1','url2'] formatlarını destekle
+  let gallery = [];
+  if (Array.isArray(game.gallery)) {
+    gallery = game.gallery.map((item) =>
+      typeof item === 'string' ? item : (item?.image_url || item?.url || '')
+    ).filter(Boolean);
+  }
+
+  // rules ve tips: null/undefined veya string ise diziye çevir
+  const rules = Array.isArray(game.rules) && game.rules.length > 0
+    ? game.rules
+    : (game.rules ? [String(game.rules)] : ['']);
+  const tips = Array.isArray(game.tips) && game.tips.length > 0
+    ? game.tips
+    : (game.tips ? [String(game.tips)] : ['']);
+
+  return {
+    id: game.id,
+    name: game.name || '',
+    slug: game.slug || generateSlug(game.name),
+    category: game.category || defaultCategory,
+    players: game.players || '',
+    difficulty: game.difficulty || 'Kolay',
+    image: game.image || '',
+    gallery,
+    shortDescription: game.shortDescription ?? game.short_description ?? '',
+    description: game.description ?? '',
+    rules,
+    tips
+  };
+}
+
+function GameModal({ game, categories = [], onSave, onClose }) {
+  const categoryNames = categories?.length > 0 ? categories.map((c) => c.name) : [];
+  const defaultCategory = categoryNames[0] || 'Dış Mekan';
+  const options = [...new Set([...(categoryNames || []), game?.category].filter(Boolean))];
+
+  const initialFormData = useMemo(
+    () => normalizeGameToFormData(game, defaultCategory),
+    [game?.id]
+  );
+
+  const [formData, setFormData] = useState(initialFormData);
   const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(formData.image || '');
+  const [imagePreview, setImagePreview] = useState(initialFormData.image || '');
+
+  // Oyun değiştiğinde formu senkronize et (eski oyunlar için önemli)
+  useEffect(() => {
+    const normalized = normalizeGameToFormData(game, defaultCategory);
+    setFormData(normalized);
+    setImagePreview(normalized.image || '');
+  }, [game?.id]);
 
   // Ana resim yükleme
   const handleMainImageUpload = async (e) => {
@@ -38,10 +109,10 @@ function GameModal({ game, onSave, onClose }) {
     }
 
     setUploading(true);
-    const slug = formData.slug || generateSlug(formData.name);
+    const slug = (formData.slug || generateSlug(formData.name) || `game-${formData.id || Date.now()}`).replace(/[^a-z0-9-]/g, '-');
     
     try {
-      const imageUrl = await uploadGameImage(file, slug);
+      const imageUrl = await uploadGameImage(file, slug || 'game');
       if (imageUrl) {
         setFormData({ ...formData, image: imageUrl });
         setImagePreview(imageUrl);
@@ -70,10 +141,10 @@ function GameModal({ game, onSave, onClose }) {
     }
 
     setUploading(true);
-    const slug = formData.slug || generateSlug(formData.name);
+    const slug = (formData.slug || generateSlug(formData.name) || `game-${formData.id || Date.now()}`).replace(/[^a-z0-9-]/g, '-');
     
     try {
-      const imageUrls = await uploadMultipleGameImages(files, slug);
+      const imageUrls = await uploadMultipleGameImages(files, slug || 'game');
       if (imageUrls.length > 0) {
         const newGallery = [...(formData.gallery || []), ...imageUrls];
         setFormData({ ...formData, gallery: newGallery });
@@ -101,26 +172,6 @@ function GameModal({ game, onSave, onClose }) {
       }
       toast.success('Resim silindi!');
     }
-  };
-
-  // Slug oluşturma fonksiyonu
-  const generateSlug = (name) => {
-    const turkishMap = {
-      'ç': 'c', 'Ç': 'C',
-      'ğ': 'g', 'Ğ': 'G',
-      'ı': 'i', 'İ': 'I',
-      'ö': 'o', 'Ö': 'O',
-      'ş': 's', 'Ş': 'S',
-      'ü': 'u', 'Ü': 'U'
-    };
-    
-    return name
-      .split('')
-      .map(char => turkishMap[char] || char)
-      .join('')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
   };
 
   const handleSubmit = (e) => {
@@ -184,27 +235,30 @@ function GameModal({ game, onSave, onClose }) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Kategori *</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  list="category-options"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                  placeholder="Kategori seçin veya yeni yazın"
-                  required
-                />
-                <datalist id="category-options">
-                  <option value="Dış Mekan" />
-                  <option value="İç Mekan" />
-                  <option value="Masa Oyunları" />
-                  <option value="Kağıt Oyunları" />
-                  <option value="Kutu Oyunları" />
-                  <option value="Zeka Oyunları" />
-                  <option value="Parti Oyunları" />
-                </datalist>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Listeden seçebilir veya yeni bir kategori ismi yazabilirsiniz.</p>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                required
+              >
+                {options.length > 0 ? (
+                  options.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="Kağıt Oyunları">Kağıt Oyunları</option>
+                    <option value="Masa Oyunları">Masa Oyunları</option>
+                    <option value="Kutu Oyunları">Kutu Oyunları</option>
+                    <option value="Zeka Oyunları">Zeka Oyunları</option>
+                    <option value="Dış Mekan">Dış Mekan</option>
+                    <option value="İç Mekan">İç Mekan</option>
+                  </>
+                )}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">Admin panelinden Kategoriler sekmesinde yeni kategori ekleyebilirsiniz.</p>
             </div>
 
             <div>

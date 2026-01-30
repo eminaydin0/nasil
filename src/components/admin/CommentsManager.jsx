@@ -1,10 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { MessageCircle, Trash2, ThumbsUp, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'En Yeni' },
+  { value: 'oldest', label: 'En Eski' },
+  { value: 'most_likes', label: 'En Çok Beğenilen' },
+  { value: 'highest_rating', label: 'En Yüksek Puanlı' },
+  { value: 'testimonial', label: 'Ana Sayfada Gösterilen' },
+];
 
 function CommentsManager({ games }) {
   const [allComments, setAllComments] = useState([]);
   const [selectedGame, setSelectedGame] = useState('all');
+  const [sortBy, setSortBy] = useState('most_likes');
   const [loading, setLoading] = useState(true);
 
   const countReplies = (replies) => {
@@ -37,6 +46,7 @@ function CommentsManager({ games }) {
           likes: comment.likes || 0,
           replies: comment.replies || [],
           isTestimonial: comment.is_testimonial || false,
+          createdAt: comment.created_at,
           date: new Date(comment.created_at).toLocaleDateString('tr-TR'),
           gameId: comment.game_id,
           gameName: game?.name || 'Bilinmeyen Oyun',
@@ -130,36 +140,74 @@ function CommentsManager({ games }) {
     }
   };
 
-  const filteredComments = selectedGame === 'all' 
-    ? allComments 
-    : allComments.filter(c => c.gameId === parseInt(selectedGame));
+  const filteredComments = useMemo(() => {
+    let list = selectedGame === 'all'
+      ? [...allComments]
+      : allComments.filter((c) => c.gameId === parseInt(selectedGame));
+
+    // Sıralama
+    switch (sortBy) {
+      case 'newest':
+        list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        break;
+      case 'oldest':
+        list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        break;
+      case 'most_likes':
+        list.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+        break;
+      case 'highest_rating':
+        list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      case 'testimonial':
+        list = list.filter((c) => c.isTestimonial);
+        break;
+      default:
+        break;
+    }
+    return list;
+  }, [allComments, selectedGame, sortBy]);
 
   const getCommentCountByGame = (gameId) => {
-    return allComments.filter(c => c.gameId === gameId).length;
+    return allComments.filter((c) => c.gameId === gameId).length;
   };
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900">Yorumlar</h2>
           <p className="text-gray-600">Toplam {allComments.length} yorum</p>
         </div>
-        <select
-          value={selectedGame}
-          onChange={(e) => setSelectedGame(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-        >
-          <option value="all">Tüm Oyunlar ({allComments.length})</option>
-          {games.map(game => {
-            const count = getCommentCountByGame(game.id);
-            return count > 0 ? (
-              <option key={game.id} value={game.id}>
-                {game.name} ({count})
+        <div className="flex flex-wrap gap-2">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium"
+            title="Sıralama"
+          >
+            {SORT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
               </option>
-            ) : null;
-          })}
-        </select>
+            ))}
+          </select>
+          <select
+            value={selectedGame}
+            onChange={(e) => setSelectedGame(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+          >
+            <option value="all">Tüm Oyunlar ({allComments.length})</option>
+            {games.map((game) => {
+              const count = getCommentCountByGame(game.id);
+              return count > 0 ? (
+                <option key={game.id} value={game.id}>
+                  {game.name} ({count})
+                </option>
+              ) : null;
+            })}
+          </select>
+        </div>
       </div>
 
       {loading ? (

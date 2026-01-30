@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart3, MessageCircle, TrendingUp, Download, Sparkles, FileText, Phone } from 'lucide-react';
+import { BarChart3, MessageCircle, TrendingUp, Download, Sparkles, FileText, Phone, FolderPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AdminLogin from '../../components/admin/AdminLogin';
 import AdminHeader from '../../components/admin/AdminHeader';
@@ -12,9 +12,11 @@ import GameOfTheDayManager from '../../components/admin/GameOfTheDayManager';
 import ContentManager from '../../components/admin/ContentManager';
 import ContactManager from '../../components/admin/ContactManager';
 import UserManager from '../../components/admin/UserManager';
+import CategoryManager from '../../components/admin/CategoryManager';
 import AdminDashboardTab from '../../components/admin/tabs/AdminDashboardTab';
 import AdminAnalyticsTab from '../../components/admin/tabs/AdminAnalyticsTab';
 import { supabase } from '../../lib/supabase';
+import { useCategories } from '../../hooks/useCategories';
 
 // Admin action tracking fonksiyonu
 const trackAdminAction = (action, details) => {
@@ -24,6 +26,7 @@ const trackAdminAction = (action, details) => {
 
 function AdminPanel() {
   const navigate = useNavigate();
+  const { categories: adminCategories } = useCategories();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [games, setGames] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -505,6 +508,17 @@ function AdminPanel() {
               <span>Kullanıcılar</span>
             </button>
             <button
+              onClick={() => setActiveTab('categories')}
+              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+                activeTab === 'categories'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <FolderPlus size={18} />
+              <span>Kategoriler</span>
+            </button>
+            <button
               onClick={() => setActiveTab('content')}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
                 activeTab === 'content'
@@ -531,7 +545,12 @@ function AdminPanel() {
 
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
-          <AdminDashboardTab stats={stats} sortedGames={sortedGames} />
+          <AdminDashboardTab
+            stats={stats}
+            sortedGames={sortedGames}
+            games={games}
+            onTabChange={setActiveTab}
+          />
         )}
 
         {/* Games Tab */}
@@ -572,6 +591,9 @@ function AdminPanel() {
         {/* Game of the Day Tab */}
         {activeTab === 'gameoftheday' && <GameOfTheDayManager />}
 
+        {/* Categories Tab */}
+        {activeTab === 'categories' && <CategoryManager />}
+
         {/* Content Tab */}
         {activeTab === 'content' && <ContentManager />}
 
@@ -586,6 +608,7 @@ function AdminPanel() {
       {showAddModal && (
         <GameModal
           game={editingGame}
+          categories={adminCategories}
           onSave={handleSaveGame}
           onClose={() => {
             setShowAddModal(false);

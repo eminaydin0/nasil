@@ -1,71 +1,218 @@
 <!doctype html>
-<html lang="tr">
+<html lang="tr" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    
+    <!-- Preconnect & DNS Prefetch for Performance -->
+    <link rel="preconnect" href="https://yjnipjcevnxrzlgfmeci.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="//yjnipjcevnxrzlgfmeci.supabase.co" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
     <!-- Primary Meta Tags -->
     <title>Geleneksel Türk Oyunları - Nasıl Oynanır? Kuralları ve İpuçları</title>
     <meta name="title" content="Geleneksel Türk Oyunları - Nasıl Oynanır? Kuralları ve İpuçları" />
-    <meta name="description" content="Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının nasıl oynanacağını öğrenin. Detaylı kurallar, ipuçları ve stratejiler. 101 Okey, İhaleli Batak, Eşli Batak ve daha fazlası!" />
-    <meta name="keywords" content="okey nasıl oynanır, batak nasıl oynanır, pişti nasıl oynanır, 101 okey kuralları, batak kuralları, geleneksel oyunlar, türk oyunları, kağıt oyunları, masa oyunları, çocuk oyunları, saklambaç, körebe, istop, tavla, mangala, satranç" />
+    <meta name="description" content="Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının nasıl oynanacağını öğrenin. Detaylı kurallar, ipuçları ve stratejiler. 50+ oyun rehberi!" />
+    <meta name="keywords" content="okey nasıl oynanır, batak nasıl oynanır, pişti nasıl oynanır, 101 okey kuralları, batak kuralları, geleneksel oyunlar, türk oyunları, kağıt oyunları, masa oyunları, çocuk oyunları, sokak oyunları, saklambaç, körebe, istop, tavla, mangala, satranç, uno, monopoly" />
     <meta name="author" content="Nasıl Oynanır" />
+    <meta name="publisher" content="Nasıl Oynanır" />
+    <meta name="copyright" content="Nasıl Oynanır" />
+    
+    <!-- Robots & Indexing -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow" />
+    
+    <!-- Language & Locale -->
     <meta name="language" content="Turkish" />
-    <meta name="revisit-after" content="7 days" />
+    <meta http-equiv="content-language" content="tr" />
+    <meta name="content-language" content="tr-TR" />
+    
+    <!-- Revisit & Rating -->
+    <meta name="revisit-after" content="3 days" />
     <meta name="rating" content="general" />
     <meta name="distribution" content="global" />
     
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="TR" />
+    <meta name="geo.country" content="Turkey" />
+    <meta name="geo.placename" content="Türkiye" />
+    <meta name="ICBM" content="39.925533, 32.866287" />
+    
     <!-- Open Graph / Facebook -->
+    <meta property="og:site_name" content="Nasıl Oynanır" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://nasiloynanir.com/" />
     <meta property="og:title" content="Geleneksel Türk Oyunları - Nasıl Oynanır?" />
-    <meta property="og:description" content="Okey, Batak, Pişti gibi geleneksel Türk oyunlarının detaylı kuralları ve nasıl oynandığını öğrenin. 30+ oyun rehberi!" />
+    <meta property="og:description" content="Okey, Batak, Pişti gibi geleneksel Türk oyunlarının detaylı kuralları ve nasıl oynandığını öğrenin. 50+ oyun rehberi!" />
     <meta property="og:image" content="https://nasiloynanir.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Nasıl Oynanır - Geleneksel Türk Oyunları Rehberi" />
     <meta property="og:locale" content="tr_TR" />
     
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://nasiloynanir.com/" />
-    <meta property="twitter:title" content="Geleneksel Türk Oyunları - Nasıl Oynanır?" />
-    <meta property="twitter:description" content="Okey, Batak, Pişti gibi geleneksel Türk oyunlarının detaylı kuralları ve nasıl oynandığını öğrenin." />
-    <meta property="twitter:image" content="https://nasiloynanir.com/og-image.jpg" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@nasiloynanir" />
+    <meta name="twitter:creator" content="@nasiloynanir" />
+    <meta name="twitter:url" content="https://nasiloynanir.com/" />
+    <meta name="twitter:title" content="Geleneksel Türk Oyunları - Nasıl Oynanır?" />
+    <meta name="twitter:description" content="Okey, Batak, Pişti gibi geleneksel Türk oyunlarının detaylı kuralları ve nasıl oynandığını öğrenin." />
+    <meta name="twitter:image" content="https://nasiloynanir.com/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Nasıl Oynanır Logo" />
     
-    <!-- Additional SEO -->
+    <!-- Canonical URL -->
     <link rel="canonical" href="https://nasiloynanir.com/" />
-    <meta name="theme-color" content="#f97316" />
+    
+    <!-- Alternate Languages (if applicable) -->
+    <link rel="alternate" hreflang="tr" href="https://nasiloynanir.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://nasiloynanir.com/" />
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" href="/icon-192.svg" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#f97316" />
+    
+    <!-- Theme & Colors -->
+    <meta name="theme-color" content="#f97316" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#ea580c" media="(prefers-color-scheme: dark)" />
+    <meta name="msapplication-TileColor" content="#f97316" />
+    <meta name="msapplication-navbutton-color" content="#f97316" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Nasıl Oynanır" />
-    <link rel="apple-touch-icon" href="/icon-192.svg" />
+    <meta name="application-name" content="Nasıl Oynanır" />
     
-    <!-- Geo Tags -->
-    <meta name="geo.region" content="TR" />
-    <meta name="geo.placename" content="Turkey" />
+    <!-- Format Detection -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="date=no" />
+    <meta name="format-detection" content="address=no" />
+    <meta name="format-detection" content="email=no" />
     
-    <!-- Structured Data for Organization -->
+    <!-- Security -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    
+    <!-- Structured Data - Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://nasiloynanir.com/#organization",
+      "name": "Nasıl Oynanır",
+      "url": "https://nasiloynanir.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nasiloynanir.com/icon-512.svg",
+        "width": 512,
+        "height": 512
+      },
+      "description": "Geleneksel Türk oyunlarının nasıl oynanacağını öğrenin",
+      "foundingDate": "2024",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "eminaydinyazilim@gmail.com",
+        "contactType": "customer service",
+        "availableLanguage": "Turkish"
+      }
+    }
+    </script>
+    
+    <!-- Structured Data - WebSite with SearchAction -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": "https://nasiloynanir.com/#website",
       "name": "Nasıl Oynanır",
       "url": "https://nasiloynanir.com",
-      "description": "Geleneksel Türk oyunlarının nasıl oynanacağını öğrenin",
+      "description": "Geleneksel Türk oyunlarının nasıl oynanacağını öğrenin. Okey, Batak, Pişti ve daha fazlası!",
+      "inLanguage": "tr-TR",
+      "publisher": {
+        "@id": "https://nasiloynanir.com/#organization"
+      },
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://nasiloynanir.com/?search={search_term_string}",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://nasiloynanir.com/oyunlar?search={search_term_string}"
+        },
         "query-input": "required name=search_term_string"
       }
+    }
+    </script>
+    
+    <!-- Structured Data - BreadcrumbList (for homepage) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Ana Sayfa",
+          "item": "https://nasiloynanir.com"
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Structured Data - FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Okey nasıl oynanır?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Okey, 4 kişiyle oynanan geleneksel bir Türk masa oyunudur. 106 taş ve 2 sahte okey ile oynanır. Her oyuncuya 14 veya 15 taş dağıtılır. Amaç, taşları gruplar (aynı sayı farklı renk) veya seriler (ardışık sayılar aynı renk) halinde düzenleyerek eli kapatmaktır."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Batak nasıl oynanır?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Batak, 4 kişiyle 52 kartlık deste ile oynanan bir kart oyunudur. Oyun başında ihale yapılır ve en yüksek teklifi veren koz rengini belirler. Oyuncular sırayla kart oynar ve en yüksek kartı oynayan el alır. Amaç, söylediğiniz kadar el almaktır."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Pişti nasıl oynanır?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pişti, 2-4 kişiyle 52 kartlık deste ile oynanan hızlı tempolu bir kart oyunudur. Masaya açılan kartın aynısını atarak kart toplayabilirsiniz. Tek bir kartla toplama yaparsanız Pişti yapar ve 10 puan kazanırsınız. Vale her kartı toplar."
+          }
+        }
+      ]
     }
     </script>
   </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Noscript fallback -->
+    <noscript>
+      <div style="padding: 20px; text-align: center; font-family: system-ui, sans-serif;">
+        <h1>Nasıl Oynanır</h1>
+        <p>Bu web sitesini görüntülemek için JavaScript'i etkinleştirmeniz gerekmektedir.</p>
+        <p>Please enable JavaScript to view this website.</p>
+      </div>
+    </noscript>
+    
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

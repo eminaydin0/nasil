@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Filter, Flame, Clock } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import GameCard from '../../components/home/GameCard';
@@ -11,64 +11,59 @@ import AboutSection from '../../components/home/AboutSection';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import { trackPageView } from '../../utils/analytics';
 import { useGames } from '../../hooks/useGames';
-import { categoryConfig } from '../../constants';
+import { getCategoriesWithCounts } from '../../constants/categories';
+import { useCategories } from '../../hooks/useCategories';
+import { 
+  PAGE_SEO, 
+  SCHEMA_TEMPLATES, 
+  generateItemListSchema,
+  generateFAQSchema 
+} from '../../constants/seo';
 
 function HomePage() {
   const { games, loading } = useGames();
-  const [categories, setCategories] = useState(['Tümü']);
+  const { categories: dbCategories } = useCategories();
+
+  // DB veya constants'tan, mantıksal sırayla, sadece oyunu olan kategoriler
+  const categoriesWithCounts = getCategoriesWithCounts(games, dbCategories);
 
   useEffect(() => {
-    if (games.length > 0) {
-      // Standart kategoriler - gereksiz kombinasyonları filtrele
-      const standardCategories = [
-        'Dış Mekan',
-        'İç Mekan',
-        'Masa Oyunları',
-        'Kağıt Oyunları',
-        'Kutu Oyunları',
-        'Zeka Oyunları'
-      ];
-      
-      // Sadece standart kategorileri göster
-      const uniqueCategories = ['Tümü', ...new Set(
-        games
-          .map(g => g.category)
-          .filter(cat => standardCategories.includes(cat))
-      )];
-      
-      setCategories(uniqueCategories);
-    }
-  }, [games]);
-
-  useEffect(() => {
-    document.title = 'Geleneksel Türk Oyunları - Nasıl Oynanır? Kuralları ve İpuçları';
-    
-    const existingScript = document.querySelector('script[type="application/ld+json"]');
-    if (existingScript) {
-      existingScript.remove();
-    }
-    
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Nasıl Oynanır",
-      "url": "https://nasiloynanir.com",
-      "description": "Geleneksel Türk oyunlarının nasıl oynanacağını öğrenin. Okey, Batak, Pişti ve daha fazlası!",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://nasiloynanir.com/?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    };
-    
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(structuredData);
-    document.head.appendChild(script);
-    
     trackPageView('/');
   }, []);
 
+  // Structured Data
+  const structuredData = useMemo(() => {
+    const schemas = [
+      // Website Schema
+      SCHEMA_TEMPLATES.website,
+      // Organization Schema
+      SCHEMA_TEMPLATES.organization,
+    ];
+
+    // Oyun listesi schema (eğer oyunlar yüklendiyse)
+    if (games.length > 0) {
+      schemas.push(generateItemListSchema(games, 'Popüler Oyunlar'));
+    }
+
+    // FAQ Schema - Sık sorulan sorular
+    const faqs = [
+      {
+        question: 'Okey nasıl oynanır?',
+        answer: 'Okey, 4 kişiyle oynanan geleneksel bir Türk masa oyunudur. 106 taş ve 2 sahte okey ile oynanır. Amaç, taşları gruplar veya seriler halinde düzenleyerek eli kapatmaktır.',
+      },
+      {
+        question: 'Batak nasıl oynanır?',
+        answer: 'Batak, 4 kişiyle 52 kartlık deste ile oynanan bir kart oyunudur. Oyuncular sırayla koz belirler ve el almaya çalışırlar. En yüksek kartı oynayan el alır.',
+      },
+      {
+        question: 'Pişti nasıl oynanır?',
+        answer: 'Pişti, 2-4 kişiyle oynanan hızlı tempolu bir kart oyunudur. Amaç, masadaki kartları toplayarak puan kazanmaktır. Vale ve Pistikarları özel puan getirir.',
+      },
+    ];
+    schemas.push(generateFAQSchema(faqs));
+
+    return schemas;
+  }, [games]);
 
   if (loading) {
     return (
@@ -99,77 +94,81 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 page-transition">
-      <SEO />
+      <SEO 
+        title={PAGE_SEO.home.title}
+        description={PAGE_SEO.home.description}
+        keywords={PAGE_SEO.home.keywords}
+        url="/"
+        structuredData={structuredData}
+      />
       
       <div className="container mx-auto px-4 py-8 space-y-16">
         
         {/* Hero Carousel */}
         <HeroCarousel />
         
-        {/* Categories Section */}
-        <section>
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <Filter className="text-orange-600" />
-                Kategorilere Göz At
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {categories.filter(c => c !== 'Tümü').map(category => {
-                const config = categoryConfig[category] || categoryConfig['default'];
-                const count = games.filter(g => g.category === category).length;
-                return (
-                  <CategoryCard 
-                    key={category}
-                    category={category}
-                    count={count}
-                    icon={config.icon}
-                    color={config.color}
-                    bgColor={config.bgColor}
-                    image={config.image}
-                  />
-                );
-              })}
-            </div>
-          </section>
+        {/* Categories Section - Mantıksal sıra: Kağıt, Masa, Kutu, Zeka, Dış Mekan, İç Mekan */}
+        <section aria-labelledby="categories-title">
+          <div className="flex items-center justify-between mb-8">
+            <h2 id="categories-title" className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Filter className="text-orange-600" />
+              Kategorilere Göz At
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {categoriesWithCounts.map(({ name, count, icon, image }) => (
+              <CategoryCard
+                key={name}
+                category={name}
+                count={count}
+                icon={icon}
+                image={image}
+              />
+            ))}
+          </div>
+        </section>
 
         {/* Game of the Day */}
-        <section>
-             <GameOfTheDay games={games} />
+        <section aria-labelledby="gotd-title">
+          <GameOfTheDay games={games} />
         </section>
 
         {/* Popular Games */}
-        <section>
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <Flame className="text-red-500" />
-                Popüler Oyunlar
-              </h2>
-              <a href="#" className="text-sm font-semibold text-orange-600 hover:text-orange-700">
-                Tümünü Gör →
-              </a>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {popularGames.map(game => (
-                <GameCard key={game.id} game={game} />
-              ))}
-            </div>
-          </section>
+        <section aria-labelledby="popular-title">
+          <div className="flex items-center justify-between mb-8">
+            <h2 id="popular-title" className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Flame className="text-red-500" />
+              Popüler Oyunlar
+            </h2>
+            <a 
+              href="/oyunlar" 
+              className="text-sm font-semibold text-orange-600 hover:text-orange-700"
+              aria-label="Tüm oyunları görüntüle"
+            >
+              Tümünü Gör →
+            </a>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {popularGames.map(game => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+        </section>
 
         {/* New Arrivals */}
-        <section>
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <Clock className="text-blue-500" />
-                Yeni Eklenenler
-              </h2>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {newGames.map(game => (
-                <GameCard key={game.id} game={game} />
-              ))}
-            </div>
-          </section>
+        <section aria-labelledby="new-title">
+          <div className="flex items-center justify-between mb-8">
+            <h2 id="new-title" className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Clock className="text-blue-500" />
+              Yeni Eklenenler
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {newGames.map(game => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+        </section>
 
         {/* Tools Section */}
         <ToolsSection />
@@ -186,4 +185,3 @@ function HomePage() {
 }
 
 export default HomePage;
-

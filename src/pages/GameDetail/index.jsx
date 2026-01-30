@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
 import SEO from '../../components/common/SEO';
+import Breadcrumb, { BREADCRUMB_TEMPLATES } from '../../components/common/Breadcrumb';
 import CommentSection from '../../components/game/CommentSection';
 import GameHeader from '../../components/game/GameHeader';
 import GameInfo from '../../components/game/GameInfo';
@@ -10,6 +11,11 @@ import SkeletonLoader from '../../components/common/SkeletonLoader';
 import { trackPageView, trackGameView } from '../../utils/analytics';
 import { useGame } from '../../hooks/useGame';
 import { supabase } from '../../lib/supabase';
+import { 
+  generateGameSchema, 
+  generateArticleSchema, 
+  SITE_CONFIG 
+} from '../../constants/seo';
 
 function GameDetail() {
   const { slug } = useParams();
@@ -41,7 +47,9 @@ function GameDetail() {
           shortDescription: g.short_description,
           description: g.description,
           rules: g.rules,
-          tips: g.tips
+          tips: g.tips,
+          createdAt: g.created_at,
+          updatedAt: g.updated_at,
         }));
         setGames(formattedGames);
       }
@@ -57,34 +65,65 @@ function GameDetail() {
     }
   }, [game]);
 
+  // Gelişmiş Structured Data
   const structuredData = useMemo(() => {
     if (!game) return null;
 
-    return {
-      "@context": "https://schema.org",
-      "@type": "HowTo",
-      "name": `${game.name} Nasıl Oynanır`,
-      "description": game.description,
-      "image": game.image,
-      "step": game.rules.map((rule, index) => ({
-        "@type": "HowToStep",
-        "position": index + 1,
-        "text": rule
-      })),
-      "totalTime": "PT30M",
-      "tool": [{
-        "@type": "HowToTool",
-        "name": game.category
-      }],
-      "supply": [{
-        "@type": "HowToSupply",
-        "name": game.players
-      }],
-      "about": {
-        "@type": "Thing",
-        "name": game.category
-      }
-    };
+    return [
+      // HowTo Schema - Oyun kuralları için
+      generateGameSchema(game),
+      // Article Schema - İçerik için
+      generateArticleSchema(game),
+      // Game Schema
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Game',
+        name: game.name,
+        description: game.shortDescription || game.description,
+        image: game.image,
+        url: `${SITE_CONFIG.url}/oyun/${game.slug}`,
+        genre: game.category,
+        numberOfPlayers: {
+          '@type': 'QuantitativeValue',
+          value: game.players,
+        },
+        gamePlatform: 'Tabletop',
+        applicationCategory: 'Game',
+        inLanguage: 'tr',
+        author: {
+          '@type': 'Organization',
+          name: SITE_CONFIG.name,
+          url: SITE_CONFIG.url,
+        },
+      },
+    ].filter(Boolean);
+  }, [game]);
+
+  // Breadcrumb items
+  const breadcrumbs = useMemo(() => {
+    if (!game) return [];
+    return BREADCRUMB_TEMPLATES.gameDetail(game.name, game.category);
+  }, [game]);
+
+  // SEO meta bilgileri
+  const seoMeta = useMemo(() => {
+    if (!game) return {};
+    
+    const title = `${game.name} Nasıl Oynanır?`;
+    const description = `${game.name} nasıl oynanır? ${game.shortDescription || game.description?.substring(0, 120)}. Detaylı oyun kuralları, stratejiler ve püf noktaları.`;
+    const keywords = [
+      `${game.name} nasıl oynanır`,
+      `${game.name} kuralları`,
+      `${game.name} stratejileri`,
+      `${game.name} ipuçları`,
+      game.category,
+      game.difficulty ? `${game.difficulty} oyun` : null,
+      game.players,
+      'nasıl oynanır',
+      'oyun kuralları',
+    ].filter(Boolean).join(', ');
+
+    return { title, description, keywords };
   }, [game]);
 
   if (!game || loading) {
@@ -94,13 +133,18 @@ function GameDetail() {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO 
-        title={`${game.name} Nasıl Oynanır?`}
-        description={`${game.name} nasıl oynanır? ${game.shortDescription}. Detaylı oyun kuralları, stratejiler ve püf noktaları.`}
-        keywords={`${game.name} nasıl oynanır, ${game.name} kuralları, ${game.name} stratejileri, ${game.category}, ${game.difficulty} oyun, ${game.players}`}
+        title={seoMeta.title}
+        description={seoMeta.description}
+        keywords={seoMeta.keywords}
         image={game.image}
         url={`/oyun/${game.slug}`}
         type="article"
         structuredData={structuredData}
+        breadcrumbs={breadcrumbs}
+        publishedTime={game.createdAt}
+        modifiedTime={game.updatedAt}
+        section={game.category}
+        tags={[game.name, game.category, 'oyun kuralları', 'nasıl oynanır']}
       />
       
       <GameHeader 
@@ -111,6 +155,9 @@ function GameDetail() {
       />
 
       <div className="container mx-auto px-4 py-12">
+        {/* Breadcrumb */}
+        <Breadcrumb items={breadcrumbs} className="mb-6" />
+
         <GameInfo game={game} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

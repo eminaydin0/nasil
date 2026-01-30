@@ -21,78 +21,232 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Site configuration
+const BASE_URL = 'https://nasiloynanir.com';
+
+// Static pages configuration
+const STATIC_PAGES = [
+  { url: '', changefreq: 'daily', priority: '1.0' },
+  { url: '/oyunlar', changefreq: 'daily', priority: '0.9' },
+  { url: '/araclar', changefreq: 'weekly', priority: '0.8' },
+  { url: '/hakkimizda', changefreq: 'monthly', priority: '0.6' },
+  { url: '/iletisim', changefreq: 'monthly', priority: '0.6' },
+  { url: '/auth', changefreq: 'monthly', priority: '0.4' },
+];
+
+// Tools pages
+const TOOL_PAGES = [
+  { url: '/araclar/okey-sayaci', changefreq: 'monthly', priority: '0.7' },
+  { url: '/araclar/101-yazboz', changefreq: 'monthly', priority: '0.7' },
+  { url: '/araclar/batak-yazboz', changefreq: 'monthly', priority: '0.7' },
+  { url: '/araclar/takim-olusturucu', changefreq: 'monthly', priority: '0.7' },
+  { url: '/araclar/halisaha-takim-olusturucu', changefreq: 'monthly', priority: '0.7' },
+  { url: '/araclar/zar-at', changefreq: 'monthly', priority: '0.7' },
+  { url: '/araclar/skor-tablosu', changefreq: 'monthly', priority: '0.7' },
+];
+
+/**
+ * Generate main sitemap.xml
+ */
 const generateSitemap = async () => {
-  console.log('Generating sitemap...');
+  console.log('🚀 Starting sitemap generation...');
+  const now = new Date().toISOString();
 
   try {
     // Fetch all games
-    const { data: games, error } = await supabase
+    const { data: games, error: gamesError } = await supabase
       .from('games')
-      .select('slug, updated_at');
+      .select('slug, name, image, category, updated_at, created_at')
+      .order('updated_at', { ascending: false });
 
-    if (error) throw error;
+    if (gamesError) throw gamesError;
+    console.log(`✅ Fetched ${games.length} games`);
 
-    const baseUrl = 'https://nasiloynanir.com';
-    const staticPages = [
-      '',
-      '/oyunlar',
-      '/hakkimizda',
-      '/iletisim'
-    ];
+    // Fetch all categories
+    const { data: categories, error: catError } = await supabase
+      .from('categories')
+      .select('name, is_active')
+      .eq('is_active', true);
 
+    if (catError) {
+      console.warn('⚠️ Could not fetch categories, using defaults');
+    }
+
+    const activeCategories = categories 
+      ? categories.map(c => c.name) 
+      : [...new Set(games.map(g => g.category).filter(Boolean))];
+    
+    console.log(`✅ Found ${activeCategories.length} active categories`);
+
+    // Start building sitemap
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 `;
 
     // Add static pages
-    staticPages.forEach(page => {
+    STATIC_PAGES.forEach(page => {
       sitemap += `  <url>
-    <loc>${baseUrl}${page}</loc>
-    <changefreq>daily</changefreq>
-    <priority>${page === '' ? '1.0' : '0.8'}</priority>
+    <loc>${BASE_URL}${page.url}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
   </url>
 `;
     });
 
-    // Add game pages
-    games.forEach(game => {
-      const lastMod = game.updated_at ? new Date(game.updated_at).toISOString() : new Date().toISOString();
+    // Add tool pages
+    TOOL_PAGES.forEach(page => {
       sitemap += `  <url>
-    <loc>${baseUrl}/oyun/${game.slug}</loc>
-    <lastmod>${lastMod}</lastmod>
+    <loc>${BASE_URL}${page.url}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>
+`;
+    });
+
+    // Add game pages with images
+    games.forEach(game => {
+      const lastMod = game.updated_at || game.created_at || now;
+      const slug = encodeURIComponent(game.slug);
+      
+      sitemap += `  <url>
+    <loc>${BASE_URL}/oyun/${slug}</loc>
+    <lastmod>${new Date(lastMod).toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.9</priority>`;
+      
+      // Add image sitemap extension if image exists
+      if (game.image) {
+        sitemap += `
+    <image:image>
+      <image:loc>${game.image}</image:loc>
+      <image:title>${escapeXml(game.name)} - Nasıl Oynanır</image:title>
+      <image:caption>${escapeXml(game.name)} oyununun görseli</image:caption>
+    </image:image>`;
+      }
+      
+      sitemap += `
   </url>
 `;
     });
 
     // Add category pages
-    const { data: categories } = await supabase
-      .from('games')
-      .select('category');
-    
-    if (categories) {
-      const uniqueCategories = [...new Set(categories.map(c => c.category))];
-      uniqueCategories.forEach(category => {
-        if (category) {
-            sitemap += `  <url>
-    <loc>${baseUrl}/kategori/${encodeURIComponent(category)}</loc>
+    activeCategories.forEach(category => {
+      if (category) {
+        sitemap += `  <url>
+    <loc>${BASE_URL}/kategori/${encodeURIComponent(category)}</loc>
+    <lastmod>${now}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 `;
-        }
-      });
-    }
+      }
+    });
 
     sitemap += '</urlset>';
 
-    fs.writeFileSync(path.join(rootDir, 'public', 'sitemap.xml'), sitemap);
-    console.log('Sitemap generated successfully at public/sitemap.xml');
+    // Write main sitemap
+    const sitemapPath = path.join(rootDir, 'public', 'sitemap.xml');
+    fs.writeFileSync(sitemapPath, sitemap);
+    console.log(`✅ Main sitemap generated at public/sitemap.xml`);
+
+    // Generate sitemap index if needed (for large sites)
+    await generateSitemapIndex(games.length, activeCategories.length);
+
+    // Generate games sitemap separately for better organization
+    await generateGamesSitemap(games);
+
+    console.log('\n🎉 Sitemap generation completed successfully!');
+    console.log(`   - ${STATIC_PAGES.length + TOOL_PAGES.length} static pages`);
+    console.log(`   - ${games.length} game pages`);
+    console.log(`   - ${activeCategories.length} category pages`);
+    console.log(`   - Total: ${STATIC_PAGES.length + TOOL_PAGES.length + games.length + activeCategories.length} URLs`);
 
   } catch (error) {
-    console.error('Error generating sitemap:', error);
+    console.error('❌ Error generating sitemap:', error);
+    process.exit(1);
   }
 };
 
+/**
+ * Generate games-only sitemap for better crawling
+ */
+const generateGamesSitemap = async (games) => {
+  const now = new Date().toISOString();
+  
+  let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+`;
+
+  games.forEach(game => {
+    const lastMod = game.updated_at || game.created_at || now;
+    const slug = encodeURIComponent(game.slug);
+    
+    sitemap += `  <url>
+    <loc>${BASE_URL}/oyun/${slug}</loc>
+    <lastmod>${new Date(lastMod).toISOString()}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>`;
+    
+    if (game.image) {
+      sitemap += `
+    <image:image>
+      <image:loc>${game.image}</image:loc>
+      <image:title>${escapeXml(game.name)}</image:title>
+    </image:image>`;
+    }
+    
+    sitemap += `
+  </url>
+`;
+  });
+
+  sitemap += '</urlset>';
+
+  const gamesPath = path.join(rootDir, 'public', 'sitemap-games.xml');
+  fs.writeFileSync(gamesPath, sitemap);
+  console.log(`✅ Games sitemap generated at public/sitemap-games.xml`);
+};
+
+/**
+ * Generate sitemap index file
+ */
+const generateSitemapIndex = async (gameCount, categoryCount) => {
+  const now = new Date().toISOString();
+  
+  const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${BASE_URL}/sitemap.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${BASE_URL}/sitemap-games.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+</sitemapindex>`;
+
+  const indexPath = path.join(rootDir, 'public', 'sitemap-index.xml');
+  fs.writeFileSync(indexPath, sitemapIndex);
+  console.log(`✅ Sitemap index generated at public/sitemap-index.xml`);
+};
+
+/**
+ * Escape special XML characters
+ */
+function escapeXml(text) {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+// Run the generator
 generateSitemap();
