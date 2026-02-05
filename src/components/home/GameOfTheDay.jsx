@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, TrendingUp, Sparkles, Users, ArrowRight, Star } from 'lucide-react';
+import { Calendar, Sparkles, Users, ArrowRight, Trophy } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 function GameOfTheDay({ games }) {
@@ -68,76 +68,87 @@ function GameOfTheDay({ games }) {
   if (!gameOfTheDay) return null;
 
   return (
-    <section className="relative mb-10">
-      {/* Sade ve Şık Card */}
-      <div className="relative overflow-hidden bg-white rounded-2xl shadow-lg border border-gray-200/80 group hover:shadow-xl transition-all duration-300">
-        <div className="relative z-10 p-6 md:p-8">
-          {/* Header - Minimal */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-lg border border-orange-100">
-              <Sparkles size={14} className="text-orange-600" />
-              <span className="font-semibold text-xs tracking-wide">Günün Oyunu</span>
+    <section className="relative">
+      <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl group">
+        {/* Dekoratif arka plan */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+        </div>
+
+        <div className="relative z-10 p-6 md:p-10 lg:p-12">
+          {/* Header */}
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div className="inline-flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-full">
+              <Sparkles size={18} className="text-white" />
+              <span className="font-bold text-white text-sm">Günün Oyunu</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-500">
-              <Calendar size={14} />
-              <span className="text-xs font-medium">
-                {new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
+            <div className="flex items-center gap-2 text-gray-400">
+              <Calendar size={16} />
+              <span className="text-sm font-medium">
+                {new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 items-center">
-            {/* Game Image - Sade */}
-            <div className="relative group/image overflow-hidden rounded-xl">
-              <img 
-                src={gameOfTheDay.image} 
-                alt={gameOfTheDay.name}
-                className="w-full h-56 md:h-64 object-cover transform group-hover/image:scale-[1.02] transition-transform duration-500"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000&auto=format&fit=crop';
-                }}
-              />
-              {/* Subtle Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300"></div>
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Görsel */}
+            <div className="relative">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src={gameOfTheDay.image} 
+                  alt={gameOfTheDay.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000&auto=format&fit=crop';
+                  }}
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent"></div>
+              </div>
               
-              {/* Minimal Badges */}
-              <div className="absolute bottom-3 left-3 right-3 flex gap-2">
-                <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-gray-800 text-xs font-semibold rounded-md">
-                  {gameOfTheDay.category}
-                </span>
+              {/* Floating badge */}
+              <div className="absolute -bottom-4 -right-4 md:right-4 bg-white rounded-xl p-3 shadow-xl">
+                <div className="flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-orange-500" />
+                  <span className="text-sm font-bold text-gray-900">Öne Çıkan</span>
+                </div>
               </div>
             </div>
 
-            {/* Game Info - Minimal Typography */}
-            <div className="space-y-4">
-              {/* Title */}
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-2 leading-tight text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
-                  {gameOfTheDay.name}
-                </h2>
-              </div>
+            {/* İçerik */}
+            <div className="space-y-6">
+              {/* Kategori */}
+              <span className="inline-flex px-3 py-1.5 bg-white/10 backdrop-blur-sm text-white/80 text-xs font-semibold rounded-lg border border-white/10">
+                {gameOfTheDay.category}
+              </span>
 
-              {/* Description */}
-              <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
+              {/* Başlık */}
+              <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">
+                {gameOfTheDay.name}
+              </h2>
+
+              {/* Açıklama */}
+              <p className="text-gray-300 text-base md:text-lg leading-relaxed line-clamp-3">
                 {gameOfTheDay.shortDescription}
               </p>
               
-              {/* Stats - Minimal */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-lg">
-                  <Users size={16} className="text-gray-600" />
-                  <span className="text-xs font-medium text-gray-700">{gameOfTheDay.players}</span>
+              {/* Meta bilgiler */}
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/10">
+                  <Users size={18} className="text-orange-400" />
+                  <span className="text-sm font-medium text-white">{gameOfTheDay.players}</span>
                 </div>
               </div>
 
-              {/* CTA Button - Sade */}
+              {/* CTA */}
               <Link
                 to={`/oyun/${gameOfTheDay.slug}`}
-                className="group/btn inline-flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-lg font-semibold text-sm hover:bg-orange-600 transition-all duration-300 hover:shadow-md"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-bold text-base hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 group/btn"
               >
-                <span>Nasıl Oynanır</span>
-                <ArrowRight size={16} className="transform group-hover/btn:translate-x-0.5 transition-transform duration-300" />
+                <span>Nasıl Oynanır?</span>
+                <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>

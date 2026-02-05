@@ -3,6 +3,7 @@ import { Menu, X, Search, User } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
+import NotificationBell from '../common/NotificationBell';
 
 const navItems = [
   { to: '/', label: 'Ana Sayfa', exact: true },
@@ -151,27 +152,30 @@ function Header() {
 
             {/* User Menu - Desktop */}
             {user ? (
-              <Link 
-                to="/profil" 
-                className={`w-9 h-9 flex items-center justify-center rounded-full overflow-hidden border shadow-sm transition-colors ${
-                  pathname === '/profil' 
-                    ? 'bg-gradient-to-r from-orange-500 to-red-600 border-orange-500 text-white ring-2 ring-orange-200' 
-                    : 'bg-orange-100 text-orange-600 hover:bg-orange-200 border-orange-200'
-                }`}
-                title="Profilim"
-              >
-                {user.user_metadata?.avatar_url ? (
-                  <img 
-                    src={user.user_metadata.avatar_url} 
-                    alt="Profil" 
-                    className="w-full h-full object-cover" 
-                  />
-                ) : (
-                  <span className="font-bold text-sm">
-                    {user.user_metadata?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </Link>
+              <div className="flex items-center gap-2">
+                <NotificationBell />
+                <Link 
+                  to="/profil" 
+                  className={`w-9 h-9 flex items-center justify-center rounded-full overflow-hidden border shadow-sm transition-colors ${
+                    pathname === '/profil' 
+                      ? 'bg-gradient-to-r from-orange-500 to-red-600 border-orange-500 text-white ring-2 ring-orange-200' 
+                      : 'bg-orange-100 text-orange-600 hover:bg-orange-200 border-orange-200'
+                  }`}
+                  title="Profilim"
+                >
+                  {user.user_metadata?.avatar_url ? (
+                    <img 
+                      src={user.user_metadata.avatar_url} 
+                      alt="Profil" 
+                      className="w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <span className="font-bold text-sm">
+                      {user.user_metadata?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                </Link>
+              </div>
             ) : (
               <Link 
                 to="/auth" 
@@ -246,26 +250,32 @@ function Header() {
              
             {/* User Menu - Mobile */}
             {user ? (
-              <Link
-                to="/profil"
-                className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg font-semibold mt-2 ${
-                  pathname === '/profil'
-                    ? 'text-white bg-gradient-to-r from-orange-500 to-red-600'
-                    : 'text-orange-600 bg-orange-50 hover:bg-orange-100'
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {user.user_metadata?.avatar_url ? (
-                  <img 
-                    src={user.user_metadata.avatar_url} 
-                    alt="Profil" 
-                    className="w-5 h-5 rounded-full object-cover border border-orange-200" 
-                  />
-                ) : (
-                  <User size={18} />
-                )}
-                Profilim ({user.user_metadata?.full_name || user.email?.split('@')[0]})
-              </Link>
+              <div className="space-y-2 mt-3 pt-3 border-t border-gray-200">
+                <div className="flex items-center justify-between px-3 py-2 bg-orange-50 rounded-lg">
+                  <span className="text-sm font-medium text-gray-700">Bildirimler</span>
+                  <NotificationBell />
+                </div>
+                <Link
+                  to="/profil"
+                  className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg font-semibold ${
+                    pathname === '/profil'
+                      ? 'text-white bg-gradient-to-r from-orange-500 to-red-600'
+                      : 'text-orange-600 bg-orange-50 hover:bg-orange-100'
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {user.user_metadata?.avatar_url ? (
+                    <img 
+                      src={user.user_metadata.avatar_url} 
+                      alt="Profil" 
+                      className="w-5 h-5 rounded-full object-cover border border-orange-200" 
+                    />
+                  ) : (
+                    <User size={18} />
+                  )}
+                  Profilim ({user.user_metadata?.full_name || user.email?.split('@')[0]})
+                </Link>
+              </div>
             ) : (
               <Link
                 to="/auth"

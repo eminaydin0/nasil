@@ -427,24 +427,24 @@ function AdminPanel() {
       />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 w-full overflow-hidden">
         {/* Tabs */}
-        <div className="mb-6 border-b border-gray-200">
-          <nav className="flex space-x-8">
+        <div className="mb-4 sm:mb-6 border-b border-gray-200 -mx-3 sm:mx-0 overflow-x-auto scrollbar-hide">
+          <nav className="flex space-x-4 sm:space-x-6 md:space-x-8 px-3 sm:px-0 min-w-max">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'dashboard'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <BarChart3 size={18} />
+              <BarChart3 size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
               <span>Dashboard</span>
             </button>
             <button
               onClick={() => setActiveTab('games')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap ${
                 activeTab === 'games'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -454,90 +454,92 @@ function AdminPanel() {
             </button>
             <button
               onClick={() => setActiveTab('comments')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'comments'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <MessageCircle size={18} />
+              <MessageCircle size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
               <span>Yorumlar</span>
             </button>
             <button
               onClick={() => setActiveTab('analytics')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'analytics'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <TrendingUp size={18} />
+              <TrendingUp size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
               <span>Analytics</span>
             </button>
             <button
               onClick={() => setActiveTab('carousel')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'carousel'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <Download size={18} className="rotate-180" />
+              <Download size={16} className="rotate-180 sm:w-[18px] sm:h-[18px] shrink-0" />
               <span>Carousel</span>
             </button>
             <button
               onClick={() => setActiveTab('gameoftheday')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'gameoftheday'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <Sparkles size={18} />
-              <span>Günün Oyunu</span>
+              <Sparkles size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
+              <span className="hidden sm:inline">Günün Oyunu</span>
+              <span className="sm:hidden">Günün</span>
             </button>
             <button
               onClick={() => setActiveTab('users')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'users'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <FileText size={18} />
+              <FileText size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
               <span>Kullanıcılar</span>
             </button>
             <button
               onClick={() => setActiveTab('categories')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'categories'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <FolderPlus size={18} />
+              <FolderPlus size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
               <span>Kategoriler</span>
             </button>
             <button
               onClick={() => setActiveTab('content')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'content'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <FileText size={18} />
-              <span>İçerik Yönetimi</span>
+              <FileText size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
+              <span className="hidden sm:inline">İçerik Yönetimi</span>
+              <span className="sm:hidden">İçerik</span>
             </button>
             <button
               onClick={() => setActiveTab('contact')}
-              className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === 'contact'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <Phone size={18} />
+              <Phone size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
               <span>İletişim</span>
             </button>
           </nav>

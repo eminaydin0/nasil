@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Mail, Lock, User, ArrowRight, Loader, Calendar, Info, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Loader, Calendar, Info, AlertTriangle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import toast from 'react-hot-toast';
 
@@ -13,6 +13,7 @@ function AuthPage() {
   const [birthYear, setBirthYear] = useState('');
   const [gender, setGender] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [showVerificationInfo, setShowVerificationInfo] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const { signIn, signUp, resendVerification } = useAuth();
@@ -244,9 +245,9 @@ function AuthPage() {
               )}
               <div>
                 <label htmlFor="email-address" className="sr-only">E-posta adresi</label>
-                <div className="relative">
+                <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                    <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
                   </div>
                   <input
                     id="email-address"
@@ -255,7 +256,7 @@ function AuthPage() {
                     autoComplete="email"
                     required
                     className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                    placeholder="E-posta adresi"
+                    placeholder="ornek@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -263,22 +264,40 @@ function AuthPage() {
               </div>
               <div>
                 <label htmlFor="password" className="sr-only">Şifre</label>
-                <div className="relative">
+                <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                    <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
                   </div>
                   <input
                     id="password"
                     name="password"
-                    type="password"
-                    autoComplete="current-password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete={isLogin ? 'current-password' : 'new-password'}
                     required
-                    className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                    placeholder="Şifre"
+                    minLength={isLogin ? undefined : 6}
+                    className="appearance-none relative block w-full pl-10 pr-11 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
+                    placeholder={isLogin ? 'Şifre' : 'En az 6 karakter'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowPassword((prev) => !prev);
+                    }}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center justify-center z-10 text-gray-400 hover:text-orange-500 active:text-orange-600 transition-colors cursor-pointer min-w-[44px]"
+                    tabIndex={-1}
+                    title={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
+                    aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5 shrink-0 pointer-events-none" /> : <Eye className="h-5 w-5 shrink-0 pointer-events-none" />}
+                  </button>
                 </div>
+                {!isLogin && (
+                  <p className="mt-1.5 text-xs text-gray-500">En az 6 karakter kullanın</p>
+                )}
               </div>
             </div>
 
@@ -305,7 +324,7 @@ function AuthPage() {
             
             <div className="text-center">
               <p className="text-xs text-gray-500">
-                Kayıt olarak <a href="/kullanim-kosullari" className="underline hover:text-gray-900">Kullanım Koşulları</a>'nı kabul etmiş sayılırsınız.
+                Kayıt olarak <Link to="/kullanim-kosullari" className="underline hover:text-gray-900">Kullanım Koşulları</Link>'nı kabul etmiş sayılırsınız.
               </p>
             </div>
           </form>

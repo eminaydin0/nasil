@@ -1,41 +1,45 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Gamepad2, Search } from 'lucide-react';
 import GameCard from '../../components/home/GameCard';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { useGames } from '../../hooks/useGames';
 import { useCategories } from '../../hooks/useCategories';
-import { CATEGORY_NAMES } from '../../constants';
+import { getCategoriesWithCounts } from '../../constants/categories';
 import { PAGE_SEO, generateItemListSchema, SCHEMA_TEMPLATES } from '../../constants/seo';
 import { trackPageView } from '../../utils/analytics';
+
+// Kategori eşleştirme - büyük/küçük harf duyarsız
+const categoryMatches = (gameCategory, selectedCategory) => {
+  if (!gameCategory || selectedCategory === 'Tümü') return selectedCategory === 'Tümü';
+  const g = String(gameCategory).toLocaleLowerCase('tr-TR').trim();
+  const s = String(selectedCategory).toLocaleLowerCase('tr-TR').trim();
+  return g === s;
+};
 
 function AllGames() {
   const { games, loading } = useGames();
   const { categories: dbCategories } = useCategories();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Tümü');
-  const [categories, setCategories] = useState(['Tümü']);
+
+  // Gerçek kategoriler: DB + constants, sıralı, tüm aktif kategoriler
+  const categoryTabs = useMemo(() => {
+    const withCounts = getCategoriesWithCounts(games, dbCategories);
+    return [
+      { name: 'Tümü', count: games.length },
+      ...withCounts.map((c) => ({ name: c.name, count: c.count || 0 })),
+    ];
+  }, [games, dbCategories]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     trackPageView('/oyunlar');
   }, []);
 
-  useEffect(() => {
-    if (games.length > 0) {
-      const gameCats = new Set(games.map((g) => g.category).filter(Boolean));
-      // Sadece aktif kategorileri al (isActive !== false)
-      const categoryNames = dbCategories?.length > 0
-        ? dbCategories.filter((c) => c.isActive !== false).map((c) => c.name)
-        : CATEGORY_NAMES;
-      const ordered = categoryNames.filter((c) => gameCats.has(c));
-      setCategories(['Tümü', ...ordered]);
-    }
-  }, [games, dbCategories]);
-
-  const filteredGames = games.filter(game => {
+  const filteredGames = games.filter((game) => {
     const matchesSearch = game.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'Tümü' || game.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'Tümü' || categoryMatches(game.category, selectedCategory);
     return matchesSearch && matchesCategory;
   });
 
@@ -84,18 +88,21 @@ function AllGames() {
           {/* Filters */}
           <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-3 items-center justify-between">
             {/* Category Tabs */}
-            <div className="flex flex-wrap md:flex-nowrap items-center justify-center md:justify-start gap-1.5 w-full md:flex-1">
-              {categories.map(cat => (
+            <div className="flex flex-wrap md:flex-nowrap items-center justify-center md:justify-start gap-1.5 w-full md:flex-1 overflow-x-auto">
+              {categoryTabs.map(({ name, count }) => (
                 <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-bold whitespace-nowrap transition-all ${
-                    selectedCategory === cat
+                  key={name}
+                  onClick={() => setSelectedCategory(name)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                    selectedCategory === name
                       ? 'bg-gray-900 text-white shadow-md'
                       : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`}
                 >
-                  {cat}
+                  <span>{name}</span>
+                  <span className={selectedCategory === name ? 'text-white/80' : 'text-gray-400'}>
+                    ({count})
+                  </span>
                 </button>
               ))}
             </div>
@@ -133,8 +140,8 @@ function AllGames() {
             {/* Sonuç bilgisi */}
             <p className="text-center text-gray-500 mt-8 text-sm">
               {filteredGames.length} oyun gösteriliyor
-              {selectedCategory !== 'Tümü' && ` (${selectedCategory})`}
-              {searchTerm && ` - "${searchTerm}" araması`}
+              {selectedCategory !== 'Tümü' && ` • ${selectedCategory}`}
+              {searchTerm && ` • "${searchTerm}" araması`}
             </p>
           </>
         ) : (

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Mail } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
@@ -75,6 +76,11 @@ function Footer() {
                   İletişim
                 </a>
               </li>
+              <li>
+                <Link to="/reklam-verin" className="text-gray-600 hover:text-gray-900 transition-colors inline-block">
+                  Reklam Verin
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -105,12 +111,21 @@ function Footer() {
               </p>
             </div>
             <div className="flex items-center space-x-6">
-              <a href="/hakkimizda" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
+              <Link to="/hakkimizda" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
                 Hakkımızda
-              </a>
-              <a href="/iletisim" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
+              </Link>
+              <Link to="/iletisim" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
                 İletişim
-              </a>
+              </Link>
+              <Link to="/kullanim-kosullari" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
+                Kullanım Koşulları
+              </Link>
+              <Link to="/gizlilik" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
+                Gizlilik
+              </Link>
+              <Link to="/cerez-politikasi" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">
+                Çerezler
+              </Link>
             </div>
           </div>
         </div>

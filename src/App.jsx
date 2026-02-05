@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
+import ErrorBoundary from './components/common/ErrorBoundary';
+import CookieConsent from './components/common/CookieConsent';
+import AddToHomeScreen from './components/common/AddToHomeScreen';
 import HomePage from './pages/HomePage';
 import GameDetail from './pages/GameDetail';
 import CategoryPage from './pages/Categories';
@@ -17,6 +20,11 @@ import Okey101ScorePage from './pages/GameDetail/Okey101ScorePage';
 import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import TermsOfUse from './pages/TermsOfUse';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import CookiePolicy from './pages/CookiePolicy';
+import ReklamVerin from './pages/ReklamVerin';
+import ErrorPage from './pages/ErrorPage';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import { initSession } from './utils/analytics';
@@ -31,9 +39,12 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <Router>
-        <Toaster 
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <CookieConsent />
+          <AddToHomeScreen />
+          <Toaster 
           position="top-right"
           toastOptions={{
             duration: 3000,
@@ -84,16 +95,22 @@ function App() {
                    <Route path="/oyun/:slug/101-skor-tablosu" element={<Okey101ScorePage />} />
                   <Route path="/hakkimizda" element={<About />} />
                   <Route path="/iletisim" element={<Contact />} />
+                  <Route path="/kullanim-kosullari" element={<TermsOfUse />} />
+                  <Route path="/gizlilik" element={<PrivacyPolicy />} />
+                  <Route path="/cerez-politikasi" element={<CookiePolicy />} />
+                  <Route path="/reklam-verin" element={<ReklamVerin />} />
                   <Route path="/auth" element={<AuthPage />} />
                   <Route path="/profil" element={<ProfilePage />} />
+                  <Route path="*" element={<ErrorPage status={404} />} />
                 </Routes>
               </main>
               <Footer />
             </div>
           } />
         </Routes>
-      </Router>
-    </AuthProvider>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

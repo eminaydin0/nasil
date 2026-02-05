@@ -31,6 +31,10 @@ const STATIC_PAGES = [
   { url: '/araclar', changefreq: 'weekly', priority: '0.8' },
   { url: '/hakkimizda', changefreq: 'monthly', priority: '0.6' },
   { url: '/iletisim', changefreq: 'monthly', priority: '0.6' },
+  { url: '/kullanim-kosullari', changefreq: 'monthly', priority: '0.5' },
+  { url: '/gizlilik', changefreq: 'monthly', priority: '0.5' },
+  { url: '/cerez-politikasi', changefreq: 'monthly', priority: '0.5' },
+  { url: '/reklam-verin', changefreq: 'monthly', priority: '0.6' },
   { url: '/auth', changefreq: 'monthly', priority: '0.4' },
 ];
 

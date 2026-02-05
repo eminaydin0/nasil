@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Bookmark } from 'lucide-react'; // Kaydet ikonu için
+import { Play, Sparkles, TrendingUp } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 function HeroCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isRolling, setIsRolling] = useState(false);
 
   useEffect(() => {
     fetchSlides();
@@ -32,17 +33,14 @@ function HeroCarousel() {
     if (slides.length === 0 || isRolling) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % slides.length);
-    }, 7000);
+    }, 6000);
     return () => clearInterval(timer);
-  }, [slides.length]);
-
-  // Manuel geçişte kısa süreli duraksama veya stabilite için
-  const [isRolling, setIsRolling] = useState(false);
+  }, [slides.length, isRolling]);
 
   if (loading) {
     return (
-      <div className="h-[550px] w-full bg-[#121212] rounded-3xl animate-pulse flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="h-[500px] md:h-[600px] w-full max-w-[1400px] mx-auto bg-gradient-to-br from-gray-100 to-gray-50 rounded-3xl animate-pulse flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -50,147 +48,132 @@ function HeroCarousel() {
   if (slides.length === 0) return null;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 w-full max-w-[1400px] mx-auto p-4 select-none">
-      
-      {/* SOL TARAF: ANA SLIDER AREA */}
-      <div className="relative flex-1 h-[400px] md:h-[550px] overflow-hidden rounded-3xl group shadow-2xl bg-black">
+    <div className="w-full max-w-[1400px] mx-auto px-4">
+      <div className="relative h-[500px] md:h-[600px] overflow-hidden rounded-3xl group bg-gradient-to-br from-gray-900 via-gray-800 to-black shadow-2xl shadow-gray-900/50">
+        
+        {/* Slides */}
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-in-out ${
-              index === currentIndex ? 'opacity-100 z-10 visible' : 'opacity-0 z-0 invisible'
+            className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-out ${
+              index === currentIndex ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-95'
             }`}
           >
-            {/* Arka Plan Görseli - Görseldeki gibi tam görünür */}
+            {/* Background Image */}
             <div className="absolute inset-0">
               <img
                 src={slide.image_url}
                 alt={slide.title}
                 className="w-full h-full object-cover"
+                loading={index === 0 ? 'eager' : 'lazy'}
               />
-              {/* Hafif Karartma Gradiyentleri */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent"></div>
+              {/* Gradient overlays */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent"></div>
             </div>
 
-            {/* İçerik Katmanı */}
-            <div className="absolute bottom-12 left-8 md:left-12 z-20 max-w-xl">
-              <div className={`transition-all duration-700 delay-300 ${
-                index === currentIndex ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
+            {/* Dekoratif şekiller */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
+
+            {/* Content */}
+            <div className="absolute inset-0 flex items-end p-8 md:p-12 lg:p-16">
+              <div className={`max-w-2xl transition-all duration-700 delay-200 ${
+                index === currentIndex ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}>
-                {/* Badge/Üst Başlık */}
-                <p className="text-white font-bold text-xs uppercase tracking-widest mb-3 opacity-90 shadow-sm">
-                  {slide.badge || 'BÜYÜK GÜNCELLEME'}
-                </p>
-                
-                {/* Açıklama */}
-                <p className="text-gray-100 text-base md:text-lg mb-8 leading-relaxed line-clamp-3 drop-shadow-lg font-medium">
+                {/* Badge */}
+                {slide.badge && (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-4 shadow-lg">
+                    <Sparkles size={16} className="text-white" />
+                    <span className="text-white font-bold text-xs uppercase tracking-wider">
+                      {slide.badge}
+                    </span>
+                  </div>
+                )}
+
+                {/* Title */}
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 md:mb-6 leading-tight">
+                  {slide.title}
+                </h2>
+
+                {/* Description */}
+                <p className="text-gray-200 text-base md:text-lg lg:text-xl mb-8 leading-relaxed max-w-xl">
                   {slide.description}
                 </p>
-                
-                {/* Alt Fiyat/Durum Bilgisi */}
-                <p className="text-white text-sm mb-4 font-semibold uppercase tracking-wider">
-                   Ücretsiz
-                </p>
 
-                {/* Butonlar */}
-                <div className="flex items-center gap-3">
+                {/* CTA Buttons */}
+                <div className="flex flex-wrap items-center gap-4">
                   <a
                     href={slide.button_link}
-                    className="px-8 py-3.5 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center text-sm uppercase tracking-tight"
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-bold text-base hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105"
                   >
-                    {slide.button_text || 'Hemen Oyna'}
+                    <Play size={20} fill="currentColor" />
+                    <span>{slide.button_text || 'Keşfet'}</span>
                   </a>
                   
-                  <button className="p-3.5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-white transition-all border border-white/10 group/btn">
-                    <Bookmark size={22} className="group-active/btn:scale-90 transition-transform" />
+                  <button className="inline-flex items-center gap-2 px-6 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-xl font-semibold transition-all duration-300">
+                    <TrendingUp size={20} />
+                    <span>Popüler</span>
                   </button>
                 </div>
               </div>
             </div>
           </div>
         ))}
-      </div>
 
-      {/* SAĞ TARAF: THUMBNAIL NAVİGASYON - Modern & Şık Tasarım */}
-      <div className="hidden lg:flex flex-col gap-2.5 w-[300px]">
-        {slides.map((slide, index) => {
-          const isActive = index === currentIndex;
-          return (
+        {/* Navigation Dots */}
+        <div className="absolute bottom-8 right-8 md:right-12 z-20 flex gap-2">
+          {slides.map((_, index) => (
             <button
-              key={slide.id}
+              key={index}
               onClick={() => {
                 setCurrentIndex(index);
                 setIsRolling(true);
                 setTimeout(() => setIsRolling(false), 2000);
               }}
-              className={`relative flex items-center gap-3.5 p-3 rounded-2xl transition-all duration-500 text-left group overflow-hidden ${
-                isActive 
-                  ? 'bg-gradient-to-br from-white to-gray-50 shadow-xl shadow-gray-200/50 scale-[1.02] border-2 border-orange-500/30' 
-                  : 'bg-white/90 hover:bg-white border border-gray-200/60 hover:border-gray-300 hover:shadow-md'
+              className={`transition-all duration-300 rounded-full ${
+                index === currentIndex
+                  ? 'w-12 h-3 bg-gradient-to-r from-orange-500 to-red-500'
+                  : 'w-3 h-3 bg-white/30 hover:bg-white/50'
               }`}
-            >
-              {/* Aktif Kart İçin Sol Kenar İndikatörü */}
-              {isActive && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 to-orange-600 rounded-l-2xl"></div>
-              )}
+              aria-label={`Slide ${index + 1}`}
+            />
+          ))}
+        </div>
 
-              {/* Resim Container - Daha Şık */}
-              <div className={`relative w-14 h-16 flex-shrink-0 overflow-hidden rounded-xl transition-all duration-500 ${
-                isActive 
-                  ? 'ring-2 ring-orange-500/30 shadow-lg' 
-                  : 'ring-1 ring-gray-200/50 group-hover:ring-gray-300/70'
-              }`}>
-                <img 
-                  src={slide.image_url} 
-                  className={`w-full h-full object-cover transition-all duration-700 ${
-                    isActive 
-                      ? 'scale-100' 
-                      : 'group-hover:scale-110'
-                  }`} 
+        {/* Side thumbnails - Desktop only */}
+        <div className="hidden xl:flex absolute right-8 top-1/2 -translate-y-1/2 z-20 flex-col gap-3">
+          {slides.map((slide, index) => {
+            const isActive = index === currentIndex;
+            return (
+              <button
+                key={slide.id}
+                onClick={() => {
+                  setCurrentIndex(index);
+                  setIsRolling(true);
+                  setTimeout(() => setIsRolling(false), 2000);
+                }}
+                className={`group relative w-20 h-24 rounded-xl overflow-hidden transition-all duration-300 ${
+                  isActive
+                    ? 'ring-4 ring-orange-500 scale-110'
+                    : 'ring-2 ring-white/20 hover:ring-white/40 hover:scale-105'
+                }`}
+              >
+                <img
+                  src={slide.image_url}
                   alt={slide.title}
+                  className="w-full h-full object-cover"
                 />
-                {/* Gradient Overlay - Daha Profesyonel */}
-                <div className={`absolute inset-0 bg-gradient-to-t from-black/20 to-transparent transition-opacity duration-500 ${
-                  isActive ? 'opacity-0' : 'opacity-100 group-hover:opacity-0'
-                }`}></div>
-              </div>
-
-              {/* İçerik Alanı */}
-              <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                {/* Başlık */}
-                <span className={`font-bold leading-tight transition-all duration-300 truncate ${
-                  isActive 
-                    ? 'text-gray-900 text-[15px]' 
-                    : 'text-gray-700 text-sm group-hover:text-gray-900'
-                }`}>
-                  {slide.title}
-                </span>
-                
-                {/* Badge/Etiket - Sadece Aktif Kartta */}
-                {isActive && slide.badge && (
-                  <span className="text-xs text-orange-600 font-semibold uppercase tracking-wider mt-0.5">
-                    {slide.badge}
-                  </span>
+                {!isActive && (
+                  <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors"></div>
                 )}
-              </div>
-
-              {/* Aktif Kart İçin Ok İşareti */}
-              {isActive && (
-                <div className="flex-shrink-0 opacity-60">
-                  <svg className="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              )}
-
-              {/* Hover Efekti - Subtle Glow */}
-              <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/0 via-orange-500/0 to-orange-500/0 transition-all duration-500 pointer-events-none ${
-                isActive ? '' : 'group-hover:from-orange-500/5 group-hover:via-orange-500/0 group-hover:to-orange-500/0'
-              }`}></div>
-            </button>
-          );
-        })}
+                {isActive && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-orange-500/30 to-transparent"></div>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

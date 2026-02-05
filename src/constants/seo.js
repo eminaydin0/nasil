@@ -64,6 +64,26 @@ export const PAGE_SEO = {
     description: 'Kullanıcı profil sayfası. Hesap bilgilerinizi yönetin.',
     keywords: 'profil, hesap, kullanıcı bilgileri',
   },
+  terms: {
+    title: 'Kullanım Koşulları - Nasıl Oynanır',
+    description: 'Nasıl Oynanır web sitesinin kullanım koşulları. Platform kuralları, kullanıcı sorumlulukları ve fikri mülkiyet hakları.',
+    keywords: 'kullanım koşulları, şartlar, koşullar, nasıl oynanır',
+  },
+  privacy: {
+    title: 'Gizlilik Politikası - Nasıl Oynanır',
+    description: 'Nasıl Oynanır gizlilik politikası. Kişisel verilerin nasıl toplandığı, kullanıldığı ve korunduğu hakkında bilgi.',
+    keywords: 'gizlilik politikası, kvkk, kişisel veriler, veri koruma',
+  },
+  cookie: {
+    title: 'Çerez Politikası - Nasıl Oynanır',
+    description: 'Nasıl Oynanır çerez politikası. Sitede kullanılan çerezler, türleri ve tercihleriniz hakkında bilgi.',
+    keywords: 'çerez politikası, cookie, kvkk, gizlilik',
+  },
+  reklamVerin: {
+    title: 'Reklam Verin - Nasıl Oynanır',
+    description: 'Nasıl Oynanır\'da reklam verin. Oyunsever hedef kitlenize ulaşın. Banner, sponsorlu içerik ve özel paketler.',
+    keywords: 'reklam verin, reklam, sponsorluk, banner reklam, oyun reklam',
+  },
 };
 
 // Kategori bazlı SEO şablonları
