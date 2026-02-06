@@ -37,22 +37,22 @@ export default function NotificationBell() {
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
+  const fetchNotifications = async () => {
+    if (!user?.id) return;
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('id, type, title, content, link, icon, is_read, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (!error) setNotifications(data || []);
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!user?.id) return;
-
-    const fetchNotifications = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('id, type, title, content, link, icon, is_read, created_at')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      if (!error) setNotifications(data || []);
-      setLoading(false);
-    };
-
     fetchNotifications();
 
     const channel = supabase
@@ -73,6 +73,12 @@ export default function NotificationBell() {
       supabase.removeChannel(channel);
     };
   }, [user?.id]);
+
+  const handleBellClick = () => {
+    const willOpen = !open;
+    setOpen(willOpen);
+    if (willOpen) fetchNotifications();
+  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -114,7 +120,7 @@ export default function NotificationBell() {
     <div className="relative" ref={panelRef}>
       <button
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={handleBellClick}
         className="relative p-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-colors"
         title="Bildirimler"
         aria-label="Bildirimler"

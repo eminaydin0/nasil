@@ -50,7 +50,7 @@ const COMMENT_MIN_LENGTH = 10;
 const COMMENT_MAX_LENGTH = 1000;
 const INITIAL_COMMENTS_SHOW = 15;
 
-function CommentSection({ gameId, gameName }) {
+function CommentSection({ gameId, gameName, gameSlug }) {
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -87,8 +87,8 @@ function CommentSection({ gameId, gameName }) {
         avatar: c.avatar_url,
         rating: c.rating,
         comment: c.content,
-        // Converting to date object for sorting
-        dateObj: new Date(c.created_at), 
+        author_user_id: c.author_user_id || null,
+        dateObj: new Date(c.created_at),
         date: new Date(c.created_at).toLocaleDateString('tr-TR'),
         likes: c.likes || 0,
         replies: c.replies || [],
@@ -197,7 +197,8 @@ function CommentSection({ gameId, gameName }) {
         rating: newComment.rating,
         likes: 0,
         replies: [],
-        is_testimonial: false
+        is_testimonial: false,
+        ...(user?.id && { author_user_id: user.id })
       };
 
       const { data, error } = await supabase
@@ -295,7 +296,20 @@ function CommentSection({ gameId, gameName }) {
         .from('comments')
         .update({ replies: targetComment.replies })
         .eq('id', commentId);
-        
+
+      const commentRepliedTo = comments.find(c => c.id === commentId);
+      if (user?.id && commentRepliedTo?.author_user_id && commentRepliedTo.author_user_id !== user.id) {
+        const link = gameSlug ? `/oyun/${gameSlug}` : '#yorumlar';
+        await supabase.from('notifications').insert({
+          user_id: commentRepliedTo.author_user_id,
+          type: 'comment_reply',
+          title: 'Yorumuna yanıt verildi',
+          content: `${currentUserName} yorumuna yanıt yazdı: ${trimmed.slice(0, 60)}${trimmed.length > 60 ? '…' : ''}`,
+          link,
+          icon: '💬'
+        });
+      }
+
       setReplyText('');
       setReplyingTo(null);
       setReplyingToComment(null);
@@ -352,7 +366,22 @@ function CommentSection({ gameId, gameName }) {
         .from('comments')
         .update({ likes: targetComment.likes })
         .eq('id', commentId);
-        
+
+      if (!isLiked && user) {
+        const commentLiked = comments.find(c => c.id === commentId);
+        if (commentLiked?.author_user_id && commentLiked.author_user_id !== user.id) {
+          const link = gameSlug ? `/oyun/${gameSlug}` : '#yorumlar';
+          await supabase.from('notifications').insert({
+            user_id: commentLiked.author_user_id,
+            type: 'comment_like',
+            title: 'Yorumun beğenildi',
+            content: `${currentUserName} yorumunu beğendi.`,
+            link,
+            icon: '❤️'
+          });
+        }
+      }
+
       if (!isLiked) toast.success('Beğenildi');
     } catch (error) {
        console.error('Like error:', error);

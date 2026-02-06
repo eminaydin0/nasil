@@ -167,7 +167,7 @@ function GameDetail() {
 
         {/* Comments Section */}
         <div className="mt-6 w-full overflow-hidden">
-          <CommentSection gameId={game.id} gameName={game.name} />
+          <CommentSection gameId={game.id} gameName={game.name} gameSlug={game.slug} />
         </div>
       </div>
     </div>

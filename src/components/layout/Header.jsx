@@ -19,8 +19,9 @@ function Header() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [games, setGames] = useState([]);
   const searchRef = useRef(null);
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const profileRef = useRef(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const pathname = location.pathname;
 
@@ -82,7 +83,6 @@ function Header() {
         setSearchFocused(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -152,8 +152,6 @@ function Header() {
 
             {/* User Menu - Desktop */}
             {user ? (
-              <div className="flex items-center gap-2">
-                <NotificationBell />
                 <Link 
                   to="/profil" 
                   className={`w-9 h-9 flex items-center justify-center rounded-full overflow-hidden border shadow-sm transition-colors ${
@@ -175,7 +173,6 @@ function Header() {
                     </span>
                   )}
                 </Link>
-              </div>
             ) : (
               <Link 
                 to="/auth" 
