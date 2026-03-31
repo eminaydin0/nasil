@@ -102,13 +102,11 @@ function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-orange-100 pt-6 mt-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <div className="flex flex-col md:flex-row items-center gap-2 text-sm text-gray-500">
               <p>© {new Date().getFullYear()} Nasıl Oynanır. Tüm hakları saklıdır.</p>
               <span className="hidden md:inline text-gray-300">|</span>
-              <p>
-                Geliştirici: <a href={`mailto:${contactInfo.email}`} className="text-orange-600 hover:text-orange-700 font-medium transition-colors">Emin Aydın</a>
-              </p>
+              <p>Zenvolab tarafından kurulmuştur.</p>
             </div>
             <div className="flex items-center space-x-6">
               <Link to="/hakkimizda" className="text-gray-500 hover:text-gray-900 transition-colors text-sm font-medium">

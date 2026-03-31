@@ -11,8 +11,8 @@ export default function Okey101Page() {
   const helpContent = (
     <>
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-pink-100 rounded-lg">
-          <Grid3X3 className="w-5 h-5 text-pink-600" />
+        <div className="p-2 bg-orange-100 rounded-lg">
+          <Grid3X3 className="w-5 h-5 text-orange-600" />
         </div>
         <h3 className="text-xl font-bold text-gray-900">Nasıl Kullanılır?</h3>
       </div>
@@ -59,8 +59,8 @@ export default function Okey101Page() {
         </div>
       </div>
 
-      <div className="mt-6 p-4 bg-pink-50 rounded-xl border border-pink-200">
-        <p className="text-sm text-pink-800">
+      <div className="mt-6 p-4 bg-orange-50 rounded-xl border border-orange-200">
+        <p className="text-sm text-orange-900">
           <strong>💡 İpucu:</strong> 101 Okey'de amaç elinizdeki tüm taşları bitirmek ve en az ceza puanı toplamaktır.
         </p>
       </div>
@@ -72,7 +72,7 @@ export default function Okey101Page() {
       title=""
       description=""
       icon={Grid3X3}
-      iconColor="pink"
+      iconColor="orange"
       badge=""
       seoTitle="101 Okey Puan Hesaplama - Yazboz Tablosu"
       seoDescription="Yüzbir (101) Okey oyunu için dijital yazboz. Ceza puanları, elden bitme ve açmama cezalarını otomatik hesaplayın."

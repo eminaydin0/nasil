@@ -38,7 +38,6 @@ export default function ScoreBoard() {
     <GameTableContainer
       title="Skor Tablosu"
       icon={Trophy}
-      iconColor="blue"
       onReset={resetScores}
       className="h-full"
     >
@@ -46,8 +45,8 @@ export default function ScoreBoard() {
 
         <div className="space-y-3">
           {sortedPlayers.map((player, index) => (
-            <div key={player.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 text-sm font-bold text-gray-600">
+            <div key={player.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-orange-100 hover:bg-orange-50/40 transition-colors">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-orange-100 text-sm font-bold text-orange-700">
                 {index + 1}
               </div>
               <div className="grow">
@@ -55,14 +54,14 @@ export default function ScoreBoard() {
                   type="text"
                   value={player.name}
                   onChange={(e) => updateName(player.id, e.target.value)}
-                  className="bg-transparent font-medium text-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg px-2 py-1"
+                  className="bg-transparent font-medium text-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-orange-500/30 rounded-lg px-2 py-1"
                 />
               </div>
               
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => updateScore(player.id, -1)}
-                  className="w-8 h-8 flex items-center justify-center bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-100 active:scale-95 transition-all"
+                  className="w-8 h-8 flex items-center justify-center bg-white border border-orange-100 rounded-lg text-gray-600 hover:bg-orange-50 active:scale-95 transition-all"
                 >
                   <Minus size={16} />
                 </button>
@@ -71,7 +70,7 @@ export default function ScoreBoard() {
                 </div>
                 <button 
                   onClick={() => updateScore(player.id, 1)}
-                  className="w-8 h-8 flex items-center justify-center bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-100 active:scale-95 transition-all"
+                  className="w-8 h-8 flex items-center justify-center bg-white border border-orange-100 rounded-lg text-gray-600 hover:bg-orange-50 active:scale-95 transition-all"
                 >
                   <Plus size={16} />
                 </button>
@@ -81,7 +80,7 @@ export default function ScoreBoard() {
 
           <button
             onClick={addPlayer}
-            className="w-full py-3 border-2 border-dashed border-gray-300 text-gray-500 rounded-lg font-medium hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 border-2 border-dashed border-orange-200 text-orange-700/80 rounded-xl font-medium hover:border-orange-400 hover:bg-orange-50 transition-all flex items-center justify-center gap-2"
           >
             <Users size={18} />
             Oyuncu Ekle

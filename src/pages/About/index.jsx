@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Users, Target, Heart, Code } from 'lucide-react';
+import { Users, Target, Heart, Building2 } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { PAGE_SEO, SCHEMA_TEMPLATES, SITE_CONFIG } from '../../constants/seo';
@@ -121,18 +121,18 @@ function About() {
               </div>
             </div>
 
-            {/* Developer Section */}
+            {/* Company Section */}
             <div className="p-8 bg-gradient-to-br from-orange-50 to-amber-50">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                  <Code className="text-orange-600" size={24} />
+                  <Building2 className="text-orange-600" size={24} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Geliştirici Hakkında</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Kurumsal</h2>
                   <p className="text-gray-700 leading-relaxed">
-                    Bu proje, yazılım geliştirici <span className="font-bold text-orange-600">Emin Aydın</span> tarafından 
-                    tasarlanmış ve geliştirilmiştir. Kullanıcı deneyimini ön planda tutan, modern ve hızlı bir web deneyimi 
-                    sunmayı hedefleyen bu platform, sürekli güncellenen içeriğiyle oyun severlerin hizmetindedir.
+                    Bu site, <span className="font-bold text-orange-600">Zenvolab</span> şirketi tarafından kurulmuştur.
+                    Kullanıcı deneyimini ön planda tutan, modern ve hızlı bir web deneyimi sunmayı hedefleyen bu platform,
+                    sürekli güncellenen içeriğiyle oyun severlerin hizmetindedir.
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     <span className="px-3 py-1 bg-white rounded-full text-xs font-medium text-gray-600 shadow-sm">React</span>

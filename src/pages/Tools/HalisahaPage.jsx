@@ -13,7 +13,7 @@ export default function HalisahaPage() {
       title="Halısaha Takımı Oluşturucu"
       description="Küçük saha maçları için hızlı takım kurma aracı. 5v5, 6v6, 7v7 formatlarını destekler."
       icon={Users}
-      iconColor="yellow"
+      iconColor="orange"
       seoTitle="Halısaha Takımı Oluşturucu"
       seoDescription="Küçük saha maçları için hızlı takım kurma aracı. 5v5, 6v6, 7v7 formatlarını destekler."
       seoUrl="/araclar/halisaha-takim-olusturucu"

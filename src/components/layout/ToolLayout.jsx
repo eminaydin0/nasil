@@ -40,7 +40,7 @@ export default function ToolLayout({
       
       {/* Header Section - GameDetail Style */}
       {title && description && (
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-white border-b border-orange-100">
           <div className="container mx-auto px-4 py-12">
             <button
               onClick={() => navigate('/araclar')}
@@ -80,15 +80,15 @@ export default function ToolLayout({
 
       {/* Tool Content Section */}
       <div className={title && description ? "container mx-auto px-4 py-12" : "flex-1 min-h-0 overflow-hidden"}>
-        <div className={title && description ? "max-w-5xl mx-auto" : "h-full"}>
+          <div className={title && description ? "max-w-5xl mx-auto" : "h-full"}>
           {/* Main Tool Component */}
-          <div className={title && description ? "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8" : "h-full"}>
+          <div className={title && description ? "bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden mb-8" : "h-full"}>
             {children}
           </div>
 
           {/* Help Content */}
           {helpContent && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-orange-100 p-8">
               {helpContent}
             </div>
           )}

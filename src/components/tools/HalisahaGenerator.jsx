@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Users, Shuffle, RefreshCw } from 'lucide-react';
 import { showError } from '../../utils/toast';
+import { tool } from './toolStyles';
 
 const formations = {
   5: [
@@ -91,34 +92,34 @@ export default function HalisahaGenerator() {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 h-full flex flex-col">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-3 bg-green-100 rounded-xl">
-          <Users className="text-green-600 w-6 h-6" />
+    <div className={tool.cardPadded}>
+      <div className={tool.headerRow}>
+        <div className={tool.iconWrap}>
+          <Users className={tool.iconClass} />
         </div>
-        <h3 className="text-xl font-bold text-gray-900">Halısaha Takımı Oluşturucu</h3>
+        <h3 className={tool.title}>Halısaha Takımı Oluşturucu</h3>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 grow">
         <div className="flex flex-col gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Oyuncu İsimleri (Her satıra bir isim)</label>
+            <label className={tool.label}>Oyuncu İsimleri (Her satıra bir isim)</label>
             <textarea
               value={names}
               onChange={(e) => setNames(e.target.value)}
               placeholder={`Ahmet\nMehmet\nAyşe\nFatma...`}
-              className="w-full h-40 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none resize-none text-sm"
+              className={tool.textarea}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Format</label>
+            <label className={tool.label}>Format</label>
             <div className="flex items-center gap-3">
               {[5,6,7].map(f => (
                 <button
                   key={f}
                   onClick={() => setFormat(f)}
-                  className={`py-2 px-3 rounded-xl font-bold ${format===f? 'bg-green-600 text-white': 'bg-gray-100 text-gray-700'}`}
+                  className={`py-2 px-3 rounded-xl font-bold transition-colors ${format===f? 'bg-orange-600 text-white shadow-sm': 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                 >{f}v{f}</button>
               ))}
             </div>
@@ -139,7 +140,7 @@ export default function HalisahaGenerator() {
             <button
               onClick={generate}
               disabled={isGenerating}
-              className="flex-1 py-3 bg-green-600 text-white rounded-xl font-bold shadow hover:bg-green-700 active:scale-95 transition-all flex items-center justify-center gap-2"
+              className={`flex-1 ${tool.primaryBtn}`}
             >
               {isGenerating ? <Shuffle className="animate-spin" /> : <Shuffle />}
               {isGenerating ? 'Oluşturuluyor...' : 'Takımları Kur'}
@@ -147,14 +148,14 @@ export default function HalisahaGenerator() {
 
             <button
               onClick={reset}
-              className="py-3 px-4 bg-gray-100 rounded-xl font-semibold text-gray-700 flex items-center gap-2"
+              className={tool.secondaryBtn}
             >
-              <RefreshCw /> Sıfırla
+              <RefreshCw size={18} /> Sıfırla
             </button>
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 overflow-y-auto max-h-[520px]">
+        <div className={`${tool.panel} max-h-[520px]`}>
           {/* Field + players visual */}
           <div className="relative bg-green-800 rounded-lg p-4" style={{height: '460px'}}>
             <svg viewBox="0 0 100 100" className="w-full h-full block rounded-md">

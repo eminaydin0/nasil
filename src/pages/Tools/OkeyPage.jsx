@@ -30,7 +30,7 @@ export default function OkeyPage() {
       title="Okey Puan Sayacı"
       description="Okey oynarken puan hesabı yapmak için en kolay yol. Ceza puanlarını otomatik düşün, kalemi kağıdı bırakın."
       icon={Trophy}
-      iconColor="red"
+      iconColor="orange"
       badge="Popüler"
       seoTitle="Okey Puan Hesaplama - Düşmeli Okey Sayacı"
       seoDescription="Okey oynarken puan hesabı yapmak için en kolay yol. Ceza puanlarını otomatik düşün, kalemi kağıdı bırakın."

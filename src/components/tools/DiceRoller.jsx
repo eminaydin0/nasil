@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Dices, RefreshCw, Sparkles } from "lucide-react";
+import { tool } from "./toolStyles";
 
 export default function DiceRoller() {
   const [result, setResult] = useState(null);
@@ -73,11 +74,11 @@ export default function DiceRoller() {
   return (
     <div className="relative">
       {showConfetti && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl z-50">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-50">
           {[...Array(30)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-2 h-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-confetti"
+              className="absolute w-2 h-2 bg-gradient-to-br from-amber-300 to-orange-500 rounded-full animate-confetti"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: "-10px",
@@ -89,201 +90,181 @@ export default function DiceRoller() {
         </div>
       )}
 
-      <div className="relative bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-2xl p-8 border border-slate-200/50 overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+      <div className={`${tool.cardPadded} relative overflow-hidden`}>
+        <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/3 translate-x-1/4 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-orange-400/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 pointer-events-none" />
 
-        <div className="relative z-10">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl mb-4 shadow-lg shadow-blue-500/30 transform hover:scale-105 transition-transform">
-              <Dices size={32} className="text-white" />
-            </div>
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">
-              Dijital Zar
-            </h2>
-            <p className="text-slate-500">Şansını dene ve zarları at!</p>
+        <div className={tool.headerRow}>
+          <div className={tool.iconWrap}>
+            <Dices className={tool.iconClass} />
           </div>
-          <div
-            className="flex"
-            style={{
-              display: "flex",
-              width: "100%",
-            }}
-          >
-            <div
-              className="left"
-              style={{
-                width: "60%",
-                                padding:'10px'
+          <div>
+            <h2 className={tool.title}>Dijital Zar</h2>
+            <p className="text-sm text-gray-500 mt-0.5">
+              Şansını dene ve zarları at!
+            </p>
+          </div>
+        </div>
 
-              }}
-            >
-              <div className="relative bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 rounded-2xl p-12 mb-6 min-h-[320px] flex flex-col items-center justify-center overflow-hidden shadow-inner">
-                <div className="absolute inset-0">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)]"></div>
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
-                </div>
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          <div className="flex-1 min-w-0 space-y-6">
+            <div className="relative bg-gradient-to-br from-gray-900 via-gray-900 to-gray-950 rounded-2xl p-8 sm:p-12 min-h-[280px] flex flex-col items-center justify-center overflow-hidden shadow-inner border border-orange-900/20">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(249,115,22,0.12),transparent_55%)]" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-orange-500/5 rounded-full blur-3xl" />
 
-                <div className="absolute inset-0 opacity-[0.02]">
-                  <div className="absolute top-6 left-6 w-20 h-20 border-2 border-white rounded-xl transform rotate-12"></div>
-                  <div className="absolute bottom-6 right-6 w-24 h-24 border-2 border-white rounded-xl transform -rotate-12"></div>
-                  <div className="absolute top-1/2 left-1/4 w-16 h-16 border-2 border-white rounded-lg transform rotate-45"></div>
-                </div>
-
-                {result ? (
-                  <>
-                    <div className="flex gap-6 mb-8 relative z-10">
-                      {result.map((val, idx) => (
-                        <div
-                          key={idx}
-                          className={`relative group ${
-                            isRolling ? "animate-roll" : "animate-land"
-                          }`}
-                          style={{
-                            animationDelay: `${idx * 0.1}s`,
-                          }}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                          <div className="relative w-28 h-28 bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-2xl flex items-center justify-center border-2 border-slate-200 transform transition-all duration-300 hover:scale-105 hover:-rotate-6">
-                            <div className="grid grid-cols-3 gap-2.5 p-4">
-                              {getDiceDots(val).map(([row, col], i) => (
-                                <div
-                                  key={i}
-                                  className="w-4 h-4 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full shadow-lg"
-                                  style={{
-                                    gridColumn: col + 1,
-                                    gridRow: row + 1,
-                                  }}
-                                ></div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="text-center relative z-10">
-                      <div className="inline-flex items-center gap-2 mb-2">
-                        <div className="h-px w-8 bg-gradient-to-r from-transparent to-slate-400"></div>
-                        <span className="text-slate-400 text-sm font-medium uppercase tracking-wider">
-                          Toplam
-                        </span>
-                        <div className="h-px w-8 bg-gradient-to-l from-transparent to-slate-400"></div>
-                      </div>
-                      <div className="relative inline-block">
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-emerald-500 blur-2xl opacity-30"></div>
-                        <div className="relative text-6xl font-bold text-white drop-shadow-2xl">
-                          {result.reduce((a, b) => a + b, 0)}
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-center relative z-10">
-                    <div className="w-24 h-24 border-4 border-slate-700 border-dashed rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm bg-slate-800/30">
-                      <Dices size={48} className="text-slate-600" />
-                    </div>
-                    <p className="text-slate-400 text-lg font-medium">
-                      Zar atmak için hazır!
-                    </p>
-                    <p className="text-slate-600 text-sm mt-2">
-                      Aşağıdaki butona tıklayın
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-3 mb-6">
-                <button
-                  onClick={() => setNumDice(1)}
-                  disabled={isRolling}
-                  className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg ${
-                    numDice === 1
-                      ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-blue-500/30"
-                      : "bg-white text-slate-700 hover:bg-slate-50 shadow-slate-200"
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-2xl">🎲</span>
-                    <span>Tek Zar</span>
-                  </div>
-                </button>
-                <button
-                  onClick={() => setNumDice(2)}
-                  disabled={isRolling}
-                  className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg ${
-                    numDice === 2
-                      ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-blue-500/30"
-                      : "bg-white text-slate-700 hover:bg-slate-50 shadow-slate-200"
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-2xl">🎲🎲</span>
-                    <span>Çift Zar</span>
-                  </div>
-                </button>
-              </div>
-
-              <button
-                onClick={rollDice}
-                disabled={isRolling}
-                className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-emerald-600 text-white py-6 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-blue-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-xl transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                <RefreshCw
-                  size={24}
-                  className={
-                    isRolling
-                      ? "animate-spin"
-                      : "transition-transform group-hover:rotate-180"
-                  }
-                />
-                <span>{isRolling ? "Zarlar Atılıyor..." : "Zarları At!"}</span>
-                {!isRolling && <Sparkles size={20} className="animate-pulse" />}
-              </button>
-            </div>
-            <div
-              className="right"
-              style={{
-                width: "40%",
-                padding:'10px'
-              }}
-            >
-              {history.length > 0 && (
-                <div className="mt-8 pt-8 border-t border-slate-200">
-                  <h3 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
-                    Son Atışlar
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {history.slice(0, 6).map((roll, idx) => (
+              {result ? (
+                <>
+                  <div className="flex gap-4 sm:gap-6 mb-6 relative z-10 flex-wrap justify-center">
+                    {result.map((val, idx) => (
                       <div
                         key={idx}
-                        className="bg-gradient-to-br from-white to-slate-50 rounded-xl px-4 py-3 border border-slate-200 shadow-sm hover:shadow-md transition-all hover:scale-105"
+                        className={`relative group ${
+                          isRolling ? "animate-roll" : "animate-land"
+                        }`}
+                        style={{ animationDelay: `${idx * 0.1}s` }}
                       >
-                        <div className="flex gap-2 items-center justify-between">
-                          <div className="flex gap-1.5">
-                            {roll.map((val, i) => (
+                        <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl blur-xl opacity-25 group-hover:opacity-40 transition-opacity" />
+                        <div className="relative w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl flex items-center justify-center border-2 border-orange-100/30 transform transition-all duration-300 hover:scale-105">
+                          <div className="grid grid-cols-3 gap-2 p-3 sm:p-4">
+                            {getDiceDots(val).map(([row, col], i) => (
                               <div
                                 key={i}
-                                className="w-9 h-9 bg-white rounded-lg border-2 border-slate-300 flex items-center justify-center text-sm font-bold text-slate-800 shadow-sm"
-                              >
-                                {val}
-                              </div>
+                                className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full shadow-md"
+                                style={{
+                                  gridColumn: col + 1,
+                                  gridRow: row + 1,
+                                }}
+                              />
                             ))}
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-slate-400">=</span>
-                            <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shadow-md shadow-blue-500/30">
-                              {roll.reduce((a, b) => a + b, 0)}
-                            </div>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
+                  <div className="text-center relative z-10">
+                    <div className="inline-flex items-center gap-2 mb-2">
+                      <div className="h-px w-8 bg-gradient-to-r from-transparent to-gray-500" />
+                      <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                        Toplam
+                      </span>
+                      <div className="h-px w-8 bg-gradient-to-l from-transparent to-gray-500" />
+                    </div>
+                    <div className="relative inline-block">
+                      <div className="absolute inset-0 bg-orange-500/30 blur-2xl rounded-full scale-150" />
+                      <div className="relative text-5xl sm:text-6xl font-black text-white drop-shadow-lg">
+                        {result.reduce((a, b) => a + b, 0)}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center relative z-10">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-gray-700 border-dashed rounded-2xl flex items-center justify-center mx-auto mb-5 bg-gray-800/40">
+                    <Dices size={40} className="text-gray-500" />
+                  </div>
+                  <p className="text-gray-300 text-base font-medium">
+                    Zar atmak için hazır!
+                  </p>
+                  <p className="text-gray-500 text-sm mt-2">
+                    Aşağıdaki butona tıklayın
+                  </p>
                 </div>
               )}
             </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setNumDice(1)}
+                disabled={isRolling}
+                className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 ${
+                  numDice === 1
+                    ? "border-orange-500 bg-orange-600 text-white shadow-md shadow-orange-900/10"
+                    : "border-orange-100 bg-white text-gray-700 hover:bg-orange-50/50"
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
+                  <span className="text-xl" aria-hidden>🎲</span>
+                  <span>Tek Zar</span>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setNumDice(2)}
+                disabled={isRolling}
+                className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 ${
+                  numDice === 2
+                    ? "border-orange-500 bg-orange-600 text-white shadow-md shadow-orange-900/10"
+                    : "border-orange-100 bg-white text-gray-700 hover:bg-orange-50/50"
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
+                  <span className="text-xl" aria-hidden>🎲🎲</span>
+                  <span>Çift Zar</span>
+                </div>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={rollDice}
+              disabled={isRolling}
+              className={`${tool.primaryBtn} py-4 text-base relative overflow-hidden group`}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/15 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <RefreshCw
+                size={22}
+                className={
+                  isRolling
+                    ? "animate-spin"
+                    : "transition-transform group-hover:rotate-180"
+                }
+              />
+              <span>{isRolling ? "Zarlar Atılıyor..." : "Zarları At!"}</span>
+              {!isRolling && <Sparkles size={18} className="animate-pulse" />}
+            </button>
+          </div>
+
+          <div className="lg:w-[min(100%,280px)] shrink-0">
+            {history.length > 0 ? (
+              <div className={`${tool.panel} lg:sticky lg:top-4`}>
+                <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                  Son Atışlar
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
+                  {history.slice(0, 6).map((roll, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-white rounded-xl px-3 py-2.5 border border-orange-100 shadow-sm"
+                    >
+                      <div className="flex gap-2 items-center justify-between">
+                        <div className="flex gap-1">
+                          {roll.map((val, i) => (
+                            <div
+                              key={i}
+                              className="w-8 h-8 bg-gray-50 rounded-lg border border-orange-100 flex items-center justify-center text-xs font-bold text-gray-800"
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-gray-400">
+                          <span>=</span>
+                          <div className="bg-orange-600 text-white w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm shadow-sm">
+                            {roll.reduce((a, b) => a + b, 0)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className={`${tool.panel} min-h-[120px] flex items-center justify-center text-gray-400 text-sm text-center`}>
+                İlk atıştan sonra geçmiş burada görünür
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -295,35 +276,18 @@ export default function DiceRoller() {
           50% { transform: rotate(180deg) scale(0.9); }
           75% { transform: rotate(270deg) scale(1.1); }
         }
-
         @keyframes land {
           0% { transform: scale(1.2) rotate(10deg); }
           50% { transform: scale(0.9) rotate(-5deg); }
           100% { transform: scale(1) rotate(0deg); }
         }
-
         @keyframes confetti {
-          0% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(100vh) rotate(720deg);
-            opacity: 0;
-          }
+          0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
-
-        .animate-roll {
-          animation: roll 0.6s ease-in-out;
-        }
-
-        .animate-land {
-          animation: land 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .animate-confetti {
-          animation: confetti linear forwards;
-        }
+        .animate-roll { animation: roll 0.6s ease-in-out; }
+        .animate-land { animation: land 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .animate-confetti { animation: confetti linear forwards; }
       `}</style>
     </div>
   );

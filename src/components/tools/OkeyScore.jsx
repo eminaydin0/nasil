@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Trophy, Save } from 'lucide-react';
 import GameTableContainer from '../common/GameTableContainer';
+import { tool } from './toolStyles';
 
 export default function OkeyScore() {
   const [players, setPlayers] = useState(['Oyuncu 1', 'Oyuncu 2', 'Oyuncu 3', 'Oyuncu 4']);
@@ -36,23 +37,22 @@ export default function OkeyScore() {
     <GameTableContainer
       title="Okey Sayacı"
       icon={Trophy}
-      iconColor="red"
       onReset={resetGame}
       className="h-full"
     >
       <div className="p-6">
 
         {/* Score Display */}
-        <div className="grid grid-cols-4 gap-3 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-200">
+        <div className="grid grid-cols-4 gap-3 mb-6 bg-gray-50 p-4 rounded-xl border border-orange-100">
           {players.map((player, idx) => (
             <div key={idx} className="flex flex-col items-center">
               <input
                 type="text"
                 value={player}
                 onChange={(e) => updateName(idx, e.target.value)}
-                className="w-full text-center bg-white text-xs font-semibold text-gray-600 mb-2 focus:outline-none focus:text-gray-900 focus:ring-2 focus:ring-red-500 rounded-lg px-2 py-1 border border-gray-200"
+                className="w-full text-center bg-white text-xs font-semibold text-gray-600 mb-2 rounded-lg px-2 py-1 border border-gray-200 focus:outline-none focus:text-gray-900 focus:ring-2 focus:ring-orange-500/30"
               />
-              <div className={`text-2xl font-black ${scores[idx] <= 0 ? 'text-red-600' : 'text-gray-800'}`}>
+              <div className={`text-2xl font-black ${scores[idx] <= 0 ? 'text-orange-600' : 'text-gray-800'}`}>
                 {scores[idx]}
               </div>
             </div>
@@ -68,10 +68,10 @@ export default function OkeyScore() {
                 <button
                   key={idx}
                   onClick={() => setWinner(idx)}
-                  className={`p-2.5 rounded-lg text-sm font-medium transition-all truncate ${
+                  className={`p-2.5 rounded-xl text-sm font-medium transition-all truncate border-2 ${
                     winner === idx 
-                      ? 'bg-red-600 text-white shadow-sm' 
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'border-orange-500 bg-orange-600 text-white shadow-sm' 
+                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
                   {player}
@@ -85,20 +85,20 @@ export default function OkeyScore() {
             <div className="flex gap-2">
               <button
                 onClick={() => setWinType('normal')}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all border-2 ${
                   winType === 'normal' 
-                    ? 'bg-blue-600 text-white shadow-sm' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'border-orange-500 bg-orange-600 text-white shadow-sm' 
+                    : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 Normal (-2)
               </button>
               <button
                 onClick={() => setWinType('cift')}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all border-2 ${
                   winType === 'cift' 
-                    ? 'bg-purple-600 text-white shadow-sm' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'border-orange-500 bg-orange-600 text-white shadow-sm' 
+                    : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 Okey/Çift (-4)
@@ -108,20 +108,20 @@ export default function OkeyScore() {
 
           <button
             onClick={applyRound}
-            className="w-full py-3 bg-gray-900 text-white rounded-lg font-bold shadow-sm hover:bg-gray-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+            className={tool.primaryBtn}
           >
             <Save size={18} />
             Puanları İşle
           </button>
           
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-orange-100">
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-500 whitespace-nowrap">Başlangıç Puanı:</span>
               <input 
                 type="number" 
                 value={startScore}
                 onChange={(e) => setStartScore(Number(e.target.value))}
-                className="w-16 p-1.5 text-sm border border-gray-200 rounded-lg text-center focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+                className="w-16 p-1.5 text-sm border border-gray-200 rounded-lg text-center focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 outline-none"
               />
             </div>
           </div>

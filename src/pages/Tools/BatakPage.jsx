@@ -27,7 +27,7 @@ export default function BatakPage() {
       title="Batak & King Yazboz"
       description="İhaleli batak, eşli batak veya King oyunları için dijital yazboz. Puanları otomatik toplayın."
       icon={PencilLine}
-      iconColor="indigo"
+      iconColor="orange"
       seoTitle="Batak & King Yazboz Tablosu"
       seoDescription="İhaleli batak, eşli batak veya King oyunları için dijital yazboz. Puanları otomatik toplayın."
       seoUrl="/araclar/batak-yazboz"
