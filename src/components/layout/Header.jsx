@@ -99,13 +99,17 @@ function Header() {
     <header className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-orange-100">
       <nav className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-9 h-9 bg-linear-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-              <span className="text-white font-bold text-lg">N</span>
-            </div>
-            <div className="text-xl font-black text-gray-900 tracking-tight leading-none">
-              NASIL <span className="text-transparent bg-clip-text bg-linear-to-r from-orange-500 to-red-600">OYNANIR</span>
-            </div>
+          <Link to="/" className="flex items-center group" aria-label="Nasıl Oynanır - Ana Sayfa">
+            <img
+              src="/logo.svg"
+              alt="Nasıl Oynanır"
+              className="h-12 w-auto object-contain transition-transform group-hover:scale-105"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+              width="36"
+              height="48"
+            />
           </Link>
 
           {/* Desktop Menu */}

@@ -128,7 +128,7 @@ export const SCHEMA_TEMPLATES = {
     '@type': 'Organization',
     name: SITE_CONFIG.name,
     url: SITE_CONFIG.url,
-    logo: `${SITE_CONFIG.url}/icon-512.svg`,
+    logo: `${SITE_CONFIG.url}/logo.svg`,
     description: DEFAULT_META.description,
     foundingDate: SITE_CONFIG.foundingDate,
     contactPoint: {
@@ -244,7 +244,7 @@ export function generateArticleSchema(game) {
       name: SITE_CONFIG.name,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_CONFIG.url}/icon-512.svg`,
+        url: `${SITE_CONFIG.url}/logo.svg`,
       },
     },
     datePublished: game.createdAt,

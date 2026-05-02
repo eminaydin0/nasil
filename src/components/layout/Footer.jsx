@@ -39,14 +39,17 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center space-x-3 mb-3">
-              <div className="w-10 h-10 bg-linear-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-sm">
-                <span className="text-white font-black text-xl">N</span>
-              </div>
-              <div className="text-xl font-black text-gray-900 tracking-tight leading-none">
-                NASIL <span className="text-transparent bg-clip-text bg-linear-to-r from-orange-500 to-red-600">OYNANIR</span>
-              </div>
-            </div>
+            <Link to="/" className="inline-block mb-3" aria-label="Nasıl Oynanır - Ana Sayfa">
+              <img
+                src="/logo.svg"
+                alt="Nasıl Oynanır"
+                className="h-14 w-auto object-contain"
+                loading="lazy"
+                decoding="async"
+                width="42"
+                height="56"
+              />
+            </Link>
             <p className="text-gray-600 leading-relaxed max-w-md text-sm">
               Geleneksel Türk oyunlarını dijital ortamda yaşatıyoruz. Kültürümüzün değerli mirasını gelecek nesillere aktarıyoruz.
             </p>
