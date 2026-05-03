@@ -61,7 +61,6 @@ function CommentSection({ gameId, gameName, gameSlug }) {
   const [replyingSubmitting, setReplyingSubmitting] = useState(false);
 
   const [replyingTo, setReplyingTo] = useState(null);
-  const [replyingToComment, setReplyingToComment] = useState(null);
   const [replyText, setReplyText] = useState('');
 
   const currentUserName = user?.user_metadata?.full_name || getOrCreateGuestName();
@@ -112,7 +111,6 @@ function CommentSection({ gameId, gameName, gameSlug }) {
   useEffect(() => {
     setVisibleCount(INITIAL_COMMENTS_SHOW);
     setReplyingTo(null);
-    setReplyingToComment(null);
     setReplyText('');
   }, [gameId]);
 
@@ -312,7 +310,6 @@ function CommentSection({ gameId, gameName, gameSlug }) {
 
       setReplyText('');
       setReplyingTo(null);
-      setReplyingToComment(null);
       toast.success('Yanıtınız eklendi.');
     } catch (error) {
       console.error('Reply error:', error);
@@ -429,53 +426,51 @@ function CommentSection({ gameId, gameName, gameSlug }) {
   ];
 
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm overflow-hidden w-full">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-warm-200/70 shadow-soft overflow-hidden w-full">
       {/* Header */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-amber-500/5" />
+      <div className="relative overflow-hidden bg-gradient-to-br from-cream-100 via-white to-amber-50/60">
+        <div className="absolute -top-16 -right-16 w-48 h-48 bg-amber-300/20 rounded-full blur-3xl pointer-events-none" />
         <div className="relative px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-8">
-            {/* Sol: Başlık + Özet */}
             <div className="min-w-0">
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                <div className="p-2 sm:p-2.5 bg-orange-100 rounded-xl shrink-0">
-                  <MessageCircle className="text-orange-600" size={24} />
-                </div>
+              <h2 className="text-xl sm:text-2xl md:text-[1.75rem] font-extrabold text-warm-900 flex items-center gap-3 mb-4 tracking-tight leading-tight">
+                <span className="inline-flex items-center justify-center w-11 h-11 bg-gradient-to-br from-orange-500 to-red-500 text-white rounded-2xl shadow-warm-glow shrink-0">
+                  <MessageCircle size={20} aria-hidden="true" />
+                </span>
                 <span className="truncate">Oyuncu Yorumları</span>
               </h2>
-              <div className="flex items-baseline gap-2 sm:gap-3">
-                <span className="text-4xl sm:text-5xl font-black text-gray-900">{averageRating}</span>
+              <div className="flex items-baseline gap-3">
+                <span className="text-4xl sm:text-5xl font-extrabold text-warm-900 tracking-tight tabular-nums">{averageRating}</span>
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-0.5 sm:gap-1">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star
                         key={s}
                         size={16}
-                        className={`shrink-0 ${s <= Math.round(averageRating) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'}`}
+                        className={`shrink-0 ${s <= Math.round(averageRating) ? 'text-accent-400 fill-accent-400' : 'text-warm-300 fill-warm-100'}`}
                       />
                     ))}
                   </div>
-                  <span className="text-xs sm:text-sm text-gray-500 font-medium">{comments.length} değerlendirme</span>
+                  <span className="text-xs sm:text-sm text-warm-500 font-medium mt-0.5">{comments.length} değerlendirme</span>
                 </div>
               </div>
             </div>
 
-            {/* Sağ: Rating dağılımı */}
             {comments.length > 0 && (
               <div className="flex-1 w-full min-w-0 max-w-xs space-y-1.5 sm:space-y-2">
                 {ratingCounts.map(({ star, count, percentage }) => (
                   <div key={star} className="flex items-center gap-2 sm:gap-3">
-                    <span className="flex items-center gap-0.5 w-6 sm:w-8 text-xs sm:text-sm font-medium text-gray-600 shrink-0">
+                    <span className="flex items-center gap-0.5 w-6 sm:w-8 text-xs sm:text-sm font-semibold text-warm-600 shrink-0 tabular-nums">
                       {star}
-                      <Star size={10} className="text-amber-400 fill-amber-400 hidden sm:block" />
+                      <Star size={10} className="text-accent-400 fill-accent-400 hidden sm:block" />
                     </span>
-                    <div className="flex-1 min-w-0 h-1.5 sm:h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="flex-1 min-w-0 h-1.5 sm:h-2 bg-warm-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-700"
+                        className="h-full bg-gradient-to-r from-accent-400 to-orange-500 rounded-full transition-all duration-700"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    <span className="w-4 sm:w-6 text-right text-xs text-gray-400 font-medium shrink-0">{count}</span>
+                    <span className="w-4 sm:w-6 text-right text-xs text-warm-500 font-medium shrink-0 tabular-nums">{count}</span>
                   </div>
                 ))}
               </div>
@@ -492,59 +487,59 @@ function CommentSection({ gameId, gameName, gameSlug }) {
             <button
               type="button"
               onClick={handleOpenForm}
-              className="w-full py-4 sm:py-5 px-4 sm:px-6 rounded-xl sm:rounded-2xl border-2 border-dashed border-gray-200 hover:border-orange-300 hover:bg-gradient-to-br hover:from-orange-50/80 hover:to-amber-50/50 transition-all duration-300 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 group"
+              className="w-full py-5 px-4 sm:px-6 rounded-2xl border-2 border-dashed border-warm-200 hover:border-orange-300 hover:bg-gradient-to-br hover:from-cream-100 hover:to-orange-50 transition-all duration-500 ease-spring flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 group"
             >
               <div className="flex items-center gap-3 sm:gap-4 sm:flex-1">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-orange-100 flex items-center justify-center shrink-0 group-hover:bg-orange-200 group-hover:scale-105 transition-all duration-300">
-                  <MessageCircle className="text-orange-600" size={24} />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-orange-50 flex items-center justify-center shrink-0 group-hover:bg-gradient-to-br group-hover:from-orange-500 group-hover:to-red-500 group-hover:text-white group-hover:scale-105 group-hover:-rotate-3 transition-all duration-500 ease-spring text-orange-600">
+                  <MessageCircle size={24} />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                  <p className="font-bold text-gray-900 text-base sm:text-lg">Deneyimini paylaş</p>
-                  <p className="text-xs sm:text-sm text-gray-500 truncate sm:whitespace-normal">Bu oyun hakkında ne düşünüyorsun?</p>
+                  <p className="font-extrabold text-warm-900 text-base sm:text-lg tracking-tight">Deneyimini paylaş</p>
+                  <p className="text-xs sm:text-sm text-warm-500 truncate sm:whitespace-normal">Bu oyun hakkında ne düşünüyorsun?</p>
                 </div>
               </div>
-              <span className="px-4 sm:px-5 py-2.5 bg-orange-600 text-white rounded-xl font-semibold text-sm text-center group-hover:bg-orange-700 group-hover:shadow-lg group-hover:shadow-orange-500/25 transition-all shrink-0">
+              <span className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-bold text-sm text-center shadow-warm-glow group-hover:shadow-warm-glow-lg group-hover:-translate-y-0.5 transition-all shrink-0">
                 Yorum Yaz
               </span>
             </button>
           ) : (
-            <div className="rounded-xl sm:rounded-2xl border-2 border-orange-200 bg-gradient-to-br from-orange-50/50 to-amber-50/30 overflow-hidden shadow-sm">
-              <div className="p-3 sm:p-5 bg-white/80 border-b border-gray-100 flex items-center justify-between">
-                <h3 className="font-bold text-gray-900 text-sm sm:text-base">Yorumunu yaz</h3>
-                <button type="button" onClick={handleCloseForm} className="text-xs sm:text-sm text-gray-500 hover:text-gray-800 font-medium px-2 py-1.5 sm:px-3 hover:bg-gray-100 rounded-lg transition-colors">
+            <div className="rounded-2xl border border-orange-200/70 bg-gradient-to-br from-cream-100 via-white to-amber-50/40 overflow-hidden shadow-soft">
+              <div className="p-4 sm:p-5 bg-white/80 border-b border-warm-100 flex items-center justify-between backdrop-blur-sm">
+                <h3 className="font-extrabold text-warm-900 text-sm sm:text-base tracking-tight">Yorumunu yaz</h3>
+                <button type="button" onClick={handleCloseForm} className="text-xs sm:text-sm text-warm-500 hover:text-warm-800 font-semibold px-3 py-1.5 hover:bg-warm-100 rounded-lg transition-colors">
                   Vazgeç
                 </button>
               </div>
               <div className="p-4 sm:p-6">
-                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 p-3 sm:p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
-                  <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-white text-sm font-bold overflow-hidden shrink-0 ${!currentUserAvatar && myAvatarColor} ring-2 ring-white shadow-md`}>
+                <div className="flex items-center gap-3 mb-5 p-3 sm:p-4 bg-white rounded-2xl border border-warm-100 shadow-soft">
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-white text-sm font-bold overflow-hidden shrink-0 ${!currentUserAvatar && myAvatarColor} ring-2 ring-white shadow-soft`}>
                     {currentUserAvatar ? (
                       <img src={currentUserAvatar} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                      getInitials(currentUserName)
+                      myInitials
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] sm:text-xs text-gray-400 font-semibold uppercase tracking-wider">Yorum Yapan</p>
-                    <p className="font-bold text-gray-900 text-sm sm:text-base truncate">{currentUserName}</p>
+                    <p className="text-[10px] sm:text-xs text-warm-400 font-bold uppercase tracking-wider">Yorum Yapan</p>
+                    <p className="font-extrabold text-warm-900 text-sm sm:text-base truncate tracking-tight">{currentUserName}</p>
                   </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
                   <div>
-                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">Puanın</label>
-                    <div className="p-3 sm:p-4 bg-white rounded-xl border border-gray-200">
+                    <label className="block text-xs sm:text-sm font-bold text-warm-700 mb-2 tracking-wide uppercase">Puanın</label>
+                    <div className="p-3 sm:p-4 bg-white rounded-xl border border-warm-200">
                       <StarRating
                         rating={newComment.rating}
                         onRatingChange={(r) => setNewComment({ ...newComment, rating: r })}
-                        size={24}
+                        size={26}
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
+                    <label className="block text-xs sm:text-sm font-bold text-warm-700 mb-2 tracking-wide uppercase">
                       Yorumun
-                      <span className="ml-1 sm:ml-2 text-gray-400 font-normal text-xs">
+                      <span className="ml-2 text-warm-400 font-medium normal-case tracking-normal text-xs">
                         ({newComment.comment.trim().length}/{COMMENT_MAX_LENGTH})
                       </span>
                     </label>
@@ -553,14 +548,14 @@ function CommentSection({ gameId, gameName, gameSlug }) {
                       onChange={(e) => setNewComment({ ...newComment, comment: e.target.value.slice(0, COMMENT_MAX_LENGTH) })}
                       rows="4"
                       maxLength={COMMENT_MAX_LENGTH}
-                      className="w-full p-3 sm:p-4 bg-white border border-gray-200 rounded-xl text-sm sm:text-base focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none resize-none transition-all placeholder:text-gray-400"
+                      className="w-full p-4 bg-white border border-warm-200 rounded-xl text-sm sm:text-base focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none resize-none transition-all placeholder:text-warm-400 leading-relaxed"
                       placeholder="Oyun hakkında ne düşünüyorsun? (en az 10 karakter)"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 bg-orange-600 text-white text-sm sm:text-base rounded-xl font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm sm:text-base rounded-xl font-bold hover:from-orange-600 hover:to-red-600 transition-all shadow-warm-glow hover:shadow-warm-glow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? 'Gönderiliyor...' : 'Yorumu Gönder'}
                   </button>
@@ -572,19 +567,19 @@ function CommentSection({ gameId, gameName, gameSlug }) {
 
         {/* Sıralama */}
         {comments.length > 0 && (
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-gray-100">
-            <p className="text-xs sm:text-sm font-medium text-gray-600">
-              <span className="font-bold text-gray-900">{comments.length}</span> topluluk yorumu
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-warm-100">
+            <p className="text-xs sm:text-sm font-medium text-warm-600">
+              <span className="font-bold text-warm-900 tabular-nums">{comments.length}</span> topluluk yorumu
             </p>
             <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1 -mx-1 sm:mx-0 scrollbar-hide">
               {sortOptions.map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => setSortBy(opt.value)}
-                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${
+                  className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap shrink-0 ${
                     sortBy === opt.value
-                      ? 'bg-gray-900 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+                      ? 'bg-charcoal-900 text-white shadow-soft-md'
+                      : 'bg-warm-100 text-warm-600 hover:bg-warm-200 hover:text-warm-900'
                   }`}
                 >
                   {opt.label}
@@ -597,20 +592,27 @@ function CommentSection({ gameId, gameName, gameSlug }) {
         {/* Yorum listesi */}
         <div ref={newCommentRef} className="space-y-4 sm:space-y-6">
           {comments.length === 0 && !loading ? (
-            <div className="text-center py-10 sm:py-16 px-4 sm:px-6 rounded-xl sm:rounded-2xl bg-gray-50/80 border-2 border-dashed border-gray-200">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <MessageCircle size={28} className="text-gray-400" />
+            <div className="relative overflow-hidden text-center py-12 sm:py-16 px-4 sm:px-6 rounded-2xl bg-gradient-to-br from-cream-100 via-white to-orange-50 border border-warm-200/70">
+              <div className="absolute -top-12 -right-12 w-48 h-48 bg-orange-200/30 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative max-w-md mx-auto">
+                <div className="w-16 h-16 rounded-2xl bg-white shadow-soft border border-warm-100 flex items-center justify-center mx-auto mb-5">
+                  <MessageCircle size={28} className="text-orange-600" />
+                </div>
+                <h3 className="text-2xl font-extrabold text-warm-900 mb-2 tracking-tight">İlk yorumu sen yaz</h3>
+                <p className="text-warm-600 leading-relaxed mb-6 max-w-sm mx-auto">
+                  Bu oyunu deneyimledin mi? Görüşlerin diğer oyunculara yol gösterecek.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleOpenForm}
+                  className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold hover:from-orange-600 hover:to-red-600 transition-all shadow-warm-glow hover:shadow-warm-glow-lg hover:-translate-y-0.5 ease-spring duration-300"
+                >
+                  <MessageCircle size={18} />
+                  Yorum Yazmaya Başla
+                </button>
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1.5 sm:mb-2">Henüz yorum yok</h3>
-              <p className="text-sm sm:text-base text-gray-500 mb-4 sm:mb-6 max-w-sm mx-auto">Bu oyun hakkında ilk görüş bildiren sen ol!</p>
-              <button
-                type="button"
-                onClick={handleOpenForm}
-                className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors shadow-lg shadow-orange-500/25"
-              >
-                <MessageCircle size={18} />
-                Yorum Yazmaya Başla
-              </button>
             </div>
           ) : (
             <>
@@ -620,10 +622,7 @@ function CommentSection({ gameId, gameName, gameSlug }) {
                   comment={comment}
                   handleLike={handleLike}
                   replyingTo={replyingTo}
-                  setReplyingTo={(id) => {
-                    setReplyingTo(id);
-                    setReplyingToComment(id ? comment : null);
-                  }}
+                  setReplyingTo={setReplyingTo}
                   replyText={replyText}
                   setReplyText={setReplyText}
                   handleReplySubmit={handleReplySubmit}
@@ -639,7 +638,7 @@ function CommentSection({ gameId, gameName, gameSlug }) {
                   <button
                     type="button"
                     onClick={() => setVisibleCount((c) => c + INITIAL_COMMENTS_SHOW)}
-                    className="px-4 py-2.5 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-xl transition-colors"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 text-xs sm:text-sm font-bold text-orange-600 hover:text-orange-700 hover:bg-orange-50 border border-warm-200 hover:border-orange-200 rounded-xl transition-all duration-300 ease-spring bg-white shadow-soft"
                   >
                     Daha fazla yorum göster ({sortedComments.length - visibleCount} kaldı)
                   </button>
@@ -657,16 +656,14 @@ function CommentItem({ comment, handleLike, replyingTo, setReplyingTo, replyText
   const isReplying = replyingTo === comment.id;
   const avatarColor = getAvatarColor(comment.name);
   const initials = getInitials(comment.name);
-  const myReplyColor = getAvatarColor(currentUserIdentity);
-  const myReplyInitials = getInitials(currentUserIdentity);
   const isLiked = likedComments?.has(comment.id);
 
   return (
-    <article className="group rounded-xl sm:rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50/80 transition-colors duration-300 overflow-hidden">
+    <article className="group rounded-2xl border border-warm-200/70 bg-cream-50 hover:bg-cream-100/60 transition-colors duration-300 overflow-hidden">
       <div className="p-4 sm:p-6">
         <div className="flex gap-3 sm:gap-4">
           {/* Avatar */}
-          <div className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white overflow-hidden ${!comment.avatar && avatarColor}`}>
+          <div className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-soft ring-2 ring-white overflow-hidden ${!comment.avatar && avatarColor}`}>
             {comment.avatar ? (
               <img src={comment.avatar} alt={comment.name} className="w-full h-full object-cover" />
             ) : (
@@ -675,41 +672,38 @@ function CommentItem({ comment, handleLike, replyingTo, setReplyingTo, replyText
           </div>
 
           <div className="flex-1 min-w-0 overflow-hidden">
-            {/* Header */}
-            <div className="flex flex-wrap items-start justify-between gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
               <div className="min-w-0">
-                <h4 className="font-bold text-gray-900 text-sm sm:text-base flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <h4 className="font-extrabold text-warm-900 text-sm sm:text-base flex flex-wrap items-center gap-1.5 sm:gap-2 tracking-tight">
                   <span className="truncate max-w-[140px] sm:max-w-none">{comment.name}</span>
                   {comment.isTestimonial && (
-                    <span className="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 bg-blue-100 text-blue-600 text-[10px] sm:text-xs font-semibold rounded-md sm:rounded-lg shrink-0">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-200 text-[10px] sm:text-xs font-bold rounded-md shrink-0 uppercase tracking-wider">
                       <CheckCircle2 size={10} /> Onaylı
                     </span>
                   )}
                 </h4>
-                <span className="text-[11px] sm:text-xs text-gray-500 font-medium">{comment.date}</span>
+                <span className="text-[11px] sm:text-xs text-warm-500 font-medium">{comment.date}</span>
               </div>
               <div className="flex items-center gap-0.5 shrink-0">
                 {[1, 2, 3, 4, 5].map((s) => (
                   <Star
                     key={s}
                     size={12}
-                    className={`shrink-0 ${s <= comment.rating ? 'text-amber-400 fill-amber-400' : 'text-gray-200'}`}
+                    className={`shrink-0 ${s <= comment.rating ? 'text-accent-400 fill-accent-400' : 'text-warm-300 fill-warm-100'}`}
                   />
                 ))}
               </div>
             </div>
 
-            {/* İçerik */}
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-[15px] mb-3 sm:mb-4 break-words">
+            <p className="text-warm-700 leading-[1.65] text-sm sm:text-[15px] mb-4 break-words tracking-[-0.005em]">
               {comment.comment}
             </p>
 
-            {/* Aksiyonlar */}
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={() => handleLike(comment.id)}
-                className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                  isLiked ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-600 hover:bg-orange-50 hover:text-orange-600'
+                className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ease-spring ${
+                  isLiked ? 'bg-orange-100 text-orange-700 shadow-soft' : 'bg-white border border-warm-200 text-warm-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
                 }`}
               >
                 <ThumbsUp size={14} className={`shrink-0 ${isLiked ? 'fill-orange-600' : ''}`} />
@@ -717,7 +711,7 @@ function CommentItem({ comment, handleLike, replyingTo, setReplyingTo, replyText
               </button>
               <button
                 onClick={() => setReplyingTo(isReplying ? null : comment.id)}
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-orange-50 hover:text-orange-600 transition-all"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-warm-600 bg-white border border-warm-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition-all duration-300 ease-spring"
               >
                 <Reply size={14} className="shrink-0" />
                 Yanıtla

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { BarChart3, MessageCircle, TrendingUp, Download, Sparkles, FileText, Phone, FolderPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AdminLogin from '../../components/admin/AdminLogin';
-import AdminHeader from '../../components/admin/AdminHeader';
+import AdminSidebar from '../../components/admin/AdminSidebar';
+import AdminTopbar from '../../components/admin/AdminTopbar';
 import GamesTable from '../../components/admin/GamesTable';
 import GameModal from '../../components/admin/GameModal';
 import CommentsManager from '../../components/admin/CommentsManager';
@@ -17,34 +16,36 @@ import AdminDashboardTab from '../../components/admin/tabs/AdminDashboardTab';
 import AdminAnalyticsTab from '../../components/admin/tabs/AdminAnalyticsTab';
 import { supabase } from '../../lib/supabase';
 import { useCategories } from '../../hooks/useCategories';
+import { useConfirm } from '../../components/ui';
 
-// Admin action tracking fonksiyonu
 const trackAdminAction = (action, details) => {
-  console.log(`[Admin Action] ${action}:`, details);
-  // İsterseniz buraya analytics tracking ekleyebilirsiniz
+  if (import.meta.env.DEV) {
+    console.log(`[Admin Action] ${action}:`, details);
+  }
 };
 
 function AdminPanel() {
-  const navigate = useNavigate();
   const { categories: adminCategories } = useCategories();
+  const confirm = useConfirm();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [games, setGames] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingGame, setEditingGame] = useState(null);
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'games', 'comments', 'analytics', 'carousel'
-  const [sortBy, setSortBy] = useState('name'); // 'name', 'views', 'rating', 'id', 'category', 'comments'
-  const [sortDirection, setSortDirection] = useState('asc'); // 'asc' or 'desc'
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sortBy, setSortBy] = useState('id');
+  const [sortDirection, setSortDirection] = useState('asc');
   const [selectedGames, setSelectedGames] = useState([]);
   const [stats, setStats] = useState({
     totalGames: 0,
     totalViews: 0,
     totalComments: 0,
-    avgRating: 0
+    avgRating: 0,
   });
   const [sortedGames, setSortedGames] = useState([]);
+  const [unreadContactCount, setUnreadContactCount] = useState(0);
 
   useEffect(() => {
-    // Check if already logged in
     const adminData = localStorage.getItem('adminData') || sessionStorage.getItem('adminData');
     if (adminData) {
       setIsAuthenticated(true);
@@ -53,18 +54,35 @@ function AdminPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Unread contact count for badge
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const loadUnread = async () => {
+      try {
+        const { count } = await supabase
+          .from('contact_messages')
+          .select('id', { count: 'exact', head: true })
+          .eq('is_read', false);
+        setUnreadContactCount(count || 0);
+      } catch (err) {
+        console.error('Unread count error:', err);
+      }
+    };
+    loadUnread();
+    const interval = setInterval(loadUnread, 60000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, activeTab]);
+
   const loadGames = async () => {
     try {
-      // Supabase'den oyunları çek
       const { data, error } = await supabase
         .from('games')
         .select('*, gallery:game_gallery_images(image_url)')
         .order('id', { ascending: true });
-      
+
       if (error) throw error;
-      
-      // Format games
-      const formattedGames = data.map(g => ({
+
+      const formattedGames = data.map((g) => ({
         id: g.id,
         slug: g.slug,
         name: g.name,
@@ -72,19 +90,21 @@ function AdminPanel() {
         players: g.players,
         difficulty: g.difficulty,
         image: g.image,
-        gallery: g.gallery ? g.gallery.map(item => item.image_url) : [],
+        gallery: g.gallery ? g.gallery.map((item) => item.image_url) : [],
         shortDescription: g.short_description,
         description: g.description,
         rules: g.rules,
-        tips: g.tips
+        tips: g.tips,
+        videoUrl: g.video_url || '',
+        videoTitle: g.video_title || '',
+        playTimeMinutes: g.play_time_minutes || '',
+        faq: Array.isArray(g.faq) ? g.faq : [],
       }));
-      
+
       setGames(formattedGames);
-      
-      // Stats hesapla
+
       await calculateStats(formattedGames);
-      
-      // SortedGames'i de yükle
+
       const gamesWithStats = await loadGamesWithStats(formattedGames);
       setSortedGames(gamesWithStats);
     } catch (error) {
@@ -95,45 +115,24 @@ function AdminPanel() {
 
   const calculateStats = async (gamesList) => {
     try {
-      // Toplam view sayısı
-      const { data: viewsData, error: viewsError } = await supabase
-        .from('game_views')
-        .select('view_count');
-      
-      if (viewsError) {
-        console.error('Error fetching views:', viewsError);
-      }
-      
-      console.log('Views data from Supabase:', viewsData);
-      
-      const totalViews = viewsData?.reduce((sum, v) => sum + (v.view_count || 0), 0) || 0;
-      
-      // Toplam yorum sayısı ve ortalama rating
-      const { data: commentsData, error: commentsError } = await supabase
-        .from('comments')
-        .select('rating');
-      
-      if (commentsError) {
-        console.error('Error fetching comments:', commentsError);
-      }
-      
-      const totalComments = commentsData?.length || 0;
-      const avgRating = totalComments > 0
-        ? commentsData.reduce((sum, c) => sum + c.rating, 0) / totalComments
-        : 0;
-      
-      console.log('Stats calculated:', {
+      const [viewsRes, commentsRes] = await Promise.all([
+        supabase.from('game_views').select('view_count'),
+        supabase.from('comments').select('rating'),
+      ]);
+
+      const totalViews =
+        viewsRes.data?.reduce((sum, v) => sum + (v.view_count || 0), 0) || 0;
+      const totalComments = commentsRes.data?.length || 0;
+      const avgRating =
+        totalComments > 0
+          ? commentsRes.data.reduce((sum, c) => sum + c.rating, 0) / totalComments
+          : 0;
+
+      setStats({
         totalGames: gamesList.length,
         totalViews,
         totalComments,
-        avgRating: avgRating.toFixed(1)
-      });
-      
-      setStats({
-        totalGames: gamesList.length,
-        totalViews: totalViews,
-        totalComments: totalComments,
-        avgRating: avgRating.toFixed(1)
+        avgRating: avgRating.toFixed(1),
       });
     } catch (error) {
       console.error('Error calculating stats:', error);
@@ -141,43 +140,49 @@ function AdminPanel() {
         totalGames: gamesList.length,
         totalViews: 0,
         totalComments: 0,
-        avgRating: 0
+        avgRating: 0,
       });
     }
   };
 
+  // Tek sorguda tum oyunlarin view ve yorum istatistiklerini cek (N+1 fix)
   const loadGamesWithStats = async (gamesList) => {
-    const gamesWithStats = await Promise.all(
-      gamesList.map(async (game) => {
-        try {
-          // Get view count
-          const { data: viewData } = await supabase
-            .from('game_views')
-            .select('view_count')
-            .eq('game_id', game.id)
-            .single();
-          
-          // Get comments
-          const { data: commentsData } = await supabase
-            .from('comments')
-            .select('rating')
-            .eq('game_id', game.id);
-          
-          const views = viewData?.view_count || 0;
-          const comments = commentsData || [];
-          const rating = comments.length > 0 
-            ? comments.reduce((sum, c) => sum + c.rating, 0) / comments.length 
-            : 0;
-          
-          return { ...game, views, commentCount: comments.length, rating };
-        } catch (error) {
-          console.error(`Error loading stats for game ${game.id}:`, error);
-          return { ...game, views: 0, commentCount: 0, rating: 0 };
-        }
-      })
-    );
-    
-    return gamesWithStats;
+    try {
+      const ids = gamesList.map((g) => g.id);
+      if (ids.length === 0) return gamesList;
+
+      const [viewsRes, commentsRes] = await Promise.all([
+        supabase.from('game_views').select('game_id, view_count').in('game_id', ids),
+        supabase.from('comments').select('game_id, rating').in('game_id', ids),
+      ]);
+
+      const viewMap = new Map();
+      (viewsRes.data || []).forEach((v) => {
+        viewMap.set(v.game_id, v.view_count || 0);
+      });
+
+      const commentMap = new Map();
+      (commentsRes.data || []).forEach((c) => {
+        const arr = commentMap.get(c.game_id) || [];
+        arr.push(c.rating);
+        commentMap.set(c.game_id, arr);
+      });
+
+      return gamesList.map((g) => {
+        const ratings = commentMap.get(g.id) || [];
+        const rating =
+          ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
+        return {
+          ...g,
+          views: viewMap.get(g.id) || 0,
+          commentCount: ratings.length,
+          rating,
+        };
+      });
+    } catch (error) {
+      console.error('Error loading game stats:', error);
+      return gamesList.map((g) => ({ ...g, views: 0, commentCount: 0, rating: 0 }));
+    }
   };
 
   const handleLogin = () => {
@@ -195,32 +200,41 @@ function AdminPanel() {
   };
 
   const handleDeleteGame = async (id) => {
-    if (window.confirm('Bu oyunu silmek istediğinizden emin misiniz?')) {
-      try {
-        const { error } = await supabase
-          .from('games')
-          .delete()
-          .eq('id', id);
-        
-        if (error) throw error;
-        
-        const updatedGames = games.filter(g => g.id !== id);
-        setGames(updatedGames);
-        trackAdminAction('delete_game', `Game ID: ${id}`);
-        toast.success('Oyun başarıyla silindi!');
-      } catch (error) {
-        console.error('Error deleting game:', error);
-        toast.error('Oyun silinirken hata oluştu!');
-      }
+    const game = games.find((g) => g.id === id);
+    const ok = await confirm({
+      type: 'danger',
+      title: 'Oyunu sil',
+      description: game
+        ? `"${game.name}" oyununu kalıcı olarak silmek üzeresiniz. Bu işlem geri alınamaz.`
+        : 'Bu oyunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+      confirmText: 'Evet, Sil',
+      cancelText: 'Vazgeç',
+    });
+    if (!ok) return;
+    try {
+      const { error } = await supabase.from('games').delete().eq('id', id);
+      if (error) throw error;
+      const updatedGames = games.filter((g) => g.id !== id);
+      setGames(updatedGames);
+      trackAdminAction('delete_game', `Game ID: ${id}`);
+      toast.success('Oyun başarıyla silindi!');
+    } catch (error) {
+      console.error('Error deleting game:', error);
+      toast.error('Oyun silinirken hata oluştu!');
     }
   };
 
   const handleSaveGame = async (gameData) => {
     try {
       let gameId;
+      const seoFields = {
+        video_url: gameData.videoUrl ?? null,
+        video_title: gameData.videoTitle ?? null,
+        play_time_minutes: gameData.playTimeMinutes ?? null,
+        faq: Array.isArray(gameData.faq) ? gameData.faq : [],
+      };
 
       if (editingGame) {
-        // Edit existing game
         const { error } = await supabase
           .from('games')
           .update({
@@ -233,57 +247,55 @@ function AdminPanel() {
             short_description: gameData.shortDescription,
             description: gameData.description,
             rules: gameData.rules,
-            tips: gameData.tips
+            tips: gameData.tips,
+            ...seoFields,
           })
           .eq('id', editingGame.id);
-        
+
         if (error) throw error;
         gameId = editingGame.id;
       } else {
-        // Add new game
         const { data, error } = await supabase
           .from('games')
-          .insert([{
-            slug: gameData.slug,
-            name: gameData.name,
-            category: gameData.category,
-            players: gameData.players,
-            difficulty: gameData.difficulty,
-            image: gameData.image,
-            short_description: gameData.shortDescription,
-            description: gameData.description,
-            rules: gameData.rules,
-            tips: gameData.tips
-          }])
+          .insert([
+            {
+              slug: gameData.slug,
+              name: gameData.name,
+              category: gameData.category,
+              players: gameData.players,
+              difficulty: gameData.difficulty,
+              image: gameData.image,
+              short_description: gameData.shortDescription,
+              description: gameData.description,
+              rules: gameData.rules,
+              tips: gameData.tips,
+              ...seoFields,
+            },
+          ])
           .select()
           .single();
-        
+
         if (error) throw error;
         gameId = data.id;
       }
 
-      // Handle Gallery Images
       if (gameData.gallery) {
-        // 1. Delete existing gallery images for this game
         const { error: deleteError } = await supabase
           .from('game_gallery_images')
           .delete()
           .eq('game_id', gameId);
-        
+
         if (deleteError) console.error('Error clearing gallery:', deleteError);
 
-        // 2. Insert new gallery images
         if (gameData.gallery.length > 0) {
           const galleryInserts = gameData.gallery.map((url, index) => ({
             game_id: gameId,
             image_url: url,
-            order_index: index
+            order_index: index,
           }));
-
           const { error: insertError } = await supabase
             .from('game_gallery_images')
             .insert(galleryInserts);
-          
           if (insertError) console.error('Error inserting gallery:', insertError);
         }
       }
@@ -301,54 +313,47 @@ function AdminPanel() {
 
   const handleBulkDelete = async () => {
     if (selectedGames.length === 0) return;
-    if (window.confirm(`Seçili ${selectedGames.length} oyunu silmek istediğinizden emin misiniz?`)) {
-      try {
-        const { error } = await supabase
-          .from('games')
-          .delete()
-          .in('id', selectedGames);
-        
-        if (error) throw error;
-        
-        const updatedGames = games.filter(g => !selectedGames.includes(g.id));
-        setGames(updatedGames);
-        setSelectedGames([]);
-        trackAdminAction('bulk_delete', `Deleted ${selectedGames.length} games`);
-        toast.success(`${selectedGames.length} oyun başarıyla silindi!`);
-      } catch (error) {
-        console.error('Error deleting games:', error);
-        toast.error('Oyunlar silinirken hata oluştu!');
-      }
+    const ok = await confirm({
+      type: 'danger',
+      title: `${selectedGames.length} oyunu sil`,
+      description: `Seçili ${selectedGames.length} oyun kalıcı olarak silinecek. Bu işlem geri alınamaz.`,
+      confirmText: 'Hepsini Sil',
+      cancelText: 'Vazgeç',
+      requireText: 'SIL',
+    });
+    if (!ok) return;
+    try {
+      const { error } = await supabase.from('games').delete().in('id', selectedGames);
+      if (error) throw error;
+      const updatedGames = games.filter((g) => !selectedGames.includes(g.id));
+      setGames(updatedGames);
+      const count = selectedGames.length;
+      setSelectedGames([]);
+      trackAdminAction('bulk_delete', `Deleted ${count} games`);
+      toast.success(`${count} oyun başarıyla silindi!`);
+    } catch (error) {
+      console.error('Error deleting games:', error);
+      toast.error('Oyunlar silinirken hata oluştu!');
     }
   };
 
   const handleExportData = async () => {
     try {
-      // Fetch all data from Supabase
-      const { data: commentsData } = await supabase
-        .from('comments')
-        .select('*');
-      
-      const { data: viewsData } = await supabase
-        .from('game_views')
-        .select('*');
-      
-      const exportData = {
-        games: games,
-        comments: {},
-        views: {}
-      };
-      
-      // Group comments by game_id
-      commentsData?.forEach(comment => {
+      const [commentsRes, viewsRes] = await Promise.all([
+        supabase.from('comments').select('*'),
+        supabase.from('game_views').select('*'),
+      ]);
+
+      const exportData = { games, comments: {}, views: {} };
+
+      commentsRes.data?.forEach((comment) => {
         if (!exportData.comments[comment.game_id]) {
           exportData.comments[comment.game_id] = [];
         }
         exportData.comments[comment.game_id].push(comment);
       });
-      
-      // Group views by game_id
-      viewsData?.forEach(view => {
+
+      viewsRes.data?.forEach((view) => {
         exportData.views[view.game_id] = view.view_count;
       });
 
@@ -360,9 +365,7 @@ function AdminPanel() {
       link.download = `oyunlar-yedek-${new Date().toISOString().split('T')[0]}.json`;
       link.click();
       trackAdminAction('export_data', `Games and comments export`);
-      toast.success('Veriler başarıyla dışa aktarıldı!', {
-        icon: '💾',
-      });
+      toast.success('Veriler başarıyla dışa aktarıldı!', { icon: '💾' });
     } catch (error) {
       console.error('Error exporting data:', error);
       toast.error('Veriler dışa aktarılırken hata oluştu!');
@@ -386,33 +389,18 @@ function AdminPanel() {
   }, [games, sortBy, sortDirection]);
 
   const loadSortedGames = async () => {
-    const sorted = await getFilteredAndSortedGames();
-    setSortedGames(sorted);
-  };
-
-  const getFilteredAndSortedGames = async () => {
-    // Get games with stats from Supabase
     const gamesWithStats = await loadGamesWithStats(games);
-    
-    return gamesWithStats.sort((a, b) => {
+    const sorted = gamesWithStats.sort((a, b) => {
       let comparison = 0;
-      
-      if (sortBy === 'id') {
-        comparison = a.id - b.id;
-      } else if (sortBy === 'name') {
-        comparison = a.name.localeCompare(b.name, 'tr');
-      } else if (sortBy === 'category') {
-        comparison = a.category.localeCompare(b.category, 'tr');
-      } else if (sortBy === 'views') {
-        comparison = a.views - b.views;
-      } else if (sortBy === 'rating') {
-        comparison = a.rating - b.rating;
-      } else if (sortBy === 'comments') {
-        comparison = a.commentCount - b.commentCount;
-      }
-      
+      if (sortBy === 'id') comparison = a.id - b.id;
+      else if (sortBy === 'name') comparison = a.name.localeCompare(b.name, 'tr');
+      else if (sortBy === 'category') comparison = a.category.localeCompare(b.category, 'tr');
+      else if (sortBy === 'views') comparison = a.views - b.views;
+      else if (sortBy === 'rating') comparison = a.rating - b.rating;
+      else if (sortBy === 'comments') comparison = a.commentCount - b.commentCount;
       return sortDirection === 'asc' ? comparison : -comparison;
     });
+    setSortedGames(sorted);
   };
 
   if (!isAuthenticated) {
@@ -420,193 +408,76 @@ function AdminPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader 
-        onLogout={handleLogout}
-        onNavigateHome={() => navigate('/')}
-      />
+    <div className="min-h-screen bg-cream-50 font-sans text-charcoal-900">
+      <div className="flex min-h-screen">
+        <AdminSidebar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          onLogout={handleLogout}
+          gameCount={games.length}
+          badges={{ contact: unreadContactCount }}
+        />
 
-      {/* Main Content */}
-      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 w-full overflow-hidden">
-        {/* Tabs */}
-        <div className="mb-4 sm:mb-6 border-b border-gray-200 -mx-3 sm:mx-0 overflow-x-auto scrollbar-hide">
-          <nav className="flex space-x-4 sm:space-x-6 md:space-x-8 px-3 sm:px-0 min-w-max">
-            <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'dashboard'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <BarChart3 size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
-              <span>Dashboard</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('games')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap ${
-                activeTab === 'games'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Oyunlar ({games.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('comments')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'comments'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <MessageCircle size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
-              <span>Yorumlar</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('analytics')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'analytics'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <TrendingUp size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
-              <span>Analytics</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('carousel')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'carousel'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <Download size={16} className="rotate-180 sm:w-[18px] sm:h-[18px] shrink-0" />
-              <span>Carousel</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('gameoftheday')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'gameoftheday'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <Sparkles size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
-              <span className="hidden sm:inline">Günün Oyunu</span>
-              <span className="sm:hidden">Günün</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('users')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'users'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <FileText size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
-              <span>Kullanıcılar</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('categories')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'categories'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <FolderPlus size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
-              <span>Kategoriler</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('content')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'content'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <FileText size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
-              <span className="hidden sm:inline">İçerik Yönetimi</span>
-              <span className="sm:hidden">İçerik</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('contact')}
-              className={`pb-3 sm:pb-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
-                activeTab === 'contact'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <Phone size={16} className="sm:w-[18px] sm:h-[18px] shrink-0" />
-              <span>İletişim</span>
-            </button>
-          </nav>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <AdminTopbar
+            activeTab={activeTab}
+            onMenuClick={() => setSidebarOpen(true)}
+            unreadCount={unreadContactCount}
+          />
+
+          <main className="flex-1 px-4 py-6 md:px-8 md:py-8">
+            <div className="mx-auto max-w-[1400px]">
+              {activeTab === 'dashboard' && (
+                <AdminDashboardTab
+                  stats={stats}
+                  sortedGames={sortedGames}
+                  games={games}
+                  onTabChange={setActiveTab}
+                />
+              )}
+
+              {activeTab === 'games' && (
+                <GamesTable
+                  games={games}
+                  sortedGames={sortedGames}
+                  selectedGames={selectedGames}
+                  setSelectedGames={setSelectedGames}
+                  sortBy={sortBy}
+                  sortDirection={sortDirection}
+                  onSort={handleSort}
+                  onEdit={(game) => {
+                    setEditingGame(game);
+                    setShowAddModal(true);
+                  }}
+                  onDelete={handleDeleteGame}
+                  onBulkDelete={handleBulkDelete}
+                  onExport={handleExportData}
+                  onAddNew={() => {
+                    setEditingGame(null);
+                    setShowAddModal(true);
+                  }}
+                />
+              )}
+
+              {activeTab === 'comments' && <CommentsManager games={games} />}
+
+              {activeTab === 'analytics' && (
+                <AdminAnalyticsTab games={games} stats={stats} />
+              )}
+
+              {activeTab === 'carousel' && <CarouselManager games={games} />}
+              {activeTab === 'gameoftheday' && <GameOfTheDayManager />}
+              {activeTab === 'categories' && <CategoryManager />}
+              {activeTab === 'content' && <ContentManager />}
+              {activeTab === 'contact' && <ContactManager />}
+              {activeTab === 'users' && <UserManager />}
+            </div>
+          </main>
         </div>
+      </div>
 
-        {/* Dashboard Tab */}
-        {activeTab === 'dashboard' && (
-          <AdminDashboardTab
-            stats={stats}
-            sortedGames={sortedGames}
-            games={games}
-            onTabChange={setActiveTab}
-          />
-        )}
-
-        {/* Games Tab */}
-        {activeTab === 'games' && (
-          <GamesTable
-            games={games}
-            sortedGames={sortedGames}
-            selectedGames={selectedGames}
-            setSelectedGames={setSelectedGames}
-            sortBy={sortBy}
-            sortDirection={sortDirection}
-            onSort={handleSort}
-            onEdit={(game) => {
-              setEditingGame(game);
-              setShowAddModal(true);
-            }}
-            onDelete={handleDeleteGame}
-            onBulkDelete={handleBulkDelete}
-            onExport={handleExportData}
-            onAddNew={() => {
-              setEditingGame(null);
-              setShowAddModal(true);
-            }}
-          />
-        )}
-        
-        {/* Comments Tab */}
-        {activeTab === 'comments' && <CommentsManager games={games} />}
-        
-        {/* Analytics Tab */}
-        {activeTab === 'analytics' && (
-          <AdminAnalyticsTab games={games} stats={stats} />
-        )}
-
-        {/* Carousel Tab */}
-        {activeTab === 'carousel' && <CarouselManager games={games} />}
-
-        {/* Game of the Day Tab */}
-        {activeTab === 'gameoftheday' && <GameOfTheDayManager />}
-
-        {/* Categories Tab */}
-        {activeTab === 'categories' && <CategoryManager />}
-
-        {/* Content Tab */}
-        {activeTab === 'content' && <ContentManager />}
-
-        {/* Contact Tab */}
-        {activeTab === 'contact' && <ContactManager />}
-
-        {/* Users Tab */}
-        {activeTab === 'users' && <UserManager />}
-      </main>
-
-      {/* Add/Edit Modal */}
       {showAddModal && (
         <GameModal
           game={editingGame}

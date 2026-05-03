@@ -17,11 +17,11 @@ import {
   BarChart3,
   Download,
   Loader2,
-  ArrowRight,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { supabase } from '../../../lib/supabase';
 import { exportAnalyticsData } from '../../../utils/analytics';
+import { Donut, BarChart, MetricCard } from '../charts';
 
 const TIME_RANGES = [
   { value: '24hours', label: 'Son 24 Saat' },
@@ -29,6 +29,73 @@ const TIME_RANGES = [
   { value: '30days', label: 'Son 30 Gün' },
   { value: 'all', label: 'Tüm Zamanlar' },
 ];
+
+function ActivityIcon({ type }) {
+  const base = 'grid h-9 w-9 shrink-0 place-items-center rounded-xl';
+  switch (type) {
+    case 'game_view':
+      return (
+        <div className={`${base} bg-emerald-100 text-emerald-600`}>
+          <Eye size={16} />
+        </div>
+      );
+    case 'comment_submit':
+      return (
+        <div className={`${base} bg-purple-100 text-purple-600`}>
+          <MessageCircle size={16} />
+        </div>
+      );
+    case 'share_click':
+      return (
+        <div className={`${base} bg-pink-100 text-pink-600`}>
+          <Share2 size={16} />
+        </div>
+      );
+    case 'search':
+      return (
+        <div className={`${base} bg-amber-100 text-amber-600`}>
+          <Search size={16} />
+        </div>
+      );
+    default:
+      return (
+        <div className={`${base} bg-warm-100 text-warm-500`}>
+          <Activity size={16} />
+        </div>
+      );
+  }
+}
+
+function EngagementCard({ icon: Icon, label, value, desc, warn }) {
+  return (
+    <div
+      className={`rounded-2xl border p-4 shadow-soft sm:p-5 ${
+        warn ? 'border-rose-200/60 bg-rose-50/50' : 'border-warm-200/60 bg-white'
+      }`}
+    >
+      <div className="mb-2 flex items-center gap-2">
+        <span
+          className={`grid h-8 w-8 place-items-center rounded-lg ${
+            warn ? 'bg-rose-100 text-rose-600' : 'bg-warm-100 text-warm-600'
+          }`}
+        >
+          <Icon size={15} />
+        </span>
+        <span className="text-[11px] font-bold uppercase tracking-wider text-warm-600">
+          {label}
+        </span>
+      </div>
+      <div
+        className={`text-xl font-bold tracking-tight sm:text-2xl ${
+          warn ? 'text-rose-600' : 'text-charcoal-900'
+        }`}
+      >
+        {value}
+      </div>
+      <div className="mt-0.5 text-[11px] font-medium text-warm-500">{desc}</div>
+    </div>
+  );
+}
 
 export default function AdminAnalyticsTab({ games, stats }) {
   const [analytics, setAnalytics] = useState({
@@ -50,6 +117,7 @@ export default function AdminAnalyticsTab({ games, stats }) {
 
   useEffect(() => {
     loadAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [games, timeRange]);
 
   const loadAnalytics = async () => {
@@ -73,7 +141,6 @@ export default function AdminAnalyticsTab({ games, stats }) {
           startDate.setDate(startDate.getDate() - 7);
       }
 
-      // RPC ile verileri çek
       const { data: rpcStats, error: rpcError } = await supabase.rpc('get_dashboard_stats', {
         p_start_date: startDate.toISOString(),
       });
@@ -90,24 +157,22 @@ export default function AdminAnalyticsTab({ games, stats }) {
           avgTimeOnSite: rpcStats.avgTimeOnSite || 0,
           bounceRate: rpcStats.bounceRate || 0,
           deviceStats: rpcStats.deviceStats || { desktop: 0, mobile: 0, tablet: 0 },
-          trafficSources: rpcStats.trafficSources || { direct: 0, search: 0, social: 0, referral: 0 },
+          trafficSources:
+            rpcStats.trafficSources || { direct: 0, search: 0, social: 0, referral: 0 },
           avgPagePerSession:
             rpcStats.uniqueSessions > 0
               ? ((rpcStats.totalPageViews || 0) / rpcStats.uniqueSessions).toFixed(1)
               : 0,
         };
       } else {
-        // Fallback: localStorage verileri
-        const localData = getLocalStorageData();
-        newAnalytics = localData;
+        newAnalytics = getLocalStorageData();
       }
 
-      // Top Games (view'dan sıralı gelir)
       const { data: topGamesData } = await supabase
         .from('top_games_weekly')
         .select('*')
         .order('views', { ascending: false })
-        .limit(5);
+        .limit(6);
       const topGames = (topGamesData || []).map((gd) => {
         const game = games.find((g) => g.id === gd.game_id);
         return {
@@ -119,7 +184,6 @@ export default function AdminAnalyticsTab({ games, stats }) {
         };
       });
 
-      // Recent Activity
       const { data: recentData } = await supabase
         .from('recent_activity')
         .select('*')
@@ -128,7 +192,10 @@ export default function AdminAnalyticsTab({ games, stats }) {
       const recentActivity = (recentData || []).map((a) => {
         const game = games.find((g) => g.id === a.game_id);
         const displayName =
-          game?.name || a.event_data?.page || a.event_data?.search_term || (a.game_id ? `Oyun #${a.game_id}` : 'Sayfa');
+          game?.name ||
+          a.event_data?.page ||
+          a.event_data?.search_term ||
+          (a.game_id ? `Oyun #${a.game_id}` : 'Sayfa');
         return { ...a, game_name: displayName };
       });
 
@@ -144,9 +211,13 @@ export default function AdminAnalyticsTab({ games, stats }) {
     try {
       const deviceVisits = JSON.parse(localStorage.getItem('device_visits') || '{}');
       const trafficSources = JSON.parse(localStorage.getItem('traffic_sources') || '{}');
-      const totalDevice = (deviceVisits.desktop || 0) + (deviceVisits.mobile || 0) + (deviceVisits.tablet || 0);
+      const totalDevice =
+        (deviceVisits.desktop || 0) + (deviceVisits.mobile || 0) + (deviceVisits.tablet || 0);
       const totalTraffic =
-        (trafficSources.direct || 0) + (trafficSources.search || 0) + (trafficSources.social || 0) + (trafficSources.referral || 0);
+        (trafficSources.direct || 0) +
+        (trafficSources.search || 0) +
+        (trafficSources.social || 0) +
+        (trafficSources.referral || 0);
       return {
         totalPageViews: 0,
         totalComments: 0,
@@ -179,7 +250,6 @@ export default function AdminAnalyticsTab({ games, stats }) {
     }
   };
 
-  // Engagement Score
   const engagementScore = useMemo(() => {
     const commentRatio = (stats.totalComments || 0) / Math.max(stats.totalViews || 1, 1);
     const commentScore = Math.min(commentRatio * 100 * 0.2, 20);
@@ -189,38 +259,67 @@ export default function AdminAnalyticsTab({ games, stats }) {
     return Math.round(Math.min(commentScore + ratingScore + activityScore + gamesScore, 100));
   }, [stats]);
 
+  const deviceData = useMemo(
+    () => [
+      { label: 'Masaüstü', value: analytics.deviceStats.desktop, color: '#6366f1' },
+      { label: 'Mobil', value: analytics.deviceStats.mobile, color: '#10b981' },
+      { label: 'Tablet', value: analytics.deviceStats.tablet, color: '#f59e0b' },
+    ],
+    [analytics.deviceStats]
+  );
+
+  const trafficData = useMemo(
+    () => [
+      { label: 'Doğrudan', value: analytics.trafficSources.direct, color: '#06b6d4' },
+      { label: 'Arama', value: analytics.trafficSources.search, color: '#10b981' },
+      { label: 'Sosyal Medya', value: analytics.trafficSources.social, color: '#ec4899' },
+      { label: 'Referral', value: analytics.trafficSources.referral, color: '#f97316' },
+    ],
+    [analytics.trafficSources]
+  );
+
   const maxTopGameViews = analytics.topGames[0]?.views || 1;
 
   return (
     <div className="space-y-6">
-      {/* Başlık + Zaman Filtresi + Export */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900">Site Analitiği</h2>
-          <p className="text-sm text-gray-500 mt-0.5">Ziyaretçi ve etkileşim verileri</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {TIME_RANGES.map((tr) => (
+      {/* Filtre Bari */}
+      <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-charcoal-900">Site Analitiği</h2>
+            <p className="mt-0.5 text-sm text-warm-500">
+              Ziyaretçi davranışları ve etkileşim metrikleri
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <div className="inline-flex rounded-xl border border-warm-200 bg-cream-50 p-1">
+              {TIME_RANGES.map((tr) => (
+                <button
+                  key={tr.value}
+                  type="button"
+                  onClick={() => setTimeRange(tr.value)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                    timeRange === tr.value
+                      ? 'bg-white text-charcoal-900 shadow-soft'
+                      : 'text-warm-500 hover:text-charcoal-900'
+                  }`}
+                >
+                  {tr.label}
+                </button>
+              ))}
+            </div>
             <button
-              key={tr.value}
-              onClick={() => setTimeRange(tr.value)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                timeRange === tr.value ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              type="button"
+              onClick={() => {
+                exportAnalyticsData();
+                toast.success('Veriler dışa aktarıldı!', { icon: '📊' });
+              }}
+              className="ml-1 inline-flex items-center gap-1.5 rounded-xl bg-charcoal-900 px-3.5 py-2 text-xs font-semibold text-cream-50 transition-all hover:-translate-y-0.5 hover:bg-charcoal-800"
             >
-              {tr.label}
+              <Download size={14} />
+              İndir
             </button>
-          ))}
-          <button
-            onClick={() => {
-              exportAnalyticsData();
-              toast.success('Veriler dışa aktarıldı!', { icon: '📊' });
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium ml-1"
-          >
-            <Download size={16} />
-            İndir
-          </button>
+          </div>
         </div>
       </div>
 
@@ -230,27 +329,80 @@ export default function AdminAnalyticsTab({ games, stats }) {
         </div>
       ) : (
         <>
-          {/* Ana Metrikler - 5 Kart */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            <MetricCard icon={Eye} label="Görüntülenme" value={analytics.totalPageViews} color="bg-green-50 text-green-600" />
-            <MetricCard icon={Users} label="Ziyaretçi" value={analytics.uniqueSessions} color="bg-blue-50 text-blue-600" />
-            <MetricCard icon={MessageCircle} label="Yorum" value={analytics.totalComments} color="bg-purple-50 text-purple-600" />
-            <MetricCard icon={Search} label="Arama" value={analytics.totalSearches} color="bg-amber-50 text-amber-600" />
-            <div className="col-span-2 sm:col-span-1 bg-gradient-to-br from-orange-500 to-rose-500 rounded-2xl p-5 text-white shadow-md">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp size={20} />
-                <span className="text-sm font-medium opacity-90">Engagement</span>
+          {/* Ana Metrikler */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <MetricCard
+              icon={Eye}
+              label="Görüntülenme"
+              value={analytics.totalPageViews}
+              hint="Sayfa görüntüleme"
+              tone="emerald"
+            />
+            <MetricCard
+              icon={Users}
+              label="Ziyaretçi"
+              value={analytics.uniqueSessions}
+              hint="Tekil oturum"
+              tone="blue"
+            />
+            <MetricCard
+              icon={MessageCircle}
+              label="Yorum"
+              value={analytics.totalComments}
+              hint="Etkileşim"
+              tone="purple"
+            />
+            <MetricCard
+              icon={Search}
+              label="Arama"
+              value={analytics.totalSearches}
+              hint="Yapılan aramalar"
+              tone="amber"
+            />
+          </div>
+
+          {/* Engagement banner */}
+          <div className="relative overflow-hidden rounded-2xl border border-orange-300/40 bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 p-6 text-white shadow-warm-glow">
+            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/15 blur-3xl" />
+            <div className="absolute -bottom-12 left-1/3 h-44 w-44 rounded-full bg-amber-200/20 blur-3xl" />
+
+            <div className="relative z-10 flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/20 backdrop-blur-sm">
+                    <Activity size={18} />
+                  </span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider opacity-90">
+                    Genel Etkileşim Skoru
+                  </span>
+                </div>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-5xl font-bold tracking-tight">{engagementScore}</span>
+                  <span className="text-base font-semibold opacity-80">/100</span>
+                </div>
+                <p className="mt-1 max-w-md text-xs opacity-80">
+                  Yorum oranı, ortalama puan, aktivite ve içerik hacmi temel alınarak hesaplandı.
+                </p>
               </div>
-              <div className="text-3xl font-bold">{engagementScore}/100</div>
-              <div className="mt-2 h-2 bg-white/20 rounded-full overflow-hidden">
-                <div className="h-full bg-white rounded-full" style={{ width: `${engagementScore}%` }} />
+              <div className="w-full md:w-72">
+                <div className="h-3 w-full overflow-hidden rounded-full bg-white/20">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-amber-200 to-white transition-all duration-700 ease-spring"
+                    style={{ width: `${engagementScore}%` }}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           {/* Etkileşim Kartları */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <EngagementCard icon={Clock} label="Ort. Süre" value={`${analytics.avgTimeOnSite}sn`} desc="Sitede kalma" />
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <EngagementCard
+              icon={Clock}
+              label="Ort. Süre"
+              value={`${analytics.avgTimeOnSite}sn`}
+              desc="Sitede kalma"
+            />
             <EngagementCard
               icon={analytics.bounceRate > 50 ? TrendingDown : TrendingUp}
               label="Hemen Çıkma"
@@ -258,18 +410,28 @@ export default function AdminAnalyticsTab({ games, stats }) {
               desc="5sn altı"
               warn={analytics.bounceRate > 50}
             />
-            <EngagementCard icon={MousePointer} label="Sayfa/Oturum" value={analytics.avgPagePerSession} desc="Gezilen sayfa" />
-            <EngagementCard icon={Share2} label="Paylaşım" value={analytics.totalShares} desc="Sosyal medya" />
+            <EngagementCard
+              icon={MousePointer}
+              label="Sayfa/Oturum"
+              value={analytics.avgPagePerSession}
+              desc="Gezilen sayfa"
+            />
+            <EngagementCard
+              icon={Share2}
+              label="Paylaşım"
+              value={analytics.totalShares}
+              desc="Sosyal medya"
+            />
           </div>
 
-          {/* Ana Grid: Sol (Top Oyunlar + Aktivite) | Sağ (Cihaz + Trafik) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-            {/* Sol - 8/12 */}
-            <div className="lg:col-span-8 space-y-5">
-              {/* Top Oyunlar */}
-              <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <BarChart3 size={20} className="text-orange-500" />
+          {/* Ana Grid */}
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+            {/* Sol */}
+            <div className="space-y-5 lg:col-span-8">
+              {/* Top Oyunlar BarChart */}
+              <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
+                <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-charcoal-900 sm:text-lg">
+                  <BarChart3 size={18} className="text-orange-600" />
                   En Popüler Oyunlar
                 </h3>
                 {analytics.topGames.length > 0 ? (
@@ -277,36 +439,45 @@ export default function AdminAnalyticsTab({ games, stats }) {
                     {analytics.topGames.map((game, i) => (
                       <div
                         key={game.id}
-                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-orange-50/50 transition-colors"
+                        className="flex items-center gap-3 rounded-xl border border-transparent p-2.5 transition-colors hover:border-warm-200/70 hover:bg-cream-50"
                       >
                         <span
-                          className={`w-7 h-7 flex items-center justify-center rounded-lg text-sm font-bold ${
+                          className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg text-sm font-bold ${
                             i === 0
-                              ? 'bg-yellow-100 text-yellow-700'
+                              ? 'bg-amber-400 text-white'
                               : i === 1
-                                ? 'bg-gray-200 text-gray-600'
+                                ? 'bg-warm-300 text-white'
                                 : i === 2
-                                  ? 'bg-orange-100 text-orange-700'
-                                  : 'bg-gray-100 text-gray-500'
+                                  ? 'bg-orange-400 text-white'
+                                  : 'bg-warm-100 text-warm-500'
                           }`}
                         >
                           {i + 1}
                         </span>
-                        <img src={game.image} alt={game.name} className="w-11 h-11 rounded-lg object-cover" />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-gray-900 text-sm truncate">{game.name}</div>
-                          <div className="flex items-center gap-3 text-xs text-gray-500">
-                            <span className="flex items-center gap-1">
-                              <Eye size={12} /> {game.views.toLocaleString('tr-TR')}
+                        {game.image && (
+                          <img
+                            src={game.image}
+                            alt={game.name}
+                            loading="lazy"
+                            className="h-11 w-11 shrink-0 rounded-lg object-cover ring-1 ring-warm-200/60"
+                          />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-sm font-bold text-charcoal-900">
+                            {game.name}
+                          </div>
+                          <div className="mt-0.5 flex items-center gap-3 text-[11px] text-warm-500">
+                            <span className="inline-flex items-center gap-1">
+                              <Eye size={11} /> {game.views.toLocaleString('tr-TR')}
                             </span>
-                            <span className="flex items-center gap-1">
-                              <MessageCircle size={12} /> {game.comments}
+                            <span className="inline-flex items-center gap-1">
+                              <MessageCircle size={11} /> {game.comments}
                             </span>
                           </div>
                         </div>
-                        <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden hidden sm:block">
+                        <div className="hidden h-2 w-24 overflow-hidden rounded-full bg-warm-100 sm:block">
                           <div
-                            className="h-full bg-orange-500 rounded-full"
+                            className="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-700 ease-spring"
                             style={{ width: `${(game.views / maxTopGameViews) * 100}%` }}
                           />
                         </div>
@@ -314,23 +485,26 @@ export default function AdminAnalyticsTab({ games, stats }) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-sm py-6 text-center">Henüz veri yok</p>
+                  <p className="py-8 text-center text-sm text-warm-500">Henüz veri yok</p>
                 )}
               </div>
 
               {/* Son Aktiviteler */}
-              <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Activity size={20} className="text-blue-500" />
+              <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
+                <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-charcoal-900 sm:text-lg">
+                  <Activity size={18} className="text-blue-600" />
                   Son Aktiviteler
                 </h3>
                 {analytics.recentActivity.length > 0 ? (
                   <div className="space-y-2">
                     {analytics.recentActivity.slice(0, 8).map((a, i) => (
-                      <div key={i} className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl text-sm">
+                      <div
+                        key={i}
+                        className="flex items-center gap-3 rounded-xl border border-warm-200/60 bg-cream-50 p-2.5 text-sm transition-colors hover:border-warm-300"
+                      >
                         <ActivityIcon type={a.event_type} />
-                        <div className="flex-1 min-w-0">
-                          <span className="font-medium text-gray-800 truncate block">
+                        <div className="min-w-0 flex-1">
+                          <span className="block truncate font-semibold text-charcoal-900">
                             {a.event_type === 'game_view' && 'Görüntülendi: '}
                             {a.event_type === 'comment_submit' && 'Yorum: '}
                             {a.event_type === 'share_click' && 'Paylaşıldı: '}
@@ -338,60 +512,61 @@ export default function AdminAnalyticsTab({ games, stats }) {
                             {a.game_name || a.event_data?.search_term || '-'}
                           </span>
                         </div>
-                        <span className="text-xs text-gray-400 shrink-0">
-                          {new Date(a.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                        <span className="shrink-0 text-[11px] font-medium text-warm-500">
+                          {new Date(a.created_at).toLocaleTimeString('tr-TR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
                         </span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-sm py-6 text-center">Henüz aktivite yok</p>
+                  <p className="py-8 text-center text-sm text-warm-500">Henüz aktivite yok</p>
                 )}
               </div>
             </div>
 
-            {/* Sağ - 4/12 */}
-            <div className="lg:col-span-4 space-y-5">
-              {/* Cihaz Dağılımı */}
-              <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Monitor size={20} className="text-indigo-500" />
+            {/* Sağ */}
+            <div className="space-y-5 lg:col-span-4">
+              <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
+                <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-charcoal-900 sm:text-lg">
+                  <Monitor size={18} className="text-indigo-600" />
                   Cihaz Dağılımı
                 </h3>
-                <div className="space-y-4">
-                  <DeviceBar icon={Monitor} label="Masaüstü" value={analytics.deviceStats.desktop} color="bg-indigo-500" />
-                  <DeviceBar icon={Smartphone} label="Mobil" value={analytics.deviceStats.mobile} color="bg-emerald-500" />
-                  <DeviceBar icon={Tablet} label="Tablet" value={analytics.deviceStats.tablet} color="bg-amber-500" />
-                </div>
+                {deviceData.some((d) => d.value > 0) ? (
+                  <Donut data={deviceData} size={150} thickness={18} centerLabel="Cihaz" />
+                ) : (
+                  <BarChart
+                    data={[
+                      { label: 'Masaüstü', value: 0, color: '#6366f1' },
+                      { label: 'Mobil', value: 0, color: '#10b981' },
+                      { label: 'Tablet', value: 0, color: '#f59e0b' },
+                    ]}
+                    formatter={(v) => `%${v}`}
+                  />
+                )}
               </div>
 
-              {/* Trafik Kaynakları */}
-              <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-gray-100">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Globe size={20} className="text-cyan-500" />
+              <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
+                <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-charcoal-900 sm:text-lg">
+                  <Globe size={18} className="text-cyan-600" />
                   Trafik Kaynakları
                 </h3>
-                <div className="space-y-4">
-                  <TrafficBar label="Doğrudan" value={analytics.trafficSources.direct} color="bg-cyan-500" />
-                  <TrafficBar label="Arama (Google)" value={analytics.trafficSources.search} color="bg-green-500" />
-                  <TrafficBar label="Sosyal Medya" value={analytics.trafficSources.social} color="bg-pink-500" />
-                  <TrafficBar label="Referral" value={analytics.trafficSources.referral} color="bg-orange-500" />
-                </div>
+                <BarChart data={trafficData} formatter={(v) => `%${v}`} />
               </div>
 
-              {/* Bilgi Kutusu */}
-              <div className="bg-orange-50 rounded-2xl p-5 border border-orange-100">
-                <p className="text-orange-800 text-xs leading-relaxed">
-                  <strong className="text-orange-900">Not:</strong> Veriler{' '}
-                  {timeRange === '24hours'
-                    ? 'son 24 saat'
-                    : timeRange === '7days'
-                      ? 'son 7 gün'
-                      : timeRange === '30days'
-                        ? 'son 30 gün'
-                        : 'tüm zamanlar'}
-                  {' '}içindeki etkileşimlere dayanmaktadır.
-                </p>
+              <div className="rounded-2xl border border-orange-200/60 bg-gradient-to-br from-orange-50 to-amber-50 p-4 text-xs leading-relaxed text-orange-900">
+                <strong className="block text-orange-700">Not</strong>
+                Veriler{' '}
+                {timeRange === '24hours'
+                  ? 'son 24 saat'
+                  : timeRange === '7days'
+                    ? 'son 7 gün'
+                    : timeRange === '30days'
+                      ? 'son 30 gün'
+                      : 'tüm zamanlar'}{' '}
+                içindeki etkileşimlere dayanmaktadır.
               </div>
             </div>
           </div>
@@ -399,97 +574,4 @@ export default function AdminAnalyticsTab({ games, stats }) {
       )}
     </div>
   );
-}
-
-// Alt Bileşenler
-function MetricCard({ icon: Icon, label, value, color }) {
-  return (
-    <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100 hover:shadow-md transition-shadow">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${color}`}>
-        <Icon size={20} />
-      </div>
-      <div className="text-2xl font-bold text-gray-900">{typeof value === 'number' ? value.toLocaleString('tr-TR') : value}</div>
-      <div className="text-xs text-gray-500 mt-0.5">{label}</div>
-    </div>
-  );
-}
-
-function EngagementCard({ icon: Icon, label, value, desc, warn }) {
-  return (
-    <div className={`rounded-2xl p-4 sm:p-5 border ${warn ? 'bg-red-50 border-red-100' : 'bg-gray-50 border-gray-100'}`}>
-      <div className="flex items-center gap-2 mb-1.5">
-        <Icon size={18} className={warn ? 'text-red-500' : 'text-gray-500'} />
-        <span className="text-sm font-medium text-gray-600">{label}</span>
-      </div>
-      <div className={`text-xl sm:text-2xl font-bold ${warn ? 'text-red-600' : 'text-gray-900'}`}>{value}</div>
-      <div className="text-xs text-gray-500 mt-0.5">{desc}</div>
-    </div>
-  );
-}
-
-function DeviceBar({ icon: Icon, label, value, color }) {
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-2">
-          <Icon size={16} className="text-gray-400" />
-          <span className="text-sm font-medium text-gray-700">{label}</span>
-        </div>
-        <span className="text-sm font-bold text-gray-900">%{value}</span>
-      </div>
-      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${value}%` }} />
-      </div>
-    </div>
-  );
-}
-
-function TrafficBar({ label, value, color }) {
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-sm font-medium text-gray-700">{label}</span>
-        <span className="text-sm font-bold text-gray-900">%{value}</span>
-      </div>
-      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${value}%` }} />
-      </div>
-    </div>
-  );
-}
-
-function ActivityIcon({ type }) {
-  const base = 'w-8 h-8 rounded-lg flex items-center justify-center shrink-0';
-  switch (type) {
-    case 'game_view':
-      return (
-        <div className={`${base} bg-green-100`}>
-          <Eye size={16} className="text-green-600" />
-        </div>
-      );
-    case 'comment_submit':
-      return (
-        <div className={`${base} bg-purple-100`}>
-          <MessageCircle size={16} className="text-purple-600" />
-        </div>
-      );
-    case 'share_click':
-      return (
-        <div className={`${base} bg-pink-100`}>
-          <Share2 size={16} className="text-pink-600" />
-        </div>
-      );
-    case 'search':
-      return (
-        <div className={`${base} bg-amber-100`}>
-          <Search size={16} className="text-amber-600" />
-        </div>
-      );
-    default:
-      return (
-        <div className={`${base} bg-gray-100`}>
-          <Activity size={16} className="text-gray-500" />
-        </div>
-      );
-  }
 }

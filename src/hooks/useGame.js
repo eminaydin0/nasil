@@ -33,8 +33,14 @@ export function useGame(slug) {
         gallery: gameData.gallery ? gameData.gallery.map(item => item.image_url) : [],
         shortDescription: gameData.short_description,
         description: gameData.description,
-        rules: gameData.rules,
-        tips: gameData.tips
+        rules: Array.isArray(gameData.rules) ? gameData.rules : [],
+        tips: Array.isArray(gameData.tips) ? gameData.tips : [],
+        videoUrl: gameData.video_url || null,
+        videoTitle: gameData.video_title || null,
+        playTimeMinutes: gameData.play_time_minutes || null,
+        faq: Array.isArray(gameData.faq) ? gameData.faq : [],
+        createdAt: gameData.created_at,
+        updatedAt: gameData.updated_at,
       };
       
       setGame(foundGame);

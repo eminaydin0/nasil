@@ -21,7 +21,7 @@ VALUES (
   'Karmaşık kuralları basitleştirilmiş anlatımlarla hemen kavrayın ve oynamaya başlayın.',
   'https://images.unsplash.com/photo-1606167668584-78701c57f13d?q=80&w=2070&auto=format&fit=crop',
   'REHBER',
-  'Nasıl Oynanır?',
+  'Kuralı Ne?',
   '#oyunlar',
   1,
   true

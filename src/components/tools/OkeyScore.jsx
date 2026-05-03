@@ -2,77 +2,88 @@ import { useState } from 'react';
 import { Trophy, Save } from 'lucide-react';
 import GameTableContainer from '../common/GameTableContainer';
 import { tool } from './toolStyles';
+import { useConfirm } from '../ui';
 
 export default function OkeyScore() {
+  const confirm = useConfirm();
   const [players, setPlayers] = useState(['Oyuncu 1', 'Oyuncu 2', 'Oyuncu 3', 'Oyuncu 4']);
   const [scores, setScores] = useState([20, 20, 20, 20]);
-  const [winner, setWinner] = useState(0); // Index of winner
-  const [winType, setWinType] = useState('normal'); // normal (2), cift (4)
+  const [winner, setWinner] = useState(0);
+  const [winType, setWinType] = useState('normal');
   const [startScore, setStartScore] = useState(20);
 
-  const resetGame = () => {
-    if (window.confirm('Yeni oyun başlatmak istediğinize emin misiniz?')) {
-      setScores([startScore, startScore, startScore, startScore]);
-    }
+  const resetGame = async () => {
+    const ok = await confirm({
+      title: 'Yeni oyun',
+      description: 'Puankartı sıfırlanır ve başlangıç puana göre sıfırlanır.',
+      confirmText: 'Baştan Başlat',
+      cancelText: 'Vazgeç',
+      type: 'warning',
+    });
+    if (!ok) return;
+    setScores([startScore, startScore, startScore, startScore]);
   };
 
   const applyRound = () => {
     const penalty = winType === 'normal' ? 2 : 4;
-    
-    setScores(prevScores => prevScores.map((score, index) => {
-      // The winner's score doesn't change in classic drop-down Okey
-      if (index === winner) return score;
-      // Others lose points
-      return score - penalty;
-    }));
+    setScores((prevScores) =>
+      prevScores.map((score, index) =>
+        index === winner ? score : score - penalty
+      )
+    );
   };
 
   const updateName = (index, value) => {
-    const newPlayers = [...players];
-    newPlayers[index] = value;
-    setPlayers(newPlayers);
+    const next = [...players];
+    next[index] = value;
+    setPlayers(next);
   };
 
   return (
     <GameTableContainer
       title="Okey Sayacı"
+      subtitle="Düşmeli okey — el kazananı seç, bitiş türünü işaretle."
       icon={Trophy}
       onReset={resetGame}
       className="h-full"
     >
-      <div className="p-6">
-
-        {/* Score Display */}
-        <div className="grid grid-cols-4 gap-3 mb-6 bg-gray-50 p-4 rounded-xl border border-orange-100">
+      <div className="space-y-8 p-5 sm:p-8">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {players.map((player, idx) => (
-            <div key={idx} className="flex flex-col items-center">
+            <div
+              key={idx}
+              className={`group relative overflow-hidden rounded-2xl border-2 bg-gradient-to-b p-4 text-center transition-colors ${
+                scores[idx] <= 0
+                  ? 'border-orange-400/80 from-orange-50 to-amber-50/80 shadow-warm-glow'
+                  : 'border-warm-200/70 from-white to-cream-50/70 hover:border-warm-300'
+              }`}
+            >
+              <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-orange-400/10 opacity-0 blur-xl transition-opacity group-hover:opacity-100" />
               <input
                 type="text"
                 value={player}
                 onChange={(e) => updateName(idx, e.target.value)}
-                className="w-full text-center bg-white text-xs font-semibold text-gray-600 mb-2 rounded-lg px-2 py-1 border border-gray-200 focus:outline-none focus:text-gray-900 focus:ring-2 focus:ring-orange-500/30"
+                className="relative mb-3 w-full rounded-xl border border-warm-200/80 bg-white/95 px-2 py-2 text-center text-[11px] font-bold uppercase tracking-wide text-warm-600 outline-none ring-2 ring-transparent transition-all focus:border-orange-400 focus:text-charcoal-900 focus:ring-orange-500/15"
               />
-              <div className={`text-2xl font-black ${scores[idx] <= 0 ? 'text-orange-600' : 'text-gray-800'}`}>
+              <div
+                className={`font-display relative text-[2rem] font-black leading-none tracking-tighter sm:text-4xl ${scores[idx] <= 0 ? 'text-orange-700' : 'text-charcoal-900'}`}
+              >
                 {scores[idx]}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Controls */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Eli Kim Kazandı?</label>
-            <div className="grid grid-cols-2 gap-2">
+            <span className={tool.label}>Eli kim kazandı?</span>
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {players.map((player, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => setWinner(idx)}
-                  className={`p-2.5 rounded-xl text-sm font-medium transition-all truncate border-2 ${
-                    winner === idx 
-                      ? 'border-orange-500 bg-orange-600 text-white shadow-sm' 
-                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
+                  className={`truncate rounded-xl border-2 px-3 py-3 text-xs font-bold transition-all sm:text-sm ${winner === idx ? `${tool.toggleOn}` : `${tool.toggleOff}`}`}
                 >
                   {player}
                 </button>
@@ -81,49 +92,41 @@ export default function OkeyScore() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Bitiş Türü</label>
-            <div className="flex gap-2">
+            <span className={tool.label}>Bitiş türü</span>
+            <div className="flex gap-2 sm:gap-3">
               <button
+                type="button"
                 onClick={() => setWinType('normal')}
-                className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all border-2 ${
-                  winType === 'normal' 
-                    ? 'border-orange-500 bg-orange-600 text-white shadow-sm' 
-                    : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                className={`flex-1 rounded-xl border-2 py-3 text-xs font-bold sm:text-sm ${winType === 'normal' ? `${tool.toggleOn}` : `${tool.toggleOff}`}`}
               >
                 Normal (-2)
               </button>
               <button
+                type="button"
                 onClick={() => setWinType('cift')}
-                className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all border-2 ${
-                  winType === 'cift' 
-                    ? 'border-orange-500 bg-orange-600 text-white shadow-sm' 
-                    : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                className={`flex-1 rounded-xl border-2 py-3 text-xs font-bold sm:text-sm ${winType === 'cift' ? `${tool.toggleOn}` : `${tool.toggleOff}`}`}
               >
                 Okey/Çift (-4)
               </button>
             </div>
           </div>
 
-          <button
-            onClick={applyRound}
-            className={tool.primaryBtn}
-          >
-            <Save size={18} />
-            Puanları İşle
+          <button type="button" onClick={applyRound} className={tool.primaryBtn}>
+            <Save size={18} aria-hidden />
+            Puanları işle
           </button>
-          
-          <div className="pt-4 border-t border-orange-100">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500 whitespace-nowrap">Başlangıç Puanı:</span>
-              <input 
-                type="number" 
-                value={startScore}
-                onChange={(e) => setStartScore(Number(e.target.value))}
-                className="w-16 p-1.5 text-sm border border-gray-200 rounded-lg text-center focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 outline-none"
-              />
-            </div>
+
+          <div className="flex flex-wrap items-center gap-4 border-t border-warm-200/70 pt-6">
+            <span className="text-xs font-bold uppercase tracking-wide text-warm-500">
+              Başlangıç puanı
+            </span>
+            <input
+              type="number"
+              value={startScore}
+              onChange={(e) => setStartScore(Number(e.target.value))}
+              className={`${tool.input} w-28 text-center font-bold`}
+              min={0}
+            />
           </div>
         </div>
       </div>

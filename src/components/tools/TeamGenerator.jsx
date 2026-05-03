@@ -84,29 +84,56 @@ export default function TeamGenerator() {
           </button>
         </div>
 
-        <div className={`${tool.panel} max-h-[400px]`}>
+        <div className={`${tool.panel} max-h-[420px]`}>
            {teams.length > 0 ? (
              <div className="space-y-4">
-               {teams.map((team, idx) => (
-                 <div key={idx} className="bg-white p-4 rounded-xl shadow-sm border border-orange-100 animate-in fade-in slide-in-from-bottom-2 duration-500" style={{animationDelay: `${idx * 150}ms`}}>
-                   <h4 className="font-bold text-orange-800 mb-2 border-b border-orange-100 pb-1">
-                     {idx + 1}. Takım
-                   </h4>
-                   <ul className="space-y-1">
+               {teams.map((team, idx) => {
+                 const grad = [
+                   'from-orange-500/[0.12] to-red-600/[0.08]',
+                   'from-emerald-500/[0.12] to-teal-600/[0.08]',
+                   'from-indigo-500/[0.12] to-purple-600/[0.08]',
+                   'from-amber-500/[0.14] to-orange-600/[0.08]',
+                   'from-pink-500/[0.1] to-rose-600/[0.08]',
+                 ][idx % 5];
+                 return (
+                 <div
+                   key={idx}
+                   className="animate-fade-up relative overflow-hidden rounded-2xl border border-warm-200/70 bg-white p-[1px] shadow-soft"
+                   style={{ animationDelay: `${idx * 90}ms` }}
+                 >
+                   <div className={`rounded-[calc(1rem-1px)] bg-gradient-to-br ${grad} p-4`}>
+                   <div className="rounded-xl border border-white/60 bg-white/90 px-4 py-3 backdrop-blur-sm">
+                   <div className="mb-3 flex items-center justify-between gap-2 border-b border-warm-200/70 pb-2">
+                     <h4 className="font-display flex items-center gap-2 font-bold tracking-tight text-charcoal-900">
+                       <span className="grid h-8 w-8 place-items-center rounded-xl bg-charcoal-900 text-[13px] font-black text-white">
+                         {idx + 1}
+                       </span>
+                       Takım {idx + 1}
+                     </h4>
+                     <span className="text-[10px] font-bold uppercase tracking-widest text-warm-400">
+                       {team.length} kişi
+                     </span>
+                   </div>
+                   <ul className="space-y-2.5">
                      {team.map((player, pIdx) => (
-                       <li key={pIdx} className="text-gray-700 text-sm flex items-center gap-2">
-                         <span className="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
-                         {player}
+                       <li key={pIdx} className="flex items-center gap-3 text-[14px] font-semibold text-warm-800">
+                         <span className="h-1.5 w-8 shrink-0 rounded-full bg-gradient-to-r from-orange-400 to-red-500" />
+                         <span>{player}</span>
                        </li>
                      ))}
                    </ul>
+                   </div>
+                   </div>
                  </div>
-               ))}
+                 );
+               })}
              </div>
            ) : (
-             <div className="h-full min-h-[200px] flex flex-col items-center justify-center text-gray-400 gap-2">
-               <Users size={48} className="opacity-20 text-orange-300" />
-               <p className="text-sm text-center">İsimleri girin ve takımları oluşturun</p>
+             <div className="flex h-full min-h-[220px] flex-col items-center justify-center gap-3 text-center text-warm-400">
+               <Users size={52} className="animate-float text-orange-200" aria-hidden />
+               <p className="max-w-[200px] text-sm font-semibold leading-relaxed">
+                 İsimleri girin — takımlar saniyede hazır olur.
+               </p>
              </div>
            )}
         </div>

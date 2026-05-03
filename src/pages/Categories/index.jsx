@@ -8,6 +8,7 @@ import Breadcrumb, { BREADCRUMB_TEMPLATES } from '../../components/common/Breadc
 import { supabase } from '../../lib/supabase';
 import { CATEGORY_NAMES, getCategoryConfig, getCategoryDescription } from '../../constants';
 import { useCategories } from '../../hooks/useCategories';
+import { useGameStats } from '../../hooks/useGameStats';
 import { trackPageView } from '../../utils/analytics';
 import { 
   CATEGORY_SEO, 
@@ -23,6 +24,8 @@ function CategoryPage() {
   const [loading, setLoading] = useState(true);
 
   const decodedCategoryName = decodeURIComponent(categoryName || '');
+  const gameIds = useMemo(() => games.map((g) => g.id), [games]);
+  const { statsMap } = useGameStats(gameIds);
 
   const loadGames = useCallback(async () => {
     setLoading(true);
@@ -96,7 +99,7 @@ function CategoryPage() {
   const seoMeta = useMemo(() => {
     const categoryData = CATEGORY_SEO[decodedCategoryName] || {};
     return {
-      title: categoryData.title || `${decodedCategoryName} Oyunları - Nasıl Oynanır?`,
+      title: categoryData.title || `${decodedCategoryName} Oyunları - Kuralı Ne?`,
       description: categoryData.description || description,
       keywords: categoryData.keywords || `${decodedCategoryName}, ${decodedCategoryName.toLowerCase()} oyunları, nasıl oynanır`,
     };
@@ -195,9 +198,17 @@ function CategoryPage() {
 
         {games.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {games.map(game => (
-              <GameCard key={game.id} game={game} />
-            ))}
+            {games.map(game => {
+              const stats = statsMap[game.id];
+              return (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  rating={stats?.average || 0}
+                  commentCount={stats?.count || 0}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">

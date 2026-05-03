@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Lock, User, Eye, EyeOff, Shield, AlertCircle } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, Shield, AlertCircle, ArrowRight } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { adminLogin } from '../../utils/adminAuth';
 import toast from 'react-hot-toast';
+
+const LOGO_URL = '/logo.svg';
 
 function AdminLogin({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -21,12 +23,11 @@ function AdminLogin({ onLogin }) {
       const result = await adminLogin(supabase, username, password);
 
       if (result.success) {
-        // Admin bilgilerini storage'a kaydet
         const adminData = {
           ...result.admin,
-          loginTime: new Date().toISOString()
+          loginTime: new Date().toISOString(),
         };
-        
+
         if (rememberMe) {
           localStorage.setItem('adminData', JSON.stringify(adminData));
         } else {
@@ -41,9 +42,7 @@ function AdminLogin({ onLogin }) {
         onLogin();
       } else {
         setError(result.error);
-        toast.error(result.error, {
-          duration: 5000,
-        });
+        toast.error(result.error, { duration: 5000 });
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -55,133 +54,203 @@ function AdminLogin({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 px-4 relative overflow-hidden">
-      {/* Animated background shapes */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-yellow-300/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <div className="relative min-h-screen overflow-hidden bg-cream-100 font-sans">
+      {/* Sıcak arkaplan dekoru */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-orange-300/20 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 h-[28rem] w-[28rem] rounded-full bg-amber-300/20 blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, rgba(124, 45, 18, 0.6) 1px, transparent 0)",
+            backgroundSize: '32px 32px',
+          }}
+        />
       </div>
-      
-      <div className="relative w-full max-w-md">
-        {/* Login Card */}
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-white/20">
-          {/* Logo & Title */}
-          <div className="px-6 pt-8 pb-6 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg mb-4">
-              <Shield className="w-8 h-8 text-white" />
+
+      <div className="relative z-10 grid min-h-screen lg:grid-cols-2">
+        {/* Sol: Brand paneli (sadece desktop) */}
+        <div className="relative hidden flex-col justify-between overflow-hidden bg-charcoal-900 px-12 py-14 text-cream-50 lg:flex">
+          <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-orange-500/40 to-red-500/30 blur-3xl" />
+          <div className="absolute -bottom-24 left-1/3 h-72 w-72 rounded-full bg-gradient-to-br from-amber-400/30 to-orange-500/20 blur-3xl" />
+
+          <div className="relative">
+            <div className="flex items-center gap-3">
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 shadow-warm-glow">
+                <img src={LOGO_URL} alt="" className="h-7 w-7 brightness-0 invert" />
+              </span>
+              <div className="leading-tight">
+                <div className="text-lg font-bold">Kuralı Ne?</div>
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cream-50/60">
+                  Yönetim Paneli
+                </div>
+              </div>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Yönetici Girişi</h1>
-            <p className="text-gray-600 text-xs">Oyun paneline hoş geldiniz</p>
           </div>
 
-          {/* Form */}
-          <div className="px-6 pb-6">
-            {error && (
-              <div className="bg-red-50 border-l-4 border-red-500 rounded-r-lg p-3 mb-4 flex items-start gap-2 animate-shake">
-                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-red-800 font-medium">{error}</p>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Username Input */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-gray-700 pl-0.5">
-                  Kullanıcı Adı
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="w-4 h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
-                  </div>
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-orange-500 transition-all duration-200 text-sm text-gray-900 placeholder-gray-400"
-                    placeholder="admin"
-                    required
-                    disabled={loading}
-                    autoComplete="username"
-                  />
-                </div>
-              </div>
-
-              {/* Password Input */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-gray-700 pl-0.5">
-                  Şifre
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="w-4 h-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
-                  </div>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-orange-500 transition-all duration-200 text-sm text-gray-900 placeholder-gray-400"
-                    placeholder="••••••••"
-                    required
-                    disabled={loading}
-                    autoComplete="current-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-orange-500 transition-colors"
-                    disabled={loading}
-                    tabIndex={-1}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Remember Me */}
-              <div className="flex items-center pt-1">
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-3.5 h-3.5 text-orange-500 border-gray-300 rounded focus:ring-2 focus:ring-orange-500/20 cursor-pointer"
-                  disabled={loading}
-                />
-                <label htmlFor="rememberMe" className="ml-2 text-xs text-gray-700 cursor-pointer select-none">
-                  Beni hatırla
-                </label>
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-2.5 rounded-lg font-semibold text-sm hover:from-orange-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-5 transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                {loading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Giriş yapılıyor...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Giriş Yap</span>
-                    <Lock className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
-
-          {/* Footer */}
-          <div className="px-6 py-3 bg-gray-50/50 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-500">
-              🔒 Yetkili personel erişimi
+          <div className="relative">
+            <h2 className="text-3xl font-bold leading-tight tracking-tight md:text-4xl">
+              Oyunları, kullanıcıları ve içerikleri{' '}
+              <span className="bg-gradient-to-r from-orange-400 to-amber-300 bg-clip-text text-transparent">
+                tek panelden yönet
+              </span>
+            </h2>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-cream-50/70">
+              Premium dashboard, gerçek zamanlı analitik ve sezgisel kontroller ile sitenizi
+              dakikalar içinde güncelleyin.
             </p>
+            <div className="mt-8 grid grid-cols-3 gap-3 text-center">
+              {[
+                { v: '10+', l: 'Modül' },
+                { v: '24/7', l: 'Erişim' },
+                { v: 'SSL', l: 'Güvenlik' },
+              ].map((s) => (
+                <div
+                  key={s.l}
+                  className="rounded-xl border border-cream-50/10 bg-white/[0.04] px-3 py-3 backdrop-blur-sm"
+                >
+                  <div className="text-lg font-bold text-orange-400">{s.v}</div>
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-cream-50/60">
+                    {s.l}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative text-xs text-cream-50/40">
+            © {new Date().getFullYear()} Kuralı Ne? — Yönetici erişimi
+          </div>
+        </div>
+
+        {/* Sağ: Form */}
+        <div className="flex items-center justify-center px-4 py-10 sm:px-6 lg:px-12">
+          <div className="w-full max-w-md">
+            {/* Mobil brand */}
+            <div className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
+              <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-warm-glow">
+                <img src={LOGO_URL} alt="" className="h-6 w-6 brightness-0 invert" />
+              </span>
+              <div className="text-left leading-tight">
+                <div className="text-base font-bold text-charcoal-900">Kuralı Ne?</div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-warm-500">
+                  Yönetim Paneli
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-warm-200/70 bg-white/95 p-7 shadow-soft-xl backdrop-blur-md sm:p-9">
+              <div className="mb-7">
+                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 text-orange-600">
+                  <Shield className="h-6 w-6" />
+                </div>
+                <h1 className="text-2xl font-bold tracking-tight text-charcoal-900">
+                  Tekrar hoş geldin
+                </h1>
+                <p className="mt-1 text-sm text-warm-500">
+                  Yönetim paneline erişmek için giriş yapın.
+                </p>
+              </div>
+
+              {error && (
+                <div className="mb-5 flex items-start gap-2 rounded-xl border border-red-100 bg-red-50/80 px-4 py-3">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+                  <p className="text-xs font-semibold text-red-800">{error}</p>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block pl-1 text-xs font-semibold text-warm-700">
+                    Kullanıcı Adı
+                  </label>
+                  <div className="group relative">
+                    <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                      <User className="h-4 w-4 text-warm-400 transition-colors group-focus-within:text-orange-500" />
+                    </span>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full rounded-xl border-2 border-warm-200 bg-cream-50 py-3 pl-10 pr-3 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-500 focus:bg-white focus:outline-none"
+                      placeholder="admin"
+                      required
+                      disabled={loading}
+                      autoComplete="username"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block pl-1 text-xs font-semibold text-warm-700">
+                    Şifre
+                  </label>
+                  <div className="group relative">
+                    <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                      <Lock className="h-4 w-4 text-warm-400 transition-colors group-focus-within:text-orange-500" />
+                    </span>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full rounded-xl border-2 border-warm-200 bg-cream-50 py-3 pl-10 pr-10 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-500 focus:bg-white focus:outline-none"
+                      placeholder="••••••••"
+                      required
+                      disabled={loading}
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-warm-400 transition-colors hover:text-orange-500"
+                      disabled={loading}
+                      tabIndex={-1}
+                      aria-label="Şifreyi göster/gizle"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <label className="flex cursor-pointer items-center gap-2 pt-1 select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="h-4 w-4 cursor-pointer rounded border-warm-300 text-orange-500 focus:ring-2 focus:ring-orange-500/30"
+                    disabled={loading}
+                  />
+                  <span className="text-xs font-medium text-warm-700">
+                    Beni 30 gün hatırla
+                  </span>
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="group mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-5 py-3.5 text-sm font-bold text-white shadow-warm-glow transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:shadow-warm-glow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? (
+                    <>
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      <span>Giriş yapılıyor…</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Giriş Yap</span>
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              <div className="mt-6 border-t border-warm-200/70 pt-4 text-center">
+                <p className="text-[11px] font-medium text-warm-500">
+                  🔒 Yetkili personel erişimi · Tüm bağlantılar şifrelidir
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,43 +1,43 @@
 /**
- * Ortak araç arayüzü — site turuncu vurgusu, tutarlı kart ve form stilleri.
+ * Araçlar — warm premium görsel dil (cream / warm / brand gradient)
  */
 
 export const tool = {
-  /** Dış kart (GameTableContainer ile aynı dil) */
-  card: 'bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden flex flex-col',
+  /** Dış kart — cam + hafif degrade */
+  card:
+    'rounded-3xl border border-warm-200/80 bg-gradient-to-b from-white via-cream-50/80 to-cream-100/40 shadow-soft-lg overflow-hidden flex flex-col backdrop-blur-sm',
 
-  /** Başlıksız tam yükseklik kart (Takım / Halısaha vb.) */
-  cardPadded: 'bg-white rounded-2xl shadow-sm border border-orange-100 h-full flex flex-col p-6',
+  cardPadded:
+    'rounded-3xl border border-warm-200/80 bg-gradient-to-b from-white via-cream-50/70 to-white shadow-soft-xl h-full flex flex-col p-6 sm:p-8 relative',
 
-  /** Üst başlık satırı: ikon + başlık */
-  headerRow: 'flex items-center gap-3 mb-6',
-  iconWrap: 'p-3 bg-orange-50 rounded-xl shrink-0',
-  iconClass: 'text-orange-600 w-6 h-6',
-  title: 'text-xl font-bold text-gray-900',
+  headerRow: 'relative z-10 flex items-center gap-4 mb-8',
+  iconWrap:
+    'grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-orange-400/20 to-red-500/25 ring-1 ring-orange-500/20 shadow-soft',
+  iconClass: 'text-orange-600 w-7 h-7',
+  title: 'font-display text-xl font-bold tracking-tight text-charcoal-900',
 
-  label: 'block text-sm font-medium text-gray-700 mb-2',
+  label: 'mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-warm-500',
 
   input:
-    'w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:ring-2 focus:ring-orange-500/25 focus:border-orange-400 outline-none transition-shadow',
+    'w-full rounded-xl border-2 border-warm-200 bg-cream-50 px-4 py-2.5 text-sm text-charcoal-900 transition-all outline-none placeholder:text-warm-400 focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-500/15',
   textarea:
-    'w-full h-40 p-3 text-sm border border-gray-200 rounded-xl resize-none focus:ring-2 focus:ring-orange-500/25 focus:border-orange-400 outline-none',
+    'h-44 w-full resize-none rounded-xl border-2 border-warm-200 bg-cream-50 p-4 text-sm text-charcoal-900 outline-none transition-all placeholder:text-warm-400 focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-500/15',
 
   primaryBtn:
-    'w-full py-3 bg-orange-600 text-white rounded-xl font-bold shadow-sm shadow-orange-900/10 hover:bg-orange-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60',
+    'relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-orange-500 to-red-600 py-3.5 font-bold text-white shadow-warm-glow transition-all hover:from-orange-600 hover:to-red-700 hover:shadow-warm-glow-lg active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60',
   secondaryBtn:
-    'py-3 px-4 bg-gray-100 rounded-xl font-semibold text-gray-700 hover:bg-gray-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2',
+    'flex items-center justify-center gap-2 rounded-xl bg-warm-100 px-5 py-3 font-semibold text-warm-800 transition-colors hover:bg-warm-200 active:scale-[0.98]',
 
-  /** İçerik paneli (sağ sütun, boş durum alanı) */
-  panel: 'bg-gray-50 rounded-xl p-4 border border-orange-50 overflow-y-auto',
+  panel:
+    'max-h-[min(520px,70vh)] overflow-y-auto rounded-2xl border border-warm-200/70 bg-gradient-to-b from-warm-50/90 to-white p-5 shadow-soft',
 
-  /** Tablo hücresi sayı girişi */
   tableInput:
-    'w-full p-2 text-center border border-orange-200 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/25 bg-white',
+    'w-full rounded-xl border-2 border-warm-200 bg-white p-2.5 text-center text-sm font-bold text-charcoal-900 outline-none transition-all focus:border-orange-400 focus:ring-2 focus:ring-orange-500/20',
 
-  /** Seçili / seçili değil toggle */
-  toggleOn: 'border-orange-500 bg-orange-50 text-orange-800',
-  toggleOff: 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300',
+  toggleOn:
+    'border-2 border-orange-500 bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-soft-md',
+  toggleOff:
+    'border-2 border-warm-200 bg-warm-50 text-warm-700 hover:border-warm-300 hover:bg-cream-100',
 
-  /** Range slider */
-  range: 'w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-600',
+  range: 'h-2 w-full cursor-pointer appearance-none rounded-full bg-warm-200 accent-orange-600',
 };

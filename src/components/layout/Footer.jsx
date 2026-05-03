@@ -39,15 +39,15 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <Link to="/" className="inline-block mb-3" aria-label="Nasıl Oynanır - Ana Sayfa">
+            <Link to="/" className="inline-block mb-3" aria-label="Kuralı Ne? - Ana Sayfa">
               <img
                 src="/logo.svg"
-                alt="Nasıl Oynanır"
-                className="h-14 w-auto object-contain"
+                alt="Kuralı Ne?"
+                className="h-20 w-auto object-contain"
                 loading="lazy"
                 decoding="async"
-                width="42"
-                height="56"
+                width="60"
+                height="80"
               />
             </Link>
             <p className="text-gray-600 leading-relaxed max-w-md text-sm">
@@ -107,7 +107,7 @@ function Footer() {
         <div className="border-t border-orange-100 pt-6 mt-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <div className="flex flex-col md:flex-row items-center gap-2 text-sm text-gray-500">
-              <p>© {new Date().getFullYear()} Nasıl Oynanır. Tüm hakları saklıdır.</p>
+              <p>© {new Date().getFullYear()} Kuralı Ne?. Tüm hakları saklıdır.</p>
               <span className="hidden md:inline text-gray-300">|</span>
               <p>Zenvolab tarafından kurulmuştur.</p>
             </div>

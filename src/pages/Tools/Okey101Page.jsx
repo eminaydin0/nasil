@@ -10,78 +10,74 @@ export default function Okey101Page() {
 
   const helpContent = (
     <>
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-orange-100 rounded-lg">
-          <Grid3X3 className="w-5 h-5 text-orange-600" />
+      <div className="mb-6 flex flex-wrap items-center gap-3 border-b border-warm-200/70 pb-5">
+        <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-orange-500/20 to-pink-500/20 ring-1 ring-orange-400/35">
+          <Grid3X3 className="h-6 w-6 text-orange-700" aria-hidden />
         </div>
-        <h3 className="text-xl font-bold text-gray-900">Nasıl Kullanılır?</h3>
+        <h3 className="font-display text-xl font-bold text-charcoal-900">Nasıl kullanılır?</h3>
       </div>
 
-      <div className="space-y-4">
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-          <p className="text-gray-700">Her oyuncunun o eldeki ceza puanını kutucuğa yazın.</p>
+      <div className="space-y-5">
+        <div className="rounded-2xl border border-warm-200 bg-cream-50/70 p-4">
+          <p className="text-sm leading-relaxed text-warm-700">
+            Her oyuncunun o eldeki ceza puanını kutuya yazın; hızlı kısayol butonlarıyla (-101 / -202 / +101 vb.) daha da hızlanın.
+          </p>
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-          <h4 className="font-semibold text-gray-900 mb-3">Hızlı Giriş Butonları:</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-green-700">Bitti (-101)</span>
-              <span className="text-xs text-gray-500">Eli bitiren oyuncu için</span>
+        <div className="rounded-2xl border border-warm-200 bg-white/90 p-4">
+          <h4 className="font-bold text-charcoal-900">Kısayol düğmeleri</h4>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="flex items-start gap-2 text-sm">
+              <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+              <div>
+                <strong className="text-charcoal-900">Bitti (-101)</strong>
+                <p className="text-xs text-warm-500">Eli bitiren</p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-              <span className="text-sm font-medium text-emerald-700">Okeyli (-202)</span>
-              <span className="text-xs text-gray-500">Okey atarak biten için</span>
+            <div className="flex items-start gap-2 text-sm">
+              <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-teal-500" />
+              <div>
+                <strong className="text-charcoal-900">Okey (-202)</strong>
+                <p className="text-xs text-warm-500">Okeyle bitiş</p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-              <span className="text-sm font-medium text-red-700">Açmadı (+202)</span>
-              <span className="text-xs text-gray-500">Hiç açamayan için</span>
+            <div className="flex items-start gap-2 text-sm">
+              <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-rose-500" />
+              <div>
+                <strong className="text-charcoal-900">Açmadı (+202/+404)</strong>
+                <p className="text-xs text-warm-500">Tekli / eşli</p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-              <span className="text-sm font-medium text-orange-700">İşler (+101)</span>
-              <span className="text-xs text-gray-500">İşler taşı atan için</span>
+            <div className="flex items-start gap-2 text-sm">
+              <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-orange-500" />
+              <div>
+                <strong className="text-charcoal-900">İşler (+101)</strong>
+                <p className="text-xs text-warm-500">Ceza olarak işaretlemek için</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-          <h4 className="font-semibold text-gray-900 mb-2">Manuel Giriş:</h4>
-          <p className="text-sm text-gray-600">Eğer oyuncunun elinde kalan sayı farklıysa (örn: 35), kutucuğa manuel olarak yazabilirsiniz.</p>
+        <div className="rounded-2xl border border-orange-200/70 bg-orange-500/10 p-4 text-sm leading-relaxed text-orange-950">
+          <strong>İpucu:</strong> 101 okeyde düşük toplama ulaşan kazanır. Manuel girdi her zaman kullanılabilir.
         </div>
-
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-          <h4 className="font-semibold text-gray-900 mb-2">Otomatik Hesaplama:</h4>
-          <p className="text-sm text-gray-600">En altta toplam puanlar otomatik hesaplanır. En düşük puana sahip olan kazanır.</p>
-        </div>
-      </div>
-
-      <div className="mt-6 p-4 bg-orange-50 rounded-xl border border-orange-200">
-        <p className="text-sm text-orange-900">
-          <strong>💡 İpucu:</strong> 101 Okey'de amaç elinizdeki tüm taşları bitirmek ve en az ceza puanı toplamaktır.
-        </p>
       </div>
     </>
   );
 
   return (
     <ToolLayout
-      title=""
-      description=""
+      title="101 Okey yazboz"
+      description="Eşli ya da tekli 101 yazbozu. Ön ayar düğmeleri, otomatik alt toplam ve el bazlı tarihçe ile masayı dijitale taşıyın."
       icon={Grid3X3}
-      iconColor="orange"
-      badge=""
-      seoTitle="101 Okey Puan Hesaplama - Yazboz Tablosu"
-      seoDescription="Yüzbir (101) Okey oyunu için dijital yazboz. Ceza puanları, elden bitme ve açmama cezalarını otomatik hesaplayın."
+      iconColor="pink"
+      badge="Yeni"
+      seoTitle="101 Okey Puan Hesaplama — Yazboz tablosu"
+      seoDescription="Yüzbir (101) okey için yazboz, ceza puanları ve hızlı kısayollar."
       seoUrl="/araclar/101-yazboz"
       helpContent={helpContent}
     >
-      <div className="p-0">
-        <Okey101Score />
-      </div>
+      <div className="min-h-0 flex-1">{/* araç içi kendi içinde taşır */}<Okey101Score /></div>
     </ToolLayout>
   );
 }

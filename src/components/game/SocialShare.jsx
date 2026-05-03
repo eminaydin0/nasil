@@ -8,7 +8,7 @@ function SocialShare({ game }) {
   const [showShare, setShowShare] = useState(false);
   
   const url = `https://nasiloynanir.com/oyun/${game.slug}`;
-  const title = `${game.name} Nasıl Oynanır?`;
+  const title = `${game.name} Kuralı Ne?`;
   const description = game.shortDescription;
 
   const shareLinks = {

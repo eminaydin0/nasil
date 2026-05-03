@@ -37,7 +37,7 @@ export default function OkeyPage() {
       seoUrl="/araclar/okey-sayaci"
       helpContent={helpContent}
     >
-      <div className="p-8">
+      <div className="p-6 sm:p-10">
         <OkeyScore />
       </div>
     </ToolLayout>

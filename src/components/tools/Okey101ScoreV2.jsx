@@ -14,7 +14,7 @@ export default function Okey101Score() {
   const [currentScores, setCurrentScores] = useState(['', '', '', '']); // For individual mode
   const [teamInputs, setTeamInputs] = useState(['', '']); // For partners mode
   const [isPartners, setIsPartners] = useState(false);
-  const [partnerIdx, setPartnerIdx] = useState(2); // Default partner for Player 1 is Player 3 (index 2)
+  const [partnerIdx] = useState(2); // Default partner for Player 1 is Player 3 (index 2)
   const [gameLimit, setGameLimit] = useState(11); // Default game limit
   const [isPenaltyRound, setIsPenaltyRound] = useState(false);
   const historyRef = useRef(null);
@@ -181,28 +181,7 @@ export default function Okey101Score() {
     minScore = Math.min(...totals);
   }
 
-  const getDisplayOrder = () => {
-    // In Partners mode, we don't return 4 indices, we handle rendering separately
-    // But keeping this compatible with non-partner mode
-    if (!isPartners) return [0, 1, 2, 3];
-    return []; 
-  };
-
-  const displayOrder = getDisplayOrder();
-
-  // Pre-calculate winner status for display
-  const getWinnerStatus = (idx) => {
-    if (rounds.length === 0) return false;
-    if (isPartners) {
-      // Check if this player belongs to the winning team
-      const teamIdx = getTeamIndex(idx);
-      return teamTotals[teamIdx] === minScore;
-    }
-    return totals[idx] === minScore;
-  };
-
-  // Calculate played rounds (excluding penalties)
-  const playedRoundsCount = rounds.filter(r => {
+  useEffect(() => {
       // Handle legacy (array) - assume not penalty
       if (Array.isArray(r)) return true;
       // New format
@@ -256,56 +235,69 @@ export default function Okey101Score() {
   // Setup Screen
   if (!isGameStarted) {
     return (
-      <div className="h-full flex items-center justify-center bg-gray-50 p-4 sm:p-6 overflow-y-auto">
-        <div className="bg-white rounded-2xl shadow-sm border border-orange-100 p-4 sm:p-6 md:p-8 max-w-2xl w-full my-4">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">Oyun Ayarları</h2>
+      <div className="flex min-h-[60vh] items-center justify-center overflow-y-auto bg-gradient-to-br from-orange-400/25 via-transparent to-amber-200/25 p-4 sm:p-6">
+        <div className="relative w-full max-w-2xl overflow-hidden rounded-[1.625rem] border border-orange-400/35 bg-white/95 p-[1px] shadow-warm-glow">
+          <div className="absolute left-10 top-0 h-48 w-48 rounded-full bg-orange-400/25 blur-[80px]" aria-hidden />
+          <div className="relative rounded-[1.575rem] border border-warm-200/70 bg-white/95 px-5 py-7 sm:p-10">
+          <div className="mb-8 text-center">
+            <Award className="mx-auto mb-3 h-10 w-10 text-orange-600" aria-hidden />
+            <h2 className="font-display text-2xl font-extrabold tracking-tight text-charcoal-900 sm:text-3xl">
+              Maç başlat
+            </h2>
+            <p className="mt-2 text-sm text-warm-600">
+              Tekli ya da eşli 101 kuralları — el sayısını seç, oyuncuları yaz, masaya bak.
+            </p>
+          </div>
           
           {/* Game Mode Selection */}
           <div className="mb-4 sm:mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">Oyun Modu</label>
+            <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-warm-600 sm:mb-3">Oyun modu</label>
             <div className="grid grid-cols-2 gap-2 sm:gap-3">
               <button
+                type="button"
                 onClick={() => setIsPartners(false)}
-                className={`p-3 sm:p-4 rounded-lg border-2 transition-all ${
+                className={`rounded-xl border-2 p-3 transition-all sm:p-4 ${
                   !isPartners
-                    ? 'border-orange-500 bg-orange-50 text-orange-800'
-                    : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300'
+                    ? 'border-orange-500 bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-soft-md ring-2 ring-orange-400/35'
+                    : 'border-warm-200 bg-cream-50 text-warm-700 hover:border-warm-400'
                 }`}
               >
-                <Users className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2" />
-                <div className="font-bold text-sm sm:text-base">Tekli</div>
-                <div className="text-xs mt-1 hidden sm:block">Herkes kendi başına</div>
+                <Users className="mx-auto mb-1 h-5 w-5 sm:mb-2 sm:h-6 sm:w-6" />
+                <div className="text-sm font-bold sm:text-base">Tekli</div>
+                <div className="mt-1 hidden text-xs opacity-85 sm:block">Herkes kendi başına</div>
               </button>
               <button
+                type="button"
                 onClick={() => setIsPartners(true)}
-                className={`p-3 sm:p-4 rounded-lg border-2 transition-all ${
+                className={`rounded-xl border-2 p-3 transition-all sm:p-4 ${
                   isPartners
-                    ? 'border-orange-500 bg-orange-50 text-orange-800'
-                    : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300'
+                    ? 'border-orange-500 bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-soft-md ring-2 ring-orange-400/35'
+                    : 'border-warm-200 bg-cream-50 text-warm-700 hover:border-warm-400'
                 }`}
               >
-                <Users className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2" />
-                <div className="font-bold text-sm sm:text-base">Eşli</div>
-                <div className="text-xs mt-1 hidden sm:block">2 takım halinde</div>
+                <Users className="mx-auto mb-1 h-5 w-5 sm:mb-2 sm:h-6 sm:w-6" />
+                <div className="text-sm font-bold sm:text-base">Eşli</div>
+                <div className="mt-1 hidden text-xs opacity-85 sm:block">İki takım halinde</div>
               </button>
             </div>
           </div>
 
           {/* Game Limit */}
           <div className="mb-4 sm:mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">Kaç El Oynanacak?</label>
+            <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-warm-600 sm:mb-3">Kaç el?</label>
             <div className="flex flex-wrap gap-2">
-              {[5, 7, 9, 11, 13, 15].map(limit => (
+              {[5, 7, 9, 11, 13, 15].map((limit) => (
                 <button
+                  type="button"
                   key={limit}
                   onClick={() => setGameLimit(limit)}
-                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-bold text-sm sm:text-base transition-all ${
+                  className={`rounded-xl px-3 py-1.5 text-sm font-bold transition-all sm:px-4 sm:py-2 sm:text-base ${
                     gameLimit === limit
-                      ? 'bg-orange-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-warm-glow ring-2 ring-orange-400/40'
+                      : 'border border-warm-200 bg-white text-charcoal-800 hover:bg-cream-100'
                   }`}
                 >
-                  {limit} El
+                  {limit} el
                 </button>
               ))}
             </div>
@@ -314,8 +306,8 @@ export default function Okey101Score() {
           {/* Player Names (only for individual mode) */}
           {!isPartners && (
             <div className="mb-4 sm:mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">
-                Oyuncu İsimleri (En az 2 oyuncu)
+              <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-warm-600 sm:mb-3">
+                Oyuncu isimleri (en az 2)
               </label>
               <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 {players.map((player, idx) => (
@@ -325,7 +317,7 @@ export default function Okey101Score() {
                     value={player}
                     onChange={(e) => updatePlayerName(idx, e.target.value)}
                     placeholder={`Oyuncu ${idx + 1}`}
-                    className="p-2.5 sm:p-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none"
+                    className="rounded-xl border-2 border-warm-200 bg-cream-50 p-2.5 text-sm text-charcoal-900 outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 sm:p-3 sm:text-base"
                   />
                 ))}
               </div>
@@ -335,7 +327,7 @@ export default function Okey101Score() {
           {/* Team Names (if partners) */}
           {isPartners && (
             <div className="mb-4 sm:mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">Takım İsimleri</label>
+              <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-warm-600 sm:mb-3">Takım isimleri</label>
               <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 {teamNames.map((team, idx) => (
                   <input
@@ -348,7 +340,7 @@ export default function Okey101Score() {
                       setTeamNames(newTeams);
                     }}
                     placeholder={`${idx + 1}. Takım`}
-                    className="p-2.5 sm:p-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none"
+                    className="rounded-xl border-2 border-warm-200 bg-cream-50 p-2.5 text-sm text-charcoal-900 outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 sm:p-3 sm:text-base"
                   />
                 ))}
               </div>
@@ -357,11 +349,13 @@ export default function Okey101Score() {
 
           {/* Start Button */}
           <button
+            type="button"
             onClick={startGame}
-            className="w-full py-3 sm:py-4 bg-orange-600 text-white rounded-xl font-bold text-base sm:text-lg hover:bg-orange-700 transition-colors shadow-md"
+            className="w-full rounded-2xl bg-gradient-to-r from-orange-500 to-red-600 py-4 font-bold text-cream-50 shadow-warm-glow transition-all hover:from-orange-600 hover:to-red-700 hover:shadow-warm-glow-lg"
           >
             Oyunu Başlat
           </button>
+          </div>
         </div>
       </div>
     );
@@ -383,11 +377,11 @@ export default function Okey101Score() {
   }
 
   const thInputClass =
-    'w-full text-center font-bold text-sm sm:text-base md:text-lg text-gray-900 bg-white border-2 border-gray-200 rounded-xl px-2 py-2 sm:py-2.5 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 placeholder:text-gray-400';
+    'w-full text-center font-bold text-sm sm:text-base md:text-lg text-charcoal-900 bg-white border-2 border-warm-200 rounded-xl px-2 py-2 sm:py-2.5 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 placeholder:text-warm-400';
 
   return (
-    <div className="h-full flex flex-col min-h-0 bg-gray-50 p-3 sm:p-4 md:p-6 overflow-hidden">
-      <div className="flex flex-col flex-1 min-h-0 rounded-2xl border border-orange-100 bg-white shadow-sm overflow-hidden">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-gradient-to-b from-cream-50 to-cream-100/80 p-3 sm:p-5 md:p-6">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-warm-200/80 bg-white/95 shadow-soft-lg">
         {/* Kurulum ekranıyla aynı dil: mod + el sayısı */}
         <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 px-3 sm:px-4 py-3 border-b border-orange-100 bg-gradient-to-r from-orange-50/60 to-white shrink-0">
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
@@ -434,7 +428,7 @@ export default function Okey101Score() {
           <table className="w-full min-w-[500px]">
             <thead>
               <tr>
-                <th className="p-2 sm:p-3 md:p-4 w-12 sm:w-16 md:w-20 text-center font-bold text-xs sm:text-sm md:text-base text-orange-800 border-r border-orange-100 bg-orange-50/40">
+              <th className="w-12 border-r border-warm-100 bg-gradient-to-b from-orange-50 to-amber-50/50 p-2 text-center text-xs font-black uppercase tracking-wide text-orange-900 sm:w-16 md:w-20 md:text-sm">
                   El
                 </th>
                 {isPartners ? (
@@ -480,7 +474,7 @@ export default function Okey101Score() {
         </div>
 
         {/* Geçmiş */}
-        <div className="flex-1 min-h-0 overflow-auto bg-gray-50">
+        <div className="flex-1 min-h-0 overflow-auto bg-cream-100/70">
           {rounds.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full min-h-[120px] text-gray-400 px-4 py-8">
               <p className="text-sm font-medium text-gray-500">Henüz el girilmedi</p>

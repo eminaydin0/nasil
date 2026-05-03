@@ -1,9 +1,20 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Mail, Lock, User, ArrowRight, Loader, Calendar, Info, AlertTriangle, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import {
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  Calendar,
+  Info,
+  AlertTriangle,
+  CheckCircle,
+  Sparkles,
+} from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import toast from 'react-hot-toast';
+import { TextField, Button } from '../../components/ui';
 
 function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,7 +24,6 @@ function AuthPage() {
   const [birthYear, setBirthYear] = useState('');
   const [gender, setGender] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [showVerificationInfo, setShowVerificationInfo] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const { signIn, signUp, resendVerification } = useAuth();
@@ -30,19 +40,21 @@ function AuthPage() {
     try {
       if (isLogin) {
         const { error } = await signIn(email, password);
-        
+
         if (error) {
-          if (error.message.includes("Email not confirmed")) {
-             toast.error("E-posta adresiniz henüz doğrulanmamış.", {
-               icon: <AlertTriangle className="text-orange-500" />,
-               duration: 5000
-             });
-             setShowVerificationInfo(true);
-             throw new Error("Lütfen gelen kutunuzu kontrol edin ve üyeliğinizi doğrulayın.");
+          if (error.message.includes('Email not confirmed')) {
+            toast.error('E-posta adresiniz henüz doğrulanmamış.', {
+              icon: <AlertTriangle className="text-orange-500" />,
+              duration: 5000,
+            });
+            setShowVerificationInfo(true);
+            throw new Error(
+              'Lütfen gelen kutunuzu kontrol edin ve üyeliğinizi doğrulayın.'
+            );
           }
-           throw error;
+          throw error;
         }
-        
+
         toast.success('Giriş başarılı!');
         navigate('/');
       } else {
@@ -55,28 +67,29 @@ function AuthPage() {
         const metadata = {
           full_name: fullName,
           birth_year: birthYear,
-          gender: gender
+          gender,
         };
 
         const { error } = await signUp(email, password, metadata);
         if (error) throw error;
-        
+
         toast.success('Kayıt başarılı!', {
-          icon: <CheckCircle className="text-green-500" />
+          icon: <CheckCircle className="text-emerald-500" />,
         });
-        
-        // Show verification required message
+
         setIsLogin(true);
         setShowVerificationInfo(true);
-        // Clear form
         setFullName('');
         setBirthYear('');
         setGender('');
-        // Keep email to help them login
       }
     } catch (error) {
-      if (!error.message.includes("Lütfen gelen kutunuzu")) { // Avoid double toast if we manually threw
-         toast.error(error.message === "Invalid login credentials" ? "E-posta veya şifre hatalı." : error.message);
+      if (!error.message.includes('Lütfen gelen kutunuzu')) {
+        toast.error(
+          error.message === 'Invalid login credentials'
+            ? 'E-posta veya şifre hatalı.'
+            : error.message
+        );
       }
     } finally {
       setLoading(false);
@@ -85,14 +98,14 @@ function AuthPage() {
 
   const handleResendVerification = async () => {
     if (resendCooldown > 0) return;
-    
+
     try {
       const { error } = await resendVerification(email);
       if (error) throw error;
-      
+
       toast.success('Doğrulama bağlantısı tekrar gönderildi.');
-      setResendCooldown(60); // 60 seconds cooldown
-      
+      setResendCooldown(60);
+
       const interval = setInterval(() => {
         setResendCooldown((prev) => {
           if (prev <= 1) {
@@ -102,7 +115,6 @@ function AuthPage() {
           return prev - 1;
         });
       }, 1000);
-      
     } catch (error) {
       toast.error('E-posta gönderilemedi: ' + error.message);
     }
@@ -110,224 +122,204 @@ function AuthPage() {
 
   return (
     <>
-      <SEO 
-        title={isLogin ? "Giriş Yap - Nasıl Oynanır" : "Kayıt Ol - Nasıl Oynanır"}
-        description={isLogin ? "Hesabınıza giriş yapın" : "Yeni hesap oluşturun"}
+      <SEO
+        title={isLogin ? 'Giriş Yap - Kuralı Ne?' : 'Kayıt Ol - Kuralı Ne?'}
+        description={isLogin ? 'Hesabınıza giriş yapın' : 'Yeni hesap oluşturun'}
       />
-      <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-          <div className="text-center">
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900 tracking-tight">
-              {isLogin ? 'Hoş Geldiniz' : 'Hesap Oluşturun'}
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              {isLogin ? (
-                <>
-                  Hesabınız yok mu?{' '}
-                  <button
-                    onClick={() => {
-                        setIsLogin(false);
-                        setShowVerificationInfo(false);
-                    }}
-                    className="font-medium text-orange-600 hover:text-orange-500 transition-colors"
-                  >
-                    Hemen kaydolun
-                  </button>
-                </>
-              ) : (
-                <>
-                  Zaten hesabınız var mı?{' '}
-                  <button
-                    onClick={() => {
-                        setIsLogin(true);
-                        setShowVerificationInfo(false);
-                    }}
-                    className="font-medium text-orange-600 hover:text-orange-500 transition-colors"
-                  >
-                    Giriş yapın
-                  </button>
-                </>
-              )}
-            </p>
+      <div className="relative min-h-[80vh] overflow-hidden bg-cream-100 px-4 py-12 sm:px-6 lg:px-8 font-sans">
+        {/* Sicak arkaplan */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-orange-300/20 blur-3xl" />
+          <div className="absolute -bottom-40 -right-32 h-[28rem] w-[28rem] rounded-full bg-amber-300/20 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto flex max-w-md flex-col items-center">
+          {/* Tab toggle */}
+          <div className="mb-6 inline-flex rounded-2xl border border-warm-200 bg-white p-1 shadow-soft">
+            <button
+              type="button"
+              onClick={() => {
+                setIsLogin(true);
+                setShowVerificationInfo(false);
+              }}
+              className={`rounded-xl px-5 py-2 text-sm font-bold transition-all ${
+                isLogin
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-warm-glow'
+                  : 'text-warm-600 hover:text-charcoal-900'
+              }`}
+            >
+              Giriş Yap
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsLogin(false);
+                setShowVerificationInfo(false);
+              }}
+              className={`rounded-xl px-5 py-2 text-sm font-bold transition-all ${
+                !isLogin
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-warm-glow'
+                  : 'text-warm-600 hover:text-charcoal-900'
+              }`}
+            >
+              Kayıt Ol
+            </button>
           </div>
-          
-          {showVerificationInfo && (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex flex-col gap-3">
-              <div className="flex items-start gap-3">
-                <div className="bg-white p-2 rounded-full shadow-xs shrink-0">
-                  <Info className="h-6 w-6 text-orange-500" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-sm font-bold text-orange-900">E-posta Doğrulaması Gerekiyor</h4>
-                  <p className="text-xs text-orange-700 mt-1">
-                    Güvenliğiniz için <span className="font-semibold">{email}</span> adresine bir doğrulama bağlantısı gönderdik. Lütfen gelen kutunuzu (veya spam klasörünü) kontrol edip bağlantıya tıklayın.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleResendVerification}
-                disabled={resendCooldown > 0}
-                className="ml-auto text-xs font-semibold text-orange-600 hover:text-orange-800 underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
-              >
-                {resendCooldown > 0 
-                  ? `${resendCooldown} saniye sonra tekrar gönderebilirsiniz` 
-                  : 'Doğrulama E-postasını Tekrar Gönder'}
-              </button>
-            </div>
-          )}
 
-          <form className="mt-8 space-y-6" onSubmit={handleAuth}>
-            <div className="space-y-4">
-              {!isLogin && (
-                <>
-                  <div>
-                    <label htmlFor="full-name" className="sr-only">Ad Soyad</label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        id="full-name"
-                        name="fullName"
-                        type="text"
-                        autoComplete="name"
-                        required={!isLogin}
-                        className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                        placeholder="Ad Soyad"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="birth-year" className="sr-only">Doğum Yılı</label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Calendar className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <select
-                        id="birth-year"
-                        name="birthYear"
-                        required={!isLogin}
-                        className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm bg-white"
-                        value={birthYear}
-                        onChange={(e) => setBirthYear(e.target.value)}
-                      >
-                        <option value="">Doğum Yılı Seçiniz</option>
-                        {years.map(year => (
-                          <option key={year} value={year}>{year}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="gender" className="sr-only">Cinsiyet</label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <select
-                        id="gender"
-                        name="gender"
-                        required={!isLogin}
-                        className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm bg-white"
-                        value={gender}
-                        onChange={(e) => setGender(e.target.value)}
-                      >
-                        <option value="">Cinsiyet Seçiniz</option>
-                        <option value="male">Erkek</option>
-                        <option value="female">Kadın</option>
-                        <option value="other">Diğer</option>
-                      </select>
-                    </div>
-                  </div>
-                </>
-              )}
-              <div>
-                <label htmlFor="email-address" className="sr-only">E-posta adresi</label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
-                  </div>
-                  <input
-                    id="email-address"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                    placeholder="ornek@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
+          <div className="w-full overflow-hidden rounded-3xl border border-warm-200/70 bg-white/95 p-7 shadow-soft-xl backdrop-blur-md sm:p-9">
+            <div className="mb-6 text-center">
+              <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 text-orange-600">
+                <Sparkles className="h-6 w-6" />
               </div>
-              <div>
-                <label htmlFor="password" className="sr-only">Şifre</label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
-                  </div>
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete={isLogin ? 'current-password' : 'new-password'}
-                    required
-                    minLength={isLogin ? undefined : 6}
-                    className="appearance-none relative block w-full pl-10 pr-11 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                    placeholder={isLogin ? 'Şifre' : 'En az 6 karakter'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setShowPassword((prev) => !prev);
-                    }}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center justify-center z-10 text-gray-400 hover:text-orange-500 active:text-orange-600 transition-colors cursor-pointer min-w-[44px]"
-                    tabIndex={-1}
-                    title={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
-                    aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5 shrink-0 pointer-events-none" /> : <Eye className="h-5 w-5 shrink-0 pointer-events-none" />}
-                  </button>
-                </div>
-                {!isLogin && (
-                  <p className="mt-1.5 text-xs text-gray-500">En az 6 karakter kullanın</p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-linear-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <Loader className="animate-spin h-5 w-5" />
-                ) : (
-                  <>
-                    <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                      {isLogin ? <ArrowRight className="h-5 w-5 text-orange-200 group-hover:text-orange-100" /> : <User className="h-5 w-5 text-orange-200 group-hover:text-orange-100" />}
-                    </span>
-                    {isLogin ? 'Giriş Yap' : (
-                         showVerificationInfo ? 'Doğrulama E-postası Gönderildi' : 'Hesap Oluştur'
-                    )}
-                  </>
-                )}
-              </button>
-            </div>
-            
-            <div className="text-center">
-              <p className="text-xs text-gray-500">
-                Kayıt olarak <Link to="/kullanim-kosullari" className="underline hover:text-gray-900">Kullanım Koşulları</Link>'nı kabul etmiş sayılırsınız.
+              <h1 className="text-2xl font-bold tracking-tight text-charcoal-900">
+                {isLogin ? 'Tekrar hoş geldin' : 'Aramıza katıl'}
+              </h1>
+              <p className="mt-1 text-sm text-warm-500">
+                {isLogin
+                  ? 'Yorum yapmak ve favorilere eklemek için giriş yap'
+                  : 'Hesap oluştur, oyun deneyimini kişiselleştir'}
               </p>
             </div>
-          </form>
+
+            {showVerificationInfo && (
+              <div className="mb-5 rounded-2xl border border-orange-200/70 bg-gradient-to-br from-orange-50 to-amber-50 p-4">
+                <div className="flex items-start gap-3">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white shadow-soft">
+                    <Info className="h-5 w-5 text-orange-500" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-bold text-orange-900">
+                      E-posta Doğrulaması Gerekiyor
+                    </h4>
+                    <p className="mt-1 text-xs leading-relaxed text-orange-800/80">
+                      <span className="font-bold">{email}</span> adresine bir doğrulama
+                      bağlantısı gönderdik. Lütfen gelen kutunuzu (veya spam klasörünü)
+                      kontrol edip bağlantıya tıklayın.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={resendCooldown > 0}
+                  className="mt-3 w-full rounded-lg border border-orange-200 bg-white px-3 py-2 text-xs font-bold text-orange-700 transition-colors hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {resendCooldown > 0
+                    ? `${resendCooldown} saniye sonra tekrar gönder`
+                    : 'Doğrulama E-postasını Tekrar Gönder'}
+                </button>
+              </div>
+            )}
+
+            <form onSubmit={handleAuth} className="space-y-4">
+              {!isLogin && (
+                <>
+                  <TextField
+                    label="Ad Soyad"
+                    icon={User}
+                    type="text"
+                    autoComplete="name"
+                    required
+                    placeholder="Adınız ve soyadınız"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <TextField
+                      as="select"
+                      label="Doğum Yılı"
+                      icon={Calendar}
+                      required
+                      value={birthYear}
+                      onChange={(e) => setBirthYear(e.target.value)}
+                    >
+                      <option value="">Seçiniz</option>
+                      {years.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </TextField>
+                    <TextField
+                      as="select"
+                      label="Cinsiyet"
+                      icon={User}
+                      required
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                    >
+                      <option value="">Seçiniz</option>
+                      <option value="male">Erkek</option>
+                      <option value="female">Kadın</option>
+                      <option value="other">Diğer</option>
+                    </TextField>
+                  </div>
+                </>
+              )}
+
+              <TextField
+                label="E-posta Adresi"
+                icon={Mail}
+                type="email"
+                autoComplete="email"
+                required
+                placeholder="ornek@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
+              <TextField
+                label="Şifre"
+                icon={Lock}
+                type="password"
+                autoComplete={isLogin ? 'current-password' : 'new-password'}
+                required
+                minLength={isLogin ? undefined : 6}
+                placeholder={isLogin ? 'Şifreniz' : 'En az 6 karakter'}
+                hint={!isLogin ? 'En az 6 karakter kullanın' : undefined}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <Button
+                type="submit"
+                fullWidth
+                loading={loading}
+                size="lg"
+                iconRight={!loading ? ArrowRight : undefined}
+                className="mt-2"
+              >
+                {isLogin ? 'Giriş Yap' : 'Hesap Oluştur'}
+              </Button>
+
+              <p className="pt-2 text-center text-[11px] leading-relaxed text-warm-500">
+                {isLogin ? 'Hesabın yok mu? ' : 'Zaten hesabın var mı? '}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setShowVerificationInfo(false);
+                  }}
+                  className="font-bold text-orange-600 underline-offset-2 hover:text-orange-700 hover:underline"
+                >
+                  {isLogin ? 'Hemen kaydol' : 'Giriş yap'}
+                </button>
+              </p>
+
+              {!isLogin && (
+                <p className="text-center text-[11px] text-warm-500">
+                  Kayıt olarak{' '}
+                  <Link
+                    to="/kullanim-kosullari"
+                    className="font-semibold text-warm-700 underline-offset-2 hover:underline"
+                  >
+                    Kullanım Koşulları
+                  </Link>
+                  'nı kabul etmiş sayılırsınız.
+                </p>
+              )}
+            </form>
+          </div>
         </div>
       </div>
     </>

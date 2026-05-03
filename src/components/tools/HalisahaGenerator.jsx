@@ -115,12 +115,15 @@ export default function HalisahaGenerator() {
           <div>
             <label className={tool.label}>Format</label>
             <div className="flex items-center gap-3">
-              {[5,6,7].map(f => (
+              {[5, 6, 7].map((f) => (
                 <button
                   key={f}
+                  type="button"
                   onClick={() => setFormat(f)}
-                  className={`py-2 px-3 rounded-xl font-bold transition-colors ${format===f? 'bg-orange-600 text-white shadow-sm': 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-                >{f}v{f}</button>
+                  className={`rounded-xl px-4 py-2.5 font-bold transition-all ${format === f ? tool.toggleOn : `${tool.toggleOff} bg-white`}`}
+                >
+                  {f}v{f}
+                </button>
               ))}
             </div>
           </div>
@@ -155,26 +158,31 @@ export default function HalisahaGenerator() {
           </div>
         </div>
 
-        <div className={`${tool.panel} max-h-[520px]`}>
-          {/* Field + players visual */}
-          <div className="relative bg-green-800 rounded-lg p-4" style={{height: '460px'}}>
-            <svg viewBox="0 0 100 100" className="w-full h-full block rounded-md">
+        <div className={`${tool.panel} max-h-none`}>
+          <div className="relative overflow-hidden rounded-2xl p-3 shadow-inner ring-1 ring-white/10" style={{
+            height: '460px',
+            background:
+              'radial-gradient(ellipse 140% 100% at 50% -10%,rgba(251,146,60,0.15),transparent 55%), linear-gradient(180deg,#020617,#0f172a 8%, #14532d 22%, #16a34a 48%, #14532d 78%, #0f172a 100%)',
+          }}>
+            <svg viewBox="0 0 100 100" className="relative z-[1] h-full w-full block rounded-xl">
               <defs>
-                <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0" stopColor="#1e3a8a" stopOpacity="0.08" />
-                  <stop offset="1" stopColor="#064e3b" stopOpacity="0.06" />
+                <linearGradient id="turfGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#fde68a" stopOpacity="0.12" />
+                  <stop offset="50%" stopColor="#22c55e" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#14532d" stopOpacity="0.6" />
                 </linearGradient>
               </defs>
-              <rect x="0" y="0" width="100" height="100" rx="4" fill="#16a34a" />
-              <rect x="5" y="8" width="90" height="84" rx="2" fill="#0f766e" />
-              <line x1="50" y1="8" x2="50" y2="92" stroke="#d1fae5" strokeWidth="0.4" />
-              <circle cx="50" cy="50" r="8" stroke="#d1fae5" fill="none" strokeWidth="0.4" />
+              <rect x="0" y="0" width="100" height="100" rx="4" fill="url(#turfGlow)" />
+              <rect x="5" y="8" width="90" height="84" rx="2" fill="#065f46" stroke="#34d399" strokeWidth="0.15" opacity="0.95" />
+              <line x1="50" y1="8" x2="50" y2="92" stroke="#fef9c3" strokeWidth="0.35" opacity="0.85" />
+              <circle cx="50" cy="50" r="8" stroke="#fef08a" fill="rgba(253,224,71,0.08)" strokeWidth="0.35" />
               <rect x="5" y="36" width="10" height="28" rx="1" stroke="#d1fae5" fill="none" strokeWidth="0.4" />
               <rect x="85" y="36" width="10" height="28" rx="1" stroke="#d1fae5" fill="none" strokeWidth="0.4" />
             </svg>
 
             {teams.length === 2 ? (
               <>
+                <div className="pointer-events-none absolute inset-4 z-[2]">
                 {teams.map((team, tIdx) => (
                   <div key={tIdx}>
                     {team.players.map((p, idx) => {
@@ -186,9 +194,9 @@ export default function HalisahaGenerator() {
                       const top = `calc(${y}% - 18px)`;
 
                       return (
-                        <div key={idx} className="absolute" style={{left, top}}>
+                        <div key={`${tIdx}-${idx}`} className="absolute" style={{left, top}}>
                           <div className="flex items-center gap-2">
-                            <div className="rounded-md px-3 py-1 text-sm font-bold" style={{background: team.color, color: colorToTextContrast(team.color)}}>
+                            <div className="rounded-lg px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide shadow-lg ring-2 ring-black/15 sm:text-sm sm:normal-case sm:tracking-normal" style={{background: team.color, color: colorToTextContrast(team.color)}}>
                               {p.name.split(' ')[0]}
                             </div>
                           </div>
@@ -197,23 +205,24 @@ export default function HalisahaGenerator() {
                     })}
                   </div>
                 ))}
+                </div>
 
                 {/* Legend */}
-                <div className="absolute left-4 bottom-4 bg-white/90 rounded-lg p-2 flex gap-2 items-center">
+                <div className="absolute left-5 bottom-5 z-[3] flex items-center gap-3 rounded-xl border border-white/20 bg-charcoal-900/85 p-2.5 backdrop-blur-sm shadow-soft-xl ring-2 ring-orange-400/20">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-sm" style={{background: teamAColor}}></div>
-                    <div className="text-xs font-semibold text-gray-700">Takım A</div>
+                    <div className="h-7 w-7 rounded-lg ring-2 ring-white/30" style={{ background: teamAColor }} />
+                    <div className="text-[11px] font-bold uppercase tracking-wide text-orange-50">Takım A</div>
                   </div>
-                  <div className="flex items-center gap-2 ml-3">
-                    <div className="w-6 h-6 rounded-sm" style={{background: teamBColor}}></div>
-                    <div className="text-xs font-semibold text-gray-700">Takım B</div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-7 w-7 rounded-lg ring-2 ring-white/30" style={{ background: teamBColor }} />
+                    <div className="text-[11px] font-bold uppercase tracking-wide text-orange-50">Takım B</div>
                   </div>
                 </div>
               </>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-white/80 gap-2">
-                <Users size={48} className="opacity-40" />
-                <p className="text-sm text-center">Oyuncuları girin ve takımları oluşturun</p>
+              <div className="absolute inset-0 z-[2] flex flex-col items-center justify-center gap-3 px-8 text-center text-orange-50/90">
+                <Users size={52} className="animate-float text-white/55" aria-hidden />
+                <p className="font-semibold tracking-tight opacity-95">İsimleri girin — sahada oluşumu görün.</p>
               </div>
             )}
           </div>

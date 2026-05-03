@@ -127,7 +127,7 @@ const generateSitemap = async () => {
         sitemap += `
     <image:image>
       <image:loc>${game.image}</image:loc>
-      <image:title>${escapeXml(game.name)} - Nasıl Oynanır</image:title>
+      <image:title>${escapeXml(game.name)} - Kuralı Ne?</image:title>
       <image:caption>${escapeXml(game.name)} oyununun görseli</image:caption>
     </image:image>`;
       }
@@ -150,6 +150,18 @@ const generateSitemap = async () => {
       }
     });
 
+    // Add comparison pages (X vs Y) - SEO odakli yeni sayfa kumesi
+    const comparisonPairs = generateComparisonPairs(games);
+    comparisonPairs.forEach(({ slugA, slugB }) => {
+      sitemap += `  <url>
+    <loc>${BASE_URL}/karsilastir/${slugA}-vs-${slugB}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+`;
+    });
+
     sitemap += '</urlset>';
 
     // Write main sitemap
@@ -167,13 +179,48 @@ const generateSitemap = async () => {
     console.log(`   - ${STATIC_PAGES.length + TOOL_PAGES.length} static pages`);
     console.log(`   - ${games.length} game pages`);
     console.log(`   - ${activeCategories.length} category pages`);
-    console.log(`   - Total: ${STATIC_PAGES.length + TOOL_PAGES.length + games.length + activeCategories.length} URLs`);
+    console.log(`   - ${comparisonPairs.length} comparison pages`);
+    console.log(`   - Total: ${STATIC_PAGES.length + TOOL_PAGES.length + games.length + activeCategories.length + comparisonPairs.length} URLs`);
 
   } catch (error) {
     console.error('❌ Error generating sitemap:', error);
     process.exit(1);
   }
 };
+
+/**
+ * Karsilastirma sayfasi ciftleri uretir.
+ * Her oyun icin: ayni kategoride en yakin 3 oyunla esler.
+ * Spam onlemek icin (slugA, slugB) ciftleri leksikografik sirayla
+ * uretilir, boylece (a, b) ve (b, a) olarak iki kez gecmez.
+ */
+function generateComparisonPairs(games) {
+  const pairs = new Set();
+  const result = [];
+  const byCategory = {};
+
+  games.forEach((g) => {
+    if (!g.category) return;
+    if (!byCategory[g.category]) byCategory[g.category] = [];
+    byCategory[g.category].push(g);
+  });
+
+  Object.values(byCategory).forEach((bucket) => {
+    bucket.forEach((gameA, i) => {
+      // Her oyun icin ayni kategorideki diger oyunlarla en fazla 3 cift
+      bucket.slice(i + 1, i + 4).forEach((gameB) => {
+        const [slugA, slugB] = [gameA.slug, gameB.slug].sort();
+        const key = `${slugA}-vs-${slugB}`;
+        if (!pairs.has(key)) {
+          pairs.add(key);
+          result.push({ slugA, slugB });
+        }
+      });
+    });
+  });
+
+  return result;
+}
 
 /**
  * Generate games-only sitemap for better crawling

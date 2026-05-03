@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Star, Quote, MessageCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MessageCircle, MessagesSquare, ArrowRight } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import SectionHeader from '../common/SectionHeader';
+import { SectionHeader } from '../ui';
+import TestimonialCard from './TestimonialCard';
 
 export default function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadTestimonials();
@@ -14,109 +17,86 @@ export default function TestimonialsSection() {
     try {
       const { data: gamesData, error: gamesError } = await supabase
         .from('games')
-        .select('id, name');
-      
+        .select('id, name, slug');
+
       if (gamesError) throw gamesError;
-      
+
       const { data: commentsData, error: commentsError } = await supabase
         .from('comments')
         .select('*')
         .eq('is_testimonial', true)
         .order('created_at', { ascending: false })
         .limit(3);
-      
+
       if (commentsError) throw commentsError;
-      
-      const formattedTestimonials = (commentsData || []).map(comment => {
-        const game = gamesData.find(g => g.id === comment.game_id);
+
+      const formatted = (commentsData || []).map((c) => {
+        const game = gamesData.find((g) => g.id === c.game_id);
         return {
-          name: comment.author_name,
-          comment: comment.content,
-          rating: comment.rating,
+          name: c.author_name,
+          comment: c.content,
+          rating: c.rating,
           gameName: game?.name || 'Bilinmeyen Oyun',
-          avatarUrl: comment.avatar_url
+          gameSlug: game?.slug,
+          avatarUrl: c.avatar_url,
         };
       });
-      
-      setTestimonials(formattedTestimonials);
+
+      setTestimonials(formatted);
     } catch (error) {
       console.error('Error loading testimonials:', error);
       setTestimonials([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getInitials = (name) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
-  if (testimonials.length === 0) return null;
+  if (loading) return null;
 
   return (
     <section>
       <SectionHeader
         title="Kullanıcı Yorumları"
-        subtitle="Ne dediler?"
+        subtitle="Topluluk diyor ki"
         icon={MessageCircle}
-        iconColor="text-pink-500"
-        iconBg="bg-pink-50"
-        centered={false}
+        iconColor="text-rose-500"
+        iconBg="bg-rose-50"
+        link="/oyunlar"
+        linkText="Oyunları Keşfet"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:items-stretch">
-        {testimonials.map((testimonial, index) => (
-          <div 
-            key={index} 
-            className="group relative flex flex-col bg-white rounded-2xl p-6 md:p-8 border border-gray-100 hover:border-gray-200 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-500"
-          >
-            {/* Quote icon */}
-            <div className="absolute top-6 right-6 opacity-10 group-hover:opacity-20 transition-opacity">
-              <Quote size={40} className="text-orange-500" />
-            </div>
+      {testimonials.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:items-stretch">
+          {testimonials.map((t, index) => (
+            <TestimonialCard key={index} {...t} />
+          ))}
+        </div>
+      ) : (
+        // Boş state - "İlk yorumu sen yap" CTA
+        <div className="relative overflow-hidden rounded-3xl border border-warm-200/70 bg-gradient-to-br from-cream-100 via-white to-orange-50 p-10 md:p-14 text-center shadow-soft">
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-orange-200/40 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Rating */}
-            <div className="flex items-center gap-1 mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  className={i < testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-200 text-gray-200'}
-                />
-              ))}
+          <div className="relative max-w-md mx-auto">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-white rounded-2xl shadow-soft mb-5">
+              <MessagesSquare className="w-6 h-6 text-orange-600" aria-hidden="true" />
             </div>
-
-            {/* Comment - Esnek alan, alttaki boşluğu doldurur */}
-            <p className="text-gray-600 leading-relaxed flex-1 min-h-0 line-clamp-4">
-              "{testimonial.comment}"
+            <h3 className="text-2xl md:text-3xl font-extrabold text-warm-900 mb-3 tracking-tight">
+              İlk yorumu sen yap
+            </h3>
+            <p className="text-warm-600 leading-relaxed mb-7 max-w-sm mx-auto">
+              Bir oyun aç, kuralları oku ve deneyimini paylaş. Yorumun burada öne çıkar.
             </p>
-
-            {/* Author - Alta sabit */}
-            <div className="flex items-center gap-3 pt-5 mt-5 border-t border-gray-100 shrink-0">
-              <div className="shrink-0 w-11 h-11">
-                {testimonial.avatarUrl ? (
-                  <img 
-                    src={testimonial.avatarUrl} 
-                    alt={testimonial.name} 
-                    className="w-full h-full rounded-full object-cover ring-2 ring-gray-100"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-sm ring-2 ring-orange-100">
-                    {getInitials(testimonial.name)}
-                  </div>
-                )}
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900 text-sm">{testimonial.name}</p>
-                <p className="text-xs text-gray-500">{testimonial.gameName}</p>
-              </div>
-            </div>
+            <Link
+              to="/oyunlar"
+              className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold hover:from-orange-600 hover:to-red-600 transition-all duration-300 ease-spring shadow-warm-glow hover:shadow-warm-glow-lg hover:-translate-y-0.5"
+            >
+              <span>Oyunlara Göz At</span>
+              <ArrowRight size={18} />
+            </Link>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

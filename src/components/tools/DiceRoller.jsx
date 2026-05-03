@@ -99,8 +99,8 @@ export default function DiceRoller() {
             <Dices className={tool.iconClass} />
           </div>
           <div>
-            <h2 className={tool.title}>Dijital Zar</h2>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h2 className={tool.title}>Dijital zar</h2>
+            <p className="mt-0.5 text-sm text-warm-500">
               Şansını dene ve zarları at!
             </p>
           </div>
@@ -163,10 +163,10 @@ export default function DiceRoller() {
                     <Dices size={40} className="text-gray-500" />
                   </div>
                   <p className="text-gray-300 text-base font-medium">
-                    Zar atmak için hazır!
+                    Zar atmaya hazır...
                   </p>
-                  <p className="text-gray-500 text-sm mt-2">
-                    Aşağıdaki butona tıklayın
+                  <p className="mt-2 text-sm text-warm-500">
+                    Aşağıdaki düğmeye bas
                   </p>
                 </div>
               )}
@@ -228,7 +228,7 @@ export default function DiceRoller() {
           <div className="lg:w-[min(100%,280px)] shrink-0">
             {history.length > 0 ? (
               <div className={`${tool.panel} lg:sticky lg:top-4`}>
-                <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <h3 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-[0.12em] text-charcoal-900">
                   <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
                   Son Atışlar
                 </h3>
@@ -238,20 +238,20 @@ export default function DiceRoller() {
                       key={idx}
                       className="bg-white rounded-xl px-3 py-2.5 border border-orange-100 shadow-sm"
                     >
-                      <div className="flex gap-2 items-center justify-between">
+                      <div className="flex items-center justify-between gap-2">
                         <div className="flex gap-1">
                           {roll.map((val, i) => (
                             <div
                               key={i}
-                              className="w-8 h-8 bg-gray-50 rounded-lg border border-orange-100 flex items-center justify-center text-xs font-bold text-gray-800"
+                              className="flex h-8 w-8 items-center justify-center rounded-lg border border-orange-100 bg-cream-50 text-xs font-bold text-charcoal-800"
                             >
                               {val}
                             </div>
                           ))}
                         </div>
-                        <div className="flex items-center gap-1 text-xs text-gray-400">
-                          <span>=</span>
-                          <div className="bg-orange-600 text-white w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm shadow-sm">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold text-warm-400 tabular-nums">=</span>
+                          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-600 text-sm font-bold text-white shadow-sm">
                             {roll.reduce((a, b) => a + b, 0)}
                           </div>
                         </div>
@@ -261,7 +261,9 @@ export default function DiceRoller() {
                 </div>
               </div>
             ) : (
-              <div className={`${tool.panel} min-h-[120px] flex items-center justify-center text-gray-400 text-sm text-center`}>
+              <div
+                className={`${tool.panel} flex min-h-[120px] items-center justify-center text-center text-sm font-medium text-warm-400 lg:sticky lg:top-4`}
+              >
                 İlk atıştan sonra geçmiş burada görünür
               </div>
             )}

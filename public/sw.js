@@ -91,7 +91,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('Nasıl Oynanır', options)
+    self.registration.showNotification('Kuralı Ne?', options)
   );
 });
 

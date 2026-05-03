@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import CookieConsent from './components/common/CookieConsent';
@@ -17,6 +17,7 @@ import DicePage from './pages/Tools/DicePage';
 import ScoreBoardPage from './pages/Tools/ScoreBoardPage';
 import HalisahaPage from './pages/Tools/HalisahaPage';
 import Okey101ScorePage from './pages/GameDetail/Okey101ScorePage';
+import ComparePage from './pages/Compare';
 import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -31,6 +32,7 @@ import { initSession } from './utils/analytics';
 import { AuthProvider } from './context/AuthContext';
 import AuthPage from './pages/Auth/AuthPage';
 import ProfilePage from './pages/Profile/ProfilePage';
+import { ConfirmProvider } from './components/ui';
 
 function App() {
   useEffect(() => {
@@ -41,35 +43,50 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
+        <ConfirmProvider>
         <Router>
           <CookieConsent />
           <AddToHomeScreen />
-          <Toaster 
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: '#fff',
-              color: '#363636',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              borderRadius: '12px',
-              padding: '16px',
-              fontSize: '14px',
-            },
-            success: {
-              iconTheme: {
-                primary: '#10b981',
-                secondary: '#fff',
+          <Toaster
+            position="top-right"
+            gutter={10}
+            toastOptions={{
+              duration: 3000,
+              className: 'font-sans',
+              style: {
+                background: '#ffffff',
+                color: '#1c1917',
+                fontFamily:
+                  "Manrope, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                fontSize: '14px',
+                fontWeight: 600,
+                padding: '12px 16px',
+                borderRadius: '14px',
+                border: '1px solid rgba(231, 229, 228, 0.7)',
+                boxShadow:
+                  '0 10px 25px -5px rgba(28, 25, 23, 0.1), 0 8px 10px -6px rgba(28, 25, 23, 0.05)',
+                maxWidth: '420px',
               },
-            },
-            error: {
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
+              success: {
+                iconTheme: { primary: '#10b981', secondary: '#ecfdf5' },
+                style: {
+                  borderLeft: '4px solid #10b981',
+                },
               },
-            },
-          }}
-        />
+              error: {
+                iconTheme: { primary: '#f43f5e', secondary: '#fff1f2' },
+                style: {
+                  borderLeft: '4px solid #f43f5e',
+                },
+              },
+              loading: {
+                iconTheme: { primary: '#f97316', secondary: '#fff7ed' },
+                style: {
+                  borderLeft: '4px solid #f97316',
+                },
+              },
+            }}
+          />
         <Routes>
           {/* Admin Panel Route - No Header/Footer */}
           <Route path="/admin-panel" element={<AdminPanel />} />
@@ -93,6 +110,7 @@ function App() {
                   <Route path="/kategori/:categoryName" element={<CategoryPage />} />
                   <Route path="/oyun/:slug" element={<GameDetail />} />
                    <Route path="/oyun/:slug/101-skor-tablosu" element={<Okey101ScorePage />} />
+                  <Route path="/karsilastir/:comparison" element={<ComparePage />} />
                   <Route path="/hakkimizda" element={<About />} />
                   <Route path="/iletisim" element={<Contact />} />
                   <Route path="/kullanim-kosullari" element={<TermsOfUse />} />
@@ -109,6 +127,7 @@ function App() {
           } />
         </Routes>
         </Router>
+        </ConfirmProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

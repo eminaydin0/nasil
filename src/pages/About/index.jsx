@@ -74,7 +74,7 @@ function About() {
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">Misyonumuz</h2>
                   <p className="text-lg text-gray-700 leading-relaxed">
-                    Nasıl Oynanır, geleneksel Türk oyunlarını ve popüler kutu oyunlarını dijital dünyada yaşatmak, 
+                    Kuralı Ne?, geleneksel Türk oyunlarını ve popüler kutu oyunlarını dijital dünyada yaşatmak, 
                     yeni nesillere aktarmak ve oyun severlere rehberlik etmek amacıyla kurulmuş kapsamlı bir oyun kütüphanesidir.
                   </p>
                 </div>

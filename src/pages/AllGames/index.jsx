@@ -5,6 +5,7 @@ import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { useGames } from '../../hooks/useGames';
 import { useCategories } from '../../hooks/useCategories';
+import { useGameStats } from '../../hooks/useGameStats';
 import { getCategoriesWithCounts } from '../../constants/categories';
 import { PAGE_SEO, generateItemListSchema, SCHEMA_TEMPLATES } from '../../constants/seo';
 import { trackPageView } from '../../utils/analytics';
@@ -42,6 +43,9 @@ function AllGames() {
     const matchesCategory = selectedCategory === 'Tümü' || categoryMatches(game.category, selectedCategory);
     return matchesSearch && matchesCategory;
   });
+
+  const allGameIds = useMemo(() => games.map((g) => g.id), [games]);
+  const { statsMap } = useGameStats(allGameIds);
 
   // SEO için structured data
   const structuredData = [
@@ -132,9 +136,17 @@ function AllGames() {
         ) : filteredGames.length > 0 ? (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredGames.map(game => (
-                <GameCard key={game.id} game={game} />
-              ))}
+              {filteredGames.map(game => {
+                const stats = statsMap[game.id];
+                return (
+                  <GameCard
+                    key={game.id}
+                    game={game}
+                    rating={stats?.average || 0}
+                    commentCount={stats?.count || 0}
+                  />
+                );
+              })}
             </div>
             
             {/* Sonuç bilgisi */}

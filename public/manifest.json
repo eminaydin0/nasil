@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "Nasıl Oynanır - Geleneksel Türk Oyunları",
-  "short_name": "Nasıl Oynanır",
-  "description": "Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının nasıl oynanacağını öğrenin",
+  "name": "Kuralı Ne? - Geleneksel Türk Oyunları",
+  "short_name": "Kuralı Ne?",
+  "description": "Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının kuralı ne? Detaylı kurallar, ipuçları ve stratejiler.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

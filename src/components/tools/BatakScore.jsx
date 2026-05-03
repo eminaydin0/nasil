@@ -51,44 +51,45 @@ export default function BatakScore() {
 
   return (
     <GameTableContainer
-      title="Batak/King Yazboz"
+      title="Batak & King yazboz"
+      subtitle="Her turu yaz; Enter ile hızlı ekle. Dip satır hep toplanır."
       icon={PencilLine}
       onReset={resetGame}
       className="h-full"
     >
-      <div className="p-6">
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-center">
+      <div className="bg-gradient-to-b from-transparent to-cream-50/40 p-5 sm:p-8">
+        <div className="overflow-x-auto rounded-2xl border border-warm-200/70 bg-white/90 shadow-soft">
+          <table className="w-full text-center text-sm">
             <thead>
-              <tr className="border-b border-orange-100">
+              <tr className="border-b border-orange-100/80 bg-gradient-to-r from-orange-50 via-cream-50 to-amber-50/40">
                 {players.map((player, idx) => (
-                  <th key={idx} className="p-3 pb-4">
+                  <th key={idx} className="p-4 pb-3">
                     <input
                       type="text"
                       value={player}
                       onChange={(e) => updatePlayerName(idx, e.target.value)}
-                      className="w-full text-center font-bold text-gray-700 bg-gray-50 rounded-xl px-3 py-2 border border-gray-200 focus:ring-2 focus:ring-orange-500/25 focus:border-orange-400 outline-none"
+                      className="w-full rounded-xl border-2 border-warm-200/80 bg-white px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-charcoal-800 outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-500/20 sm:text-[13px] sm:normal-case sm:tracking-normal"
                     />
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="text-gray-600">
+            <tbody className="text-warm-700">
               {rounds.map((round, roundIdx) => (
-                <tr key={roundIdx} className="border-b border-orange-50 hover:bg-orange-50/40 transition-colors">
+                <tr
+                  key={roundIdx}
+                  className="border-b border-warm-100 bg-white/60 transition-colors odd:bg-cream-50/50 hover:bg-orange-50/25"
+                >
                   {round.map((score, scoreIdx) => (
-                    <td key={scoreIdx} className="py-3 px-2">
+                    <td key={scoreIdx} className="px-3 py-3 font-semibold tabular-nums">
                       {score}
                     </td>
                   ))}
                 </tr>
               ))}
-              
-              {/* Input Row */}
-              <tr className="border-t-2 border-orange-200 bg-orange-50/50">
+              <tr className="border-t-2 border-orange-300/70 bg-gradient-to-br from-orange-500/12 via-orange-50/65 to-transparent">
                 {currentRound.map((val, idx) => (
-                  <td key={idx} className="p-2">
+                  <td key={idx} className="p-3">
                     <input
                       type="number"
                       value={val}
@@ -102,9 +103,9 @@ export default function BatakScore() {
               </tr>
             </tbody>
             <tfoot>
-              <tr className="border-t-2 border-orange-100 bg-gray-50">
+              <tr className="border-t-2 border-orange-400/70 bg-charcoal-900 text-cream-50">
                 {totals.map((total, idx) => (
-                  <td key={idx} className="py-4 font-black text-lg text-gray-900">
+                  <td key={idx} className="py-4 font-display text-lg font-black tabular-nums sm:text-xl">
                     {total}
                   </td>
                 ))}

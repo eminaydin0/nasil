@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Trash2, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Upload, X, Image as ImageIcon, PlayCircle, HelpCircle, Clock } from 'lucide-react';
 import { uploadGameImage, uploadMultipleGameImages, deleteGameImage } from '../../lib/supabase';
 import toast from 'react-hot-toast';
+import { useConfirm } from '../ui';
 
 // Slug oluşturma (Türkçe karakterleri normalize eder)
 function generateSlug(name) {
@@ -34,7 +35,11 @@ function normalizeGameToFormData(game, defaultCategory) {
       shortDescription: '',
       description: '',
       rules: [''],
-      tips: ['']
+      tips: [''],
+      videoUrl: '',
+      videoTitle: '',
+      playTimeMinutes: '',
+      faq: []
     };
   }
 
@@ -54,6 +59,11 @@ function normalizeGameToFormData(game, defaultCategory) {
     ? game.tips
     : (game.tips ? [String(game.tips)] : ['']);
 
+  // FAQ: [{question, answer}] dizisi (eski oyunlarda yok)
+  const faq = Array.isArray(game.faq)
+    ? game.faq.filter((item) => item && (item.question || item.answer))
+    : [];
+
   return {
     id: game.id,
     name: game.name || '',
@@ -66,11 +76,16 @@ function normalizeGameToFormData(game, defaultCategory) {
     shortDescription: game.shortDescription ?? game.short_description ?? '',
     description: game.description ?? '',
     rules,
-    tips
+    tips,
+    videoUrl: game.videoUrl ?? game.video_url ?? '',
+    videoTitle: game.videoTitle ?? game.video_title ?? '',
+    playTimeMinutes: game.playTimeMinutes ?? game.play_time_minutes ?? '',
+    faq
   };
 }
 
 function GameModal({ game, categories = [], onSave, onClose }) {
+  const confirm = useConfirm();
   const categoryNames = categories?.length > 0 ? categories.map((c) => c.name) : [];
   const defaultCategory = categoryNames[0] || 'Dış Mekan';
   const options = [...new Set([...(categoryNames || []), game?.category].filter(Boolean))];
@@ -162,23 +177,42 @@ function GameModal({ game, categories = [], onSave, onClose }) {
 
   // Galeri resmini silme
   const handleRemoveGalleryImage = async (imageUrl, index) => {
-    if (window.confirm('Bu resmi silmek istediğinizden emin misiniz?')) {
-      const newGallery = formData.gallery.filter((_, i) => i !== index);
-      setFormData({ ...formData, gallery: newGallery });
-      
-      // Storage'dan da sil (opsiyonel)
-      if (imageUrl.includes('supabase')) {
-        await deleteGameImage(imageUrl);
-      }
-      toast.success('Resim silindi!');
+    const ok = await confirm({
+      type: 'danger',
+      title: 'Resmi sil',
+      description: 'Bu galeri resmini silmek istediğinizden emin misiniz?',
+      confirmText: 'Evet, Sil',
+      cancelText: 'Vazgeç',
+    });
+    if (!ok) return;
+    const newGallery = formData.gallery.filter((_, i) => i !== index);
+    setFormData({ ...formData, gallery: newGallery });
+    if (imageUrl.includes('supabase')) {
+      await deleteGameImage(imageUrl);
     }
+    toast.success('Resim silindi!');
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     const slug = formData.slug || generateSlug(formData.name);
-    onSave({ ...formData, slug });
+    // FAQ icindeki tamamen bos kayitlari at
+    const cleanedFaq = (formData.faq || []).filter(
+      (item) => (item.question || '').trim() && (item.answer || '').trim()
+    );
+    const playTime = formData.playTimeMinutes === '' || formData.playTimeMinutes == null
+      ? null
+      : Number(formData.playTimeMinutes) || null;
+
+    onSave({
+      ...formData,
+      slug,
+      faq: cleanedFaq,
+      playTimeMinutes: playTime,
+      videoUrl: (formData.videoUrl || '').trim() || null,
+      videoTitle: (formData.videoTitle || '').trim() || null,
+    });
   };
 
   const handleRuleChange = (index, value) => {
@@ -209,6 +243,22 @@ function GameModal({ game, categories = [], onSave, onClose }) {
   const removeTip = (index) => {
     const newTips = formData.tips.filter((_, i) => i !== index);
     setFormData({ ...formData, tips: newTips });
+  };
+
+  // FAQ handlers
+  const handleFaqChange = (index, field, value) => {
+    const newFaq = [...(formData.faq || [])];
+    newFaq[index] = { ...(newFaq[index] || {}), [field]: value };
+    setFormData({ ...formData, faq: newFaq });
+  };
+
+  const addFaq = () => {
+    setFormData({ ...formData, faq: [...(formData.faq || []), { question: '', answer: '' }] });
+  };
+
+  const removeFaq = (index) => {
+    const newFaq = (formData.faq || []).filter((_, i) => i !== index);
+    setFormData({ ...formData, faq: newFaq });
   };
 
   return (
@@ -469,6 +519,123 @@ function GameModal({ game, categories = [], onSave, onClose }) {
                   )}
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* SEO odakli zenginlestirme alanlari */}
+          <div className="rounded-xl border border-orange-100 bg-orange-50/40 p-5 space-y-5">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-orange-500 text-white">
+                <PlayCircle size={16} />
+              </span>
+              <div>
+                <h3 className="text-sm font-bold text-gray-900">SEO Zenginleştirmeleri</h3>
+                <p className="text-xs text-gray-500">Bu alanlar Google rich snippet'leri için kullanılır. Hepsi opsiyoneldir.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
+                  <PlayCircle size={14} className="text-orange-500" />
+                  Video URL (YouTube/Vimeo)
+                </label>
+                <input
+                  type="url"
+                  value={formData.videoUrl}
+                  onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                  placeholder="https://youtube.com/watch?v=..."
+                />
+                <p className="text-xs text-gray-500 mt-1">Video carousel sonuçlarına girer (VideoObject schema).</p>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
+                  <Clock size={14} className="text-orange-500" />
+                  Tahmini oyun süresi (dakika)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="600"
+                  value={formData.playTimeMinutes}
+                  onChange={(e) => setFormData({ ...formData, playTimeMinutes: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                  placeholder="Örn: 45"
+                />
+                <p className="text-xs text-gray-500 mt-1">Boş bırakırsan rozet ve schema'da gösterilmez.</p>
+              </div>
+            </div>
+
+            {formData.videoUrl && (
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  Video başlığı (opsiyonel)
+                </label>
+                <input
+                  type="text"
+                  value={formData.videoTitle}
+                  onChange={(e) => setFormData({ ...formData, videoTitle: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                  placeholder="Boş bırakırsan oyun adından otomatik üretilir"
+                />
+              </div>
+            )}
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                  <HelpCircle size={14} className="text-orange-500" />
+                  Sık Sorulan Sorular (FAQ)
+                </label>
+                <button
+                  type="button"
+                  onClick={addFaq}
+                  className="text-orange-600 text-sm hover:text-orange-700 font-medium"
+                >
+                  + Soru Ekle
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mb-3">
+                FAQPage rich snippet'i için. Eklediğin sorular Google sonuçlarında öne çıkan kutucuk olarak görünebilir.
+              </p>
+              {formData.faq.length === 0 && (
+                <p className="text-sm text-gray-400 italic px-3 py-4 bg-white rounded-lg border border-dashed border-gray-200 text-center">
+                  Henüz soru yok. "+ Soru Ekle" ile başla.
+                </p>
+              )}
+              <div className="space-y-3">
+                {formData.faq.map((item, index) => (
+                  <div key={index} className="bg-white rounded-lg border border-gray-200 p-3 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-gray-500">Soru {index + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeFaq(index)}
+                        className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"
+                        aria-label="Bu soruyu sil"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={item.question || ''}
+                      onChange={(e) => handleFaqChange(index, 'question', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                      placeholder="Soru (örn: Bu oyunda kaç kart kullanılır?)"
+                    />
+                    <textarea
+                      value={item.answer || ''}
+                      onChange={(e) => handleFaqChange(index, 'answer', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm"
+                      rows="3"
+                      placeholder="Cevap (kısa ve net olsun, Google için ideal)"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

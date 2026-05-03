@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Upload, Image as ImageIcon, ArrowUp, ArrowDown, Search, Gamepad2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
+import { useConfirm } from '../ui';
 
 function CarouselManager({ games = [] }) {
+  const confirm = useConfirm();
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -19,7 +21,7 @@ function CarouselManager({ games = [] }) {
     description: '',
     image_url: '',
     badge: 'ÖNE ÇIKAN',
-    button_text: 'Nasıl Oynanır?',
+    button_text: 'Kuralı Ne?',
     button_link: '#oyunlar',
     order_index: 0,
     is_active: true
@@ -108,7 +110,17 @@ function CarouselManager({ games = [] }) {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Bu slaytı silmek istediğinizden emin misiniz?')) return;
+    const slide = slides.find((s) => s.id === id);
+    const ok = await confirm({
+      type: 'danger',
+      title: 'Slaytı sil',
+      description: slide?.title
+        ? `"${slide.title}" slaytı kalıcı olarak silinecek.`
+        : 'Bu slayt kalıcı olarak silinecek.',
+      confirmText: 'Evet, Sil',
+      cancelText: 'Vazgeç',
+    });
+    if (!ok) return;
 
     try {
       const { error } = await supabase
@@ -171,7 +183,7 @@ function CarouselManager({ games = [] }) {
       description: game.shortDescription || (game.description ? game.description.substring(0, 150) + '...' : ''),
       image_url: game.image,
       button_link: `/oyun/${game.slug}`,
-      button_text: 'Nasıl Oynanır?'
+      button_text: 'Kuralı Ne?'
     }));
     setShowGameSelector(false);
     toast.success(`${game.name} bilgileri aktarıldı`);

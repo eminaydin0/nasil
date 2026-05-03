@@ -1,0 +1,164 @@
+﻿
+> nasiloynanir@0.0.0 lint
+> eslint .
+
+
+D:\Web\nasiloynanir\public\sw.js
+  104:7  error  'clients' is not defined  no-undef
+
+D:\Web\nasiloynanir\scripts\generate-sitemap.js
+   14:22  error  'process' is not defined                                                                 no-undef
+   15:27  error  'process' is not defined                                                                 no-undef
+   19:3   error  'process' is not defined                                                                 no-undef
+  187:5   error  'process' is not defined                                                                 no-undef
+  269:37  error  'gameCount' is defined but never used. Allowed unused args must match /^(_|[A-Z])/u      no-unused-vars
+  269:48  error  'categoryCount' is defined but never used. Allowed unused args must match /^(_|[A-Z])/u  no-unused-vars
+
+D:\Web\nasiloynanir\src\App.jsx
+  2:10  error  'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+D:\Web\nasiloynanir\src\components\admin\ContentManager.jsx
+  54:6  warning  React Hook useEffect has a missing dependency: 'loadContent'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+D:\Web\nasiloynanir\src\components\admin\GameModal.jsx
+   95:5  warning  React Hook useMemo has missing dependencies: 'defaultCategory' and 'game'. Either include them or remove the dependency array    react-hooks/exhaustive-deps
+  107:6  warning  React Hook useEffect has missing dependencies: 'defaultCategory' and 'game'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+D:\Web\nasiloynanir\src\components\common\AddToHomeScreen.jsx
+  36:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  34 |     }
+  35 |
+> 36 |     setIsIOSDevice(isIOS());
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  37 |
+  38 |     const handler = (e) => {
+  39 |       e.preventDefault();  react-hooks/set-state-in-effect
+
+D:\Web\nasiloynanir\src\components\common\Breadcrumb.jsx
+   22:9   error  'location' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                        no-unused-vars
+  105:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  147:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\Web\nasiloynanir\src\components\common\ErrorBoundary.jsx
+  18:35  error  'error' is defined but never used. Allowed unused args must match /^(_|[A-Z])/u  no-unused-vars
+
+D:\Web\nasiloynanir\src\components\common\NotificationBell.jsx
+  56:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  54 |   useEffect(() => {
+  55 |     if (!user?.id) return;
+> 56 |     fetchNotifications();
+     |     ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  57 |
+  58 |     const channel = supabase
+  59 |       .channel('notifications')  react-hooks/set-state-in-effect
+  75:6  warning  React Hook useEffect has a missing dependency: 'fetchNotifications'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/exhaustive-deps
+
+D:\Web\nasiloynanir\src\components\layout\Footer.jsx
+  13:5  error  Error: Cannot access variable before it is declared
+
+`loadContactInfo` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  11 |
+  12 |   useEffect(() => {
+> 13 |     loadContactInfo();
+     |     ^^^^^^^^^^^^^^^ `loadContactInfo` accessed before it is declared
+  14 |   }, []);
+  15 |
+  16 |   const loadContactInfo = async () => {
+
+  14 |   }, []);
+  15 |
+> 16 |   const loadContactInfo = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 17 |     try {
+     | ^^^^^^^^^
+> 18 |       const { data, error } = await supabase
+     ÔÇĞ
+     | ^^^^^^^^^
+> 33 |     }
+     | ^^^^^^^^^
+> 34 |   };
+     | ^^^^^ `loadContactInfo` is declared here
+  35 |
+  36 |   return (
+  37 |     <footer className="bg-white border-t border-orange-100">  react-hooks/immutability
+
+D:\Web\nasiloynanir\src\components\tools\Okey101ScoreV2.jsx
+   17:22  error  'setPartnerIdx' is assigned a value but never used. Allowed unused elements of array destructuring must match /^_/u  no-unused-vars
+  191:9   error  'displayOrder' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                         no-unused-vars
+  194:9   error  'getWinnerStatus' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                      no-unused-vars
+
+D:\Web\nasiloynanir\src\components\ui\ConfirmDialog.jsx
+  132:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\Web\nasiloynanir\src\context\AuthContext.jsx
+  6:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\Web\nasiloynanir\src\hooks\useFavorites.js
+  125:6  warning  React Hook useEffect has a missing dependency: 'loadFavorites'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+D:\Web\nasiloynanir\src\hooks\useGame.js
+  94:6  warning  React Hook useEffect has a missing dependency: 'loadGame'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+D:\Web\nasiloynanir\src\lib\supabase.js
+  228:13  error  'data' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+D:\Web\nasiloynanir\src\pages\GameDetail\index.jsx
+  35:5  error  Error: Cannot access variable before it is declared
+
+`loadAllGames` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  33 |   useEffect(() => {
+  34 |     window.scrollTo(0, 0);
+> 35 |     loadAllGames();
+     |     ^^^^^^^^^^^^ `loadAllGames` accessed before it is declared
+  36 |   }, []);
+  37 |
+  38 |   const loadAllGames = async () => {
+
+  36 |   }, []);
+  37 |
+> 38 |   const loadAllGames = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 39 |     try {
+     | ^^^^^^^^^
+> 40 |       // Optimize: sadece sidebar/oneri icin gereken alanlar
+     ÔÇĞ
+     | ^^^^^^^^^
+> 61 |     }
+     | ^^^^^^^^^
+> 62 |   };
+     | ^^^^^ `loadAllGames` is declared here
+  63 |
+  64 |   useEffect(() => {
+  65 |     if (game) {  react-hooks/immutability
+
+D:\Web\nasiloynanir\src\pages\Profile\ProfilePage.jsx
+  45:14  error  'error' is defined but never used. Allowed unused caught errors must match /^_/u  no-unused-vars
+
+D:\Web\nasiloynanir\test-supabase-direct.js
+  12:17  error  'testData' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  78:3   error  'process' is not defined                                                                  no-undef
+  81:3   error  'process' is not defined                                                                  no-undef
+
+D:\Web\nasiloynanir\tests\test-supabase-direct.js
+  12:17  error  'testData' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  78:3   error  'process' is not defined                                                                  no-undef
+  81:3   error  'process' is not defined                                                                  no-undef
+
+Ô£û 35 problems (29 errors, 6 warnings)
+

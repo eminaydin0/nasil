@@ -5,7 +5,7 @@
 
 // Site temel bilgileri
 export const SITE_CONFIG = {
-  name: 'Nasıl Oynanır',
+  name: 'Kuralı Ne?',
   tagline: 'Geleneksel Türk Oyunları Rehberi',
   url: 'https://nasiloynanir.com',
   defaultImage: 'https://nasiloynanir.com/og-image.jpg',
@@ -14,25 +14,25 @@ export const SITE_CONFIG = {
   charset: 'UTF-8',
   themeColor: '#f97316',
   twitterHandle: '@nasiloynanir',
-  author: 'Nasıl Oynanır',
-  publisher: 'Nasıl Oynanır',
+  author: 'Kuralı Ne?',
+  publisher: 'Kuralı Ne?',
   foundingDate: '2024',
   email: 'eminaydinyazilim@gmail.com',
 };
 
 // Varsayılan meta açıklamaları
 export const DEFAULT_META = {
-  title: 'Geleneksel Türk Oyunları - Nasıl Oynanır? Kuralları ve İpuçları',
-  description: 'Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının nasıl oynanacağını öğrenin. Detaylı kurallar, ipuçları ve stratejiler. 50+ oyun rehberi!',
-  keywords: 'okey nasıl oynanır, batak nasıl oynanır, pişti nasıl oynanır, 101 okey kuralları, batak kuralları, geleneksel oyunlar, türk oyunları, kağıt oyunları, masa oyunları, çocuk oyunları, sokak oyunları',
+  title: 'Geleneksel Türk Oyunları - Kuralı Ne? Kuralları, İpuçları ve Stratejileri',
+  description: 'Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının kuralı ne? Detaylı kurallar, ipuçları ve stratejiler. 50+ oyun rehberi!',
+  keywords: 'okey kuralı ne, batak kuralı ne, pişti kuralı ne, 101 okey kuralları, batak kuralları, geleneksel oyunlar, türk oyunları, kağıt oyunları, masa oyunları, çocuk oyunları, sokak oyunları',
 };
 
 // Sayfa bazlı SEO şablonları
 export const PAGE_SEO = {
   home: {
-    title: 'Geleneksel Türk Oyunları - Nasıl Oynanır? Kuralları ve İpuçları',
-    description: 'Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının nasıl oynanacağını öğrenin. Detaylı kurallar, ipuçları ve stratejiler.',
-    keywords: 'geleneksel türk oyunları, nasıl oynanır, oyun kuralları, kart oyunları, masa oyunları, çocuk oyunları',
+    title: 'Kuralı Ne? - Geleneksel Türk Oyunları Rehberi',
+    description: 'Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının kuralı ne? Detaylı kurallar, ipuçları ve stratejiler tek bir yerde.',
+    keywords: 'kuralı ne, oyun kuralları, geleneksel türk oyunları, kart oyunları, masa oyunları, çocuk oyunları',
   },
   allGames: {
     title: 'Tüm Oyunlar - Oyun Arşivi',
@@ -45,8 +45,8 @@ export const PAGE_SEO = {
     keywords: 'okey sayacı, batak yazboz, 101 okey hesaplama, takım oluşturucu, skor tablosu, oyun araçları',
   },
   about: {
-    title: 'Hakkımızda - Nasıl Oynanır',
-    description: 'Nasıl Oynanır, geleneksel Türk oyunlarını ve popüler kutu oyunlarını dijital dünyada yaşatmak amacıyla kurulmuş kapsamlı bir oyun rehberidir.',
+    title: 'Hakkımızda - Kuralı Ne?',
+    description: 'Kuralı Ne?, geleneksel Türk oyunlarını ve popüler kutu oyunlarını dijital dünyada yaşatmak amacıyla kurulmuş kapsamlı bir oyun rehberidir.',
     keywords: 'hakkımızda, nasıl oynanır, geleneksel oyunlar, türk oyunları',
   },
   contact: {
@@ -56,7 +56,7 @@ export const PAGE_SEO = {
   },
   auth: {
     title: 'Giriş Yap / Kayıt Ol',
-    description: 'Nasıl Oynanır hesabınıza giriş yapın veya yeni bir hesap oluşturun. Yorum yapın, oyunları favorileyin.',
+    description: 'Kuralı Ne? hesabınıza giriş yapın veya yeni bir hesap oluşturun. Yorum yapın, oyunları favorileyin.',
     keywords: 'giriş yap, kayıt ol, hesap oluştur, üyelik',
   },
   profile: {
@@ -65,23 +65,23 @@ export const PAGE_SEO = {
     keywords: 'profil, hesap, kullanıcı bilgileri',
   },
   terms: {
-    title: 'Kullanım Koşulları - Nasıl Oynanır',
-    description: 'Nasıl Oynanır web sitesinin kullanım koşulları. Platform kuralları, kullanıcı sorumlulukları ve fikri mülkiyet hakları.',
+    title: 'Kullanım Koşulları - Kuralı Ne?',
+    description: 'Kuralı Ne? web sitesinin kullanım koşulları. Platform kuralları, kullanıcı sorumlulukları ve fikri mülkiyet hakları.',
     keywords: 'kullanım koşulları, şartlar, koşullar, nasıl oynanır',
   },
   privacy: {
-    title: 'Gizlilik Politikası - Nasıl Oynanır',
-    description: 'Nasıl Oynanır gizlilik politikası. Kişisel verilerin nasıl toplandığı, kullanıldığı ve korunduğu hakkında bilgi.',
+    title: 'Gizlilik Politikası - Kuralı Ne?',
+    description: 'Kuralı Ne? gizlilik politikası. Kişisel verilerin nasıl toplandığı, kullanıldığı ve korunduğu hakkında bilgi.',
     keywords: 'gizlilik politikası, kvkk, kişisel veriler, veri koruma',
   },
   cookie: {
-    title: 'Çerez Politikası - Nasıl Oynanır',
-    description: 'Nasıl Oynanır çerez politikası. Sitede kullanılan çerezler, türleri ve tercihleriniz hakkında bilgi.',
+    title: 'Çerez Politikası - Kuralı Ne?',
+    description: 'Kuralı Ne? çerez politikası. Sitede kullanılan çerezler, türleri ve tercihleriniz hakkında bilgi.',
     keywords: 'çerez politikası, cookie, kvkk, gizlilik',
   },
   reklamVerin: {
-    title: 'Reklam Verin - Nasıl Oynanır',
-    description: 'Nasıl Oynanır\'da reklam verin. Oyunsever hedef kitlenize ulaşın. Banner, sponsorlu içerik ve özel paketler.',
+    title: 'Reklam Verin - Kuralı Ne?',
+    description: 'Kuralı Ne? sitesinde reklam verin. Oyunsever hedef kitlenize ulaşın. Banner, sponsorlu içerik ve özel paketler.',
     keywords: 'reklam verin, reklam, sponsorluk, banner reklam, oyun reklam',
   },
 };
@@ -89,32 +89,32 @@ export const PAGE_SEO = {
 // Kategori bazlı SEO şablonları
 export const CATEGORY_SEO = {
   'Kağıt Oyunları': {
-    title: 'Kağıt Oyunları - Nasıl Oynanır?',
+    title: 'Kağıt Oyunları - Kuralı Ne?',
     description: 'Batak, Pişti, King, Papaz Kaçtı gibi popüler kağıt oyunlarının kuralları ve nasıl oynandığını öğrenin.',
     keywords: 'kağıt oyunları, batak, pişti, king, papaz kaçtı, kart oyunları',
   },
   'Masa Oyunları': {
-    title: 'Masa Oyunları - Nasıl Oynanır?',
+    title: 'Masa Oyunları - Kuralı Ne?',
     description: 'Okey, Tavla, Satranç, Dama gibi klasik masa oyunlarının kuralları ve stratejileri.',
     keywords: 'masa oyunları, okey, tavla, satranç, dama, mangala',
   },
   'Kutu Oyunları': {
-    title: 'Kutu Oyunları - Nasıl Oynanır?',
+    title: 'Kutu Oyunları - Kuralı Ne?',
     description: 'Monopoly, UNO, Catan, Risk gibi popüler kutu oyunlarının detaylı kuralları ve ipuçları.',
     keywords: 'kutu oyunları, monopoly, uno, catan, risk, jenga, tabu',
   },
   'Dış Mekan': {
-    title: 'Dış Mekan Oyunları - Nasıl Oynanır?',
+    title: 'Dış Mekan Oyunları - Kuralı Ne?',
     description: 'Saklambaç, Körebe, Yakan Top gibi sokak oyunları ve açık alan oyunlarının kuralları.',
     keywords: 'sokak oyunları, dış mekan oyunları, saklambaç, körebe, yakan top, sek sek',
   },
   'İç Mekan': {
-    title: 'İç Mekan Oyunları - Nasıl Oynanır?',
+    title: 'İç Mekan Oyunları - Kuralı Ne?',
     description: 'Evde oynayabileceğiniz eğlenceli oyunlar. İç mekan oyunlarının kuralları ve ipuçları.',
     keywords: 'iç mekan oyunları, ev oyunları, salon oyunları',
   },
   'Zeka Oyunları': {
-    title: 'Zeka Oyunları - Nasıl Oynanır?',
+    title: 'Zeka Oyunları - Kuralı Ne?',
     description: 'Satranç, Dama, Sudoku gibi zeka geliştiren oyunların kuralları ve stratejileri.',
     keywords: 'zeka oyunları, strateji oyunları, satranç, dama, bulmaca',
   },
@@ -176,17 +176,28 @@ export const SCHEMA_TEMPLATES = {
   }),
 };
 
+// ISO-8601 dakikadan PT formatina (orn. 45 -> 'PT45M', 90 -> 'PT1H30M')
+function minutesToIso8601(minutes) {
+  const m = Number(minutes);
+  if (!m || m <= 0 || !Number.isFinite(m)) return 'PT30M';
+  const hours = Math.floor(m / 60);
+  const remaining = Math.round(m % 60);
+  if (hours === 0) return `PT${remaining}M`;
+  if (remaining === 0) return `PT${hours}H`;
+  return `PT${hours}H${remaining}M`;
+}
+
 // Oyun için HowTo schema oluşturucu
-export function generateGameSchema(game) {
+export function generateGameSchema(game, options = {}) {
   if (!game) return null;
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    name: `${game.name} Nasıl Oynanır`,
+    name: `${game.name} Kuralı Ne?`,
     description: game.description || game.shortDescription,
     image: game.image,
-    totalTime: 'PT30M',
+    totalTime: minutesToIso8601(game.playTimeMinutes),
     estimatedCost: {
       '@type': 'MonetaryAmount',
       currency: 'TRY',
@@ -221,7 +232,100 @@ export function generateGameSchema(game) {
     }));
   }
 
+  // AggregateRating (varsa) - rich snippet yildizlari icin
+  const rating = options.aggregateRating;
+  if (rating && rating.count > 0 && rating.average > 0) {
+    schema.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: Number(rating.average).toFixed(2),
+      ratingCount: rating.count,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+
   return schema;
+}
+
+// VideoObject schema - YouTube/Vimeo video icin rich snippet
+export function generateVideoSchema(game) {
+  if (!game?.videoUrl) return null;
+
+  const name = game.videoTitle || `${game.name} Kuralı Ne? - Video Anlatım`;
+  const description = game.shortDescription
+    ? `${game.name} oyununun nasıl oynandığını adım adım anlatan video. ${game.shortDescription}`
+    : `${game.name} oyununun nasıl oynandığını anlatan video.`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name,
+    description,
+    thumbnailUrl: game.image,
+    contentUrl: game.videoUrl,
+    embedUrl: game.videoUrl,
+    uploadDate: game.createdAt || game.updatedAt || new Date().toISOString(),
+    inLanguage: SITE_CONFIG.language,
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.name,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_CONFIG.url}/logo.svg`,
+      },
+    },
+  };
+}
+
+// Karsilastirma sayfasi schema - "X vs Y" sayfalari icin
+export function generateComparisonPageSchema(gameA, gameB) {
+  if (!gameA || !gameB) return null;
+
+  const url = `${SITE_CONFIG.url}/karsilastir/${gameA.slug}-vs-${gameB.slug}`;
+  const title = `${gameA.name} vs ${gameB.name} - Hangisi Daha İyi?`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: title,
+    url,
+    description: `${gameA.name} ile ${gameB.name} oyunlarının kuralları, oyuncu sayısı, zorluk seviyesi ve oyun süresi karşılaştırması.`,
+    inLanguage: SITE_CONFIG.language,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: SITE_CONFIG.name,
+      url: SITE_CONFIG.url,
+    },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          item: {
+            '@type': 'Game',
+            name: gameA.name,
+            url: `${SITE_CONFIG.url}/oyun/${gameA.slug}`,
+            image: gameA.image,
+            genre: gameA.category,
+            numberOfPlayers: { '@type': 'QuantitativeValue', value: gameA.players },
+          },
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          item: {
+            '@type': 'Game',
+            name: gameB.name,
+            url: `${SITE_CONFIG.url}/oyun/${gameB.slug}`,
+            image: gameB.image,
+            genre: gameB.category,
+            numberOfPlayers: { '@type': 'QuantitativeValue', value: gameB.players },
+          },
+        },
+      ],
+    },
+  };
 }
 
 // Article schema oluşturucu
@@ -231,7 +335,7 @@ export function generateArticleSchema(game) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${game.name} Nasıl Oynanır? Kuralları ve İpuçları`,
+    headline: `${game.name} Kuralı Ne? Kuralları ve İpuçları`,
     description: game.shortDescription || game.description,
     image: game.image,
     author: {
@@ -318,7 +422,7 @@ export function generateCollectionPageSchema(category, games) {
   return {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: categoryInfo.title || `${category} - Nasıl Oynanır?`,
+    name: categoryInfo.title || `${category} - Kuralı Ne?`,
     description: categoryInfo.description || `${category} kategorisindeki tüm oyunlar`,
     url: `${SITE_CONFIG.url}/kategori/${encodeURIComponent(category)}`,
     isPartOf: {
@@ -379,6 +483,8 @@ export default {
   CATEGORY_SEO,
   SCHEMA_TEMPLATES,
   generateGameSchema,
+  generateVideoSchema,
+  generateComparisonPageSchema,
   generateArticleSchema,
   generateBreadcrumbSchema,
   generateFAQSchema,

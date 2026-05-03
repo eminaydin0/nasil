@@ -1,4 +1,4 @@
-# Nasıl Oynanır - Robots.txt
+# Kuralı Ne? - Robots.txt
 # https://nasiloynanir.com
 
 # Allow all search engines to index all public pages

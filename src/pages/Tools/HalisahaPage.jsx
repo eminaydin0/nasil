@@ -18,7 +18,7 @@ export default function HalisahaPage() {
       seoDescription="Küçük saha maçları için hızlı takım kurma aracı. 5v5, 6v6, 7v7 formatlarını destekler."
       seoUrl="/araclar/halisaha-takim-olusturucu"
     >
-      <div className="p-8">
+      <div className="p-6 sm:p-10">
         <HalisahaGenerator />
       </div>
     </ToolLayout>

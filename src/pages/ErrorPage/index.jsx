@@ -29,7 +29,7 @@ function ErrorPage({ status = 404, title, message }) {
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4 py-16">
       <SEO
-        title={`${displayTitle} - Nasıl Oynanır`}
+        title={`${displayTitle} - Kuralı Ne?`}
         description={displayMessage}
         noindex
       />

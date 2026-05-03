@@ -66,10 +66,14 @@ function GameRecommendations({ currentGame, allGames }) {
             className="block group"
           >
             <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all border border-orange-100">
-              <img 
-                src={game.image} 
+              <img
+                src={game.image}
                 alt={game.name}
                 className="w-16 h-16 rounded-lg object-cover"
+                loading="lazy"
+                decoding="async"
+                width="64"
+                height="64"
               />
               <div className="flex-1 min-w-0">
                 <h4 className="font-semibold text-gray-900 group-hover:text-orange-600 transition-colors text-sm mb-1 truncate">

@@ -1,11 +1,135 @@
 @import "tailwindcss";
 
+/* Tailwind v4 - Tema değişkenleri (warm sophisticated paletti) */
+@theme {
+  /* Tipografi */
+  --font-sans: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Manrope', system-ui, sans-serif;
+
+  /* Marka rengi (mevcut orange/red korunuyor) */
+  --color-brand-50: #fff7ed;
+  --color-brand-100: #ffedd5;
+  --color-brand-200: #fed7aa;
+  --color-brand-300: #fdba74;
+  --color-brand-400: #fb923c;
+  --color-brand-500: #f97316;
+  --color-brand-600: #ea580c;
+  --color-brand-700: #c2410c;
+  --color-brand-800: #9a3412;
+  --color-brand-900: #7c2d12;
+
+  /* Sıcak beyaz / krem tonları */
+  --color-cream-50: #fefdfb;
+  --color-cream-100: #fdfaf4;
+  --color-cream-200: #faf3e6;
+  --color-cream-300: #f5ead0;
+
+  /* Sıcak gri (cool gri yerine) */
+  --color-warm-50: #fafaf9;
+  --color-warm-100: #f5f5f4;
+  --color-warm-200: #e7e5e4;
+  --color-warm-300: #d6d3d1;
+  --color-warm-400: #a8a29e;
+  --color-warm-500: #78716c;
+  --color-warm-600: #57534e;
+  --color-warm-700: #44403c;
+  --color-warm-800: #292524;
+  --color-warm-900: #1c1917;
+
+  /* Charcoal - sıcak koyu */
+  --color-charcoal-800: #23201d;
+  --color-charcoal-900: #16140f;
+  --color-charcoal-950: #0d0c0a;
+
+  /* Premium aksan - amber/altın */
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+
+  /* Yumuşak gölgeler */
+  --shadow-soft: 0 1px 3px 0 rgba(28, 25, 23, 0.04), 0 1px 2px 0 rgba(28, 25, 23, 0.03);
+  --shadow-soft-md: 0 4px 6px -1px rgba(28, 25, 23, 0.06), 0 2px 4px -2px rgba(28, 25, 23, 0.04);
+  --shadow-soft-lg: 0 10px 15px -3px rgba(28, 25, 23, 0.08), 0 4px 6px -4px rgba(28, 25, 23, 0.05);
+  --shadow-soft-xl: 0 20px 25px -5px rgba(28, 25, 23, 0.08), 0 8px 10px -6px rgba(28, 25, 23, 0.04);
+  --shadow-warm-glow: 0 10px 30px -10px rgba(249, 115, 22, 0.25);
+  --shadow-warm-glow-lg: 0 20px 50px -15px rgba(249, 115, 22, 0.35);
+
+  /* Easing */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Animasyonlar */
+  --animate-fade-in: fadeIn 0.5s ease-out;
+  --animate-fade-up: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-down: slideDown 0.3s ease-out;
+  --animate-slow-fade: fadeIn 0.9s ease-out;
+  --animate-shimmer: shimmer 2s infinite linear;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-count-up: countUp 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    0% { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideDown {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes countUp {
+    0% { opacity: 0; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+}
+
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
-/* Custom animations */
+/* Tipografi base ayarları - Manrope için optimize */
+body {
+  font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.011em;
+  color: #1c1917;
+  background-color: #fefdfb;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+/* Selection rengi - sıcak turuncu */
+::selection {
+  background-color: rgba(249, 115, 22, 0.2);
+  color: #7c2d12;
+}
+
+/* Focus ring - accessibility (sıcak turuncu) */
+:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Eski animasyonlar (geriye dönük uyumluluk) */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -66,7 +190,7 @@ html {
 
 .animate-shimmer {
   animation: shimmer 2s infinite linear;
-  background: linear-gradient(to right, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+  background: linear-gradient(to right, #f5f5f4 0%, #e7e5e4 50%, #f5f5f4 100%);
   background-size: 1000px 100%;
 }
 
@@ -78,22 +202,23 @@ html {
   animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - sıcak turuncu */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #fafaf9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #f97316, #dc2626);
+  background: linear-gradient(to bottom, #fb923c, #ea580c);
   border-radius: 5px;
+  border: 2px solid #fafaf9;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #ea580c, #b91c1c);
+  background: linear-gradient(to bottom, #f97316, #c2410c);
 }
 
 /* Hide scrollbar for gallery thumbnails */
@@ -104,3 +229,17 @@ html {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Premium gradient text helper */
+.text-gradient-brand {
+  background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Stagger delay utilities */
+.stagger-1 { animation-delay: 0.1s; animation-fill-mode: backwards; }
+.stagger-2 { animation-delay: 0.2s; animation-fill-mode: backwards; }
+.stagger-3 { animation-delay: 0.3s; animation-fill-mode: backwards; }
+.stagger-4 { animation-delay: 0.4s; animation-fill-mode: backwards; }

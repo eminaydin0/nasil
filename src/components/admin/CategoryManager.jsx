@@ -1,19 +1,39 @@
 import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, Loader2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Loader2,
+  Eye,
+  EyeOff,
+  FolderTree,
+  X,
+  Save,
+} from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
+import { useConfirm } from '../ui';
 
 const COLOR_OPTIONS = [
-  { value: 'red', label: 'Kırmızı' },
-  { value: 'orange', label: 'Turuncu' },
-  { value: 'purple', label: 'Mor' },
-  { value: 'blue', label: 'Mavi' },
-  { value: 'green', label: 'Yeşil' },
-  { value: 'indigo', label: 'İndigo' },
-  { value: 'gray', label: 'Gri' },
+  { value: 'red', label: 'Kırmızı', hex: '#ef4444' },
+  { value: 'orange', label: 'Turuncu', hex: '#f97316' },
+  { value: 'amber', label: 'Amber', hex: '#f59e0b' },
+  { value: 'green', label: 'Yeşil', hex: '#22c55e' },
+  { value: 'emerald', label: 'Emerald', hex: '#10b981' },
+  { value: 'blue', label: 'Mavi', hex: '#3b82f6' },
+  { value: 'cyan', label: 'Cyan', hex: '#06b6d4' },
+  { value: 'indigo', label: 'İndigo', hex: '#6366f1' },
+  { value: 'purple', label: 'Mor', hex: '#a855f7' },
+  { value: 'pink', label: 'Pembe', hex: '#ec4899' },
+  { value: 'gray', label: 'Gri', hex: '#9ca3af' },
 ];
 
+function getColorHex(value) {
+  return COLOR_OPTIONS.find((c) => c.value === value)?.hex || '#9ca3af';
+}
+
 function CategoryManager() {
+  const confirm = useConfirm();
   const [categories, setCategories] = useState([]);
   const [gameCounts, setGameCounts] = useState({});
   const [loading, setLoading] = useState(true);
@@ -24,7 +44,7 @@ function CategoryManager() {
     name: '',
     description: '',
     image_url: '',
-    color: 'gray',
+    color: 'orange',
     order_index: 0,
     is_active: true,
   });
@@ -32,22 +52,14 @@ function CategoryManager() {
   const loadCategories = async () => {
     try {
       setLoading(true);
-      
-      // Kategorileri ve oyun sayılarını paralel çek
       const [catResult, gamesResult] = await Promise.all([
-        supabase
-          .from('categories')
-          .select('*')
-          .order('order_index', { ascending: true }),
-        supabase
-          .from('games')
-          .select('category'),
+        supabase.from('categories').select('*').order('order_index', { ascending: true }),
+        supabase.from('games').select('category'),
       ]);
 
       if (catResult.error) throw catResult.error;
       setCategories(catResult.data || []);
 
-      // Oyun sayılarını hesapla
       if (gamesResult.data) {
         const counts = {};
         gamesResult.data.forEach((g) => {
@@ -73,7 +85,7 @@ function CategoryManager() {
       name: '',
       description: '',
       image_url: '',
-      color: 'gray',
+      color: 'orange',
       order_index: categories.length + 1,
       is_active: true,
     });
@@ -86,7 +98,7 @@ function CategoryManager() {
       name: cat.name,
       description: cat.description || '',
       image_url: cat.image_url || '',
-      color: cat.color || 'gray',
+      color: cat.color || 'orange',
       order_index: cat.order_index || 0,
       is_active: cat.is_active ?? true,
     });
@@ -150,13 +162,18 @@ function CategoryManager() {
 
   const handleDelete = async (cat) => {
     const gameCount = gameCounts[cat.name] || 0;
-    const warningMsg = gameCount > 0
-      ? `⚠️ "${cat.name}" kategorisinde ${gameCount} oyun var!\n\nKategoriyi silersen bu oyunlar kategorisiz kalır. Emin misin?`
-      : `"${cat.name}" kategorisini silmek istediğinizden emin misiniz?`;
-
-    if (!window.confirm(warningMsg)) {
-      return;
-    }
+    const ok = await confirm({
+      type: 'danger',
+      title: `"${cat.name}" kategorisini sil`,
+      description:
+        gameCount > 0
+          ? `Bu kategoride ${gameCount} oyun bulunuyor. Kategoriyi silersen bu oyunlar kategorisiz kalır. Devam etmek istiyor musun?`
+          : 'Bu kategoriyi kalıcı olarak silmek istediğinizden emin misiniz?',
+      confirmText: 'Evet, Sil',
+      cancelText: 'Vazgeç',
+      requireText: gameCount > 0 ? 'SIL' : '',
+    });
+    if (!ok) return;
 
     try {
       const { error } = await supabase.from('categories').delete().eq('id', cat.id);
@@ -189,128 +206,184 @@ function CategoryManager() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
+      <div className="flex items-center justify-center rounded-2xl border border-warm-200/60 bg-white p-20 shadow-soft">
+        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
       </div>
     );
   }
 
+  const activeCount = categories.filter((c) => c.is_active).length;
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900">Kategori Yönetimi</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Oyun kategorilerini ekleyin, düzenleyin veya silin. Sıra numarası listede görünüm sırasını belirler.
-          </p>
+    <div className="space-y-5">
+      {/* Üst bar */}
+      <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight text-charcoal-900">
+              <FolderTree size={20} className="text-orange-600" />
+              Kategori Yönetimi
+            </h2>
+            <p className="mt-0.5 text-sm text-warm-500">
+              {categories.length} kategori · {activeCount} aktif · Sıralama listede görünüm sırasını
+              belirler
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              if (showForm) {
+                resetForm();
+              } else {
+                setFormData({
+                  name: '',
+                  description: '',
+                  image_url: '',
+                  color: 'orange',
+                  order_index: categories.length + 1,
+                  is_active: true,
+                });
+                setEditingId(null);
+                setShowForm(true);
+              }
+            }}
+            className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold shadow-soft transition-all hover:-translate-y-0.5 ${
+              showForm
+                ? 'border border-warm-200 bg-cream-50 text-warm-700 hover:bg-warm-100'
+                : 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-warm-glow hover:shadow-warm-glow-lg'
+            }`}
+          >
+            {showForm ? (
+              <>
+                <X size={16} />
+                İptal
+              </>
+            ) : (
+              <>
+                <Plus size={16} />
+                Yeni Kategori
+              </>
+            )}
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setFormData({
-              name: '',
-              description: '',
-              image_url: '',
-              color: 'gray',
-              order_index: categories.length + 1,
-              is_active: true,
-            });
-            setEditingId(null);
-            setShowForm(!showForm);
-          }}
-          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
-        >
-          <Plus size={18} />
-          {showForm ? 'İptal' : 'Yeni Kategori'}
-        </button>
       </div>
 
+      {/* Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h3 className="font-semibold text-gray-900 mb-4">
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-2xl border border-orange-200/60 bg-gradient-to-br from-orange-50/30 to-amber-50/30 p-5 shadow-soft sm:p-6"
+        >
+          <h3 className="mb-4 text-base font-bold text-charcoal-900">
             {editingId ? 'Kategoriyi Düzenle' : 'Yeni Kategori Ekle'}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Kategori Adı *</label>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                Kategori Adı *
+              </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                className="w-full rounded-xl border-2 border-warm-200 bg-white px-3.5 py-2.5 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:outline-none"
                 placeholder="Örn: Kağıt Oyunları"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Renk</label>
-              <select
-                value={formData.color}
-                onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-              >
-                {COLOR_OPTIONS.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sıra</label>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                Sıra
+              </label>
               <input
                 type="number"
                 min="1"
                 value={formData.order_index}
-                onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) || 1 })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                onChange={(e) =>
+                  setFormData({ ...formData, order_index: parseInt(e.target.value) || 1 })
+                }
+                className="w-full rounded-xl border-2 border-warm-200 bg-white px-3.5 py-2.5 text-sm text-charcoal-900 transition-all focus:border-orange-400 focus:outline-none"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                Açıklama
+              </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows="2"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none"
+                className="w-full resize-none rounded-xl border-2 border-warm-200 bg-white px-3.5 py-2.5 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:outline-none"
                 placeholder="Kategori hakkında kısa açıklama"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Görsel URL</label>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                Görsel URL
+              </label>
               <input
                 type="url"
                 value={formData.image_url}
                 onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                className="w-full rounded-xl border-2 border-warm-200 bg-white px-3.5 py-2.5 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:outline-none"
                 placeholder="https://..."
               />
             </div>
             <div className="md:col-span-2">
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                Renk
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {COLOR_OPTIONS.map((c) => {
+                  const isActive = formData.color === c.value;
+                  return (
+                    <button
+                      key={c.value}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, color: c.value })}
+                      className={`group relative grid h-9 w-9 place-items-center rounded-xl shadow-soft transition-all duration-200 hover:-translate-y-0.5 ${
+                        isActive ? 'ring-2 ring-charcoal-900 ring-offset-2' : ''
+                      }`}
+                      style={{ backgroundColor: c.hex }}
+                      title={c.label}
+                    >
+                      {isActive && (
+                        <span className="text-xs font-bold text-white drop-shadow">✓</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="md:col-span-2">
+              <label className="flex cursor-pointer items-center gap-2 select-none">
                 <input
                   type="checkbox"
                   checked={formData.is_active}
                   onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                  className="h-4 w-4 cursor-pointer rounded border-warm-300 text-orange-500 focus:ring-orange-500/30"
                 />
-                <span className="text-sm font-medium text-gray-700">Aktif (sitede görünsün)</span>
+                <span className="text-sm font-semibold text-warm-700">Aktif (sitede görünsün)</span>
               </label>
             </div>
           </div>
-          <div className="flex gap-2 mt-4">
+          <div className="mt-5 flex gap-2">
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 font-medium flex items-center gap-2"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-5 py-2.5 text-sm font-bold text-white shadow-warm-glow transition-all hover:-translate-y-0.5 hover:shadow-warm-glow-lg disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving && <Loader2 size={16} className="animate-spin" />}
+              {saving ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Save size={16} />
+              )}
               {editingId ? 'Güncelle' : 'Ekle'}
             </button>
             <button
               type="button"
               onClick={resetForm}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="rounded-xl border border-warm-200 bg-white px-4 py-2.5 text-sm font-semibold text-warm-700 transition-colors hover:bg-warm-100"
             >
               İptal
             </button>
@@ -318,110 +391,142 @@ function CategoryManager() {
         </form>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Sıra</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Kategori</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Oyun</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Renk</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Durum</th>
-              <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">İşlemler</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.length === 0 ? (
+      {/* Liste */}
+      <div className="overflow-hidden rounded-2xl border border-warm-200/60 bg-white shadow-soft">
+        {categories.length === 0 ? (
+          <div className="p-16 text-center">
+            <FolderTree size={28} className="mx-auto mb-2 text-warm-400" />
+            <p className="text-sm font-semibold text-warm-700">Henüz kategori yok</p>
+            <p className="mt-1 text-xs text-warm-500">
+              "Yeni Kategori" butonu ile ilkini ekleyin.
+            </p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead className="border-b border-warm-200 bg-cream-50">
               <tr>
-                <td colSpan="6" className="py-12 text-center text-gray-500">
-                  Henüz kategori yok. Yeni kategori ekleyin.
-                </td>
+                <th className="w-16 px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600">
+                  Sıra
+                </th>
+                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600">
+                  Kategori
+                </th>
+                <th className="hidden px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600 sm:table-cell">
+                  Oyun
+                </th>
+                <th className="hidden px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600 md:table-cell">
+                  Renk
+                </th>
+                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600">
+                  Durum
+                </th>
+                <th className="px-4 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-warm-600">
+                  İşlem
+                </th>
               </tr>
-            ) : (
-              categories.map((cat) => {
+            </thead>
+            <tbody>
+              {categories.map((cat) => {
                 const gameCount = gameCounts[cat.name] || 0;
-                const colorMap = {
-                  red: '#ef4444',
-                  orange: '#f97316',
-                  purple: '#a855f7',
-                  blue: '#3b82f6',
-                  green: '#22c55e',
-                  indigo: '#6366f1',
-                  gray: '#9ca3af',
-                };
+                const hex = getColorHex(cat.color);
                 return (
                   <tr
                     key={cat.id}
-                    className={`border-b border-gray-100 hover:bg-gray-50/50 ${!cat.is_active ? 'opacity-50 bg-gray-50' : ''}`}
+                    className={`border-b border-warm-100 transition-colors hover:bg-cream-50 ${
+                      !cat.is_active ? 'opacity-60' : ''
+                    }`}
                   >
-                    <td className="py-3 px-4 text-sm text-gray-600">{cat.order_index}</td>
-                    <td className="py-3 px-4">
-                      <div className="font-medium text-gray-900">{cat.name}</div>
-                      {cat.description && (
-                        <div className="text-xs text-gray-500 mt-0.5 truncate max-w-xs">{cat.description}</div>
-                      )}
+                    <td className="px-4 py-3 text-sm font-bold text-warm-600">
+                      <span className="grid h-7 w-7 place-items-center rounded-md bg-warm-100 text-xs">
+                        {cat.order_index}
+                      </span>
                     </td>
-                    <td className="py-3 px-4">
-                      <span className={`text-sm font-medium ${gameCount > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="h-9 w-9 shrink-0 rounded-xl"
+                          style={{ backgroundColor: hex, boxShadow: `0 4px 14px -4px ${hex}99` }}
+                        />
+                        <div className="min-w-0">
+                          <div className="font-bold text-charcoal-900">{cat.name}</div>
+                          {cat.description && (
+                            <div className="truncate text-xs text-warm-500 sm:max-w-md">
+                              {cat.description}
+                            </div>
+                          )}
+                          <div className="mt-0.5 text-[11px] font-semibold text-warm-500 sm:hidden">
+                            {gameCount} oyun
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="hidden px-4 py-3 sm:table-cell">
+                      <span
+                        className={`inline-flex rounded-md px-2 py-0.5 text-xs font-bold ${
+                          gameCount > 0
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-warm-100 text-warm-500'
+                        }`}
+                      >
                         {gameCount}
                       </span>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="hidden px-4 py-3 md:table-cell">
                       <span
-                        className="inline-block w-4 h-4 rounded-full border border-gray-300"
-                        style={{ backgroundColor: colorMap[cat.color] || '#9ca3af' }}
+                        className="inline-block h-5 w-5 rounded-md border border-warm-300/60"
+                        style={{ backgroundColor: hex }}
                         title={cat.color}
                       />
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="px-4 py-3">
                       {cat.is_active ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                          <Eye size={12} /> Aktif
+                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                          <Eye size={11} /> Aktif
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
-                          <EyeOff size={12} /> Pasif
+                        <span className="inline-flex items-center gap-1 rounded-md bg-warm-200 px-2 py-0.5 text-[11px] font-bold text-warm-600">
+                          <EyeOff size={11} /> Pasif
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex justify-end gap-1">
+                    <td className="px-4 py-3 text-right">
+                      <div className="inline-flex items-center gap-0.5">
                         <button
                           type="button"
                           onClick={() => handleToggleActive(cat)}
-                          className={`p-2 rounded-lg transition-colors ${
+                          className={`grid h-8 w-8 place-items-center rounded-lg transition-colors ${
                             cat.is_active
-                              ? 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                              : 'text-green-500 hover:text-green-700 hover:bg-green-50'
+                              ? 'text-warm-500 hover:bg-warm-100 hover:text-warm-700'
+                              : 'text-emerald-600 hover:bg-emerald-50'
                           }`}
                           title={cat.is_active ? 'Pasifleştir' : 'Aktifleştir'}
                         >
-                          {cat.is_active ? <EyeOff size={16} /> : <Eye size={16} />}
+                          {cat.is_active ? <EyeOff size={15} /> : <Eye size={15} />}
                         </button>
                         <button
                           type="button"
                           onClick={() => handleEdit(cat)}
-                          className="p-2 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                          className="grid h-8 w-8 place-items-center rounded-lg text-blue-600 transition-colors hover:bg-blue-50"
                           title="Düzenle"
                         >
-                          <Pencil size={16} />
+                          <Pencil size={15} />
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDelete(cat)}
-                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="grid h-8 w-8 place-items-center rounded-lg text-rose-600 transition-colors hover:bg-rose-50"
                           title="Sil"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={15} />
                         </button>
                       </div>
                     </td>
                   </tr>
                 );
-              })
-            )}
-          </tbody>
-        </table>
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

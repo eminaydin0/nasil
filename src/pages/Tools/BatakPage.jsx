@@ -27,13 +27,13 @@ export default function BatakPage() {
       title="Batak & King Yazboz"
       description="İhaleli batak, eşli batak veya King oyunları için dijital yazboz. Puanları otomatik toplayın."
       icon={PencilLine}
-      iconColor="orange"
+      iconColor="indigo"
       seoTitle="Batak & King Yazboz Tablosu"
       seoDescription="İhaleli batak, eşli batak veya King oyunları için dijital yazboz. Puanları otomatik toplayın."
       seoUrl="/araclar/batak-yazboz"
       helpContent={helpContent}
     >
-      <div className="p-8">
+      <div className="p-6 sm:p-10">
         <BatakScore />
       </div>
     </ToolLayout>
