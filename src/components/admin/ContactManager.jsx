@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Save,
   Loader2,
   Mail,
   Phone,
@@ -10,10 +9,15 @@ import {
   Check,
   MessageCircle,
   Settings,
+  Eye,
+  User,
+  Calendar,
+  Reply,
+  ExternalLink,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import { useConfirm } from '../ui';
+import { useConfirm, TextField, Button, Modal, Avatar } from '../ui';
 
 const DEFAULT_CONTACT = {
   email: 'eminaydinyazilim@gmail.com',
@@ -29,6 +33,21 @@ function ContactManager() {
   const [messagesLoading, setMessagesLoading] = useState(true);
   const [activeSubTab, setActiveSubTab] = useState('messages');
   const [contactInfo, setContactInfo] = useState({ email: '', phone: '', address: '' });
+  const [viewerMessageId, setViewerMessageId] = useState(null);
+
+  /** Listede ve modalda her zaman güncel satır kullanılır */
+  const viewerMessage = useMemo(
+    () =>
+      viewerMessageId == null ? null : messages.find((m) => m.id === viewerMessageId) ?? null,
+    [messages, viewerMessageId]
+  );
+
+  /** Tam metni özetler — listede sığdırır */
+  const previewMessage = (text, max = 140) => {
+    const t = (text || '').trim();
+    if (!t) return '—';
+    return t.length > max ? `${t.slice(0, max)}…` : t;
+  };
 
   const loadMessages = useCallback(async () => {
     setMessagesLoading(true);
@@ -113,7 +132,7 @@ function ContactManager() {
     }
   };
 
-  const markAsRead = async (id, isRead) => {
+  const markAsRead = async (id, isRead, silent = false) => {
     try {
       const { error } = await supabase
         .from('contact_messages')
@@ -121,9 +140,18 @@ function ContactManager() {
         .eq('id', id);
       if (error) throw error;
       setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, is_read: isRead } : m)));
-      toast.success(isRead ? 'Okundu işaretlendi' : 'Okunmadı işaretlendi');
+      if (!silent) {
+        toast.success(isRead ? 'Okundu işaretlendi' : 'Okunmadı işaretlendi');
+      }
     } catch (_err) {
-      toast.error('Güncellenemedi');
+      if (!silent) toast.error('Güncellenemedi');
+    }
+  };
+
+  const openViewer = (msg) => {
+    setViewerMessageId(msg?.id ?? null);
+    if (msg && !msg.is_read) {
+      markAsRead(msg.id, true, true);
     }
   };
 
@@ -140,10 +168,16 @@ function ContactManager() {
       const { error } = await supabase.from('contact_messages').delete().eq('id', id);
       if (error) throw error;
       setMessages((prev) => prev.filter((m) => m.id !== id));
+      if (viewerMessageId === id) setViewerMessageId(null);
       toast.success('Mesaj silindi');
     } catch (_err) {
       toast.error('Silinemedi');
     }
+  };
+
+  /** Modal içinden sil */
+  const deleteFromViewer = () => {
+    if (viewerMessage) deleteMessage(viewerMessage.id);
   };
 
   const formatDate = (dateStr) => {
@@ -156,6 +190,15 @@ function ContactManager() {
       minute: '2-digit',
     });
   };
+
+  const replyMailHref = useMemo(() => {
+    if (!viewerMessage) return '';
+    return `mailto:${encodeURIComponent(viewerMessage.email)}?subject=${encodeURIComponent(
+      `[Kuralı Ne?] Mesajınız — ${viewerMessage.name?.trim() || 'Ziyaretçi'}`
+    )}&body=${encodeURIComponent(
+      `\n\n--- Önceki ileti (${formatDate(viewerMessage.created_at)}) ---\n${viewerMessage.message || ''}`
+    )}`;
+  }, [viewerMessage]);
 
   if (loading) {
     return (
@@ -230,42 +273,64 @@ function ContactManager() {
             </div>
           ) : (
             <div className="space-y-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-warm-400">
+                Satıra veya görüntüle düğmesine tıklayın — tam metin yeni sekmeden yanıtlamayı da içerir.
+              </p>
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`rounded-xl border p-4 transition-colors ${
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => openViewer(msg)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openViewer(msg);
+                    }
+                  }}
+                  className={`cursor-pointer rounded-xl border p-4 text-left transition-colors ${
                     msg.is_read
-                      ? 'border-warm-200/60 bg-cream-50 hover:border-warm-300'
-                      : 'border-orange-200 bg-orange-50/60 hover:border-orange-300'
+                      ? 'border-warm-200/60 bg-cream-50 hover:border-orange-300/60 hover:bg-white'
+                      : 'border-orange-200 bg-orange-50/60 hover:border-orange-400 hover:bg-orange-50'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <div className="mb-2 flex flex-wrap items-center gap-2">
+                        <Avatar name={msg.name || '?'} size="sm" className="shrink-0" />
                         <span className="text-sm font-bold text-charcoal-900">{msg.name}</span>
-                        <a
-                          href={`mailto:${msg.email}`}
-                          className="truncate text-xs font-semibold text-orange-600 hover:underline"
-                        >
-                          {msg.email}
-                        </a>
+                        <span className="truncate text-xs font-semibold text-warm-500">{msg.email}</span>
                         {!msg.is_read && (
                           <span className="rounded-md bg-orange-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
                             Yeni
                           </span>
                         )}
                       </div>
-                      <p className="whitespace-pre-wrap text-sm leading-relaxed text-warm-700">
-                        {msg.message}
+                      <p className="line-clamp-2 text-sm leading-relaxed text-warm-700">
+                        {previewMessage(msg.message)}
                       </p>
-                      <p className="mt-2 text-[11px] font-medium text-warm-500">
-                        {formatDate(msg.created_at)}
+                      <p className="mt-2 flex items-center gap-1 text-[11px] font-medium text-warm-500">
+                        <Calendar size={11} aria-hidden /> {formatDate(msg.created_at)}
                       </p>
                     </div>
-                    <div className="flex shrink-0 items-center gap-1">
+                    <div className="flex shrink-0 flex-col gap-1 sm:flex-row">
                       <button
                         type="button"
-                        onClick={() => markAsRead(msg.id, !msg.is_read)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openViewer(msg);
+                        }}
+                        className="grid h-8 w-8 place-items-center rounded-lg bg-orange-500/15 text-orange-700 transition-colors hover:bg-orange-500/25"
+                        title="Görüntüle"
+                      >
+                        <Eye size={16} aria-hidden />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          markAsRead(msg.id, !msg.is_read);
+                        }}
                         className="grid h-8 w-8 place-items-center rounded-lg text-warm-600 transition-colors hover:bg-warm-100 hover:text-charcoal-900"
                         title={msg.is_read ? 'Okunmadı işaretle' : 'Okundu işaretle'}
                       >
@@ -273,7 +338,10 @@ function ContactManager() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => deleteMessage(msg.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteMessage(msg.id);
+                        }}
                         className="grid h-8 w-8 place-items-center rounded-lg text-rose-600 transition-colors hover:bg-rose-50"
                         title="Sil"
                       >
@@ -291,72 +359,123 @@ function ContactManager() {
       {/* Bilgi düzenleme */}
       {activeSubTab === 'info' && (
         <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
-          <h3 className="mb-5 text-base font-bold text-charcoal-900">İletişim Bilgilerini Düzenle</h3>
+          <h3 className="mb-5 font-display text-lg font-bold text-charcoal-900">
+            Yayında görünen iletişim kutusu
+          </h3>
           <form onSubmit={handleSave} className="space-y-5">
-            <div>
-              <label className="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-warm-600">
-                <Mail size={13} className="text-orange-500" />
-                E-posta Adresi
-              </label>
-              <input
-                type="email"
-                value={contactInfo.email}
-                onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
-                className="w-full rounded-xl border-2 border-warm-200 bg-cream-50 px-3.5 py-2.5 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:bg-white focus:outline-none"
-                placeholder="ornek@email.com"
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-warm-600">
-                <Phone size={13} className="text-orange-500" />
-                Telefon
-              </label>
-              <input
-                type="text"
-                value={contactInfo.phone}
-                onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
-                className="w-full rounded-xl border-2 border-warm-200 bg-cream-50 px-3.5 py-2.5 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:bg-white focus:outline-none"
-                placeholder="05XX XXX XX XX"
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-warm-600">
-                <MapPin size={13} className="text-orange-500" />
-                Adres
-              </label>
-              <textarea
-                value={contactInfo.address}
-                onChange={(e) => setContactInfo({ ...contactInfo, address: e.target.value })}
-                rows={3}
-                className="w-full resize-none rounded-xl border-2 border-warm-200 bg-cream-50 px-3.5 py-2.5 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:bg-white focus:outline-none"
-                placeholder="Adres bilgisi..."
-              />
-            </div>
+            <TextField
+              label="E-posta"
+              type="email"
+              value={contactInfo.email}
+              onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+              icon={Mail}
+              tone="subtle"
+              placeholder="iletisim@siteniz.com"
+            />
+            <TextField
+              label="Telefon"
+              type="text"
+              value={contactInfo.phone}
+              onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+              icon={Phone}
+              tone="subtle"
+              placeholder="05XX XXX XX XX"
+            />
+            <TextField
+              as="textarea"
+              label="Konum özeti"
+              rows={3}
+              value={contactInfo.address}
+              onChange={(e) => setContactInfo({ ...contactInfo, address: e.target.value })}
+              icon={MapPin}
+              tone="subtle"
+              placeholder="İl, Türkiye"
+              hint="/iletisim ve şema için tek satır yeter."
+            />
 
             <div className="border-t border-warm-200/60 pt-4">
-              <button
-                type="submit"
-                disabled={saving}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-5 py-2.5 text-sm font-bold text-white shadow-warm-glow transition-all hover:-translate-y-0.5 hover:shadow-warm-glow-lg disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="animate-spin" size={16} />
-                    Kaydediliyor...
-                  </>
-                ) : (
-                  <>
-                    <Save size={16} />
-                    Değişiklikleri Kaydet
-                  </>
-                )}
-              </button>
+              <Button type="submit" size="md" loading={saving}>
+                Kaydet ve canlı yayına al
+              </Button>
             </div>
           </form>
         </div>
       )}
+
+      <Modal
+        open={Boolean(viewerMessage)}
+        onClose={() => setViewerMessageId(null)}
+        size="xl"
+        icon={User}
+        title={viewerMessage?.name || 'Ziyaretçi'}
+        description={viewerMessage ? formatDate(viewerMessage.created_at) : ''}
+        footer={
+          viewerMessage ? (
+            <>
+              <Button variant="secondary" size="md" onClick={() => setViewerMessageId(null)}>
+                Kapat
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => markAsRead(viewerMessage.id, !viewerMessage.is_read)}
+              >
+                {viewerMessage.is_read ? 'Okunmadı yap' : 'Okundu işaretle'}
+              </Button>
+              <Button size="md" href={replyMailHref} iconLeft={Reply}>
+                Yanıtla
+              </Button>
+              <Button
+                size="md"
+                className="bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700"
+                onClick={() => deleteFromViewer()}
+              >
+                Sil
+              </Button>
+            </>
+          ) : null
+        }
+      >
+        {viewerMessage && (
+          <div className="space-y-5">
+            <div className="flex flex-wrap gap-4 rounded-2xl border border-warm-200/70 bg-gradient-to-br from-orange-50/80 to-white p-4">
+              <a
+                href={`mailto:${viewerMessage.email}`}
+                className="inline-flex flex-1 min-w-[12rem] items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-bold text-orange-700 shadow-soft ring-1 ring-warm-200 transition-colors hover:bg-orange-50"
+              >
+                <Mail size={16} className="shrink-0" aria-hidden /> {viewerMessage.email}
+              </a>
+              <a
+                href={replyMailHref}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-orange-700 hover:text-orange-900"
+              >
+                <ExternalLink size={13} aria-hidden /> Posta kutusunda aç
+              </a>
+            </div>
+            <div>
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.12em] text-warm-500">
+                Mesaj
+              </p>
+              <div className="max-h-[min(52vh,28rem)] overflow-y-auto whitespace-pre-wrap rounded-2xl border border-warm-200/70 bg-warm-50/60 p-5 text-[15px] leading-relaxed text-charcoal-900">
+                {viewerMessage.message || '—'}
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-[11px] text-warm-500">
+              <span title="Kayıt benzersiz kodu">
+                ID:{' '}
+                <code className="rounded-md bg-warm-100 px-1.5 py-0.5 font-mono text-warm-800">
+                  {String(viewerMessage.id).slice(0, 12)}
+                  {(String(viewerMessage.id).length > 12 ? '…' : '')}
+                </code>
+              </span>
+              <span>·</span>
+              <span>{viewerMessage.is_read ? 'Okundu' : 'Okunmadı'} (otomatik güncellenir)</span>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
