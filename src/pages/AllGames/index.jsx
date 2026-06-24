@@ -101,7 +101,7 @@ function AllGames() {
   ];
 
   return (
-    <div className="min-h-screen bg-cream-50 py-12">
+    <div className="min-h-screen bg-cream-50 py-8 sm:py-12">
       <SEO 
         title={seoMeta.title}
         description={seoMeta.description}
@@ -116,16 +116,16 @@ function AllGames() {
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
         {/* Header Section */}
-        <div className="mb-10">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-orange-100 rounded-xl">
+        <div className="mb-8 sm:mb-10">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+            <div className="shrink-0 rounded-xl bg-orange-100 p-3 self-start">
               <Gamepad2 className="text-orange-600" size={32} />
             </div>
-            <div>
-              <h1 className="text-3xl font-black text-warm-900">
+            <div className="min-w-0">
+              <h1 className="text-2xl font-black text-warm-900 sm:text-3xl">
                 {searchQuery ? `"${searchQuery}" Arama Sonuçları` : 'Tüm Oyunlar'}
               </h1>
-              <p className="text-warm-600">
+              <p className="text-sm text-warm-600 sm:text-base">
                 {searchQuery
                   ? `${filteredGames.length} oyun bulundu`
                   : `Arşivimizdeki tüm oyunları keşfedin (${games.length} oyun)`}
@@ -134,9 +134,9 @@ function AllGames() {
           </div>
 
           {/* Filters */}
-          <div className="bg-white p-3 rounded-xl shadow-sm border border-warm-100 flex flex-col md:flex-row gap-3 items-center justify-between">
+          <div className="flex flex-col gap-3 rounded-xl border border-warm-100 bg-white p-3 shadow-sm md:flex-row md:items-center md:justify-between">
             {/* Category Tabs */}
-            <div className="flex flex-wrap md:flex-nowrap items-center justify-center md:justify-start gap-1.5 w-full md:flex-1 overflow-x-auto">
+            <div className="scroll-touch -mx-1 flex w-full items-center gap-1.5 overflow-x-auto px-1 pb-1 md:mx-0 md:flex-1 md:flex-wrap md:justify-start md:overflow-visible md:pb-0">
               {categoryTabs.map(({ name, count }) => (
                 <button
                   key={name}
@@ -172,14 +172,14 @@ function AllGames() {
 
         {/* Games Grid */}
         {loading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
               <div key={i} className="bg-white rounded-2xl h-80 animate-pulse"></div>
             ))}
           </div>
         ) : filteredGames.length > 0 ? (
           <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredGames.map(game => {
                 const stats = statsMap[game.id];
                 return (

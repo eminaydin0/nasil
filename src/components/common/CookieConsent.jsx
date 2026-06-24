@@ -93,7 +93,7 @@ function CookieConsent() {
       )}
 
       {/* Alt Bar - Minimal, arka plan görünür */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 px-3 sm:px-4 pb-3 sm:pb-4 pointer-events-none">
+      <div className="fixed bottom-0 left-0 right-0 z-50 safe-area-bottom px-3 pb-3 sm:px-4 sm:pb-4 pointer-events-none">
         <div className="max-w-4xl mx-auto pointer-events-auto animate-slide-up">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4 sm:py-3 sm:px-4 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-warm-200/80">
             <div className="flex items-center gap-3 flex-1 min-w-0">

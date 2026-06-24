@@ -49,7 +49,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
 
   return (
     <div className="bg-cream-50 border-b border-warm-200/60">
-      <div className="container mx-auto px-4 py-10 md:py-14">
+      <div className="container mx-auto px-4 py-6 sm:py-8 md:py-14">
         {/* Geri - minimal */}
         <button
           onClick={() => navigate(-1)}
@@ -59,7 +59,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
           <span>Geri</span>
         </button>
 
-        <div className="grid lg:grid-cols-5 gap-8 lg:gap-12">
+        <div className="grid gap-6 lg:grid-cols-5 lg:gap-12">
           {/* Galeri */}
           <div className="lg:col-span-3 space-y-3">
             <div
@@ -155,20 +155,22 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
           </div>
 
           {/* Içerik */}
-          <div className="lg:col-span-2 flex flex-col justify-center">
-            <div className="flex items-center justify-between gap-3 mb-4">
-              <div className="flex items-center gap-2.5 flex-wrap min-w-0">
+          <div className="lg:col-span-2 flex flex-col justify-center min-w-0">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-2.5">
                 <Badge variant="brand" size="md" className="uppercase tracking-wider">
                   {game.category}
                 </Badge>
-                <span className="inline-flex items-center text-warm-500 text-xs font-medium">
-                  <Eye size={13} className="mr-1.5" />
+                <span className="inline-flex items-center text-xs font-medium text-warm-500">
+                  <Eye size={13} className="mr-1.5 shrink-0" />
                   {viewCount.toLocaleString('tr-TR')} görüntülenme
                 </span>
               </div>
-              <SocialShare game={game} />
+              <div className="shrink-0 self-start sm:self-auto">
+                <SocialShare game={game} />
+              </div>
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-warm-900 mb-3 leading-[1.05] tracking-tight">
+            <h1 className="mb-3 text-2xl font-extrabold leading-[1.08] tracking-tight text-warm-900 sm:text-3xl md:text-4xl lg:text-5xl">
               {game.name}{' '}
               <span className="text-orange-600">Kuralı Ne?</span>
             </h1>

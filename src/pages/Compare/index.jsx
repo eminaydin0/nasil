@@ -20,6 +20,11 @@ import {
   buildComparisonSeoMeta,
   buildComparisonStructuredData,
 } from '../../lib/seoEngine';
+import {
+  parseComparisonParam,
+  buildComparisonPath,
+  getCanonicalUrl,
+} from '../../constants/seo';
 
 const DIFFICULTY_RANK = { Kolay: 1, Orta: 2, Zor: 3 };
 
@@ -27,6 +32,19 @@ function parsePlayerCount(playersText) {
   if (!playersText) return 0;
   const match = String(playersText).match(/\d+/);
   return match ? parseInt(match[0], 10) : 0;
+}
+
+function normalizeStringArray(value) {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return value.trim() ? [value] : [];
+    }
+  }
+  return [];
 }
 
 function mapGame(row, ratingSummary = { count: 0, average: 0 }) {
@@ -41,26 +59,26 @@ function mapGame(row, ratingSummary = { count: 0, average: 0 }) {
     image: row.image,
     shortDescription: row.short_description,
     description: row.description,
-    rules: Array.isArray(row.rules) ? row.rules : [],
-    tips: Array.isArray(row.tips) ? row.tips : [],
+    rules: normalizeStringArray(row.rules),
+    tips: normalizeStringArray(row.tips),
     playTimeMinutes: row.play_time_minutes || null,
     ratingCount: ratingSummary.count,
     ratingAverage: ratingSummary.average,
   };
 }
 
-function ParseSlugs(comparison) {
-  if (!comparison || !comparison.includes('-vs-')) return null;
-  const [slugA, slugB] = comparison.split('-vs-');
-  if (!slugA || !slugB) return null;
-  return { slugA, slugB };
+function summarizeRatings(comments, gameId) {
+  const list = (comments || []).filter((c) => c.game_id === gameId && c.rating > 0);
+  if (list.length === 0) return { count: 0, average: 0 };
+  const sum = list.reduce((acc, c) => acc + (c.rating || 0), 0);
+  return { count: list.length, average: sum / list.length };
 }
 
 function ComparisonCell({ valueA, valueB, betterIndex }) {
-  const a = `flex-1 p-4 ${betterIndex === 0 ? 'bg-green-50' : ''}`;
-  const b = `flex-1 p-4 ${betterIndex === 1 ? 'bg-green-50' : ''}`;
+  const a = `min-w-0 flex-1 p-3 sm:p-4 ${betterIndex === 0 ? 'bg-green-50' : ''}`;
+  const b = `min-w-0 flex-1 p-3 sm:p-4 ${betterIndex === 1 ? 'bg-green-50' : ''}`;
   return (
-    <div className="flex items-stretch border-b border-warm-100 last:border-b-0">
+    <div className="flex min-w-0 items-stretch border-b border-warm-100 last:border-b-0">
       <div className={a}>{valueA}</div>
       <div className="w-px bg-warm-100" />
       <div className={b}>{valueB}</div>
@@ -118,7 +136,7 @@ function GameHeaderCard({ game }) {
 export default function ComparePage() {
   const { comparison } = useParams();
   const navigate = useNavigate();
-  const slugs = useMemo(() => ParseSlugs(comparison), [comparison]);
+  const slugs = useMemo(() => parseComparisonParam(comparison), [comparison]);
 
   const [gameA, setGameA] = useState(null);
   const [gameB, setGameB] = useState(null);
@@ -146,7 +164,7 @@ export default function ComparePage() {
     setLoading(true);
     setError(null);
     try {
-      const [resA, resB, ratingsRes] = await Promise.all([
+      const [resA, resB] = await Promise.all([
         supabase
           .from('games')
           .select('id, slug, name, category, players, difficulty, image, short_description, description, rules, tips, play_time_minutes')
@@ -157,26 +175,21 @@ export default function ComparePage() {
           .select('id, slug, name, category, players, difficulty, image, short_description, description, rules, tips, play_time_minutes')
           .eq('slug', slugs.slugB)
           .maybeSingle(),
-        supabase
-          .from('game_ratings')
-          .select('game_id, rating'),
       ]);
 
       if (resA.error || !resA.data) throw new Error(`Oyun bulunamadı: ${slugs.slugA}`);
       if (resB.error || !resB.data) throw new Error(`Oyun bulunamadı: ${slugs.slugB}`);
 
-      const ratings = ratingsRes.data || [];
-      const summarize = (id) => {
-        const list = ratings.filter((r) => r.game_id === id);
-        if (list.length === 0) return { count: 0, average: 0 };
-        return {
-          count: list.length,
-          average: list.reduce((sum, r) => sum + (r.rating || 0), 0) / list.length,
-        };
-      };
+      const gameIds = [resA.data.id, resB.data.id];
+      const { data: commentRatings } = await supabase
+        .from('comments')
+        .select('game_id, rating')
+        .in('game_id', gameIds);
 
-      setGameA(mapGame(resA.data, summarize(resA.data.id)));
-      setGameB(mapGame(resB.data, summarize(resB.data.id)));
+      const ratings = commentRatings || [];
+
+      setGameA(mapGame(resA.data, summarizeRatings(ratings, resA.data.id)));
+      setGameB(mapGame(resB.data, summarizeRatings(ratings, resB.data.id)));
     } catch (err) {
       console.error('Compare loading error:', err);
       setError(err.message);
@@ -272,7 +285,7 @@ export default function ComparePage() {
         breadcrumbs={breadcrumbs}
       />
 
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="container mx-auto max-w-5xl px-4 py-6 sm:py-8">
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
         <header className="text-center mb-8">
@@ -280,7 +293,7 @@ export default function ComparePage() {
             <Trophy size={14} />
             Karşılaştırma
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black text-warm-900 mt-3 tracking-tight">
+          <h1 className="mt-3 text-2xl font-black tracking-tight text-warm-900 sm:text-3xl md:text-4xl break-words">
             {gameA.name} <span className="text-orange-500">vs</span> {gameB.name}
           </h1>
           <p className="text-warm-600 mt-2 max-w-2xl mx-auto">
@@ -406,11 +419,20 @@ export default function ComparePage() {
             Başka bir karşılaştırma denemek ister misin? <Link to="/oyunlar" className="text-orange-600 font-semibold hover:underline">Tüm oyunlara göz at →</Link>
           </p>
           <p className="text-xs text-warm-400 mt-2">
-            <a
-              href={`${SITE_CONFIG.url}/karsilastir/${gameA.slug}-vs-${gameB.slug}`}
+            <Link
+              to={buildComparisonPath(gameA.slug, gameB.slug)}
               className="hover:underline"
             >
               Bu sayfayı paylaş
+            </Link>
+            <span className="mx-1.5">·</span>
+            <a
+              href={getCanonicalUrl(buildComparisonPath(gameA.slug, gameB.slug))}
+              className="hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Tam bağlantı
             </a>
           </p>
         </section>

@@ -144,7 +144,7 @@ function GameDetail() {
         setSelectedImage={setSelectedImage}
       />
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-6 sm:py-8 md:py-12">
         {/* Breadcrumb */}
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 

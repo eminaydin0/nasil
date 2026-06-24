@@ -134,7 +134,7 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 max-h-[min(400px,70vh)] bg-white rounded-xl shadow-xl border border-warm-200 overflow-hidden z-50 flex flex-col">
+        <div className="absolute right-0 top-full z-50 mt-2 flex max-h-[min(400px,70vh)] w-[min(20rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-xl border border-warm-200 bg-white shadow-xl">
           <div className="flex items-center justify-between px-4 py-3 border-b border-warm-100 bg-cream-50">
             <span className="font-semibold text-warm-800">Bildirimler</span>
             {unreadCount > 0 && (

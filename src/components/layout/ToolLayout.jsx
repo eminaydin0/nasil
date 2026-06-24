@@ -37,7 +37,7 @@ export default function ToolLayout({
   );
 
   return (
-    <div className="min-h-screen bg-cream-50 py-12">
+    <div className="min-h-screen bg-cream-50 py-8 sm:py-12">
       <SEO
         title={toolSeo.title}
         description={toolSeo.description}
@@ -52,15 +52,15 @@ export default function ToolLayout({
 
         {/* Başlık */}
         <div className="mb-6">
-          <div className="mb-4 flex items-start gap-3">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start">
             {Icon && (
-              <div className="shrink-0 rounded-xl bg-orange-100 p-3">
+              <div className="shrink-0 self-start rounded-xl bg-orange-100 p-3">
                 <Icon className="text-orange-600" size={32} aria-hidden />
               </div>
             )}
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-3xl font-black text-warm-900">{title}</h1>
+                <h1 className="text-2xl font-black text-warm-900 sm:text-3xl">{title}</h1>
                 {badge ? (
                   <span className="rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-bold text-orange-700">
                     {badge}

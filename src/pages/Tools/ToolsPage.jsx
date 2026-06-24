@@ -68,7 +68,7 @@ export default function ToolsPage() {
   const breadcrumbs = [{ name: 'Oyun Araçları', url: null }];
 
   return (
-    <div className="min-h-screen bg-cream-50 py-12">
+    <div className="min-h-screen bg-cream-50 py-8 sm:py-12">
       <SEO
         title={PAGE_SEO.tools.title}
         description={PAGE_SEO.tools.description}
@@ -81,13 +81,13 @@ export default function ToolsPage() {
 
         {/* Giriş */}
         <div className="mb-8">
-          <div className="mb-4 flex items-center gap-3">
-            <div className="rounded-xl bg-orange-100 p-3">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+            <div className="self-start rounded-xl bg-orange-100 p-3">
               <Wrench className="text-orange-600" size={32} aria-hidden />
             </div>
-            <div>
-              <h1 className="text-3xl font-black text-warm-900">Oyun Araçları</h1>
-              <p className="text-warm-600">{SITE_TOOLS.length} ücretsiz araç · kayıt gerektirmez</p>
+            <div className="min-w-0">
+              <h1 className="text-2xl font-black text-warm-900 sm:text-3xl">Oyun Araçları</h1>
+              <p className="text-sm text-warm-600 sm:text-base">{SITE_TOOLS.length} ücretsiz araç · kayıt gerektirmez</p>
             </div>
           </div>
 

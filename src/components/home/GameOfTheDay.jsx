@@ -86,9 +86,9 @@ function GameOfTheDay({ games }) {
               <Sparkles size={16} className="text-white" />
               <span className="font-bold text-white text-sm tracking-wide">Günün Oyunu</span>
             </div>
-            <div className="flex items-center gap-2 text-cream-100/60">
-              <Calendar size={15} />
-              <span className="text-sm font-medium capitalize">
+            <div className="flex flex-col gap-2 text-cream-100/60 sm:flex-row sm:items-center sm:gap-2">
+              <Calendar size={15} className="shrink-0" />
+              <span className="text-xs font-medium capitalize sm:text-sm">
                 {new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
             </div>

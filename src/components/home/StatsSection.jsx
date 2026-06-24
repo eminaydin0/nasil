@@ -63,26 +63,26 @@ function StatsSection() {
           {/* Yumuşak iç vinyetleme */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(249,115,22,0.04),transparent_60%)] pointer-events-none" />
 
-          <div className="relative grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-warm-100">
+          <div className="relative grid grid-cols-2 divide-x divide-y divide-warm-100 md:grid-cols-4 md:divide-y-0">
             {stats.map((stat) => {
               const Icon = stat.icon;
               const count = counts[stat.id];
               return (
-                <div key={stat.id} className="group flex items-center gap-5 p-6 md:p-8 transition-colors duration-300 hover:bg-cream-100/40">
+                <div key={stat.id} className="group flex flex-col items-start gap-3 p-4 transition-colors duration-300 hover:bg-cream-100/40 sm:flex-row sm:items-center sm:gap-4 sm:p-6 md:gap-5 md:p-8">
                   {/* İkon - dairesel sıcak zemin */}
-                  <div className={`shrink-0 relative inline-flex items-center justify-center w-14 h-14 ${stat.bg} rounded-2xl shadow-soft transition-transform duration-500 ease-spring group-hover:-rotate-3 group-hover:scale-105`}>
-                    <Icon className="w-6 h-6 text-warm-800" aria-hidden="true" />
-                    <span className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${stat.accent} opacity-0 group-hover:opacity-15 transition-opacity duration-500`} />
+                  <div className={`relative inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${stat.bg} shadow-soft transition-transform duration-500 ease-spring group-hover:-rotate-3 group-hover:scale-105 sm:h-14 sm:w-14`}>
+                    <Icon className="h-5 w-5 text-warm-800 sm:w-6 sm:h-6" aria-hidden="true" />
+                    <span className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${stat.accent} opacity-0 transition-opacity duration-500 group-hover:opacity-15`} />
                   </div>
 
                   <div className="min-w-0">
-                    <div className="flex items-baseline gap-1.5 leading-none">
-                      <span className="text-4xl md:text-5xl font-extrabold text-warm-900 tracking-tight tabular-nums">
+                    <div className="flex items-baseline gap-1 leading-none">
+                      <span className="text-3xl font-extrabold tabular-nums tracking-tight text-warm-900 sm:text-4xl md:text-5xl">
                         <Counter target={count} />
                       </span>
-                      <span className={`text-2xl md:text-3xl font-extrabold bg-gradient-to-r ${stat.accent} bg-clip-text text-transparent`}>+</span>
+                      <span className={`bg-gradient-to-r text-xl font-extrabold ${stat.accent} bg-clip-text text-transparent sm:text-2xl md:text-3xl`}>+</span>
                     </div>
-                    <p className="text-sm font-medium text-warm-500 mt-2 truncate">{stat.label}</p>
+                    <p className="mt-1.5 truncate text-xs font-medium text-warm-500 sm:mt-2 sm:text-sm">{stat.label}</p>
                   </div>
                 </div>
               );

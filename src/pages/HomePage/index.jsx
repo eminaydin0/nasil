@@ -121,7 +121,7 @@ function HomePage() {
       />
 
       {/* Hero */}
-      <section className="bg-cream-50 pt-6 pb-10 md:pb-14">
+      <section className="bg-cream-50 pt-4 pb-8 sm:pt-6 sm:pb-10 md:pb-14">
         <HeroCarousel />
       </section>
 
@@ -130,7 +130,7 @@ function HomePage() {
 
       <div className="container mx-auto px-4">
         {/* Categories */}
-        <section className="py-12 md:py-16" aria-labelledby="categories-title">
+        <section className="py-10 md:py-16" aria-labelledby="categories-title">
           <SectionHeader
             title="Kategoriler"
             subtitle="Keşfet"

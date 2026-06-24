@@ -226,7 +226,7 @@ function AuthPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                   />
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <TextField
                       as="select"
                       label="Doğum Yılı"

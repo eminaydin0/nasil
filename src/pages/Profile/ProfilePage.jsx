@@ -181,7 +181,7 @@ function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-cream-50 py-12 font-sans">
+    <div className="min-h-screen bg-cream-50 py-8 font-sans sm:py-12">
       <SEO
         title="Profilim - Kuralı Ne?"
         description="Hesabınız, favorileriniz ve profil ayarları"
@@ -193,6 +193,29 @@ function ProfilePage() {
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
         <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
+          {/* Mobil tab şeridi — lg altında yatay kaydırma */}
+          <div className="scroll-touch -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:hidden">
+            {TABS.map((tab) => {
+              const Icon = tab.icon;
+              const active = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => handleTabChange(tab)}
+                  className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                    active
+                      ? 'border-orange-200 bg-orange-50 text-orange-700'
+                      : 'border-warm-200 bg-white text-warm-700 hover:border-warm-300'
+                  }`}
+                >
+                  <Icon size={16} className={active ? 'text-orange-600' : 'text-warm-400'} aria-hidden />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
           {/* Sol sidebar */}
           <aside className="lg:col-span-4 xl:col-span-3">
             <div className="sticky top-24 space-y-4">
@@ -228,7 +251,7 @@ function ProfilePage() {
                 </div>
               </div>
 
-              <nav className="rounded-2xl border border-warm-200/70 bg-white p-2 shadow-soft">
+              <nav className="hidden rounded-2xl border border-warm-200/70 bg-white p-2 shadow-soft lg:block">
                 {TABS.map((tab) => {
                   const Icon = tab.icon;
                   const active = activeTab === tab.id;

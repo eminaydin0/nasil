@@ -44,9 +44,14 @@ function App() {
           <Toaster
             position="top-right"
             gutter={10}
+            containerStyle={{
+              top: 72,
+              right: 12,
+              left: 12,
+            }}
             toastOptions={{
               duration: 3000,
-              className: 'font-sans',
+              className: 'font-sans !max-w-none sm:!max-w-[420px]',
               style: {
                 background: '#ffffff',
                 color: '#1c1917',
@@ -59,7 +64,7 @@ function App() {
                 border: '1px solid rgba(231, 229, 228, 0.7)',
                 boxShadow:
                   '0 10px 25px -5px rgba(28, 25, 23, 0.1), 0 8px 10px -6px rgba(28, 25, 23, 0.05)',
-                maxWidth: '420px',
+                maxWidth: '100%',
               },
               success: {
                 iconTheme: { primary: '#10b981', secondary: '#ecfdf5' },
@@ -89,10 +94,10 @@ function App() {
           
           {/* Main Site Routes - With Header/Footer */}
           <Route path="/*" element={
-            <div className="min-h-screen flex flex-col bg-white">
+            <div className="flex min-h-screen min-w-0 flex-col overflow-x-clip bg-white">
               <Header />
               <ScrollToTop />
-              <main className="grow page-transition">
+              <main className="min-w-0 grow overflow-x-clip page-transition">
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/oyunlar" element={<AllGames />} />

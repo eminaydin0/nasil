@@ -73,10 +73,11 @@ function SocialShare({ game }) {
       {/* Main Share Button */}
       <button
         onClick={handleNativeShare}
-        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-md hover:shadow-lg font-medium text-sm"
+        className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 px-3 py-2 text-sm font-medium text-white shadow-md transition-all hover:from-orange-600 hover:to-orange-700 hover:shadow-lg sm:px-4"
+        aria-label="Paylaş"
       >
         <Share2 size={18} />
-        <span>Paylaş</span>
+        <span className="hidden sm:inline">Paylaş</span>
       </button>
 
       {/* Share Options Dropdown */}
@@ -89,7 +90,7 @@ function SocialShare({ game }) {
           />
           
           {/* Dropdown */}
-          <div className="absolute top-full mt-2 right-0 bg-white rounded-xl shadow-2xl border border-warm-100 p-3 z-50 min-w-[240px]">
+          <div className="absolute right-0 top-full z-50 mt-2 min-w-[240px] max-w-[min(20rem,calc(100vw-2rem))] rounded-xl border border-warm-100 bg-white p-3 shadow-2xl">
             <p className="text-xs font-semibold text-warm-700 mb-3 px-2">Paylaşım Seçenekleri</p>
             
             <div className="space-y-1">

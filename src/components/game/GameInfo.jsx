@@ -59,39 +59,40 @@ function printGameRules(game) {
 
 export default function GameInfo({ game }) {
   return (
-    <div className="bg-white rounded-2xl shadow-soft border border-warm-200/70 p-5 md:p-6 mb-6">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+    <div className="mb-6 rounded-2xl border border-warm-200/70 bg-white p-4 shadow-soft sm:p-5 md:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-4">
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center justify-center w-11 h-11 bg-cream-100 border border-warm-200/60 rounded-xl shadow-soft">
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-warm-200/60 bg-cream-100 shadow-soft">
             <Users className="text-warm-700" size={20} aria-hidden="true" />
           </span>
-          <div>
-            <p className="text-[11px] uppercase tracking-wider text-warm-500 font-semibold">Oyuncu</p>
-            <p className="font-bold text-warm-900 text-sm tracking-tight">{game.players}</p>
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-warm-500">Oyuncu</p>
+            <p className="text-sm font-bold tracking-tight text-warm-900">{game.players}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center justify-center w-11 h-11 bg-cream-100 border border-warm-200/60 rounded-xl shadow-soft">
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-warm-200/60 bg-cream-100 shadow-soft">
             <MapPin className="text-warm-700" size={20} aria-hidden="true" />
           </span>
-          <div>
-            <p className="text-[11px] uppercase tracking-wider text-warm-500 font-semibold">Kategori</p>
-            <p className="font-bold text-warm-900 text-sm tracking-tight">{game.category}</p>
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-warm-500">Kategori</p>
+            <p className="text-sm font-bold tracking-tight text-warm-900">{game.category}</p>
           </div>
         </div>
 
-        <div className="flex items-center flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <DifficultyBadge difficulty={game.difficulty} />
           <PlayTimeBadge minutes={game.playTimeMinutes} />
         </div>
 
-        <div className="ml-auto">
+        <div className="w-full sm:ml-auto sm:w-auto">
           <Button
             variant="secondary"
             size="md"
             iconLeft={Printer}
             onClick={() => printGameRules(game)}
+            className="w-full sm:w-auto"
           >
             Kuralları Yazdır
           </Button>

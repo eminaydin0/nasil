@@ -22,7 +22,7 @@ function CarouselManager({ games = [] }) {
     image_url: '',
     badge: 'ÖNE ÇIKAN',
     button_text: 'Kuralı Ne?',
-    button_link: '#oyunlar',
+    button_link: '/oyunlar',
     order_index: 0,
     is_active: true
   };

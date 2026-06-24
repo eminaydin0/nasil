@@ -44,7 +44,7 @@ const Breadcrumb = ({
       className={`${className}`}
     >
       <ol 
-        className={`flex items-center ${compact ? 'flex-wrap' : ''} gap-1 text-sm`}
+        className={`flex flex-wrap items-center gap-x-1 gap-y-1 text-sm ${compact ? '' : ''}`}
         itemScope 
         itemType="https://schema.org/BreadcrumbList"
       >
@@ -66,7 +66,7 @@ const Breadcrumb = ({
               {isLast ? (
                 // Son öğe - aktif sayfa (link değil)
                 <span 
-                  className="text-warm-900 font-medium truncate max-w-[200px]"
+                  className="max-w-[min(200px,50vw)] truncate font-medium text-warm-900 sm:max-w-[280px]"
                   itemProp="name"
                   aria-current="page"
                 >

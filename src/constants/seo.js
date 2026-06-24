@@ -452,6 +452,26 @@ export function getCanonicalUrl(path) {
   return `${SITE_CONFIG.url}${cleanPath}`;
 }
 
+/** Karşılaştırma URL ayırıcısı: /karsilastir/{slugA}-vs-{slugB} */
+export const COMPARISON_SEPARATOR = '-vs-';
+
+/** URL segmentinden iki oyun slug'ını çıkarır (slug içinde tire olsa da güvenli). */
+export function parseComparisonParam(comparison) {
+  if (!comparison || typeof comparison !== 'string') return null;
+  const idx = comparison.indexOf(COMPARISON_SEPARATOR);
+  if (idx <= 0) return null;
+  const slugA = comparison.slice(0, idx);
+  const slugB = comparison.slice(idx + COMPARISON_SEPARATOR.length);
+  if (!slugA || !slugB) return null;
+  return { slugA, slugB };
+}
+
+/** Karşılaştırma sayfası yolu (slug sırası korunur — her iki yön de çalışır). */
+export function buildComparisonPath(slugA, slugB) {
+  if (!slugA || !slugB) return null;
+  return `/karsilastir/${slugA}${COMPARISON_SEPARATOR}${slugB}`;
+}
+
 // Title oluşturucu
 export function generateTitle(pageTitle, includeSiteName = true) {
   if (!pageTitle) return DEFAULT_META.title;

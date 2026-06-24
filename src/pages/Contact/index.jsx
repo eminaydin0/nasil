@@ -157,13 +157,13 @@ function Contact() {
 
         {/* Giriş */}
         <div className="mb-8">
-          <div className="mb-4 flex items-center gap-3">
-            <div className="rounded-xl bg-orange-100 p-3">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+            <div className="self-start rounded-xl bg-orange-100 p-3">
               <MessageCircle className="text-orange-600" size={32} aria-hidden />
             </div>
-            <div>
-              <h1 className="text-3xl font-black text-warm-900">İletişim</h1>
-              <p className="text-warm-600">Sorularınız, önerileriniz ve iş birliği teklifleri</p>
+            <div className="min-w-0">
+              <h1 className="text-2xl font-black text-warm-900 sm:text-3xl">İletişim</h1>
+              <p className="text-sm text-warm-600 sm:text-base">Sorularınız, önerileriniz ve iş birliği teklifleri</p>
             </div>
           </div>
 

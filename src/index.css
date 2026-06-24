@@ -93,10 +93,17 @@
   }
 }
 
-/* Smooth scroll behavior */
+/* Smooth scroll behavior + yatay taşmayı engelle (mobil) */
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: clip;
 }
 
 /* Tipografi base ayarları - Manrope için optimize */
@@ -109,6 +116,8 @@ body {
   letter-spacing: -0.011em;
   color: #1c1917;
   background-color: #fefdfb;
+  overflow-x: clip;
+  min-width: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -243,3 +252,16 @@ h1, h2, h3, h4, h5, h6 {
 .stagger-2 { animation-delay: 0.2s; animation-fill-mode: backwards; }
 .stagger-3 { animation-delay: 0.3s; animation-fill-mode: backwards; }
 .stagger-4 { animation-delay: 0.4s; animation-fill-mode: backwards; }
+
+/* Mobil güvenli alan (çentikli ekranlar) */
+@supports (padding: max(0px)) {
+  .safe-area-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Yatay kaydırılabilir filtre/tab şeritleri */
+.scroll-touch {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}

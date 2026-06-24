@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight, GitCompareArrows } from 'lucide-react';
+import { buildComparisonPath } from '../../constants/seo';
 import GameRecommendations from '../../components/home/GameRecommendations';
 
 function pickComparisonCandidates(currentGame, allGames, max = 3) {
@@ -45,7 +46,7 @@ export default function GameSidebar({ game, games }) {
             {compareCandidates.map((other) => (
               <Link
                 key={other.id}
-                to={`/karsilastir/${game.slug}-vs-${other.slug}`}
+                to={buildComparisonPath(game.slug, other.slug)}
                 className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-white/80 hover:bg-white border border-orange-100 hover:border-orange-300 transition-all group"
               >
                 <span className="text-sm font-medium text-warm-900 truncate">

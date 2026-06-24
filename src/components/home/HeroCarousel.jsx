@@ -3,6 +3,34 @@ import { Play, Sparkles, TrendingUp, Compass } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
+/** Eski #oyunlar formatını ve göreli yolları SPA rotasına çevirir */
+function normalizeSlideHref(link) {
+  if (!link || !String(link).trim()) return '/oyunlar';
+  const raw = String(link).trim();
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+  if (raw.startsWith('#')) {
+    const path = raw.slice(1);
+    return path.startsWith('/') ? path : `/${path}`;
+  }
+  return raw.startsWith('/') ? raw : `/${raw}`;
+}
+
+function SlideCtaButton({ href, className, children }) {
+  const target = normalizeSlideHref(href);
+  if (target.startsWith('http://') || target.startsWith('https://')) {
+    return (
+      <a href={target} className={className} target="_blank" rel="noopener noreferrer">
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link to={target} className={className}>
+      {children}
+    </Link>
+  );
+}
+
 /**
  * HeroCarousel - hero alanı.
  * Slide yoksa düşmez: marka odaklı statik fallback hero gösterir.
@@ -44,7 +72,7 @@ function HeroCarousel() {
 
   if (loading) {
     return (
-      <div className="h-[440px] md:h-[560px] w-full max-w-[1400px] mx-auto bg-gradient-to-br from-cream-100 to-cream-200 rounded-3xl animate-pulse flex items-center justify-center">
+      <div className="h-[360px] w-full max-w-[1400px] mx-auto animate-pulse rounded-3xl bg-gradient-to-br from-cream-100 to-cream-200 sm:h-[440px] md:h-[560px] flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -60,13 +88,13 @@ function HeroCarousel() {
           <div className="absolute -bottom-32 -left-32 w-[24rem] h-[24rem] bg-red-500/15 rounded-full blur-[120px]" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[44rem] h-[44rem] bg-amber-500/5 rounded-full blur-[140px]" />
 
-          <div className="relative px-8 py-20 md:px-16 md:py-28 lg:py-32 text-center max-w-3xl mx-auto">
+          <div className="relative mx-auto max-w-3xl px-5 py-14 text-center sm:px-8 sm:py-20 md:px-16 md:py-28 lg:py-32">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full mb-6 border border-white/15">
               <Sparkles size={14} className="text-orange-300" />
               <span className="text-cream-100 text-xs font-bold uppercase tracking-[0.2em]">Geleneksel oyunlar arşivi</span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-[1.05] tracking-tight">
+            <h1 className="mb-6 text-3xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-4xl md:text-6xl lg:text-7xl">
               Her oyunun{' '}
               <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
                 kuralı burada
@@ -77,17 +105,17 @@ function HeroCarousel() {
               Okey, batak, pişti, mangala ve fazlası — kuralları, ipuçları ve püf noktalarıyla tek çatı altında.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Link
                 to="/oyunlar"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold text-base hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-warm-glow hover:shadow-warm-glow-lg hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 px-6 py-3.5 text-base font-bold text-white shadow-warm-glow transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-600 hover:to-red-600 hover:shadow-warm-glow-lg sm:px-8 sm:py-4"
               >
                 <Compass size={20} />
                 <span>Oyunları Keşfet</span>
               </Link>
               <Link
                 to="/araclar"
-                className="inline-flex items-center gap-2 px-6 py-4 bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/20 text-white rounded-2xl font-semibold transition-all"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-3.5 font-semibold text-white backdrop-blur-md transition-all hover:bg-white/15 sm:px-6 sm:py-4"
               >
                 <TrendingUp size={18} />
                 <span>Araçlar</span>
@@ -101,7 +129,7 @@ function HeroCarousel() {
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-4">
-      <div className="relative h-[440px] md:h-[560px] overflow-hidden rounded-3xl group bg-gradient-to-br from-charcoal-900 via-warm-900 to-charcoal-950 shadow-soft-xl">
+      <div className="relative h-[360px] overflow-hidden rounded-3xl bg-gradient-to-br from-charcoal-900 via-warm-900 to-charcoal-950 shadow-soft-xl group sm:h-[440px] md:h-[560px]">
         {/* Slides */}
         {slides.map((slide, index) => (
           <div
@@ -133,7 +161,7 @@ function HeroCarousel() {
             <div className="absolute -bottom-16 -left-16 w-72 h-72 bg-amber-500/10 rounded-full blur-[100px]" />
 
             {/* Content */}
-            <div className="absolute inset-0 flex items-end p-7 md:p-12 lg:p-16">
+            <div className="absolute inset-0 flex items-end p-5 sm:p-7 md:p-12 lg:p-16">
               <div
                 className={`max-w-2xl transition-all duration-700 delay-200 ease-spring ${
                   index === currentIndex ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -148,7 +176,7 @@ function HeroCarousel() {
                   </div>
                 )}
 
-                <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 md:mb-5 leading-[1.05] tracking-tight">
+                <h2 className="mb-3 text-2xl font-extrabold leading-[1.08] tracking-tight text-white sm:mb-4 sm:text-3xl md:mb-5 md:text-5xl lg:text-6xl">
                   {slide.title}
                 </h2>
 
@@ -157,13 +185,13 @@ function HeroCarousel() {
                 </p>
 
                 <div className="flex flex-wrap items-center gap-3">
-                  <a
+                  <SlideCtaButton
                     href={slide.button_link}
                     className="inline-flex items-center gap-3 px-7 py-3.5 md:px-8 md:py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold text-base hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-warm-glow hover:shadow-warm-glow-lg hover:-translate-y-0.5"
                   >
                     <Play size={18} fill="currentColor" />
                     <span>{slide.button_text || 'Keşfet'}</span>
-                  </a>
+                  </SlideCtaButton>
 
                   <Link
                     to="/oyunlar"

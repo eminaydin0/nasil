@@ -136,7 +136,7 @@ function CategoryPage() {
       
       {/* Header Section - GameDetail Style */}
       <div className="bg-white border-b border-warm-200">
-        <div className="container mx-auto px-4 py-12">
+        <div className="container mx-auto px-4 py-8 sm:py-12">
           {/* Breadcrumb */}
           <Breadcrumb items={breadcrumbs} className="mb-6" />
 
@@ -170,7 +170,7 @@ function CategoryPage() {
                   {games.length} oyun
                 </span>
               </div>
-              <h1 className="text-3xl font-bold text-warm-900 mb-2">{decodedCategoryName} Oyunları</h1>
+              <h1 className="mb-2 text-2xl font-bold text-warm-900 sm:text-3xl">{decodedCategoryName} Oyunları</h1>
               <p className="text-warm-600 text-sm leading-relaxed">{description}</p>
             </div>
           </div>
@@ -178,16 +178,16 @@ function CategoryPage() {
       </div>
 
       {/* Games Grid - HomePage Style */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-warm-900 flex items-center gap-2">
+      <div className="container mx-auto px-4 py-8 sm:py-12">
+        <div className="mb-6 flex flex-col gap-2 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-warm-900 sm:text-2xl">
             <Filter className="text-orange-600" aria-hidden="true" />
             {games.length} Oyun Listeleniyor
           </h2>
         </div>
 
         {games.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {games.map(game => {
               const stats = statsMap[game.id];
               return (
