@@ -77,7 +77,7 @@ export default function Okey101Page() {
       seoUrl="/araclar/101-yazboz"
       helpContent={helpContent}
     >
-      <div className="min-h-0 flex-1">{/* araç içi kendi içinde taşır */}<Okey101Score /></div>
+      <Okey101Score />
     </ToolLayout>
   );
 }

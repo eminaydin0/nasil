@@ -181,11 +181,9 @@ export default function Okey101Score() {
     minScore = Math.min(...totals);
   }
 
-  useEffect(() => {
-      // Handle legacy (array) - assume not penalty
-      if (Array.isArray(r)) return true;
-      // New format
-      return !r.isPenalty;
+  const playedRoundsCount = rounds.filter((r) => {
+    if (Array.isArray(r)) return true;
+    return !r.isPenalty;
   }).length;
 
   const isGameFinished = gameLimit > 0 && playedRoundsCount >= gameLimit;
@@ -235,31 +233,28 @@ export default function Okey101Score() {
   // Setup Screen
   if (!isGameStarted) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center overflow-y-auto bg-gradient-to-br from-orange-400/25 via-transparent to-amber-200/25 p-4 sm:p-6">
-        <div className="relative w-full max-w-2xl overflow-hidden rounded-[1.625rem] border border-orange-400/35 bg-white/95 p-[1px] shadow-warm-glow">
-          <div className="absolute left-10 top-0 h-48 w-48 rounded-full bg-orange-400/25 blur-[80px]" aria-hidden />
-          <div className="relative rounded-[1.575rem] border border-warm-200/70 bg-white/95 px-5 py-7 sm:p-10">
-          <div className="mb-8 text-center">
-            <Award className="mx-auto mb-3 h-10 w-10 text-orange-600" aria-hidden />
-            <h2 className="font-display text-2xl font-extrabold tracking-tight text-charcoal-900 sm:text-3xl">
-              Maç başlat
-            </h2>
-            <p className="mt-2 text-sm text-warm-600">
-              Tekli ya da eşli 101 kuralları — el sayısını seç, oyuncuları yaz, masaya bak.
-            </p>
-          </div>
+      <div className="p-6 sm:p-8">
+        <div className="mb-8 text-center">
+          <Award className="mx-auto mb-3 h-10 w-10 text-orange-600" aria-hidden />
+          <h2 className="text-2xl font-extrabold tracking-tight text-warm-900 sm:text-3xl">
+            Maç başlat
+          </h2>
+          <p className="mt-2 text-sm text-warm-600">
+            Tekli ya da eşli 101 kuralları — el sayısını seç, oyuncuları yaz.
+          </p>
+        </div>
           
           {/* Game Mode Selection */}
           <div className="mb-4 sm:mb-6">
-            <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-warm-600 sm:mb-3">Oyun modu</label>
+            <label className="mb-2 block text-sm font-semibold text-warm-700 sm:mb-3">Oyun modu</label>
             <div className="grid grid-cols-2 gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => setIsPartners(false)}
                 className={`rounded-xl border-2 p-3 transition-all sm:p-4 ${
                   !isPartners
-                    ? 'border-orange-500 bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-soft-md ring-2 ring-orange-400/35'
-                    : 'border-warm-200 bg-cream-50 text-warm-700 hover:border-warm-400'
+                    ? 'border-orange-500 bg-orange-50 text-orange-800 shadow-sm'
+                    : 'border-warm-200 bg-cream-50 text-warm-700 hover:border-warm-300'
                 }`}
               >
                 <Users className="mx-auto mb-1 h-5 w-5 sm:mb-2 sm:h-6 sm:w-6" />
@@ -271,8 +266,8 @@ export default function Okey101Score() {
                 onClick={() => setIsPartners(true)}
                 className={`rounded-xl border-2 p-3 transition-all sm:p-4 ${
                   isPartners
-                    ? 'border-orange-500 bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-soft-md ring-2 ring-orange-400/35'
-                    : 'border-warm-200 bg-cream-50 text-warm-700 hover:border-warm-400'
+                    ? 'border-orange-500 bg-orange-50 text-orange-800 shadow-sm'
+                    : 'border-warm-200 bg-cream-50 text-warm-700 hover:border-warm-300'
                 }`}
               >
                 <Users className="mx-auto mb-1 h-5 w-5 sm:mb-2 sm:h-6 sm:w-6" />
@@ -284,7 +279,7 @@ export default function Okey101Score() {
 
           {/* Game Limit */}
           <div className="mb-4 sm:mb-6">
-            <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-warm-600 sm:mb-3">Kaç el?</label>
+            <label className="mb-2 block text-sm font-semibold text-warm-700 sm:mb-3">Kaç el?</label>
             <div className="flex flex-wrap gap-2">
               {[5, 7, 9, 11, 13, 15].map((limit) => (
                 <button
@@ -293,8 +288,8 @@ export default function Okey101Score() {
                   onClick={() => setGameLimit(limit)}
                   className={`rounded-xl px-3 py-1.5 text-sm font-bold transition-all sm:px-4 sm:py-2 sm:text-base ${
                     gameLimit === limit
-                      ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-warm-glow ring-2 ring-orange-400/40'
-                      : 'border border-warm-200 bg-white text-charcoal-800 hover:bg-cream-100'
+                      ? 'bg-orange-600 text-white shadow-sm'
+                      : 'border border-warm-200 bg-white text-warm-800 hover:bg-cream-100'
                   }`}
                 >
                   {limit} el
@@ -306,7 +301,7 @@ export default function Okey101Score() {
           {/* Player Names (only for individual mode) */}
           {!isPartners && (
             <div className="mb-4 sm:mb-6">
-              <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-warm-600 sm:mb-3">
+              <label className="mb-2 block text-sm font-semibold text-warm-700 sm:mb-3">
                 Oyuncu isimleri (en az 2)
               </label>
               <div className="grid grid-cols-2 gap-2 sm:gap-3">
@@ -327,7 +322,7 @@ export default function Okey101Score() {
           {/* Team Names (if partners) */}
           {isPartners && (
             <div className="mb-4 sm:mb-6">
-              <label className="mb-2 block text-[11px] font-bold uppercase tracking-[0.12em] text-warm-600 sm:mb-3">Takım isimleri</label>
+              <label className="mb-2 block text-sm font-semibold text-warm-700 sm:mb-3">Takım isimleri</label>
               <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 {teamNames.map((team, idx) => (
                   <input
@@ -351,12 +346,10 @@ export default function Okey101Score() {
           <button
             type="button"
             onClick={startGame}
-            className="w-full rounded-2xl bg-gradient-to-r from-orange-500 to-red-600 py-4 font-bold text-cream-50 shadow-warm-glow transition-all hover:from-orange-600 hover:to-red-700 hover:shadow-warm-glow-lg"
+            className="w-full rounded-xl bg-orange-600 py-4 font-bold text-white shadow-sm transition-colors hover:bg-orange-700"
           >
             Oyunu Başlat
           </button>
-          </div>
-        </div>
       </div>
     );
   }
@@ -380,10 +373,8 @@ export default function Okey101Score() {
     'w-full text-center font-bold text-sm sm:text-base md:text-lg text-charcoal-900 bg-white border-2 border-warm-200 rounded-xl px-2 py-2 sm:py-2.5 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 placeholder:text-warm-400';
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-gradient-to-b from-cream-50 to-cream-100/80 p-3 sm:p-5 md:p-6">
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-warm-200/80 bg-white/95 shadow-soft-lg">
-        {/* Kurulum ekranıyla aynı dil: mod + el sayısı */}
-        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 px-3 sm:px-4 py-3 border-b border-orange-100 bg-gradient-to-r from-orange-50/60 to-white shrink-0">
+    <div className="min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-warm-100 bg-cream-50 px-4 py-3 sm:gap-3 sm:px-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             <span className="inline-flex items-center gap-2 rounded-xl border-2 border-orange-500 bg-orange-50 px-3 py-2 text-sm font-bold text-orange-800">
               <Users className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
@@ -409,7 +400,7 @@ export default function Okey101Score() {
 
         {/* Winner Banner */}
         {isGameFinished && rounds.length > 0 && winnerName && (
-          <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 sm:px-6 py-3 sm:py-4 shrink-0">
+          <div className="border-b border-orange-200 bg-orange-600 px-4 py-3 text-white sm:px-6 sm:py-4">
             <div className="flex items-center justify-center gap-2 sm:gap-3">
               <Award className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
               <div className="text-center">
@@ -424,8 +415,8 @@ export default function Okey101Score() {
         )}
 
         {/* Tablo başlığı — kurulumdaki input kutularıyla aynı köşe/border */}
-        <div className="border-b border-orange-100 bg-white overflow-x-auto shrink-0">
-          <table className="w-full min-w-[500px]">
+        <div className="border-b border-warm-100 overflow-x-auto">
+          <table className="w-full min-w-[480px]">
             <thead>
               <tr>
               <th className="w-12 border-r border-warm-100 bg-gradient-to-b from-orange-50 to-amber-50/50 p-2 text-center text-xs font-black uppercase tracking-wide text-orange-900 sm:w-16 md:w-20 md:text-sm">
@@ -474,15 +465,15 @@ export default function Okey101Score() {
         </div>
 
         {/* Geçmiş */}
-        <div className="flex-1 min-h-0 overflow-auto bg-cream-100/70">
+        <div className="max-h-[min(360px,50vh)] overflow-y-auto bg-cream-50/50">
           {rounds.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full min-h-[120px] text-warm-400 px-4 py-8">
               <p className="text-sm font-medium text-warm-500">Henüz el girilmedi</p>
               <p className="text-xs text-warm-400 mt-1 text-center">Aşağıdan puanları girip kaydedin</p>
             </div>
           ) : (
-            <div ref={historyRef} className="p-2 sm:p-3 overflow-x-auto">
-              <table className="w-full min-w-[500px]">
+            <div ref={historyRef} className="overflow-x-auto p-2 sm:p-3">
+              <table className="w-full min-w-[480px]">
                 <tbody>
                   {rounds.map((roundData, rIdx) => {
                     const isLegacy = Array.isArray(roundData);
@@ -560,9 +551,9 @@ export default function Okey101Score() {
       </div>
 
         {/* Alt giriş — kurulumdaki input stilleri */}
-        <div className="border-t border-orange-100 bg-gradient-to-b from-white to-orange-50/30 p-2 sm:p-3 md:p-4 shrink-0">
+        <div className="border-t border-warm-100 bg-white p-2 sm:p-3 md:p-4">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[500px]">
+          <table className="w-full min-w-[480px]">
             <tbody>
               <tr>
                 {isPartners ? (
@@ -648,7 +639,6 @@ export default function Okey101Score() {
             <span className="text-xs sm:text-sm font-medium text-warm-700">Ceza Eli</span>
           </label>
         </div>
-      </div>
       </div>
     </div>
   );

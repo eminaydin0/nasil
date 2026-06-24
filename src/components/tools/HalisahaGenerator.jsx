@@ -92,15 +92,8 @@ export default function HalisahaGenerator() {
   };
 
   return (
-    <div className={tool.cardPadded}>
-      <div className={tool.headerRow}>
-        <div className={tool.iconWrap}>
-          <Users className={tool.iconClass} />
-        </div>
-        <h3 className={tool.title}>Halısaha Takımı Oluşturucu</h3>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 grow">
+    <div className="p-6 sm:p-8">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="flex flex-col gap-4">
           <div>
             <label className={tool.label}>Oyuncu İsimleri (Her satıra bir isim)</label>

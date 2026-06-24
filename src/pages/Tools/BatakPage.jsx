@@ -33,9 +33,7 @@ export default function BatakPage() {
       seoUrl="/araclar/batak-yazboz"
       helpContent={helpContent}
     >
-      <div className="p-6 sm:p-10">
-        <BatakScore />
-      </div>
+      <BatakScore />
     </ToolLayout>
   );
 }

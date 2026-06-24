@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PencilLine, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import GameTableContainer from '../common/GameTableContainer';
 import { tool } from './toolStyles';
 import { showSuccess } from '../../utils/toast';
@@ -50,14 +50,8 @@ export default function BatakScore() {
   };
 
   return (
-    <GameTableContainer
-      title="Batak & King yazboz"
-      subtitle="Her turu yaz; Enter ile hızlı ekle. Dip satır hep toplanır."
-      icon={PencilLine}
-      onReset={resetGame}
-      className="h-full"
-    >
-      <div className="bg-gradient-to-b from-transparent to-cream-50/40 p-5 sm:p-8">
+    <GameTableContainer onReset={resetGame}>
+      <div className="p-5 sm:p-8">
         <div className="overflow-x-auto rounded-2xl border border-warm-200/70 bg-white/90 shadow-soft">
           <table className="w-full text-center text-sm">
             <thead>

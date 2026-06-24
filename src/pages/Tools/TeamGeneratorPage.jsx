@@ -58,9 +58,7 @@ export default function TeamGeneratorPage() {
       seoUrl="/araclar/takim-olusturucu"
       helpContent={helpContent}
     >
-      <div className="p-6 sm:p-10">
-        <TeamGenerator />
-      </div>
+      <TeamGenerator />
     </ToolLayout>
   );
 }

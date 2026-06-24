@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, Plus, Minus, Trophy, Medal } from 'lucide-react';
+import { Users, Plus, Minus, Medal } from 'lucide-react';
 import GameTableContainer from '../common/GameTableContainer';
 import { useConfirm } from '../ui';
 
@@ -59,13 +59,7 @@ export default function ScoreBoard() {
     }[rank] || null);
 
   return (
-    <GameTableContainer
-      title="Skor tablosu"
-      subtitle="Sıralama en yüksek puana göre. Dokunmadan hızlı puan güncellemesi."
-      icon={Trophy}
-      onReset={resetScores}
-      className="h-full"
-    >
+    <GameTableContainer onReset={resetScores}>
       <div className="space-y-4 p-5 sm:p-8">
         {sortedPlayers.map((player, index) => {
           const podium = podiumStyle(index);

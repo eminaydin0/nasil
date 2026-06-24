@@ -74,14 +74,14 @@ export default function DiceRoller() {
   return (
     <div className="relative">
       {showConfetti && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-50">
+        <div className="pointer-events-none absolute inset-0 z-50 overflow-hidden rounded-2xl">
           {[...Array(30)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-2 h-2 bg-gradient-to-br from-amber-300 to-orange-500 rounded-full animate-confetti"
+              className="absolute h-2 w-2 animate-confetti rounded-full bg-gradient-to-br from-amber-300 to-orange-500"
               style={{
                 left: `${Math.random() * 100}%`,
-                top: "-10px",
+                top: '-10px',
                 animationDelay: `${Math.random() * 0.5}s`,
                 animationDuration: `${2 + Math.random()}s`,
               }}
@@ -90,50 +90,28 @@ export default function DiceRoller() {
         </div>
       )}
 
-      <div className={`${tool.cardPadded} relative overflow-hidden`}>
-        <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/3 translate-x-1/4 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-40 h-40 bg-orange-400/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 pointer-events-none" />
-
-        <div className={tool.headerRow}>
-          <div className={tool.iconWrap}>
-            <Dices className={tool.iconClass} />
-          </div>
-          <div>
-            <h2 className={tool.title}>Dijital zar</h2>
-            <p className="mt-0.5 text-sm text-warm-500">
-              Şansını dene ve zarları at!
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-          <div className="flex-1 min-w-0 space-y-6">
-            <div className="relative bg-gradient-to-br from-gray-900 via-gray-900 to-gray-950 rounded-2xl p-8 sm:p-12 min-h-[280px] flex flex-col items-center justify-center overflow-hidden shadow-inner border border-orange-900/20">
+      <div className="p-6 sm:p-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+          <div className="min-w-0 flex-1 space-y-6">
+            <div className="relative flex min-h-[280px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-warm-200 bg-charcoal-900 p-8 sm:p-12">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(249,115,22,0.12),transparent_55%)]" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-orange-500/5 rounded-full blur-3xl" />
 
               {result ? (
                 <>
-                  <div className="flex gap-4 sm:gap-6 mb-6 relative z-10 flex-wrap justify-center">
+                  <div className="relative z-10 mb-6 flex flex-wrap justify-center gap-4 sm:gap-6">
                     {result.map((val, idx) => (
                       <div
                         key={idx}
-                        className={`relative group ${
-                          isRolling ? "animate-roll" : "animate-land"
-                        }`}
+                        className={`relative ${isRolling ? 'animate-roll' : 'animate-land'}`}
                         style={{ animationDelay: `${idx * 0.1}s` }}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl blur-xl opacity-25 group-hover:opacity-40 transition-opacity" />
-                        <div className="relative w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl flex items-center justify-center border-2 border-orange-100/30 transform transition-all duration-300 hover:scale-105">
+                        <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border-2 border-orange-100/30 bg-gradient-to-br from-white to-cream-50 shadow-xl sm:h-28 sm:w-28">
                           <div className="grid grid-cols-3 gap-2 p-3 sm:p-4">
                             {getDiceDots(val).map(([row, col], i) => (
                               <div
                                 key={i}
-                                className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full shadow-md"
-                                style={{
-                                  gridColumn: col + 1,
-                                  gridRow: row + 1,
-                                }}
+                                className="h-3.5 w-3.5 rounded-full bg-charcoal-800 shadow-md sm:h-4 sm:w-4"
+                                style={{ gridColumn: col + 1, gridRow: row + 1 }}
                               />
                             ))}
                           </div>
@@ -141,33 +119,22 @@ export default function DiceRoller() {
                       </div>
                     ))}
                   </div>
-                  <div className="text-center relative z-10">
-                    <div className="inline-flex items-center gap-2 mb-2">
-                      <div className="h-px w-8 bg-gradient-to-r from-transparent to-gray-500" />
-                      <span className="text-warm-400 text-xs font-semibold uppercase tracking-wider">
-                        Toplam
-                      </span>
-                      <div className="h-px w-8 bg-gradient-to-l from-transparent to-gray-500" />
-                    </div>
-                    <div className="relative inline-block">
-                      <div className="absolute inset-0 bg-orange-500/30 blur-2xl rounded-full scale-150" />
-                      <div className="relative text-5xl sm:text-6xl font-black text-white drop-shadow-lg">
-                        {result.reduce((a, b) => a + b, 0)}
-                      </div>
+                  <div className="relative z-10 text-center">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-warm-400">
+                      Toplam
+                    </span>
+                    <div className="mt-1 text-5xl font-black text-white sm:text-6xl">
+                      {result.reduce((a, b) => a + b, 0)}
                     </div>
                   </div>
                 </>
               ) : (
-                <div className="text-center relative z-10">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-gray-700 border-dashed rounded-2xl flex items-center justify-center mx-auto mb-5 bg-gray-800/40">
-                    <Dices size={40} className="text-warm-500" />
+                <div className="relative z-10 text-center">
+                  <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-2xl border-4 border-dashed border-warm-600 bg-charcoal-800/40 sm:h-24 sm:w-24">
+                    <Dices size={40} className="text-warm-400" />
                   </div>
-                  <p className="text-warm-300 text-base font-medium">
-                    Zar atmaya hazır...
-                  </p>
-                  <p className="mt-2 text-sm text-warm-500">
-                    Aşağıdaki düğmeye bas
-                  </p>
+                  <p className="font-medium text-warm-300">Zar atmaya hazır…</p>
+                  <p className="mt-2 text-sm text-warm-500">Aşağıdaki düğmeye bas</p>
                 </div>
               )}
             </div>
@@ -177,31 +144,25 @@ export default function DiceRoller() {
                 type="button"
                 onClick={() => setNumDice(1)}
                 disabled={isRolling}
-                className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 ${
+                className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 sm:text-base ${
                   numDice === 1
-                    ? "border-orange-500 bg-orange-600 text-white shadow-md shadow-orange-900/10"
-                    : "border-orange-100 bg-white text-warm-700 hover:bg-orange-50/50"
+                    ? 'border-orange-500 bg-orange-600 text-white shadow-md'
+                    : 'border-warm-200 bg-white text-warm-700 hover:bg-orange-50'
                 }`}
               >
-                <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
-                  <span className="text-xl" aria-hidden>🎲</span>
-                  <span>Tek Zar</span>
-                </div>
+                Tek Zar
               </button>
               <button
                 type="button"
                 onClick={() => setNumDice(2)}
                 disabled={isRolling}
-                className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 ${
+                className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 sm:text-base ${
                   numDice === 2
-                    ? "border-orange-500 bg-orange-600 text-white shadow-md shadow-orange-900/10"
-                    : "border-orange-100 bg-white text-warm-700 hover:bg-orange-50/50"
+                    ? 'border-orange-500 bg-orange-600 text-white shadow-md'
+                    : 'border-warm-200 bg-white text-warm-700 hover:bg-orange-50'
                 }`}
               >
-                <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
-                  <span className="text-xl" aria-hidden>🎲🎲</span>
-                  <span>Çift Zar</span>
-                </div>
+                Çift Zar
               </button>
             </div>
 
@@ -209,51 +170,37 @@ export default function DiceRoller() {
               type="button"
               onClick={rollDice}
               disabled={isRolling}
-              className={`${tool.primaryBtn} py-4 text-base relative overflow-hidden group`}
+              className={`${tool.primaryBtn} relative overflow-hidden py-4 text-base`}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/15 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-              <RefreshCw
-                size={22}
-                className={
-                  isRolling
-                    ? "animate-spin"
-                    : "transition-transform group-hover:rotate-180"
-                }
-              />
-              <span>{isRolling ? "Zarlar Atılıyor..." : "Zarları At!"}</span>
+              <RefreshCw size={22} className={isRolling ? 'animate-spin' : ''} />
+              <span>{isRolling ? 'Zarlar atılıyor…' : 'Zarları at!'}</span>
               {!isRolling && <Sparkles size={18} className="animate-pulse" />}
             </button>
           </div>
 
-          <div className="lg:w-[min(100%,280px)] shrink-0">
+          <div className="shrink-0 lg:w-[min(100%,280px)]">
             {history.length > 0 ? (
               <div className={`${tool.panel} lg:sticky lg:top-4`}>
-                <h3 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-[0.12em] text-charcoal-900">
-                  <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
-                  Son Atışlar
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
+                <h3 className="mb-4 text-sm font-bold text-warm-900">Son atışlar</h3>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
                   {history.slice(0, 6).map((roll, idx) => (
                     <div
                       key={idx}
-                      className="bg-white rounded-xl px-3 py-2.5 border border-orange-100 shadow-sm"
+                      className="rounded-xl border border-warm-200 bg-cream-50 px-3 py-2.5"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex gap-1">
                           {roll.map((val, i) => (
                             <div
                               key={i}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg border border-orange-100 bg-cream-50 text-xs font-bold text-charcoal-800"
+                              className="flex h-8 w-8 items-center justify-center rounded-lg border border-warm-200 bg-white text-xs font-bold text-charcoal-800"
                             >
                               {val}
                             </div>
                           ))}
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-warm-400 tabular-nums">=</span>
-                          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-600 text-sm font-bold text-white shadow-sm">
-                            {roll.reduce((a, b) => a + b, 0)}
-                          </div>
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-600 text-sm font-bold text-white">
+                          {roll.reduce((a, b) => a + b, 0)}
                         </div>
                       </div>
                     </div>
@@ -261,9 +208,7 @@ export default function DiceRoller() {
                 </div>
               </div>
             ) : (
-              <div
-                className={`${tool.panel} flex min-h-[120px] items-center justify-center text-center text-sm font-medium text-warm-400 lg:sticky lg:top-4`}
-              >
+              <div className={`${tool.panel} flex min-h-[120px] items-center justify-center text-center text-sm text-warm-500 lg:sticky lg:top-4`}>
                 İlk atıştan sonra geçmiş burada görünür
               </div>
             )}

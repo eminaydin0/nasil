@@ -18,9 +18,7 @@ export default function DicePage() {
       seoDescription="Kaybolan zarlar için dijital çözüm. Tek tıkla tek veya çift zar atın. Tavla ve diğer kutu oyunları için ideal online zar atma aracı."
       seoUrl="/araclar/zar-at"
     >
-      <div className="p-6 sm:p-10">
-        <DiceRoller />
-      </div>
+      <DiceRoller />
     </ToolLayout>
   );
 }

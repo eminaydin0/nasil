@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Trophy, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 import GameTableContainer from '../common/GameTableContainer';
 import { tool } from './toolStyles';
 import { useConfirm } from '../ui';
@@ -40,13 +40,7 @@ export default function OkeyScore() {
   };
 
   return (
-    <GameTableContainer
-      title="Okey Sayacı"
-      subtitle="Düşmeli okey — el kazananı seç, bitiş türünü işaretle."
-      icon={Trophy}
-      onReset={resetGame}
-      className="h-full"
-    >
+    <GameTableContainer onReset={resetGame}>
       <div className="space-y-8 p-5 sm:p-8">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {players.map((player, idx) => (

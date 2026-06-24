@@ -66,9 +66,7 @@ export default function ScoreBoardPage() {
       seoUrl="/araclar/skor-tablosu"
       helpContent={helpContent}
     >
-      <div className="p-6 sm:p-10">
-        <ScoreBoard />
-      </div>
+      <ScoreBoard />
     </ToolLayout>
   );
 }
