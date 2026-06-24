@@ -1,17 +1,14 @@
 import { useEffect } from 'react';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
-import {
-  Dices,
-  Trophy,
-  PencilLine,
-  Users,
-  ArrowRight,
-  Grid3X3,
-  Wrench,
-} from 'lucide-react';
+import { ArrowRight, Wrench, Zap, Smartphone, Gift, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PAGE_SEO } from '../../constants/seo';
+import {
+  SITE_TOOLS,
+  TOOL_HIGHLIGHTS,
+  groupToolsByCategory,
+} from '../../constants/tools';
 
 const colorMap = {
   orange: { bg: 'bg-orange-50', text: 'text-orange-600', accent: 'from-orange-500 to-red-500' },
@@ -22,6 +19,8 @@ const colorMap = {
   sky: { bg: 'bg-sky-50', text: 'text-sky-600', accent: 'from-sky-500 to-blue-600' },
   indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600', accent: 'from-indigo-500 to-violet-600' },
 };
+
+const HIGHLIGHT_ICONS = [Zap, Gift, Smartphone, Clock];
 
 function ToolCard({ title, description, icon: Icon, link, badge, color = 'orange' }) {
   const c = colorMap[color] || colorMap.orange;
@@ -36,7 +35,7 @@ function ToolCard({ title, description, icon: Icon, link, badge, color = 'orange
       />
 
       {badge ? (
-        <span className="absolute right-4 top-4 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+        <span className="absolute right-4 top-4 rounded-full bg-orange-600 px-2 py-0.5 text-[10px] font-bold text-white">
           {badge}
         </span>
       ) : null}
@@ -65,59 +64,7 @@ export default function ToolsPage() {
     window.scrollTo(0, 0);
   }, []);
 
-  const tools = [
-    {
-      title: '101 Okey Yazboz',
-      description: 'Yüzbir oyunu için ceza puanları, el geçmişi ve otomatik toplamlar.',
-      icon: Grid3X3,
-      link: '/araclar/101-yazboz',
-      badge: 'Yeni',
-      color: 'orange',
-    },
-    {
-      title: 'Okey Puan Sayacı',
-      description: 'Düşmeli okeyde ceza puanlarını kaybetmeyin. Normal ve okey çift bitiş seçenekleri.',
-      icon: Trophy,
-      link: '/araclar/okey-sayaci',
-      color: 'red',
-    },
-    {
-      title: 'Batak & King Yazboz',
-      description: 'İhaleli batak veya king için tur bazlı yazboz. Toplamlar otomatik hesaplanır.',
-      icon: PencilLine,
-      link: '/araclar/batak-yazboz',
-      color: 'amber',
-    },
-    {
-      title: 'Takım Oluşturucu',
-      description: 'İsimleri yazın — takımlar adil şekilde rastgele dağılsın.',
-      icon: Users,
-      link: '/araclar/takim-olusturucu',
-      color: 'rose',
-    },
-    {
-      title: 'Halısaha Takım Oluşturucu',
-      description: '5v5, 6v6 veya 7v7. Forma renkleriyle sahada iki takım oluşturun.',
-      icon: Users,
-      link: '/araclar/halisaha-takim-olusturucu',
-      color: 'emerald',
-    },
-    {
-      title: 'Zar At',
-      description: 'Tek veya çift zar, animasyonlu atışlar ve sonuç geçmişi.',
-      icon: Dices,
-      link: '/araclar/zar-at',
-      color: 'sky',
-    },
-    {
-      title: 'Basit Skor Tablosu',
-      description: 'Her oyuna uyumlu nötr tablo; isimleri düzenleyin, sıralama güncellensin.',
-      icon: Trophy,
-      link: '/araclar/skor-tablosu',
-      color: 'indigo',
-    },
-  ];
-
+  const grouped = groupToolsByCategory(SITE_TOOLS);
   const breadcrumbs = [{ name: 'Oyun Araçları', url: null }];
 
   return (
@@ -132,7 +79,7 @@ export default function ToolsPage() {
       <div className="container mx-auto px-4">
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
-        {/* Giriş — Tüm Oyunlar ile aynı ölçek */}
+        {/* Giriş */}
         <div className="mb-8">
           <div className="mb-4 flex items-center gap-3">
             <div className="rounded-xl bg-orange-100 p-3">
@@ -140,7 +87,7 @@ export default function ToolsPage() {
             </div>
             <div>
               <h1 className="text-3xl font-black text-warm-900">Oyun Araçları</h1>
-              <p className="text-warm-600">{tools.length} ücretsiz araç · kayıt gerektirmez</p>
+              <p className="text-warm-600">{SITE_TOOLS.length} ücretsiz araç · kayıt gerektirmez</p>
             </div>
           </div>
 
@@ -152,19 +99,59 @@ export default function ToolsPage() {
           </div>
         </div>
 
-        {/* Araç listesi */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {tools.map((tool) => (
-            <ToolCard key={tool.link} {...tool} />
-          ))}
+        {/* Öne çıkanlar */}
+        <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {TOOL_HIGHLIGHTS.map(({ label, sub }, i) => {
+            const Icon = HIGHLIGHT_ICONS[i];
+            return (
+              <div
+                key={label}
+                className="rounded-xl border border-warm-200/70 bg-white px-4 py-3 shadow-soft"
+              >
+                <Icon className="mb-2 h-5 w-5 text-orange-600" aria-hidden />
+                <p className="text-sm font-bold text-warm-900">{label}</p>
+                <p className="text-xs text-warm-500">{sub}</p>
+              </div>
+            );
+          })}
         </div>
 
-        <p className="mt-10 text-center text-sm text-warm-500">
-          Aradığın aracı bulamadın mı?{' '}
-          <Link to="/iletisim" className="font-semibold text-orange-600 hover:text-orange-700">
-            Bize yaz, ekleyelim
-          </Link>
-        </p>
+        {/* Kategorilere göre araçlar */}
+        {grouped.map(({ key, label, items }) => (
+          <section key={key} className="mb-10">
+            <h2 className="mb-4 text-lg font-extrabold text-warm-900">{label}</h2>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((tool) => (
+                <ToolCard key={tool.id} {...tool} />
+              ))}
+            </div>
+          </section>
+        ))}
+
+        {/* Alt CTA */}
+        <div className="rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-8">
+          <div>
+            <h2 className="text-lg font-extrabold text-warm-900">Oyun kurallarını da öğren</h2>
+            <p className="mt-1 text-sm text-warm-600">
+              Araçları kullanırken kurallarda takılırsan arşivimizde 50+ geleneksel oyun rehberi var.
+            </p>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3 sm:mt-0 sm:shrink-0">
+            <Link
+              to="/oyunlar"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange-700"
+            >
+              Oyunları keşfet
+              <ArrowRight size={16} aria-hidden />
+            </Link>
+            <Link
+              to="/iletisim"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-warm-200 bg-cream-50 px-5 py-2.5 text-sm font-semibold text-warm-700 transition-colors hover:bg-white"
+            >
+              Araç öner
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
