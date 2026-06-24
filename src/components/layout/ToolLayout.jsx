@@ -1,9 +1,11 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import SEO from '../common/SEO';
 import Breadcrumb from '../common/Breadcrumb';
 import { TOOL_FEATURES } from '../../constants/tools';
 import { ToolFeaturesCard, RelatedToolsCard, RelatedToolsStrip } from '../tools/ToolExtras';
+import { buildToolSeoMeta, buildToolStructuredData } from '../../lib/seoEngine';
 
 /**
  * Araç alt sayfası iskeleti — /araclar listesi ile aynı ölçek ve dil
@@ -24,12 +26,25 @@ export default function ToolLayout({
     { name: title, url: null },
   ];
 
+  const toolSeo = useMemo(
+    () => buildToolSeoMeta(seoUrl, { seoTitle, seoDescription, title, description, seoUrl }),
+    [seoUrl, seoTitle, seoDescription, title, description]
+  );
+
+  const toolSchema = useMemo(
+    () => buildToolStructuredData(seoUrl, { seoTitle, seoDescription, title, description, seoUrl }),
+    [seoUrl, seoTitle, seoDescription, title, description]
+  );
+
   return (
     <div className="min-h-screen bg-cream-50 py-12">
       <SEO
-        title={seoTitle || `${title} - Kuralı Ne?`}
-        description={seoDescription || description}
-        url={seoUrl}
+        title={toolSeo.title}
+        description={toolSeo.description}
+        keywords={toolSeo.keywords}
+        url={toolSeo.url}
+        structuredData={toolSchema}
+        breadcrumbs={breadcrumbs}
       />
 
       <div className="container mx-auto px-4">

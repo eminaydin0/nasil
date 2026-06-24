@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { buildGameFaqs } from '../../lib/seoEngine';
 
 export default function FAQAccordion({ game }) {
-  const faqs = Array.isArray(game?.faq) ? game.faq.filter((item) => item?.question && item?.answer) : [];
+  const faqs = useMemo(() => buildGameFaqs(game), [game]);
   const [openIndex, setOpenIndex] = useState(0);
 
   if (faqs.length === 0) return null;

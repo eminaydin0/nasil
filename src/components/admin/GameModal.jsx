@@ -3,6 +3,7 @@ import { Trash2, Upload, X, Image as ImageIcon, PlayCircle, HelpCircle, Clock } 
 import { uploadGameImage, uploadMultipleGameImages, deleteGameImage } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 import { useConfirm } from '../ui';
+import GameSeoPreview from './GameSeoPreview';
 
 // Slug oluşturma (Türkçe karakterleri normalize eder)
 function generateSlug(name) {
@@ -637,6 +638,8 @@ function GameModal({ game, categories = [], onSave, onClose }) {
                 ))}
               </div>
             </div>
+
+            <GameSeoPreview formData={formData} />
           </div>
 
           <div className="flex items-center justify-end space-x-4 pt-4 border-t border-gray-200">

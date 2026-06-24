@@ -23,6 +23,7 @@ import {
   generateItemListSchema,
   generateFAQSchema,
 } from '../../constants/seo';
+import { buildHomeSeoMeta, buildHomeFaqs } from '../../lib/seoEngine';
 
 function HomePage() {
   const { games, loading } = useGames();
@@ -61,32 +62,17 @@ function HomePage() {
     trackPageView('/');
   }, []);
 
-  // Structured Data
+  const homeSeo = useMemo(() => buildHomeSeoMeta(games), [games]);
+
   const structuredData = useMemo(() => {
     const schemas = [SCHEMA_TEMPLATES.website, SCHEMA_TEMPLATES.organization];
 
     if (games.length > 0) {
-      schemas.push(generateItemListSchema(games, 'Popüler Oyunlar'));
+      const byViews = [...games].sort((a, b) => (b.views || 0) - (a.views || 0));
+      schemas.push(generateItemListSchema(byViews.slice(0, 10), 'Popüler Oyunlar'));
     }
 
-    const faqs = [
-      {
-        question: 'Okey nasıl oynanır?',
-        answer:
-          'Okey, 4 kişiyle oynanan geleneksel bir Türk masa oyunudur. 106 taş ve 2 sahte okey ile oynanır. Amaç, taşları gruplar veya seriler halinde düzenleyerek eli kapatmaktır.',
-      },
-      {
-        question: 'Batak nasıl oynanır?',
-        answer:
-          'Batak, 4 kişiyle 52 kartlık deste ile oynanan bir kart oyunudur. Oyuncular sırayla koz belirler ve el almaya çalışırlar. En yüksek kartı oynayan el alır.',
-      },
-      {
-        question: 'Pişti nasıl oynanır?',
-        answer:
-          'Pişti, 2-4 kişiyle oynanan hızlı tempolu bir kart oyunudur. Amaç, masadaki kartları toplayarak puan kazanmaktır. Vale ve Pistikarları özel puan getirir.',
-      },
-    ];
-    schemas.push(generateFAQSchema(faqs));
+    schemas.push(generateFAQSchema(buildHomeFaqs(games)));
 
     return schemas;
   }, [games]);
@@ -128,8 +114,8 @@ function HomePage() {
     <div className="min-h-screen bg-cream-50 page-transition">
       <SEO
         title={PAGE_SEO.home.title}
-        description={PAGE_SEO.home.description}
-        keywords={PAGE_SEO.home.keywords}
+        description={homeSeo.description}
+        keywords={homeSeo.keywords || PAGE_SEO.home.keywords}
         url="/"
         structuredData={structuredData}
       />

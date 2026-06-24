@@ -17,9 +17,9 @@ import PlayTimeBadge from '../../components/game/PlayTimeBadge';
 import { supabase } from '../../lib/supabase';
 import { trackPageView } from '../../utils/analytics';
 import {
-  generateComparisonPageSchema,
-  SITE_CONFIG,
-} from '../../constants/seo';
+  buildComparisonSeoMeta,
+  buildComparisonStructuredData,
+} from '../../lib/seoEngine';
 
 const DIFFICULTY_RANK = { Kolay: 1, Orta: 2, Zor: 3 };
 
@@ -196,21 +196,12 @@ export default function ComparePage() {
 
   const structuredData = useMemo(() => {
     if (!gameA || !gameB) return null;
-    return [generateComparisonPageSchema(gameA, gameB)].filter(Boolean);
+    return buildComparisonStructuredData(gameA, gameB);
   }, [gameA, gameB]);
 
   const seoMeta = useMemo(() => {
     if (!gameA || !gameB) return {};
-    const title = `${gameA.name} vs ${gameB.name} - Hangisi Daha İyi? Karşılaştırma`;
-    const description = `${gameA.name} ile ${gameB.name} arasındaki farklar, kuralları, oyuncu sayısı, zorluk ve oyun süresi karşılaştırması. Hangisi sana daha uygun?`;
-    const keywords = [
-      `${gameA.name} vs ${gameB.name}`,
-      `${gameA.name} ${gameB.name} karşılaştırma`,
-      `${gameA.name} mı ${gameB.name} mi`,
-      `${gameA.name} farklı`,
-      `${gameB.name} farklı`,
-    ].join(', ');
-    return { title, description, keywords };
+    return buildComparisonSeoMeta(gameA, gameB);
   }, [gameA, gameB]);
 
   if (loading) {
@@ -274,9 +265,9 @@ export default function ComparePage() {
         title={seoMeta.title}
         description={seoMeta.description}
         keywords={seoMeta.keywords}
-        url={`/karsilastir/${gameA.slug}-vs-${gameB.slug}`}
+        url={seoMeta.url}
         type="website"
-        image={gameA.image}
+        image={seoMeta.image}
         structuredData={structuredData}
         breadcrumbs={breadcrumbs}
       />

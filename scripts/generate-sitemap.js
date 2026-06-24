@@ -35,7 +35,6 @@ const STATIC_PAGES = [
   { url: '/gizlilik', changefreq: 'monthly', priority: '0.5' },
   { url: '/cerez-politikasi', changefreq: 'monthly', priority: '0.5' },
   { url: '/reklam-verin', changefreq: 'monthly', priority: '0.6' },
-  { url: '/auth', changefreq: 'monthly', priority: '0.4' },
 ];
 
 // Tools pages

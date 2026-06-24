@@ -9,6 +9,7 @@ import { useCategories } from '../../hooks/useCategories';
 import { useGameStats } from '../../hooks/useGameStats';
 import { getCategoriesWithCounts } from '../../constants/categories';
 import { PAGE_SEO, generateItemListSchema, SCHEMA_TEMPLATES } from '../../constants/seo';
+import { buildAllGamesSeoMeta } from '../../lib/seoEngine';
 import { trackPageView } from '../../utils/analytics';
 
 // Kategori eşleştirme - büyük/küçük harf duyarsız
@@ -75,21 +76,24 @@ function AllGames() {
   const { statsMap } = useGameStats(allGameIds);
 
   const searchQuery = searchParams.get('search')?.trim() ?? '';
-  const seoTitle = searchQuery
-    ? `"${searchQuery}" Arama Sonuçları - Tüm Oyunlar`
-    : PAGE_SEO.allGames.title;
-  const seoDescription = searchQuery
-    ? `"${searchQuery}" araması için ${filteredGames.length} oyun bulundu. Geleneksel Türk oyunları arşivinde arama yapın.`
-    : PAGE_SEO.allGames.description;
-  const seoUrl = searchQuery
-    ? `/oyunlar?search=${encodeURIComponent(searchQuery)}`
-    : '/oyunlar';
 
-  // SEO için structured data
-  const structuredData = [
-    SCHEMA_TEMPLATES.webPage(seoTitle, seoDescription, seoUrl),
-    games.length > 0 ? generateItemListSchema(filteredGames, searchQuery ? `"${searchQuery}" Arama Sonuçları` : 'Tüm Oyunlar') : null,
-  ].filter(Boolean);
+  const seoMeta = useMemo(
+    () => buildAllGamesSeoMeta(filteredGames, {
+      searchQuery,
+      category: selectedCategory,
+    }),
+    [filteredGames, searchQuery, selectedCategory]
+  );
+
+  const structuredData = useMemo(() => [
+    SCHEMA_TEMPLATES.webPage(seoMeta.title, seoMeta.description, seoMeta.url),
+    filteredGames.length > 0
+      ? generateItemListSchema(
+          filteredGames,
+          searchQuery ? `"${searchQuery}" Arama Sonuçları` : 'Tüm Oyunlar'
+        )
+      : null,
+  ].filter(Boolean), [seoMeta, filteredGames, searchQuery]);
 
   // Breadcrumb
   const breadcrumbs = [
@@ -99,10 +103,10 @@ function AllGames() {
   return (
     <div className="min-h-screen bg-cream-50 py-12">
       <SEO 
-        title={seoTitle}
-        description={seoDescription}
-        keywords={PAGE_SEO.allGames.keywords}
-        url={seoUrl}
+        title={seoMeta.title}
+        description={seoMeta.description}
+        keywords={seoMeta.keywords || PAGE_SEO.allGames.keywords}
+        url={seoMeta.url}
         structuredData={structuredData}
         breadcrumbs={breadcrumbs}
       />

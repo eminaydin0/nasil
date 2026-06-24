@@ -14,12 +14,9 @@ import { trackPageView, trackGameView } from '../../utils/analytics';
 import { useGame } from '../../hooks/useGame';
 import { supabase } from '../../lib/supabase';
 import {
-  generateGameSchema,
-  generateArticleSchema,
-  generateVideoSchema,
-  generateFAQSchema,
-  SITE_CONFIG,
-} from '../../constants/seo';
+  buildGameSeoMeta,
+  buildGameStructuredData,
+} from '../../lib/seoEngine';
 
 function GameDetail() {
   const { slug } = useParams();
@@ -87,87 +84,26 @@ function GameDetail() {
     }
   }, [game]);
 
-  // Gelişmiş Structured Data
+  const aggregateRating = useMemo(() => (
+    commentRatingStats.count > 0
+      ? { count: commentRatingStats.count, average: commentRatingStats.average }
+      : null
+  ), [commentRatingStats]);
+
   const structuredData = useMemo(() => {
     if (!game) return null;
+    return buildGameStructuredData(game, { aggregateRating });
+  }, [game, aggregateRating]);
 
-    const aggregateRating = commentRatingStats.count > 0
-      ? { count: commentRatingStats.count, average: commentRatingStats.average }
-      : null;
-
-    const schemas = [
-      // HowTo Schema - Oyun kuralları için (AggregateRating ile zenginlestirilmis)
-      generateGameSchema(game, { aggregateRating }),
-      // Article Schema - İçerik için
-      generateArticleSchema(game),
-      // VideoObject - varsa
-      generateVideoSchema(game),
-      // FAQPage - varsa
-      Array.isArray(game.faq) && game.faq.length > 0 ? generateFAQSchema(game.faq) : null,
-      // Game Schema
-      {
-        '@context': 'https://schema.org',
-        '@type': 'Game',
-        name: game.name,
-        description: game.shortDescription || game.description,
-        image: game.image,
-        url: `${SITE_CONFIG.url}/oyun/${game.slug}`,
-        genre: game.category,
-        numberOfPlayers: {
-          '@type': 'QuantitativeValue',
-          value: game.players,
-        },
-        gamePlatform: 'Tabletop',
-        applicationCategory: 'Game',
-        inLanguage: 'tr',
-        author: {
-          '@type': 'Organization',
-          name: SITE_CONFIG.name,
-          url: SITE_CONFIG.url,
-        },
-        ...(aggregateRating && {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: aggregateRating.average.toFixed(2),
-            ratingCount: aggregateRating.count,
-            bestRating: 5,
-            worstRating: 1,
-          },
-        }),
-      },
-    ].filter(Boolean);
-
-    return schemas;
-  }, [game, commentRatingStats]);
-
-  // Breadcrumb items
   const breadcrumbs = useMemo(() => {
     if (!game) return [];
     return BREADCRUMB_TEMPLATES.gameDetail(game.name, game.category);
   }, [game]);
 
-  // SEO meta bilgileri
   const seoMeta = useMemo(() => {
     if (!game) return {};
-
-    const title = `${game.name} Kuralı Ne?`;
-    const description = `${game.name} kuralı ne? ${game.shortDescription || game.description?.substring(0, 120)}. Detaylı oyun kuralları, stratejiler ve püf noktaları.`;
-    const keywords = [
-      `${game.name} kuralı ne`,
-      `${game.name} nasıl oynanır`,
-      `${game.name} kuralları`,
-      `${game.name} stratejileri`,
-      `${game.name} ipuçları`,
-      game.category,
-      game.difficulty ? `${game.difficulty} oyun` : null,
-      game.players,
-      'kuralı ne',
-      'nasıl oynanır',
-      'oyun kuralları',
-    ].filter(Boolean).join(', ');
-
-    return { title, description, keywords };
-  }, [game]);
+    return buildGameSeoMeta(game, { aggregateRating });
+  }, [game, aggregateRating]);
 
   if (!game || loading) {
     return <SkeletonLoader type="game-detail" />;
@@ -179,15 +115,15 @@ function GameDetail() {
         title={seoMeta.title}
         description={seoMeta.description}
         keywords={seoMeta.keywords}
-        image={game.image}
-        url={`/oyun/${game.slug}`}
+        image={seoMeta.image}
+        url={seoMeta.url}
         type="article"
         structuredData={structuredData}
         breadcrumbs={breadcrumbs}
-        publishedTime={game.createdAt}
-        modifiedTime={game.updatedAt}
-        section={game.category}
-        tags={[game.name, game.category, 'oyun kuralları', 'nasıl oynanır']}
+        publishedTime={seoMeta.publishedTime}
+        modifiedTime={seoMeta.modifiedTime}
+        section={seoMeta.section}
+        tags={seoMeta.tags}
       />
 
       <GameHeader

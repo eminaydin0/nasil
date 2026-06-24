@@ -10,11 +10,10 @@ import { CATEGORY_NAMES, getCategoryConfig, getCategoryDescription } from '../..
 import { useCategories } from '../../hooks/useCategories';
 import { useGameStats } from '../../hooks/useGameStats';
 import { trackPageView } from '../../utils/analytics';
-import { 
-  CATEGORY_SEO, 
-  generateCollectionPageSchema,
-  generateItemListSchema 
-} from '../../constants/seo';
+import {
+  buildCategorySeoMeta,
+  buildCategoryStructuredData,
+} from '../../lib/seoEngine';
 
 function CategoryPage() {
   const { categoryName } = useParams();
@@ -95,24 +94,15 @@ function CategoryPage() {
   
   const colorClass = colorClasses[config.color] || colorClasses.gray;
 
-  // SEO Meta
-  const seoMeta = useMemo(() => {
-    const categoryData = CATEGORY_SEO[decodedCategoryName] || {};
-    return {
-      title: categoryData.title || `${decodedCategoryName} Oyunları - Kuralı Ne?`,
-      description: categoryData.description || description,
-      keywords: categoryData.keywords || `${decodedCategoryName}, ${decodedCategoryName.toLowerCase()} oyunları, nasıl oynanır`,
-    };
-  }, [decodedCategoryName, description]);
+  const seoMeta = useMemo(
+    () => buildCategorySeoMeta(decodedCategoryName, games, { description }),
+    [decodedCategoryName, games, description]
+  );
 
-  // Structured Data
-  const structuredData = useMemo(() => {
-    if (!games.length) return null;
-    return [
-      generateCollectionPageSchema(decodedCategoryName, games),
-      generateItemListSchema(games, `${decodedCategoryName} Oyunları`),
-    ];
-  }, [decodedCategoryName, games]);
+  const structuredData = useMemo(
+    () => buildCategoryStructuredData(decodedCategoryName, games),
+    [decodedCategoryName, games]
+  );
 
   // Breadcrumb
   const breadcrumbs = BREADCRUMB_TEMPLATES.category(decodedCategoryName);
@@ -139,7 +129,7 @@ function CategoryPage() {
         title={seoMeta.title}
         description={seoMeta.description}
         keywords={seoMeta.keywords}
-        url={`/kategori/${categoryName}`}
+        url={seoMeta.url || `/kategori/${categoryName}`}
         structuredData={structuredData}
         breadcrumbs={breadcrumbs}
       />
