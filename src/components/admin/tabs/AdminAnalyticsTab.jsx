@@ -17,10 +17,12 @@ import {
   BarChart3,
   Download,
   Loader2,
+  LayoutGrid,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { supabase } from '../../../lib/supabase';
-import { exportAnalyticsData } from '../../../utils/analytics';
+import { exportAnalyticsData, fetchPageViewStats } from '../../../utils/analytics';
+import { SITE_TOOLS } from '../../../constants/tools';
 import { Donut, BarChart, MetricCard } from '../charts';
 
 const TIME_RANGES = [
@@ -29,42 +31,6 @@ const TIME_RANGES = [
   { value: '30days', label: 'Son 30 Gün' },
   { value: 'all', label: 'Tüm Zamanlar' },
 ];
-
-function ActivityIcon({ type }) {
-  const base = 'grid h-9 w-9 shrink-0 place-items-center rounded-xl';
-  switch (type) {
-    case 'game_view':
-      return (
-        <div className={`${base} bg-emerald-100 text-emerald-600`}>
-          <Eye size={16} />
-        </div>
-      );
-    case 'comment_submit':
-      return (
-        <div className={`${base} bg-purple-100 text-purple-600`}>
-          <MessageCircle size={16} />
-        </div>
-      );
-    case 'share_click':
-      return (
-        <div className={`${base} bg-pink-100 text-pink-600`}>
-          <Share2 size={16} />
-        </div>
-      );
-    case 'search':
-      return (
-        <div className={`${base} bg-amber-100 text-amber-600`}>
-          <Search size={16} />
-        </div>
-      );
-    default:
-      return (
-        <div className={`${base} bg-warm-100 text-warm-500`}>
-          <Activity size={16} />
-        </div>
-      );
-  }
-}
 
 function EngagementCard({ icon: Icon, label, value, desc, warn }) {
   return (
@@ -110,7 +76,7 @@ export default function AdminAnalyticsTab({ games, stats }) {
     deviceStats: { desktop: 0, mobile: 0, tablet: 0 },
     trafficSources: { direct: 0, search: 0, social: 0, referral: 0 },
     topGames: [],
-    recentActivity: [],
+    pageViewStats: [],
   });
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('7days');
@@ -184,22 +150,11 @@ export default function AdminAnalyticsTab({ games, stats }) {
         };
       });
 
-      const { data: recentData } = await supabase
-        .from('recent_activity')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-      const recentActivity = (recentData || []).map((a) => {
-        const game = games.find((g) => g.id === a.game_id);
-        const displayName =
-          game?.name ||
-          a.event_data?.page ||
-          a.event_data?.search_term ||
-          (a.game_id ? `Oyun #${a.game_id}` : 'Sayfa');
-        return { ...a, game_name: displayName };
-      });
+      const toolLinks = Object.fromEntries(SITE_TOOLS.map((t) => [t.link, t.title]));
 
-      setAnalytics((prev) => ({ ...prev, ...newAnalytics, topGames, recentActivity }));
+      const pageViewStats = await fetchPageViewStats(timeRange, games, toolLinks);
+
+      setAnalytics((prev) => ({ ...prev, ...newAnalytics, topGames, pageViewStats }));
     } catch (err) {
       console.error('Analytics error:', err);
     } finally {
@@ -279,6 +234,7 @@ export default function AdminAnalyticsTab({ games, stats }) {
   );
 
   const maxTopGameViews = analytics.topGames[0]?.views || 1;
+  const maxPageViews = analytics.pageViewStats[0]?.views || 1;
 
   return (
     <div className="space-y-6">
@@ -489,40 +445,51 @@ export default function AdminAnalyticsTab({ games, stats }) {
                 )}
               </div>
 
-              {/* Son Aktiviteler */}
+              {/* Sayfa Görüntülenmeleri */}
               <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
-                <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-charcoal-900 sm:text-lg">
-                  <Activity size={18} className="text-blue-600" />
-                  Son Aktiviteler
+                <h3 className="mb-1 flex items-center gap-2 text-base font-bold text-charcoal-900 sm:text-lg">
+                  <LayoutGrid size={18} className="text-blue-600" />
+                  Sayfa Görüntülenmeleri
                 </h3>
-                {analytics.recentActivity.length > 0 ? (
-                  <div className="space-y-2">
-                    {analytics.recentActivity.slice(0, 8).map((a, i) => (
+                <p className="mb-4 text-xs text-warm-500">
+                  Seçili dönemde hangi sayfanın kaç kez ziyaret edildiği
+                </p>
+                {analytics.pageViewStats.length > 0 ? (
+                  <div className="max-h-[28rem] space-y-2 overflow-y-auto pr-1">
+                    {analytics.pageViewStats.map((item, i) => (
                       <div
-                        key={i}
-                        className="flex items-center gap-3 rounded-xl border border-warm-200/60 bg-cream-50 p-2.5 text-sm transition-colors hover:border-warm-300"
+                        key={item.path}
+                        className="rounded-xl border border-warm-200/60 bg-cream-50 p-3 transition-colors hover:border-warm-300"
                       >
-                        <ActivityIcon type={a.event_type} />
-                        <div className="min-w-0 flex-1">
-                          <span className="block truncate font-semibold text-charcoal-900">
-                            {a.event_type === 'game_view' && 'Görüntülendi: '}
-                            {a.event_type === 'comment_submit' && 'Yorum: '}
-                            {a.event_type === 'share_click' && 'Paylaşıldı: '}
-                            {a.event_type === 'search' && 'Arama: '}
-                            {a.game_name || a.event_data?.search_term || '-'}
+                        <div className="mb-2 flex items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white text-[11px] font-bold text-warm-500 shadow-soft">
+                                {i + 1}
+                              </span>
+                              <span className="truncate text-sm font-semibold text-charcoal-900">
+                                {item.label}
+                              </span>
+                            </div>
+                            <p className="mt-1 truncate pl-8 text-[11px] text-warm-400">{item.path}</p>
+                          </div>
+                          <span className="shrink-0 rounded-lg bg-orange-100 px-2.5 py-1 text-sm font-bold tabular-nums text-orange-700">
+                            {item.views.toLocaleString('tr-TR')}
                           </span>
                         </div>
-                        <span className="shrink-0 text-[11px] font-medium text-warm-500">
-                          {new Date(a.created_at).toLocaleTimeString('tr-TR', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
+                        <div className="h-1.5 overflow-hidden rounded-full bg-warm-100">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-700 ease-spring"
+                            style={{ width: `${(item.views / maxPageViews) * 100}%` }}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="py-8 text-center text-sm text-warm-500">Henüz aktivite yok</p>
+                  <p className="py-8 text-center text-sm text-warm-500">
+                    Henüz sayfa görüntülenme verisi yok
+                  </p>
                 )}
               </div>
             </div>

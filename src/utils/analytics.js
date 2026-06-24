@@ -301,25 +301,124 @@ export const clearAnalyticsData = () => {
 };
 
 // Fetch analytics data from Supabase
+export const getStartDateForTimeRange = (timeRange = '7days') => {
+  const startDate = new Date();
+  switch (timeRange) {
+    case '24hours':
+      startDate.setHours(startDate.getHours() - 24);
+      break;
+    case '7days':
+      startDate.setDate(startDate.getDate() - 7);
+      break;
+    case '30days':
+      startDate.setDate(startDate.getDate() - 30);
+      break;
+    case 'all':
+      return new Date(0);
+    default:
+      startDate.setDate(startDate.getDate() - 7);
+  }
+  return startDate;
+};
+
+const STATIC_PAGE_LABELS = {
+  '/': 'Ana Sayfa',
+  '/oyunlar': 'Tüm Oyunlar',
+  '/araclar': 'Oyun Araçları',
+  '/hakkimizda': 'Hakkımızda',
+  '/iletisim': 'İletişim',
+  '/gizlilik': 'Gizlilik Politikası',
+  '/kullanim-kosullari': 'Kullanım Koşulları',
+  '/cerez-politikasi': 'Çerez Politikası',
+  '/reklam-verin': 'Reklam Verin',
+  '/auth': 'Giriş / Kayıt',
+  '/profil': 'Profil',
+};
+
+/** Sayfa yolunu admin panelde okunabilir etikete çevirir */
+export function resolvePageLabel(path, games = [], toolLinks = {}) {
+  if (!path) return 'Bilinmeyen Sayfa';
+
+  const [pathname, query = ''] = path.split('?');
+
+  if (STATIC_PAGE_LABELS[pathname]) return STATIC_PAGE_LABELS[pathname];
+
+  if (pathname === '/oyunlar' || (pathname.startsWith('/oyunlar') && query.includes('search='))) {
+    const params = new URLSearchParams(query);
+    const term = params.get('search');
+    return term ? `Oyun Arama: "${term}"` : 'Tüm Oyunlar';
+  }
+
+  if (pathname.startsWith('/oyun/') && !pathname.includes('101-skor-tablosu')) {
+    const slug = pathname.replace('/oyun/', '');
+    const game = games.find((g) => g.slug === slug);
+    return game ? `Oyun: ${game.name}` : `Oyun: ${slug}`;
+  }
+
+  if (pathname.includes('/101-skor-tablosu')) {
+    const slug = pathname.replace('/oyun/', '').replace('/101-skor-tablosu', '');
+    const game = games.find((g) => g.slug === slug);
+    return game ? `101 Skor: ${game.name}` : `101 Skor Tablosu`;
+  }
+
+  if (pathname.startsWith('/kategori/')) {
+    const category = decodeURIComponent(pathname.replace('/kategori/', ''));
+    return `Kategori: ${category}`;
+  }
+
+  if (pathname.startsWith('/araclar/')) {
+    const toolLabel = toolLinks[pathname];
+    if (toolLabel) return toolLabel;
+    return `Araç: ${pathname.replace('/araclar/', '')}`;
+  }
+
+  if (pathname.startsWith('/karsilastir/')) {
+    const pair = pathname.replace('/karsilastir/', '').replace(/-/g, ' ');
+    return `Karşılaştırma: ${pair}`;
+  }
+
+  if (pathname.startsWith('/hata-')) {
+    return `Hata Sayfası (${pathname.replace('/hata-', '')})`;
+  }
+
+  return pathname;
+}
+
+/** Sayfa bazlı görüntülenme sayılarını döner (analytics_events.page_view) */
+export const fetchPageViewStats = async (timeRange = '7days', games = [], toolLinks = {}) => {
+  try {
+    const startDate = getStartDateForTimeRange(timeRange);
+
+    const { data, error } = await supabase
+      .from('analytics_events')
+      .select('event_data')
+      .eq('event_type', 'page_view')
+      .gte('created_at', startDate.toISOString());
+
+    if (error) throw error;
+
+    const counts = {};
+    for (const row of data || []) {
+      const page = row.event_data?.page || '/';
+      counts[page] = (counts[page] || 0) + 1;
+    }
+
+    return Object.entries(counts)
+      .map(([path, views]) => ({
+        path,
+        views,
+        label: resolvePageLabel(path, games, toolLinks),
+      }))
+      .sort((a, b) => b.views - a.views);
+  } catch (error) {
+    console.error('Failed to fetch page view stats:', error);
+    return [];
+  }
+};
+
 export const fetchAnalyticsFromSupabase = async (timeRange = '7days') => {
   try {
-    let startDate = new Date();
-    
-    switch (timeRange) {
-      case '24hours':
-        startDate.setHours(startDate.getHours() - 24);
-        break;
-      case '7days':
-        startDate.setDate(startDate.getDate() - 7);
-        break;
-      case '30days':
-        startDate.setDate(startDate.getDate() - 30);
-        break;
-      default:
-        startDate.setDate(startDate.getDate() - 7);
-    }
-    
-    // Get events
+    const startDate = getStartDateForTimeRange(timeRange);
     const { data: events, error } = await supabase
       .from('analytics_events')
       .select('*')
