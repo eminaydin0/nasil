@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import CookieConsent from './components/common/CookieConsent';
 import AddToHomeScreen from './components/common/AddToHomeScreen';
+import ScrollToTop from './components/common/ScrollToTop';
 import HomePage from './pages/HomePage';
 import GameDetail from './pages/GameDetail';
 import CategoryPage from './pages/Categories';
@@ -88,6 +89,7 @@ function App() {
           <Route path="/*" element={
             <div className="min-h-screen flex flex-col bg-white">
               <Header />
+              <ScrollToTop />
               <main className="grow page-transition">
                 <Routes>
                   <Route path="/" element={<HomePage />} />

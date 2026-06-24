@@ -31,6 +31,64 @@ const navItems = [
   { to: '/iletisim', label: 'İletişim', exact: true },
 ];
 
+function useNavActive(pathname) {
+  return (to, exact) => {
+    if (exact) return pathname === to;
+    if (to === '/oyunlar') {
+      return (
+        pathname === '/oyunlar' ||
+        pathname.startsWith('/oyun/') ||
+        pathname.startsWith('/kategori/')
+      );
+    }
+    if (to === '/araclar') {
+      return pathname === '/araclar' || pathname.startsWith('/araclar/');
+    }
+    return pathname.startsWith(to);
+  };
+}
+
+function GameSearchDropdown({ games, searchTerm, searchResultsUrl, onNavigate }) {
+  if (!searchTerm) return null;
+
+  return (
+    <div className="absolute top-[calc(100%+6px)] z-50 w-full overflow-hidden rounded-xl border border-warm-200/80 bg-white p-1 shadow-soft-xl">
+      {games.length > 0 ? (
+        games.map((game) => (
+          <Link
+            key={game.id}
+            to={`/oyun/${game.slug}`}
+            className="flex items-center gap-3 rounded-lg p-2.5 transition-colors hover:bg-cream-50"
+            onClick={onNavigate}
+          >
+            <img
+              src={game.image}
+              alt={game.name}
+              loading="lazy"
+              className="h-9 w-9 shrink-0 rounded-lg object-cover ring-1 ring-warm-200/60"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-warm-900">{game.name}</p>
+              <p className="truncate text-xs text-warm-500">{game.shortDescription}</p>
+            </div>
+          </Link>
+        ))
+      ) : (
+        <p className="px-3 py-2.5 text-xs text-warm-500">Eşleşen oyun bulunamadı</p>
+      )}
+      {searchResultsUrl && (
+        <Link
+          to={searchResultsUrl}
+          className="mt-0.5 block border-t border-warm-100 px-3 py-2.5 text-center text-xs font-semibold text-orange-600 hover:bg-orange-50 rounded-b-lg"
+          onClick={onNavigate}
+        >
+          Tüm sonuçları gör
+        </Link>
+      )}
+    </div>
+  );
+}
+
 function Header() {
   const [searchTerm, setSearchTerm] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -42,36 +100,7 @@ function Header() {
   const location = useLocation();
   const pathname = location.pathname;
   const confirm = useConfirm();
-
-  const isActive = (to, exact) => {
-    if (exact) return pathname === to;
-    if (to === '/oyunlar')
-      return (
-        pathname === '/oyunlar' ||
-        pathname.startsWith('/oyun/') ||
-        pathname.startsWith('/kategori/')
-      );
-    if (to === '/araclar') return pathname === '/araclar' || pathname.startsWith('/araclar/');
-    return pathname.startsWith(to);
-  };
-
-  const navLinkClass = (to, exact) => {
-    const active = isActive(to, exact);
-    const base =
-      'px-3.5 py-2 rounded-xl transition-all text-sm font-semibold tracking-wide';
-    return active
-      ? `${base} text-white bg-gradient-to-r from-orange-500 to-red-500 shadow-warm-glow`
-      : `${base} text-warm-700 hover:bg-warm-100 hover:text-charcoal-900`;
-  };
-
-  const mobileNavLinkClass = (to, exact) => {
-    const active = isActive(to, exact);
-    const base =
-      'block px-3.5 py-2.5 text-sm rounded-xl transition-all font-semibold';
-    return active
-      ? `${base} text-white bg-gradient-to-r from-orange-500 to-red-500 shadow-warm-glow`
-      : `${base} text-warm-700 hover:bg-warm-100 hover:text-charcoal-900`;
-  };
+  const isActive = useNavActive(pathname);
 
   useEffect(() => {
     loadGames();
@@ -85,16 +114,16 @@ function Header() {
 
       if (error) throw error;
 
-      const formattedGames = (data || []).map((game) => ({
-        id: game.id,
-        slug: game.slug,
-        name: game.name,
-        category: game.category,
-        shortDescription: game.short_description,
-        image: game.image,
-      }));
-
-      setGames(formattedGames);
+      setGames(
+        (data || []).map((game) => ({
+          id: game.id,
+          slug: game.slug,
+          name: game.name,
+          category: game.category,
+          shortDescription: game.short_description,
+          image: game.image,
+        }))
+      );
     } catch (error) {
       console.error('Error loading games:', error);
       setGames([]);
@@ -111,12 +140,18 @@ function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Route degistiginde mobil menuyu kapat
   useEffect(() => {
     setMobileMenuOpen(false);
     setSearchFocused(false);
     setSearchTerm('');
   }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   const filteredGames = games
     .filter(
@@ -132,9 +167,13 @@ function Header() {
   const handleSearchKeyDown = (e) => {
     if (e.key === 'Enter' && searchTerm.trim()) {
       navigate(`/oyunlar?search=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchFocused(false);
-      setSearchTerm('');
+      clearSearch();
     }
+  };
+
+  const clearSearch = () => {
+    setSearchFocused(false);
+    setSearchTerm('');
   };
 
   const searchResultsUrl = searchTerm.trim()
@@ -163,333 +202,289 @@ function Header() {
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Kullanıcı';
   const avatarUrl = user?.user_metadata?.avatar_url;
 
+  const desktopNavClass = (to, exact) => {
+    const active = isActive(to, exact);
+    return [
+      'relative px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap',
+      active
+        ? 'text-orange-700 bg-orange-50'
+        : 'text-warm-600 hover:text-warm-900 hover:bg-warm-50',
+    ].join(' ');
+  };
+
+  const mobileNavClass = (to, exact) => {
+    const active = isActive(to, exact);
+    return [
+      'block rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors',
+      active ? 'bg-orange-50 text-orange-700' : 'text-warm-700 hover:bg-cream-100',
+    ].join(' ');
+  };
+
   return (
-    <header className="sticky top-0 z-50 border-b border-warm-200/60 bg-cream-50/85 backdrop-blur-md font-sans">
-      <nav className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-3">
-          <Link to="/" className="group flex items-center" aria-label="Kuralı Ne? - Ana Sayfa">
+    <header className="sticky top-0 z-50 border-b border-warm-200/80 bg-white/90 font-sans shadow-[0_1px_0_rgba(28,25,23,0.04),0_4px_24px_-4px_rgba(28,25,23,0.06)] backdrop-blur-lg">
+      <nav className="container mx-auto px-4" aria-label="Ana menü">
+        <div className="flex h-[4.25rem] items-center justify-between gap-4">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="group flex shrink-0 items-center gap-2.5"
+            aria-label="Kuralı Ne? - Ana Sayfa"
+          >
             <img
               src="/logo.svg"
               alt="Kuralı Ne?"
-              className="h-14 w-auto object-contain transition-transform duration-300 ease-spring group-hover:scale-105 md:h-16"
+              className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02] md:h-12"
               loading="eager"
               decoding="async"
-              fetchpriority="high"
+              fetchPriority="high"
               width="48"
-              height="64"
+              height="48"
             />
+            <span className="hidden text-sm font-extrabold tracking-tight text-warm-900 sm:block">
+              Kuralı Ne?
+            </span>
           </Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden items-center gap-2 md:flex">
-            {navItems.map(({ to, label, exact }) => (
-              <Link key={to} to={to} className={navLinkClass(to, exact)}>
-                {label}
-              </Link>
-            ))}
+          {/* Desktop nav — pill */}
+          <div className="hidden flex-1 justify-center lg:flex">
+            <div className="inline-flex items-center gap-0.5 rounded-xl border border-warm-200/70 bg-cream-50/80 p-1">
+              {navItems.map(({ to, label, exact }) => (
+                <Link key={to} to={to} className={desktopNavClass(to, exact)}>
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
 
-            {/* Search */}
-            <div className="relative ml-1" ref={searchRef}>
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            {/* Search — desktop */}
+            <div className="relative hidden md:block" ref={searchRef}>
               <Search
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-warm-400"
-                size={16}
+                size={15}
+                aria-hidden
               />
               <input
-                type="text"
-                placeholder="Oyun ara..."
+                type="search"
+                placeholder="Oyun ara…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onKeyDown={handleSearchKeyDown}
-                className="w-56 rounded-xl border border-warm-200 bg-white py-2 pl-9 pr-3 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
+                className="w-44 rounded-full border border-warm-200/80 bg-cream-50 py-2 pl-9 pr-3 text-sm text-warm-900 placeholder:text-warm-400 transition-all focus:w-52 focus:border-orange-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 xl:w-48 xl:focus:w-56"
+                aria-label="Oyun ara"
               />
-
-              {searchFocused && searchTerm && (
-                <div className="absolute top-full z-50 mt-2 w-72 animate-fade-up overflow-hidden rounded-2xl border border-warm-200/60 bg-white p-1.5 shadow-soft-xl ring-1 ring-charcoal-900/5">
-                  {filteredGames.length > 0 ? (
-                    filteredGames.map((game) => (
-                      <a
-                        key={game.id}
-                        href={`/oyun/${game.slug}`}
-                        className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-cream-100"
-                        onClick={() => {
-                          setSearchFocused(false);
-                          setSearchTerm('');
-                        }}
-                      >
-                        <img
-                          src={game.image}
-                          alt={game.name}
-                          loading="lazy"
-                          className="h-10 w-10 shrink-0 rounded-lg object-cover ring-1 ring-warm-200/60"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <h4 className="truncate text-sm font-bold text-charcoal-900">
-                            {game.name}
-                          </h4>
-                          <p className="truncate text-xs text-warm-500">
-                            {game.shortDescription}
-                          </p>
-                        </div>
-                      </a>
-                    ))
-                  ) : (
-                    <p className="px-3 py-2 text-xs text-warm-500">Eşleşen oyun bulunamadı</p>
-                  )}
-                  {searchResultsUrl && (
-                    <Link
-                      to={searchResultsUrl}
-                      className="mt-1 block rounded-xl border-t border-warm-100 px-3 py-2.5 text-center text-xs font-bold text-orange-600 transition-colors hover:bg-orange-50"
-                      onClick={() => {
-                        setSearchFocused(false);
-                        setSearchTerm('');
-                      }}
-                    >
-                      Tüm sonuçları gör
-                    </Link>
-                  )}
-                </div>
+              {searchFocused && (
+                <GameSearchDropdown
+                  games={filteredGames}
+                  searchTerm={searchTerm}
+                  searchResultsUrl={searchResultsUrl}
+                  onNavigate={clearSearch}
+                />
               )}
             </div>
 
-            {/* Auth area */}
-            {user ? (
-              <div className="ml-1 flex items-center gap-1">
-                <NotificationBell />
-                <Dropdown
-                  align="right"
-                  width="w-64"
-                  trigger={({ open, toggle }) => (
-                    <button
-                      type="button"
-                      onClick={toggle}
-                      className={`group flex items-center gap-2 rounded-xl border py-1 pl-1 pr-2.5 transition-all ${
-                        open
-                          ? 'border-orange-300 bg-orange-50 shadow-warm-glow'
-                          : 'border-warm-200 bg-white shadow-soft hover:border-warm-300'
-                      }`}
-                      aria-label="Profil menüsü"
-                    >
-                      <Avatar src={avatarUrl} name={displayName} size="sm" />
-                      <span className="hidden max-w-[7rem] truncate text-xs font-bold text-charcoal-900 lg:inline">
-                        {displayName}
-                      </span>
-                      <ChevronDown
-                        size={14}
-                        className={`text-warm-500 transition-transform duration-200 ${
-                          open ? 'rotate-180' : ''
+            <div className="hidden items-center gap-1.5 md:flex">
+              {user ? (
+                <>
+                  <NotificationBell />
+                  <Dropdown
+                    align="right"
+                    width="w-60"
+                    trigger={({ open, toggle }) => (
+                      <button
+                        type="button"
+                        onClick={toggle}
+                        className={`flex items-center gap-2 rounded-full border py-1 pl-1 pr-2.5 transition-all ${
+                          open
+                            ? 'border-orange-200 bg-orange-50/80'
+                            : 'border-warm-200/80 bg-cream-50 hover:border-warm-300 hover:bg-white'
                         }`}
-                      />
-                    </button>
-                  )}
-                >
-                  {({ close }) => (
-                    <>
-                      <div className="flex items-center gap-3 rounded-xl bg-cream-100 px-3 py-2.5">
-                        <Avatar src={avatarUrl} name={displayName} size="md" />
-                        <div className="min-w-0">
-                          <div className="truncate text-sm font-bold text-charcoal-900">
-                            {displayName}
+                        aria-label="Profil menüsü"
+                        aria-expanded={open}
+                      >
+                        <Avatar src={avatarUrl} name={displayName} size="sm" />
+                        <span className="hidden max-w-[5.5rem] truncate text-xs font-semibold text-warm-800 xl:inline">
+                          {displayName}
+                        </span>
+                        <ChevronDown
+                          size={14}
+                          className={`text-warm-400 transition-transform ${open ? 'rotate-180' : ''}`}
+                          aria-hidden
+                        />
+                      </button>
+                    )}
+                  >
+                    {({ close }) => (
+                      <>
+                        <div className="mb-1 flex items-center gap-2.5 rounded-lg bg-cream-50 px-2.5 py-2">
+                          <Avatar src={avatarUrl} name={displayName} size="md" />
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-bold text-warm-900">{displayName}</p>
+                            <p className="truncate text-[11px] text-warm-500">{user.email}</p>
                           </div>
-                          <div className="truncate text-xs text-warm-500">{user.email}</div>
                         </div>
-                      </div>
-                      <DropdownSeparator />
-                      <DropdownLabel>Hesap</DropdownLabel>
-                      <DropdownItem
-                        as={Link}
-                        to="/profil"
-                        icon={UserIcon}
-                        onClick={close}
-                      >
-                        Profilim
-                      </DropdownItem>
-                      <DropdownItem
-                        as={Link}
-                        to="/profil"
-                        icon={Heart}
-                        onClick={close}
-                      >
-                        Favorilerim
-                      </DropdownItem>
-                      <DropdownItem
-                        as={Link}
-                        to="/profil"
-                        icon={Settings}
-                        onClick={close}
-                      >
-                        Ayarlar
-                      </DropdownItem>
-                      <DropdownSeparator />
-                      <DropdownItem
-                        icon={LogOut}
-                        variant="danger"
-                        onClick={() => {
-                          close();
-                          handleLogout();
-                        }}
-                      >
-                        Çıkış Yap
-                      </DropdownItem>
-                    </>
-                  )}
-                </Dropdown>
-              </div>
-            ) : (
-              <Link
-                to="/auth"
-                className="ml-1 inline-flex items-center gap-1.5 rounded-xl bg-charcoal-900 px-4 py-2 text-sm font-bold text-cream-50 shadow-soft transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:bg-charcoal-800"
-              >
-                Giriş Yap
-              </Link>
-            )}
-          </div>
+                        <DropdownSeparator />
+                        <DropdownLabel>Hesap</DropdownLabel>
+                        <DropdownItem as={Link} to="/profil" icon={UserIcon} onClick={close}>
+                          Profilim
+                        </DropdownItem>
+                        <DropdownItem as={Link} to="/profil#favoriler" icon={Heart} onClick={close}>
+                          Favorilerim
+                        </DropdownItem>
+                        <DropdownItem as={Link} to="/profil#hesap" icon={Settings} onClick={close}>
+                          Ayarlar
+                        </DropdownItem>
+                        <DropdownSeparator />
+                        <DropdownItem
+                          icon={LogOut}
+                          variant="danger"
+                          onClick={() => {
+                            close();
+                            handleLogout();
+                          }}
+                        >
+                          Çıkış Yap
+                        </DropdownItem>
+                      </>
+                    )}
+                  </Dropdown>
+                </>
+              ) : (
+                <Link
+                  to="/auth"
+                  className="inline-flex items-center rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-700"
+                >
+                  Giriş Yap
+                </Link>
+              )}
+            </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex items-center gap-1 md:hidden">
-            {user && <NotificationBell />}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="rounded-xl border border-warm-200 bg-white p-2 text-warm-700 shadow-soft transition-colors hover:bg-warm-50"
-              aria-label={mobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
-            >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
+            {/* Mobile toggle */}
+            <div className="flex items-center gap-1 md:hidden">
+              {user && <NotificationBell />}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen((o) => !o)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-warm-200/80 bg-cream-50 text-warm-700 transition-colors hover:bg-white"
+                aria-label={mobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
           </div>
         </div>
+      </nav>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="mt-4 space-y-2 border-t border-warm-200/60 pb-3 pt-4 md:hidden">
-            {/* Search */}
-            <div className="relative mb-3">
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <>
+          <button
+            type="button"
+            className="fixed inset-0 z-40 bg-charcoal-900/20 backdrop-blur-[2px] md:hidden"
+            aria-label="Menüyü kapat"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="fixed inset-x-0 top-[4.25rem] z-50 max-h-[calc(100dvh-4.25rem)] overflow-y-auto border-b border-warm-200/80 bg-white px-4 py-4 shadow-soft-xl md:hidden">
+            <div className="relative mb-4" ref={searchRef}>
               <Search
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-warm-400"
                 size={16}
+                aria-hidden
               />
               <input
-                type="text"
-                placeholder="Oyun ara..."
+                type="search"
+                placeholder="Oyun ara…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onKeyDown={handleSearchKeyDown}
-                className="w-full rounded-xl border border-warm-200 bg-white py-2.5 pl-9 pr-3 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
+                className="w-full rounded-xl border border-warm-200/80 bg-cream-50 py-2.5 pl-10 pr-3 text-sm text-warm-900 placeholder:text-warm-400 focus:border-orange-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100"
+                aria-label="Oyun ara"
               />
-              {searchFocused && searchTerm && (
-                <div className="absolute top-full z-50 mt-2 w-full overflow-hidden rounded-2xl border border-warm-200/60 bg-white p-1.5 shadow-soft-xl ring-1 ring-charcoal-900/5">
-                  {filteredGames.length > 0 ? (
-                    filteredGames.map((game) => (
-                    <a
-                      key={game.id}
-                      href={`/oyun/${game.slug}`}
-                      className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-cream-100"
-                      onClick={() => {
-                        setSearchFocused(false);
-                        setSearchTerm('');
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      <img
-                        src={game.image}
-                        alt={game.name}
-                        loading="lazy"
-                        className="h-10 w-10 shrink-0 rounded-lg object-cover ring-1 ring-warm-200/60"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <h4 className="truncate text-sm font-bold text-charcoal-900">
-                          {game.name}
-                        </h4>
-                        <p className="truncate text-xs text-warm-500">
-                          {game.shortDescription}
-                        </p>
-                      </div>
-                    </a>
-                    ))
-                  ) : (
-                    <p className="px-3 py-2 text-xs text-warm-500">Eşleşen oyun bulunamadı</p>
-                  )}
-                  {searchResultsUrl && (
-                    <Link
-                      to={searchResultsUrl}
-                      className="mt-1 block rounded-xl border-t border-warm-100 px-3 py-2.5 text-center text-xs font-bold text-orange-600 transition-colors hover:bg-orange-50"
-                      onClick={() => {
-                        setSearchFocused(false);
-                        setSearchTerm('');
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      Tüm sonuçları gör
-                    </Link>
-                  )}
-                </div>
+              {searchFocused && (
+                <GameSearchDropdown
+                  games={filteredGames}
+                  searchTerm={searchTerm}
+                  searchResultsUrl={searchResultsUrl}
+                  onNavigate={() => {
+                    clearSearch();
+                    setMobileMenuOpen(false);
+                  }}
+                />
               )}
             </div>
 
-            {navItems.map(({ to, label, exact }) => (
-              <Link
-                key={to}
-                to={to}
-                className={mobileNavLinkClass(to, exact)}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {label}
-              </Link>
-            ))}
-
-            {user ? (
-              <div className="mt-3 space-y-2 border-t border-warm-200/60 pt-3">
+            <div className="space-y-0.5">
+              {navItems.map(({ to, label, exact }) => (
                 <Link
-                  to="/profil"
+                  key={to}
+                  to={to}
+                  className={mobileNavClass(to, exact)}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${
-                    pathname === '/profil'
-                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-warm-glow'
-                      : 'bg-cream-100 hover:bg-warm-100'
-                  }`}
                 >
-                  <Avatar src={avatarUrl} name={displayName} size="sm" />
-                  <div className="min-w-0 flex-1">
-                    <div
-                      className={`truncate text-sm font-bold ${
-                        pathname === '/profil' ? 'text-white' : 'text-charcoal-900'
-                      }`}
-                    >
-                      {displayName}
-                    </div>
-                    <div
-                      className={`truncate text-[11px] ${
-                        pathname === '/profil' ? 'text-white/80' : 'text-warm-500'
-                      }`}
-                    >
-                      Profilimi Görüntüle
-                    </div>
-                  </div>
+                  {label}
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleLogout();
-                  }}
-                  className="flex w-full items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm font-bold text-rose-700 transition-colors hover:bg-rose-100"
+              ))}
+            </div>
+
+            <div className="mt-4 border-t border-warm-100 pt-4">
+              {user ? (
+                <div className="space-y-1">
+                  <Link
+                    to="/profil"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-xl bg-cream-50 px-3 py-3"
+                  >
+                    <Avatar src={avatarUrl} name={displayName} size="sm" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-warm-900">{displayName}</p>
+                      <p className="truncate text-xs text-warm-500">Profilim</p>
+                    </div>
+                  </Link>
+                  <Link
+                    to="/profil#favoriler"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-warm-700 hover:bg-cream-50"
+                  >
+                    <Heart size={16} className="text-orange-500" aria-hidden />
+                    Favorilerim
+                  </Link>
+                  <Link
+                    to="/profil#hesap"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-warm-700 hover:bg-cream-50"
+                  >
+                    <Settings size={16} className="text-warm-500" aria-hidden />
+                    Ayarlar
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50"
+                  >
+                    <LogOut size={16} aria-hidden />
+                    Çıkış Yap
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block rounded-xl bg-orange-600 py-3 text-center text-sm font-semibold text-white hover:bg-orange-700"
                 >
-                  <LogOut size={16} />
-                  Çıkış Yap
-                </button>
-              </div>
-            ) : (
-              <Link
-                to="/auth"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mt-3 block rounded-xl bg-charcoal-900 px-3.5 py-2.5 text-center text-sm font-bold text-cream-50 transition-colors hover:bg-charcoal-800"
-              >
-                Giriş Yap / Kayıt Ol
-              </Link>
-            )}
+                  Giriş Yap / Kayıt Ol
+                </Link>
+              )}
+            </div>
           </div>
-        )}
-      </nav>
+        </>
+      )}
     </header>
   );
 }

@@ -94,15 +94,30 @@ export function DropdownItem({
 
   if (Component) {
     return (
-      <Component className={base} onClick={onClick} {...rest}>
+      <Component
+        className={base}
+        onClick={onClick}
+        to={to}
+        href={href}
+        role="menuitem"
+        {...rest}
+      >
         {content}
       </Component>
     );
   }
 
-  if (to || href) {
+  if (to) {
     return (
-      <a className={base} href={href || to} onClick={onClick} role="menuitem" {...rest}>
+      <a className={base} href={to} onClick={onClick} role="menuitem" {...rest}>
+        {content}
+      </a>
+    );
+  }
+
+  if (href) {
+    return (
+      <a className={base} href={href} onClick={onClick} role="menuitem" {...rest}>
         {content}
       </a>
     );

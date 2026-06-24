@@ -1,12 +1,46 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail } from 'lucide-react';
+import { Mail, Phone, ArrowUpRight } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+
+const exploreLinks = [
+  { to: '/', label: 'Ana Sayfa' },
+  { to: '/oyunlar', label: 'Oyunlar' },
+  { to: '/araclar', label: 'Araçlar' },
+  { to: '/hakkimizda', label: 'Hakkımızda' },
+  { to: '/reklam-verin', label: 'Reklam Verin' },
+];
+
+const legalLinks = [
+  { to: '/kullanim-kosullari', label: 'Kullanım Koşulları' },
+  { to: '/gizlilik', label: 'Gizlilik Politikası' },
+  { to: '/cerez-politikasi', label: 'Çerez Politikası' },
+];
+
+function FooterLink({ to, children, className = '' }) {
+  return (
+    <Link
+      to={to}
+      className={`text-sm text-warm-600 transition-colors hover:text-orange-600 ${className}`}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function FooterColumn({ title, children }) {
+  return (
+    <div>
+      <h3 className="mb-3 text-sm font-bold text-warm-900">{title}</h3>
+      {children}
+    </div>
+  );
+}
 
 function Footer() {
   const [contactInfo, setContactInfo] = useState({
     email: 'eminaydinyazilim@gmail.com',
-    phone: '0553 882 76 46'
+    phone: '0553 882 76 46',
   });
 
   useEffect(() => {
@@ -25,7 +59,7 @@ function Footer() {
         const parsed = JSON.parse(data.content);
         setContactInfo({
           email: parsed.email || 'eminaydinyazilim@gmail.com',
-          phone: parsed.phone || '0553 882 76 46'
+          phone: parsed.phone || '0553 882 76 46',
         });
       }
     } catch (error) {
@@ -33,101 +67,105 @@ function Footer() {
     }
   };
 
+  const phoneHref = `tel:${contactInfo.phone.replace(/\s/g, '')}`;
+
   return (
-    <footer className="bg-white border-t border-orange-100">
-      <div className="container mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="mt-auto border-t border-warm-200/80 bg-cream-50/90">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
-          <div className="md:col-span-2">
-            <Link to="/" className="inline-block mb-3" aria-label="Kuralı Ne? - Ana Sayfa">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <Link to="/" className="inline-flex items-center gap-2.5" aria-label="Kuralı Ne? - Ana Sayfa">
               <img
                 src="/logo.svg"
                 alt="Kuralı Ne?"
-                className="h-20 w-auto object-contain"
+                className="h-12 w-auto object-contain"
                 loading="lazy"
                 decoding="async"
-                width="60"
-                height="80"
+                width="48"
+                height="48"
               />
+              <span className="text-base font-extrabold tracking-tight text-warm-900">
+                Kuralı Ne?
+              </span>
             </Link>
-            <p className="text-warm-600 leading-relaxed max-w-md text-sm">
-              <span className="font-semibold text-warm-900">Kuralı Ne?</span> — Geleneksel Türk oyunlarının kurallarını anlatan dijital rehberiniz. Kültürümüzün değerli mirasını gelecek nesillere aktarıyoruz.
+            <p className="mt-4 text-sm leading-relaxed text-warm-600">
+              Geleneksel Türk oyunlarının kurallarını anlatan dijital rehberiniz. Kültürümüzün
+              değerli mirasını gelecek nesillere aktarıyoruz.
             </p>
+            <Link
+              to="/iletisim"
+              className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-orange-600 transition-colors hover:text-orange-700"
+            >
+              Bize ulaşın
+              <ArrowUpRight size={15} aria-hidden />
+            </Link>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-xs font-black uppercase tracking-wider mb-4 text-warm-900">Hızlı Erişim</h3>
-            <ul className="space-y-2">
+          {/* Keşfet */}
+          <FooterColumn title="Keşfet">
+            <ul className="space-y-2.5">
+              {exploreLinks.map(({ to, label }) => (
+                <li key={to}>
+                  <FooterLink to={to}>{label}</FooterLink>
+                </li>
+              ))}
+            </ul>
+          </FooterColumn>
+
+          {/* Yasal */}
+          <FooterColumn title="Yasal">
+            <ul className="space-y-2.5">
+              {legalLinks.map(({ to, label }) => (
+                <li key={to}>
+                  <FooterLink to={to}>{label}</FooterLink>
+                </li>
+              ))}
+            </ul>
+          </FooterColumn>
+
+          {/* İletişim */}
+          <FooterColumn title="İletişim">
+            <ul className="space-y-3">
               <li>
-                <a href="/" className="text-warm-600 hover:text-warm-900 transition-colors inline-block">
-                  Ana Sayfa
+                <a
+                  href={`mailto:${contactInfo.email}`}
+                  className="group flex items-center gap-2.5 text-sm text-warm-600 transition-colors hover:text-orange-600"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-orange-600 shadow-soft ring-1 ring-warm-200/60 transition-colors group-hover:bg-orange-50">
+                    <Mail size={15} aria-hidden />
+                  </span>
+                  <span className="min-w-0 font-medium break-words">{contactInfo.email}</span>
                 </a>
               </li>
               <li>
-                <a href="/#oyunlar" className="text-warm-600 hover:text-warm-900 transition-colors inline-block">
-                  Oyunlar
+                <a
+                  href={phoneHref}
+                  className="group flex items-center gap-2.5 text-sm text-warm-600 transition-colors hover:text-orange-600"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-orange-600 shadow-soft ring-1 ring-warm-200/60 transition-colors group-hover:bg-orange-50">
+                    <Phone size={15} aria-hidden />
+                  </span>
+                  <span className="font-medium whitespace-nowrap">{contactInfo.phone}</span>
                 </a>
-              </li>
-              <li>
-                <a href="/hakkimizda" className="text-warm-600 hover:text-warm-900 transition-colors inline-block">
-                  Hakkımızda
-                </a>
-              </li>
-              <li>
-                <a href="/iletisim" className="text-warm-600 hover:text-warm-900 transition-colors inline-block">
-                  İletişim
-                </a>
-              </li>
-              <li>
-                <Link to="/reklam-verin" className="text-warm-600 hover:text-warm-900 transition-colors inline-block">
-                  Reklam Verin
-                </Link>
               </li>
             </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h3 className="text-xs font-black uppercase tracking-wider mb-4 text-warm-900">İletişim</h3>
-            <div className="space-y-3">
-              <a href={`mailto:${contactInfo.email}`} className="flex items-center space-x-2 text-warm-600 hover:text-warm-900 transition-colors group text-sm">
-                <Mail size={16} className="text-orange-600 transition-colors" />
-                <span className="font-medium">{contactInfo.email}</span>
-              </a>
-              <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="flex items-center space-x-2 text-warm-600 hover:text-warm-900 transition-colors group text-sm">
-                <span className="w-4 h-4 flex items-center justify-center text-orange-600 font-bold text-xs">📞</span>
-                <span className="font-medium">{contactInfo.phone}</span>
-              </a>
-            </div>
-          </div>
+          </FooterColumn>
         </div>
+      </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-orange-100 pt-6 mt-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-3">
-            <div className="flex flex-col md:flex-row items-center gap-2 text-sm text-warm-500">
-              <p>© {new Date().getFullYear()} Kuralı Ne?. Tüm hakları saklıdır.</p>
-              <span className="hidden md:inline text-warm-300">|</span>
-              <p>Zenvolab tarafından kurulmuştur.</p>
-            </div>
-            <div className="flex items-center space-x-6">
-              <Link to="/hakkimizda" className="text-warm-500 hover:text-warm-900 transition-colors text-sm font-medium">
-                Hakkımızda
-              </Link>
-              <Link to="/iletisim" className="text-warm-500 hover:text-warm-900 transition-colors text-sm font-medium">
-                İletişim
-              </Link>
-              <Link to="/kullanim-kosullari" className="text-warm-500 hover:text-warm-900 transition-colors text-sm font-medium">
-                Kullanım Koşulları
-              </Link>
-              <Link to="/gizlilik" className="text-warm-500 hover:text-warm-900 transition-colors text-sm font-medium">
-                Gizlilik
-              </Link>
-              <Link to="/cerez-politikasi" className="text-warm-500 hover:text-warm-900 transition-colors text-sm font-medium">
-                Çerezler
-              </Link>
-            </div>
+      {/* Bottom bar */}
+      <div className="border-t border-warm-200/70 bg-white/60">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-5 md:flex-row">
+          <p className="text-center text-xs leading-relaxed text-warm-500 md:text-left">
+            © {new Date().getFullYear()} Kuralı Ne?. Tüm hakları saklıdır.
+            <span className="mx-1.5 text-warm-300">·</span>
+            Zenvolab tarafından kurulmuştur.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            <FooterLink to="/iletisim">İletişim</FooterLink>
+            <FooterLink to="/gizlilik">Gizlilik</FooterLink>
+            <FooterLink to="/cerez-politikasi">Çerezler</FooterLink>
           </div>
         </div>
       </div>
