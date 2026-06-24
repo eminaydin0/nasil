@@ -3,6 +3,8 @@
  * docs/SEO-KILAVUZU.md ile senkron tutulmalıdır.
  */
 
+import { SITE_CONFIG } from './seo';
+
 export const KEYWORD_TIERS = {
   head: [
     'okey kuralı ne',
@@ -151,7 +153,7 @@ export function generateWebApplicationSchema({ name, description, url }) {
     '@type': 'WebApplication',
     name,
     description,
-    url: `https://nasiloynanir.com${url}`,
+    url: `${SITE_CONFIG.url}${url}`,
     applicationCategory: 'GameApplication',
     operatingSystem: 'Web',
     browserRequirements: 'Requires JavaScript',

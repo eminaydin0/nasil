@@ -1,5 +1,5 @@
 # Kuralı Ne? - Robots.txt
-# https://nasiloynanir.com
+# https://kuraline.xyz
 
 # Allow all search engines to index all public pages
 User-agent: *
@@ -81,9 +81,9 @@ User-agent: BLEXBot
 Disallow: /
 
 # Sitemap locations
-Sitemap: https://nasiloynanir.com/sitemap.xml
-Sitemap: https://nasiloynanir.com/sitemap-index.xml
-Sitemap: https://nasiloynanir.com/sitemap-games.xml
+Sitemap: https://kuraline.xyz/sitemap.xml
+Sitemap: https://kuraline.xyz/sitemap-index.xml
+Sitemap: https://kuraline.xyz/sitemap-games.xml
 
 # Host directive (some crawlers use this)
-Host: https://nasiloynanir.com
+Host: https://kuraline.xyz

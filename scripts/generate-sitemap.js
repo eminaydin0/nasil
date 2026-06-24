@@ -15,14 +15,15 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error('Missing Supabase credentials in .env file');
-  process.exit(1);
+  console.warn('⚠️  Sitemap atlandı: VITE_SUPABASE_URL veya VITE_SUPABASE_ANON_KEY tanımlı değil.');
+  console.warn('   Mevcut public/sitemap*.xml dosyaları kullanılacak.');
+  process.exit(0);
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Site configuration
-const BASE_URL = 'https://nasiloynanir.com';
+const BASE_URL = 'https://kuraline.xyz';
 
 // Static pages configuration
 const STATIC_PAGES = [

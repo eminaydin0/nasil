@@ -2,6 +2,7 @@ import { Users, MapPin, Printer } from 'lucide-react';
 import DifficultyBadge from './DifficultyBadge';
 import PlayTimeBadge from './PlayTimeBadge';
 import { Button } from '../ui';
+import { SITE_CONFIG } from '../../constants/seo';
 
 function escapeHtml(value) {
   if (value == null) return '';
@@ -42,7 +43,7 @@ function printGameRules(game) {
   <p>${escapeHtml(game.description || '')}</p>
   ${rules.length ? `<h2>Oyun Kuralları</h2><ol>${rulesHtml}</ol>` : ''}
   ${tips.length ? `<h2>İpuçları</h2><ul>${tipsHtml}</ul>` : ''}
-  <p class="footer">Kaynak: kuralin.ne</p>
+  <p class="footer">Kaynak: ${escapeHtml(SITE_CONFIG.url.replace('https://', ''))}</p>
 </body>
 </html>`;
 

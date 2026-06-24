@@ -2,12 +2,13 @@ import { Share2, Facebook, Twitter, Link as LinkIcon, MessageCircle, Check } fro
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { trackShare } from '../../utils/analytics';
+import { getCanonicalUrl } from '../../constants/seo';
 
 function SocialShare({ game }) {
   const [copied, setCopied] = useState(false);
   const [showShare, setShowShare] = useState(false);
   
-  const url = `https://nasiloynanir.com/oyun/${game.slug}`;
+  const url = getCanonicalUrl(`/oyun/${game.slug}`);
   const title = `${game.name} Kuralı Ne?`;
   const description = game.shortDescription;
 

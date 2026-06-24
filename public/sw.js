@@ -1,6 +1,6 @@
 // Service Worker for PWA
 
-const CACHE_NAME = 'nasiloynanir-v1';
+const CACHE_NAME = 'kuraline-v1';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -75,7 +75,7 @@ self.addEventListener('push', (event) => {
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [200, 100, 200],
-    tag: 'nasiloynanir-notification',
+    tag: 'kuraline-notification',
     actions: [
       {
         action: 'explore',

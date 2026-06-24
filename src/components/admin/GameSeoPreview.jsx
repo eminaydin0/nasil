@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Search, AlertCircle, CheckCircle2, Sparkles, FileText, HelpCircle, Code2 } from 'lucide-react';
 import { previewGameSeo } from '../../lib/seoEngine';
-import { generateTitle } from '../../constants/seo';
+import { generateTitle, SITE_CONFIG } from '../../constants/seo';
 
 function CharMeter({ label, value, idealMin, idealMax, max }) {
   const len = value?.length || 0;
@@ -75,7 +75,7 @@ export default function GameSeoPreview({ formData }) {
           {fullTitle}
         </p>
         <p className="text-green-700 text-sm truncate">
-          nasiloynanir.com › oyun › {formData.slug || '…'}
+          {SITE_CONFIG.url.replace('https://', '')} › oyun › {formData.slug || '…'}
         </p>
         <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
           {preview.meta?.description}
