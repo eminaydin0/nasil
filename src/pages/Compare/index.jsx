@@ -15,7 +15,6 @@ import Breadcrumb from '../../components/common/Breadcrumb';
 import DifficultyBadge from '../../components/game/DifficultyBadge';
 import PlayTimeBadge from '../../components/game/PlayTimeBadge';
 import { supabase } from '../../lib/supabase';
-import { trackPageView } from '../../utils/analytics';
 import {
   buildComparisonSeoMeta,
   buildComparisonStructuredData,
@@ -153,12 +152,6 @@ export default function ComparePage() {
     loadGames();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comparison]);
-
-  useEffect(() => {
-    if (gameA && gameB) {
-      trackPageView(`/karsilastir/${gameA.slug}-vs-${gameB.slug}`);
-    }
-  }, [gameA, gameB]);
 
   const loadGames = async () => {
     setLoading(true);

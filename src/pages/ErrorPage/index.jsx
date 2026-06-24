@@ -1,8 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Home, ArrowLeft, Search } from 'lucide-react';
 import SEO from '../../components/common/SEO';
-import { trackPageView } from '../../utils/analytics';
-import { useEffect } from 'react';
 
 function ErrorPage({ status = 404, title, message }) {
   const navigate = useNavigate();
@@ -21,10 +19,6 @@ function ErrorPage({ status = 404, title, message }) {
   const { title: defaultTitle, message: defaultMessage } = defaults[status] || defaults[404];
   const displayTitle = title || defaultTitle;
   const displayMessage = message || defaultMessage;
-
-  useEffect(() => {
-    trackPageView(`/hata-${status}`);
-  }, [status]);
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4 py-16">

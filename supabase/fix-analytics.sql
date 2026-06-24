@@ -135,7 +135,7 @@ $$;
 -- Seçilen zaman aralığına göre (saatlik veya günlük) gruplanmış veri döndürür
 CREATE OR REPLACE FUNCTION get_analytics_chart_data(
   p_start_date TIMESTAMPTZ,
-  p_interval TEXT DEFAULT '1 hour' -- '1 hour', '1 day'
+  p_interval TEXT DEFAULT 'day'
 )
 RETURNS TABLE (
   date_bucket TIMESTAMPTZ,

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Flame, Grid2X2, Sparkles } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import { SectionHeader } from '../../components/ui';
@@ -12,7 +12,6 @@ import ToolsSection from '../../components/home/ToolsSection';
 import NewsletterSection from '../../components/home/NewsletterSection';
 import AboutSection from '../../components/home/AboutSection';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
-import { trackPageView } from '../../utils/analytics';
 import { useGames } from '../../hooks/useGames';
 import { useGameStats } from '../../hooks/useGameStats';
 import { getCategoriesWithCounts } from '../../constants/categories';
@@ -57,10 +56,6 @@ function HomePage() {
   }, [popularGames, newGames]);
 
   const { statsMap } = useGameStats(featuredIds);
-
-  useEffect(() => {
-    trackPageView('/');
-  }, []);
 
   const homeSeo = useMemo(() => buildHomeSeoMeta(games), [games]);
 

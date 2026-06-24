@@ -11,7 +11,7 @@ import VideoSection from '../../components/game/VideoSection';
 import FAQAccordion from '../../components/game/FAQAccordion';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import ErrorPage from '../ErrorPage';
-import { trackPageView, trackGameView } from '../../utils/analytics';
+import { trackGameView } from '../../utils/analytics';
 import { useGame } from '../../hooks/useGame';
 import { supabase } from '../../lib/supabase';
 import {
@@ -80,7 +80,6 @@ function GameDetail() {
 
   useEffect(() => {
     if (game) {
-      trackPageView(`/oyun/${game.slug}`);
       trackGameView(game.name, game.id);
     }
   }, [game]);

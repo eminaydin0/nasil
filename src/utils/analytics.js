@@ -4,6 +4,18 @@ import { supabase } from '../lib/supabase';
 // Session Management
 let sessionId = null;
 let analyticsInitialized = false;
+let lastDurationSentAt = 0;
+const DURATION_SEND_INTERVAL_MS = 60_000;
+
+export const hasAnalyticsConsent = () => {
+  if (typeof window === 'undefined') return false;
+  try {
+    const consent = JSON.parse(localStorage.getItem('cookie_consent') || 'null');
+    return consent?.analytics === true;
+  } catch {
+    return false;
+  }
+};
 
 // Generate or get session ID
 const getSessionId = () => {
@@ -24,6 +36,8 @@ const getSessionId = () => {
 
 // Track analytics event to Supabase
 const trackToSupabase = async (eventType, eventData = {}, gameId = null) => {
+  if (!hasAnalyticsConsent()) return;
+
   try {
     const sessionId = getSessionId();
     const userAgent = navigator.userAgent;
@@ -51,7 +65,7 @@ const trackToSupabase = async (eventType, eventData = {}, gameId = null) => {
 
 // Initialize Analytics (single entry point — safe to call once)
 export const initAnalytics = () => {
-  if (typeof window === 'undefined' || analyticsInitialized) return;
+  if (typeof window === 'undefined' || analyticsInitialized || !hasAnalyticsConsent()) return;
   analyticsInitialized = true;
 
   getSessionId();
@@ -60,15 +74,14 @@ export const initAnalytics = () => {
 
   trackDeviceType();
   trackTrafficSource();
-  trackPageView(window.location.pathname);
 
   trackToSupabase('session_activity', {
     duration: 0,
     timestamp: new Date().toISOString(),
   });
 
-  window.addEventListener('beforeunload', updateSessionDuration);
-  setInterval(updateSessionDuration, 30000);
+  window.addEventListener('beforeunload', () => updateSessionDuration(true));
+  setInterval(() => updateSessionDuration(false), DURATION_SEND_INTERVAL_MS);
 };
 
 /** @deprecated Use initAnalytics() */
@@ -228,34 +241,32 @@ export const trackTrafficSource = () => {
 };
 
 // Session duration tracking
-export const updateSessionDuration = () => {
-  if (typeof window !== 'undefined') {
-    const sessionStart = parseInt(sessionStorage.getItem('session_start') || Date.now());
-    const duration = Math.round((Date.now() - sessionStart) / 1000); // seconds
-    
-    // Save session data locally for admin dashboard
-    const sessions = JSON.parse(localStorage.getItem('user_sessions') || '[]');
-    const currentSessionIndex = sessions.findIndex(s => s.start === sessionStart);
-    
-    if (currentSessionIndex >= 0) {
-      sessions[currentSessionIndex].duration = duration;
-    } else {
-      sessions.push({ start: sessionStart, duration: duration });
-    }
-    
-    // Keep only last 50 sessions
-    if (sessions.length > 50) {
-      sessions.shift();
-    }
-    
-    localStorage.setItem('user_sessions', JSON.stringify(sessions));
-    
-    // Track to Supabase
-    trackToSupabase('session_duration', {
-      duration: duration,
-      timestamp: new Date().toISOString()
-    });
+export const updateSessionDuration = (force = false) => {
+  if (typeof window === 'undefined' || !hasAnalyticsConsent()) return;
+
+  const now = Date.now();
+  if (!force && now - lastDurationSentAt < DURATION_SEND_INTERVAL_MS) return;
+  lastDurationSentAt = now;
+
+  const sessionStart = parseInt(sessionStorage.getItem('session_start') || now, 10);
+  const duration = Math.round((now - sessionStart) / 1000);
+
+  const sessions = JSON.parse(localStorage.getItem('user_sessions') || '[]');
+  const currentSessionIndex = sessions.findIndex((s) => s.start === sessionStart);
+
+  if (currentSessionIndex >= 0) {
+    sessions[currentSessionIndex].duration = duration;
+  } else {
+    sessions.push({ start: sessionStart, duration });
   }
+
+  if (sessions.length > 50) sessions.shift();
+  localStorage.setItem('user_sessions', JSON.stringify(sessions));
+
+  trackToSupabase('session_duration', {
+    duration,
+    timestamp: new Date().toISOString(),
+  });
 };
 
 /** @deprecated Use initAnalytics() */
@@ -499,5 +510,302 @@ export const getDailyAnalytics = async (days = 7) => {
   } catch (error) {
     console.error('Failed to fetch daily analytics:', error);
     return [];
+  }
+};
+
+function pctChange(current, previous) {
+  if (!previous) return current > 0 ? 100 : 0;
+  return Math.round(((current - previous) / previous) * 100);
+}
+
+async function countEventsInRange(eventType, start, end = null) {
+  let query = supabase
+    .from('analytics_events')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', start.toISOString());
+
+  if (end) query = query.lt('created_at', end.toISOString());
+  if (eventType) query = query.eq('event_type', eventType);
+
+  const { count, error } = await query;
+  if (error) throw error;
+  return count || 0;
+}
+
+async function countUniqueSessionsInRange(start, end = null) {
+  let query = supabase
+    .from('analytics_events')
+    .select('session_id')
+    .gte('created_at', start.toISOString())
+    .not('session_id', 'is', null);
+
+  if (end) query = query.lt('created_at', end.toISOString());
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return new Set((data || []).map((r) => r.session_id)).size;
+}
+
+/** Seçili döneme göre popüler oyunlar (game_view event'lerinden) */
+export const fetchTopGamesByPeriod = async (timeRange = '7days', games = [], limit = 10) => {
+  try {
+    const startDate = getStartDateForTimeRange(timeRange);
+
+    const { data: views, error: viewsError } = await supabase
+      .from('analytics_events')
+      .select('game_id')
+      .eq('event_type', 'game_view')
+      .gte('created_at', startDate.toISOString())
+      .not('game_id', 'is', null);
+
+    if (viewsError) throw viewsError;
+
+    const { data: comments, error: commentsError } = await supabase
+      .from('analytics_events')
+      .select('game_id')
+      .eq('event_type', 'comment_submit')
+      .gte('created_at', startDate.toISOString())
+      .not('game_id', 'is', null);
+
+    if (commentsError) throw commentsError;
+
+    const viewCounts = {};
+    const commentCounts = {};
+
+    for (const row of views || []) {
+      viewCounts[row.game_id] = (viewCounts[row.game_id] || 0) + 1;
+    }
+    for (const row of comments || []) {
+      commentCounts[row.game_id] = (commentCounts[row.game_id] || 0) + 1;
+    }
+
+    const gameIds = new Set([...Object.keys(viewCounts), ...Object.keys(commentCounts)]);
+
+    return [...gameIds]
+      .map((id) => {
+        const gameId = Number(id);
+        const game = games.find((g) => g.id === gameId);
+        return {
+          id: gameId,
+          name: game?.name || `Oyun #${gameId}`,
+          image: game?.image || '',
+          views: viewCounts[gameId] || 0,
+          comments: commentCounts[gameId] || 0,
+        };
+      })
+      .sort((a, b) => b.views - a.views || b.comments - a.comments)
+      .slice(0, limit);
+  } catch (error) {
+    console.error('Failed to fetch top games by period:', error);
+    return [];
+  }
+};
+
+/** En çok aranan terimler */
+export const fetchSearchStats = async (timeRange = '7days', limit = 15) => {
+  try {
+    const startDate = getStartDateForTimeRange(timeRange);
+
+    const { data, error } = await supabase
+      .from('analytics_events')
+      .select('event_data')
+      .eq('event_type', 'search')
+      .gte('created_at', startDate.toISOString());
+
+    if (error) throw error;
+
+    const counts = {};
+    for (const row of data || []) {
+      const term = (row.event_data?.search_term || '').trim().toLowerCase();
+      if (!term || term.length < 2) continue;
+      counts[term] = (counts[term] || 0) + 1;
+    }
+
+    return Object.entries(counts)
+      .map(([term, count]) => ({ term, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit);
+  } catch (error) {
+    console.error('Failed to fetch search stats:', error);
+    return [];
+  }
+};
+
+/** Zaman içinde görüntülenme trendi */
+export const fetchChartData = async (timeRange = '7days') => {
+  try {
+    const startDate = getStartDateForTimeRange(timeRange);
+    const interval = timeRange === '24hours' ? 'hour' : 'day';
+
+    const { data, error } = await supabase.rpc('get_analytics_chart_data', {
+      p_start_date: startDate.toISOString(),
+      p_interval: interval,
+    });
+
+    if (!error && data?.length) {
+      return data.map((row) => ({
+        date: row.date_bucket,
+        views: Number(row.view_count) || 0,
+      }));
+    }
+
+    const { data: events, error: eventsError } = await supabase
+      .from('analytics_events')
+      .select('created_at')
+      .eq('event_type', 'page_view')
+      .gte('created_at', startDate.toISOString())
+      .order('created_at', { ascending: true });
+
+    if (eventsError) throw eventsError;
+
+    const buckets = {};
+    for (const row of events || []) {
+      const d = new Date(row.created_at);
+      const key =
+        interval === 'hour'
+          ? `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}`
+          : `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      buckets[key] = (buckets[key] || 0) + 1;
+    }
+
+    return Object.entries(buckets).map(([key, views]) => ({
+      date: key,
+      views,
+    }));
+  } catch (error) {
+    console.error('Failed to fetch chart data:', error);
+    return [];
+  }
+};
+
+/** Son 5 dakikadaki aktif oturum sayısı */
+export const fetchLiveVisitors = async () => {
+  try {
+    const since = new Date(Date.now() - 5 * 60 * 1000);
+    const { data, error } = await supabase
+      .from('analytics_events')
+      .select('session_id')
+      .gte('created_at', since.toISOString())
+      .not('session_id', 'is', null);
+
+    if (error) throw error;
+    return new Set((data || []).map((r) => r.session_id)).size;
+  } catch (error) {
+    console.error('Failed to fetch live visitors:', error);
+    return 0;
+  }
+};
+
+/** Dönüşüm hunisi: ana sayfa → oyun → yorum */
+export const fetchFunnelStats = async (timeRange = '7days') => {
+  try {
+    const startDate = getStartDateForTimeRange(timeRange);
+
+    const { data, error } = await supabase
+      .from('analytics_events')
+      .select('event_type, event_data')
+      .gte('created_at', startDate.toISOString())
+      .in('event_type', ['page_view', 'game_view', 'comment_submit', 'share_click']);
+
+    if (error) throw error;
+
+    let homeViews = 0;
+    let gameViews = 0;
+    let comments = 0;
+    let shares = 0;
+
+    for (const row of data || []) {
+      if (row.event_type === 'page_view') {
+        const page = row.event_data?.page || '';
+        if (page === '/' || page.startsWith('/?')) homeViews += 1;
+      } else if (row.event_type === 'game_view') gameViews += 1;
+      else if (row.event_type === 'comment_submit') comments += 1;
+      else if (row.event_type === 'share_click') shares += 1;
+    }
+
+    return {
+      homeViews,
+      gameViews,
+      comments,
+      shares,
+      homeToGame: homeViews ? Math.round((gameViews / homeViews) * 100) : 0,
+      gameToComment: gameViews ? Math.round((comments / gameViews) * 100) : 0,
+    };
+  } catch (error) {
+    console.error('Failed to fetch funnel stats:', error);
+    return { homeViews: 0, gameViews: 0, comments: 0, shares: 0, homeToGame: 0, gameToComment: 0 };
+  }
+};
+
+/** Platform bazlı paylaşım istatistikleri */
+export const fetchShareStats = async (timeRange = '7days', limit = 8) => {
+  try {
+    const startDate = getStartDateForTimeRange(timeRange);
+
+    const { data, error } = await supabase
+      .from('analytics_events')
+      .select('event_data')
+      .eq('event_type', 'share_click')
+      .gte('created_at', startDate.toISOString());
+
+    if (error) throw error;
+
+    const counts = {};
+    for (const row of data || []) {
+      const platform = (row.event_data?.platform || 'bilinmeyen').toLowerCase();
+      counts[platform] = (counts[platform] || 0) + 1;
+    }
+
+    return Object.entries(counts)
+      .map(([platform, count]) => ({ platform, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit);
+  } catch (error) {
+    console.error('Failed to fetch share stats:', error);
+    return [];
+  }
+};
+
+/** Önceki dönemle karşılaştırma (yüzde değişim) */
+export const fetchPeriodComparison = async (timeRange = '7days') => {
+  if (timeRange === 'all') {
+    return { pageViews: null, sessions: null, comments: null, searches: null };
+  }
+
+  try {
+    const now = new Date();
+    const currentStart = getStartDateForTimeRange(timeRange);
+    const duration = now.getTime() - currentStart.getTime();
+    const previousStart = new Date(currentStart.getTime() - duration);
+
+    const [
+      curViews,
+      prevViews,
+      curSessions,
+      prevSessions,
+      curComments,
+      prevComments,
+      curSearches,
+      prevSearches,
+    ] = await Promise.all([
+      countEventsInRange('page_view', currentStart),
+      countEventsInRange('page_view', previousStart, currentStart),
+      countUniqueSessionsInRange(currentStart),
+      countUniqueSessionsInRange(previousStart, currentStart),
+      countEventsInRange('comment_submit', currentStart),
+      countEventsInRange('comment_submit', previousStart, currentStart),
+      countEventsInRange('search', currentStart),
+      countEventsInRange('search', previousStart, currentStart),
+    ]);
+
+    return {
+      pageViews: pctChange(curViews, prevViews),
+      sessions: pctChange(curSessions, prevSessions),
+      comments: pctChange(curComments, prevComments),
+      searches: pctChange(curSearches, prevSearches),
+    };
+  } catch (error) {
+    console.error('Failed to fetch period comparison:', error);
+    return { pageViews: null, sessions: null, comments: null, searches: null };
   }
 };

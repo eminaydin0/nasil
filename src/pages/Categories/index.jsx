@@ -9,7 +9,6 @@ import { supabase } from '../../lib/supabase';
 import { CATEGORY_NAMES, getCategoryConfig, getCategoryDescription } from '../../constants';
 import { useCategories } from '../../hooks/useCategories';
 import { useGameStats } from '../../hooks/useGameStats';
-import { trackPageView } from '../../utils/analytics';
 import {
   buildCategorySeoMeta,
   buildCategoryStructuredData,
@@ -74,7 +73,6 @@ function CategoryPage() {
   useEffect(() => {
     loadGames();
     window.scrollTo(0, 0);
-    trackPageView(`/kategori/${categoryName}`);
   }, [loadGames, categoryName]);
 
   const config = getCategoryConfig(decodedCategoryName, dbCategories);

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { supabase } from '../../lib/supabase';
-import { trackPageView } from '../../utils/analytics';
 import { PAGE_SEO, SCHEMA_TEMPLATES } from '../../constants/seo';
 
 const DEFAULT_CONTENT = {
@@ -19,7 +18,6 @@ function TermsOfUse() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    trackPageView('/kullanim-kosullari');
     loadContent();
   }, []);
 

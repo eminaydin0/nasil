@@ -11,7 +11,6 @@ import {
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { PAGE_SEO, SCHEMA_TEMPLATES, SITE_CONFIG } from '../../constants/seo';
-import { trackPageView } from '../../utils/analytics';
 import { supabase } from '../../lib/supabase';
 import { useSiteStats } from '../../hooks/useSiteStats';
 import { Button } from '../../components/ui';
@@ -49,7 +48,6 @@ function About() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    trackPageView('/hakkimizda');
   }, []);
 
   useEffect(() => {

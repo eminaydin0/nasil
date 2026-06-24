@@ -10,7 +10,7 @@ import { useGameStats } from '../../hooks/useGameStats';
 import { getCategoriesWithCounts } from '../../constants/categories';
 import { PAGE_SEO, generateItemListSchema, SCHEMA_TEMPLATES } from '../../constants/seo';
 import { buildAllGamesSeoMeta } from '../../lib/seoEngine';
-import { trackPageView } from '../../utils/analytics';
+import { trackGameSearch } from '../../utils/analytics';
 
 // Kategori eşleştirme - büyük/küçük harf duyarsız
 const categoryMatches = (gameCategory, selectedCategory) => {
@@ -38,10 +38,11 @@ function AllGames() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const query = searchParams.get('search');
-    trackPageView(
-      query ? `/oyunlar?search=${encodeURIComponent(query)}` : '/oyunlar'
-    );
+  }, [searchParams]);
+
+  useEffect(() => {
+    const query = searchParams.get('search')?.trim();
+    if (query) trackGameSearch(query);
   }, [searchParams]);
 
   // Geri/ileri navigasyonda URL'den arama terimini senkronize et

@@ -4,6 +4,7 @@ import ErrorBoundary from './components/common/ErrorBoundary';
 import CookieConsent from './components/common/CookieConsent';
 import AddToHomeScreen from './components/common/AddToHomeScreen';
 import ScrollToTop from './components/common/ScrollToTop';
+import AnalyticsRouteTracker from './components/common/AnalyticsRouteTracker';
 import HomePage from './pages/HomePage';
 import GameDetail from './pages/GameDetail';
 import CategoryPage from './pages/Categories';
@@ -96,6 +97,7 @@ function App() {
           <Route path="/*" element={
             <div className="flex min-h-screen min-w-0 flex-col overflow-x-clip bg-white">
               <Header />
+              <AnalyticsRouteTracker />
               <ScrollToTop />
               <main className="min-w-0 grow overflow-x-clip page-transition">
                 <Routes>

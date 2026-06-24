@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import App from './App.jsx'
-import { initAnalytics } from './utils/analytics'
+import { hasAnalyticsConsent, initAnalytics } from './utils/analytics'
 
-initAnalytics();
+if (hasAnalyticsConsent()) {
+  initAnalytics();
+}
 
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Cookie, X, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { initAnalytics } from '../../utils/analytics';
 
 /**
  * KVKK/GDPR uyumlu çerez onay banner'ı
@@ -26,6 +27,7 @@ function CookieConsent() {
       marketing: false,
       timestamp: new Date().toISOString()
     }));
+    initAnalytics();
     setIsVisible(false);
   };
 

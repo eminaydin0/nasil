@@ -5,7 +5,6 @@ import { supabase } from '../../lib/supabase';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { PAGE_SEO, SCHEMA_TEMPLATES, SITE_CONFIG } from '../../constants/seo';
-import { trackPageView } from '../../utils/analytics';
 import toast from 'react-hot-toast';
 import { TextField, Button } from '../../components/ui';
 
@@ -53,7 +52,6 @@ function Contact() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    trackPageView('/iletisim');
     loadContactInfo();
   }, []);
 
