@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Gamepad2, Search } from 'lucide-react';
 import GameCard from '../../components/home/GameCard';
 import SEO from '../../components/common/SEO';
@@ -21,7 +22,8 @@ const categoryMatches = (gameCategory, selectedCategory) => {
 function AllGames() {
   const { games, loading } = useGames();
   const { categories: dbCategories } = useCategories();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(() => searchParams.get('search') ?? '');
   const [selectedCategory, setSelectedCategory] = useState('Tümü');
 
   // Gerçek kategoriler: DB + constants, sıralı, tüm aktif kategoriler
@@ -35,8 +37,33 @@ function AllGames() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    trackPageView('/oyunlar');
-  }, []);
+    const query = searchParams.get('search');
+    trackPageView(
+      query ? `/oyunlar?search=${encodeURIComponent(query)}` : '/oyunlar'
+    );
+  }, [searchParams]);
+
+  // Geri/ileri navigasyonda URL'den arama terimini senkronize et
+  useEffect(() => {
+    setSearchTerm(searchParams.get('search') ?? '');
+  }, [searchParams]);
+
+  // Arama terimi değişince URL'yi güncelle (SearchAction ile uyumlu)
+  useEffect(() => {
+    const trimmed = searchTerm.trim();
+    const current = (searchParams.get('search') ?? '').trim();
+    if (trimmed === current) return;
+
+    const timer = setTimeout(() => {
+      if (trimmed) {
+        setSearchParams({ search: trimmed }, { replace: true });
+      } else if (searchParams.has('search')) {
+        setSearchParams({}, { replace: true });
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, searchParams, setSearchParams]);
 
   const filteredGames = games.filter((game) => {
     const matchesSearch = game.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -47,14 +74,21 @@ function AllGames() {
   const allGameIds = useMemo(() => games.map((g) => g.id), [games]);
   const { statsMap } = useGameStats(allGameIds);
 
+  const searchQuery = searchParams.get('search')?.trim() ?? '';
+  const seoTitle = searchQuery
+    ? `"${searchQuery}" Arama Sonuçları - Tüm Oyunlar`
+    : PAGE_SEO.allGames.title;
+  const seoDescription = searchQuery
+    ? `"${searchQuery}" araması için ${filteredGames.length} oyun bulundu. Geleneksel Türk oyunları arşivinde arama yapın.`
+    : PAGE_SEO.allGames.description;
+  const seoUrl = searchQuery
+    ? `/oyunlar?search=${encodeURIComponent(searchQuery)}`
+    : '/oyunlar';
+
   // SEO için structured data
   const structuredData = [
-    SCHEMA_TEMPLATES.webPage(
-      PAGE_SEO.allGames.title,
-      PAGE_SEO.allGames.description,
-      '/oyunlar'
-    ),
-    games.length > 0 ? generateItemListSchema(games, 'Tüm Oyunlar') : null,
+    SCHEMA_TEMPLATES.webPage(seoTitle, seoDescription, seoUrl),
+    games.length > 0 ? generateItemListSchema(filteredGames, searchQuery ? `"${searchQuery}" Arama Sonuçları` : 'Tüm Oyunlar') : null,
   ].filter(Boolean);
 
   // Breadcrumb
@@ -65,10 +99,10 @@ function AllGames() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <SEO 
-        title={PAGE_SEO.allGames.title}
-        description={PAGE_SEO.allGames.description}
+        title={seoTitle}
+        description={seoDescription}
         keywords={PAGE_SEO.allGames.keywords}
-        url="/oyunlar"
+        url={seoUrl}
         structuredData={structuredData}
         breadcrumbs={breadcrumbs}
       />
@@ -84,8 +118,14 @@ function AllGames() {
               <Gamepad2 className="text-orange-600" size={32} />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-gray-900">Tüm Oyunlar</h1>
-              <p className="text-gray-600">Arşivimizdeki tüm oyunları keşfedin ({games.length} oyun)</p>
+              <h1 className="text-3xl font-black text-gray-900">
+                {searchQuery ? `"${searchQuery}" Arama Sonuçları` : 'Tüm Oyunlar'}
+              </h1>
+              <p className="text-gray-600">
+                {searchQuery
+                  ? `${filteredGames.length} oyun bulundu`
+                  : `Arşivimizdeki tüm oyunları keşfedin (${games.length} oyun)`}
+              </p>
             </div>
           </div>
 

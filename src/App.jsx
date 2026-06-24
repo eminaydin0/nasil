@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import CookieConsent from './components/common/CookieConsent';
@@ -28,18 +27,12 @@ import ReklamVerin from './pages/ReklamVerin';
 import ErrorPage from './pages/ErrorPage';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
-import { initSession } from './utils/analytics';
 import { AuthProvider } from './context/AuthContext';
 import AuthPage from './pages/Auth/AuthPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 import { ConfirmProvider } from './components/ui';
 
 function App() {
-  useEffect(() => {
-    // Initialize session tracking on app load
-    initSession();
-  }, []);
-
   return (
     <ErrorBoundary>
       <AuthProvider>

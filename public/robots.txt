@@ -17,8 +17,8 @@ Disallow: /admin-panel/
 Disallow: /profil
 Disallow: /auth
 
-# Disallow query parameters that might cause duplicate content
-Disallow: /*?*search=
+# Disallow pagination/sort/filter params (duplicate content)
+# /oyunlar?search= is allowed — matches SearchAction schema
 Disallow: /*?*page=
 Disallow: /*?*sort=
 Disallow: /*?*filter=

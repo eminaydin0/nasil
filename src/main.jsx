@@ -3,16 +3,9 @@ import { createRoot } from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import App from './App.jsx'
-import { initGA, trackSession, initSession } from './utils/analytics'
+import { initAnalytics } from './utils/analytics'
 
-// Initialize Analytics
-initGA();
-
-// Initialize session tracking
-initSession();
-
-// Track session
-trackSession();
+initAnalytics();
 
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 
 // Session Management
 let sessionId = null;
+let analyticsInitialized = false;
 
 // Generate or get session ID
 const getSessionId = () => {
@@ -48,17 +49,30 @@ const trackToSupabase = async (eventType, eventData = {}, gameId = null) => {
   }
 };
 
-// Initialize Analytics
-export const initGA = () => {
-  if (typeof window !== 'undefined') {
-    getSessionId();
-    trackDeviceType();
-    trackTrafficSource();
-    
-    // Track page view on init
-    trackPageView(window.location.pathname);
-  }
+// Initialize Analytics (single entry point — safe to call once)
+export const initAnalytics = () => {
+  if (typeof window === 'undefined' || analyticsInitialized) return;
+  analyticsInitialized = true;
+
+  getSessionId();
+  const sessionStart = Date.now();
+  sessionStorage.setItem('session_start', sessionStart.toString());
+
+  trackDeviceType();
+  trackTrafficSource();
+  trackPageView(window.location.pathname);
+
+  trackToSupabase('session_activity', {
+    duration: 0,
+    timestamp: new Date().toISOString(),
+  });
+
+  window.addEventListener('beforeunload', updateSessionDuration);
+  setInterval(updateSessionDuration, 30000);
 };
+
+/** @deprecated Use initAnalytics() */
+export const initGA = () => initAnalytics();
 
 // Track page views
 export const trackPageView = (url) => {
@@ -244,27 +258,8 @@ export const updateSessionDuration = () => {
   }
 };
 
-// Initialize session on page load
-export const initSession = () => {
-  if (typeof window !== 'undefined') {
-    const sessionStart = Date.now();
-    sessionStorage.setItem('session_start', sessionStart.toString());
-    
-    // Track device and traffic source on session start
-    trackDeviceType();
-    trackTrafficSource();
-    
-    // Update session duration before page unload
-    window.addEventListener('beforeunload', () => {
-      updateSessionDuration();
-    });
-    
-    // Also update periodically (every 30 seconds)
-    setInterval(() => {
-      updateSessionDuration();
-    }, 30000);
-  }
-};
+/** @deprecated Use initAnalytics() */
+export const initSession = () => initAnalytics();
 
 // Admin Analytics - Get all analytics data
 export const getAnalyticsData = () => {

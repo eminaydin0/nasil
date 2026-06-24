@@ -129,6 +129,18 @@ function Header() {
     )
     .slice(0, 5);
 
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter' && searchTerm.trim()) {
+      navigate(`/oyunlar?search=${encodeURIComponent(searchTerm.trim())}`);
+      setSearchFocused(false);
+      setSearchTerm('');
+    }
+  };
+
+  const searchResultsUrl = searchTerm.trim()
+    ? `/oyunlar?search=${encodeURIComponent(searchTerm.trim())}`
+    : null;
+
   const handleLogout = async () => {
     const ok = await confirm({
       title: 'Çıkış yap',
@@ -188,37 +200,54 @@ function Header() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
+                onKeyDown={handleSearchKeyDown}
                 className="w-56 rounded-xl border border-warm-200 bg-white py-2 pl-9 pr-3 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
               />
 
-              {searchFocused && searchTerm && filteredGames.length > 0 && (
+              {searchFocused && searchTerm && (
                 <div className="absolute top-full z-50 mt-2 w-72 animate-fade-up overflow-hidden rounded-2xl border border-warm-200/60 bg-white p-1.5 shadow-soft-xl ring-1 ring-charcoal-900/5">
-                  {filteredGames.map((game) => (
-                    <a
-                      key={game.id}
-                      href={`/oyun/${game.slug}`}
-                      className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-cream-100"
+                  {filteredGames.length > 0 ? (
+                    filteredGames.map((game) => (
+                      <a
+                        key={game.id}
+                        href={`/oyun/${game.slug}`}
+                        className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-cream-100"
+                        onClick={() => {
+                          setSearchFocused(false);
+                          setSearchTerm('');
+                        }}
+                      >
+                        <img
+                          src={game.image}
+                          alt={game.name}
+                          loading="lazy"
+                          className="h-10 w-10 shrink-0 rounded-lg object-cover ring-1 ring-warm-200/60"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <h4 className="truncate text-sm font-bold text-charcoal-900">
+                            {game.name}
+                          </h4>
+                          <p className="truncate text-xs text-warm-500">
+                            {game.shortDescription}
+                          </p>
+                        </div>
+                      </a>
+                    ))
+                  ) : (
+                    <p className="px-3 py-2 text-xs text-warm-500">Eşleşen oyun bulunamadı</p>
+                  )}
+                  {searchResultsUrl && (
+                    <Link
+                      to={searchResultsUrl}
+                      className="mt-1 block rounded-xl border-t border-warm-100 px-3 py-2.5 text-center text-xs font-bold text-orange-600 transition-colors hover:bg-orange-50"
                       onClick={() => {
                         setSearchFocused(false);
                         setSearchTerm('');
                       }}
                     >
-                      <img
-                        src={game.image}
-                        alt={game.name}
-                        loading="lazy"
-                        className="h-10 w-10 shrink-0 rounded-lg object-cover ring-1 ring-warm-200/60"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <h4 className="truncate text-sm font-bold text-charcoal-900">
-                          {game.name}
-                        </h4>
-                        <p className="truncate text-xs text-warm-500">
-                          {game.shortDescription}
-                        </p>
-                      </div>
-                    </a>
-                  ))}
+                      Tüm sonuçları gör
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
@@ -344,11 +373,13 @@ function Header() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
+                onKeyDown={handleSearchKeyDown}
                 className="w-full rounded-xl border border-warm-200 bg-white py-2.5 pl-9 pr-3 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
               />
-              {searchFocused && searchTerm && filteredGames.length > 0 && (
+              {searchFocused && searchTerm && (
                 <div className="absolute top-full z-50 mt-2 w-full overflow-hidden rounded-2xl border border-warm-200/60 bg-white p-1.5 shadow-soft-xl ring-1 ring-charcoal-900/5">
-                  {filteredGames.map((game) => (
+                  {filteredGames.length > 0 ? (
+                    filteredGames.map((game) => (
                     <a
                       key={game.id}
                       href={`/oyun/${game.slug}`}
@@ -374,7 +405,23 @@ function Header() {
                         </p>
                       </div>
                     </a>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="px-3 py-2 text-xs text-warm-500">Eşleşen oyun bulunamadı</p>
+                  )}
+                  {searchResultsUrl && (
+                    <Link
+                      to={searchResultsUrl}
+                      className="mt-1 block rounded-xl border-t border-warm-100 px-3 py-2.5 text-center text-xs font-bold text-orange-600 transition-colors hover:bg-orange-50"
+                      onClick={() => {
+                        setSearchFocused(false);
+                        setSearchTerm('');
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      Tüm sonuçları gör
+                    </Link>
+                  )}
                 </div>
               )}
             </div>

@@ -1,20 +1,19 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { MessageCircle, ThumbsUp, Reply, Star, CheckCircle2 } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, ChevronDown, ChevronUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StarRating from '../common/StarRating';
 import { supabase } from '../../lib/supabase';
 import { trackCommentSubmit } from '../../utils/analytics';
 import { useAuth } from '../../context/AuthContext';
 
-// Helper to generate consistent colors from names
 const getAvatarColor = (name) => {
   const colors = [
-    'bg-red-500', 'bg-orange-500', 'bg-amber-500', 
-    'bg-yellow-500', 'bg-lime-500', 'bg-green-500', 
-    'bg-emerald-500', 'bg-teal-500', 'bg-cyan-500', 
-    'bg-sky-500', 'bg-blue-500', 'bg-indigo-500', 
-    'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500', 
-    'bg-pink-500', 'bg-rose-500'
+    'bg-red-500', 'bg-orange-500', 'bg-amber-500',
+    'bg-yellow-500', 'bg-lime-500', 'bg-green-500',
+    'bg-emerald-500', 'bg-teal-500', 'bg-cyan-500',
+    'bg-sky-500', 'bg-blue-500', 'bg-indigo-500',
+    'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500',
+    'bg-pink-500', 'bg-rose-500',
   ];
   if (!name) return colors[0];
   let hash = 0;
@@ -29,32 +28,67 @@ const getInitials = (name) => {
   return name
     .split(' ')
     .slice(0, 2)
-    .map(word => word[0])
+    .map((word) => word[0])
     .join('')
     .toUpperCase();
 };
 
-// Misafir kullanıcı için otomatik isim (oturum boyunca aynı kalır)
 const getOrCreateGuestName = () => {
   if (typeof window === 'undefined') return 'Misafir';
   let name = sessionStorage.getItem('guest_display_name');
   if (!name) {
-    const num = Math.floor(1000 + Math.random() * 9000); // 1000-9999 arası
+    const num = Math.floor(1000 + Math.random() * 9000);
     name = `Misafir ${num}`;
     sessionStorage.setItem('guest_display_name', name);
   }
   return name;
 };
 
+const formatRelativeTime = (dateObj) => {
+  if (!dateObj || Number.isNaN(dateObj.getTime())) return '';
+  const diffSec = Math.floor((Date.now() - dateObj.getTime()) / 1000);
+  if (diffSec < 60) return 'Az önce';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin} dakika önce`;
+  const diffHour = Math.floor(diffMin / 60);
+  if (diffHour < 24) return `${diffHour} saat önce`;
+  const diffDay = Math.floor(diffHour / 24);
+  if (diffDay < 7) return `${diffDay} gün önce`;
+  const diffWeek = Math.floor(diffDay / 7);
+  if (diffWeek < 5) return `${diffWeek} hafta önce`;
+  const diffMonth = Math.floor(diffDay / 30);
+  if (diffMonth < 12) return `${diffMonth} ay önce`;
+  const diffYear = Math.floor(diffDay / 365);
+  return `${diffYear} yıl önce`;
+};
+
 const COMMENT_MIN_LENGTH = 10;
 const COMMENT_MAX_LENGTH = 1000;
 const INITIAL_COMMENTS_SHOW = 15;
+const INITIAL_REPLIES_SHOW = 2;
+
+function Avatar({ name, avatarUrl, size = 'md' }) {
+  const sizeClass = size === 'sm' ? 'w-6 h-6 text-[10px]' : 'w-10 h-10 text-sm';
+  const color = getAvatarColor(name);
+
+  return (
+    <div
+      className={`${sizeClass} shrink-0 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden ${!avatarUrl ? color : ''}`}
+    >
+      {avatarUrl ? (
+        <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+      ) : (
+        getInitials(name)
+      )}
+    </div>
+  );
+}
 
 function CommentSection({ gameId, gameName, gameSlug }) {
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState('newest');
+  const [sortBy, setSortBy] = useState('popular');
   const [likedComments, setLikedComments] = useState(new Set());
   const [visibleCount, setVisibleCount] = useState(INITIAL_COMMENTS_SHOW);
   const [submitting, setSubmitting] = useState(false);
@@ -67,8 +101,9 @@ function CommentSection({ gameId, gameName, gameSlug }) {
   const currentUserAvatar = user?.user_metadata?.avatar_url || null;
 
   const [newComment, setNewComment] = useState({ rating: 0, comment: '' });
-  const [showForm, setShowForm] = useState(false);
+  const [composerOpen, setComposerOpen] = useState(false);
   const newCommentRef = useRef(null);
+  const composerRef = useRef(null);
 
   const loadComments = useCallback(async () => {
     try {
@@ -77,10 +112,10 @@ function CommentSection({ gameId, gameName, gameSlug }) {
         .from('comments')
         .select('*')
         .eq('game_id', gameId);
-      
+
       if (error) throw error;
-      
-      const formattedComments = data.map(c => ({
+
+      const formattedComments = data.map((c) => ({
         id: c.id,
         name: c.author_name,
         avatar: c.avatar_url,
@@ -91,9 +126,9 @@ function CommentSection({ gameId, gameName, gameSlug }) {
         date: new Date(c.created_at).toLocaleDateString('tr-TR'),
         likes: c.likes || 0,
         replies: c.replies || [],
-        isTestimonial: c.is_testimonial || false
+        isTestimonial: c.is_testimonial || false,
       }));
-      
+
       setComments(formattedComments);
     } catch (error) {
       console.error('Error loading comments:', error);
@@ -112,16 +147,14 @@ function CommentSection({ gameId, gameName, gameSlug }) {
     setVisibleCount(INITIAL_COMMENTS_SHOW);
     setReplyingTo(null);
     setReplyText('');
+    setComposerOpen(false);
   }, [gameId]);
 
-  // Load liked comments from localStorage and DB
   useEffect(() => {
-    // 1. Load from localStorage (Guest/Fallback)
     const storedLikes = JSON.parse(localStorage.getItem('liked_comments') || '[]');
     const likesSet = new Set(storedLikes);
     setLikedComments(likesSet);
 
-    // 2. If logged in, sync with DB
     const syncLikes = async () => {
       if (!user) return;
 
@@ -132,12 +165,9 @@ function CommentSection({ gameId, gameName, gameSlug }) {
           .eq('user_id', user.id);
 
         if (!error && data) {
-          const dbLikes = data.map(l => l.comment_id);
-          // Merge with localStorage
+          const dbLikes = data.map((l) => l.comment_id);
           const newSet = new Set([...likesSet, ...dbLikes]);
           setLikedComments(newSet);
-          
-          // Optionally update localStorage to match
           localStorage.setItem('liked_comments', JSON.stringify([...newSet]));
         }
       } catch (err) {
@@ -148,7 +178,6 @@ function CommentSection({ gameId, gameName, gameSlug }) {
     syncLikes();
   }, [user]);
 
-  // Derived sorted comments
   const sortedComments = useMemo(() => {
     const sorted = [...comments];
     switch (sortBy) {
@@ -161,9 +190,8 @@ function CommentSection({ gameId, gameName, gameSlug }) {
       case 'lowest':
         return sorted.sort((a, b) => a.rating - b.rating);
       case 'popular':
-        return sorted.sort((a, b) => b.likes - a.likes);
       default:
-        return sorted;
+        return sorted.sort((a, b) => b.likes - a.likes);
     }
   }, [comments, sortBy]);
 
@@ -196,7 +224,7 @@ function CommentSection({ gameId, gameName, gameSlug }) {
         likes: 0,
         replies: [],
         is_testimonial: false,
-        ...(user?.id && { author_user_id: user.id })
+        ...(user?.id && { author_user_id: user.id }),
       };
 
       const { data, error } = await supabase
@@ -217,12 +245,12 @@ function CommentSection({ gameId, gameName, gameSlug }) {
         date: new Date(data.created_at).toLocaleDateString('tr-TR'),
         likes: 0,
         replies: [],
-        isTestimonial: false
+        isTestimonial: false,
       };
 
       setComments([formattedComment, ...comments]);
       setNewComment({ rating: 0, comment: '' });
-      setShowForm(false);
+      setComposerOpen(false);
       setVisibleCount((c) => c + 1);
 
       trackCommentSubmit(gameName || 'Unknown', gameId, newComment.rating);
@@ -239,7 +267,7 @@ function CommentSection({ gameId, gameName, gameSlug }) {
     }
   };
 
-  const handleReplySubmit = async (commentId, parentReplyId = null) => {
+  const handleReplySubmit = async (commentId, parentReplyId = null, mentionName = null) => {
     const trimmed = replyText.trim();
     if (!trimmed) {
       toast.error('Lütfen yanıtınızı yazın.');
@@ -250,23 +278,25 @@ function CommentSection({ gameId, gameName, gameSlug }) {
       return;
     }
     setReplyingSubmitting(true);
+
     const reply = {
       id: Date.now(),
       text: trimmed,
       date: new Date().toLocaleDateString('tr-TR'),
+      dateObj: new Date(),
       time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
       name: currentUserName,
       avatar: currentUserAvatar,
+      mentionName: mentionName || null,
       likes: 0,
-      replies: []
+      replies: [],
     };
 
-    const updatedComments = comments.map(c => {
+    const updatedComments = comments.map((c) => {
       if (c.id === commentId) {
         if (parentReplyId) {
-          // Recursive update for nested replies
-          const addReplyToNested = (replies) => {
-            return replies.map(r => {
+          const addReplyToNested = (replies) =>
+            replies.map((r) => {
               if (r.id === parentReplyId) {
                 return { ...r, replies: [...(r.replies || []), reply] };
               }
@@ -275,27 +305,21 @@ function CommentSection({ gameId, gameName, gameSlug }) {
               }
               return r;
             });
-          };
-          
+
           return { ...c, replies: addReplyToNested(c.replies || []) };
-        } else {
-          // Top level reply to comment
-          return { ...c, replies: [...(c.replies || []), reply] };
         }
+        return { ...c, replies: [...(c.replies || []), reply] };
       }
       return c;
     });
 
     setComments(updatedComments);
-    
-    try {
-      const targetComment = updatedComments.find(c => c.id === commentId);
-      await supabase
-        .from('comments')
-        .update({ replies: targetComment.replies })
-        .eq('id', commentId);
 
-      const commentRepliedTo = comments.find(c => c.id === commentId);
+    try {
+      const targetComment = updatedComments.find((c) => c.id === commentId);
+      await supabase.from('comments').update({ replies: targetComment.replies }).eq('id', commentId);
+
+      const commentRepliedTo = comments.find((c) => c.id === commentId);
       if (user?.id && commentRepliedTo?.author_user_id && commentRepliedTo.author_user_id !== user.id) {
         const link = gameSlug ? `/oyun/${gameSlug}` : '#yorumlar';
         await supabase.from('notifications').insert({
@@ -304,7 +328,7 @@ function CommentSection({ gameId, gameName, gameSlug }) {
           title: 'Yorumuna yanıt verildi',
           content: `${currentUserName} yorumuna yanıt yazdı: ${trimmed.slice(0, 60)}${trimmed.length > 60 ? '…' : ''}`,
           link,
-          icon: '💬'
+          icon: '💬',
         });
       }
 
@@ -321,14 +345,12 @@ function CommentSection({ gameId, gameName, gameSlug }) {
 
   const handleLike = async (commentId) => {
     const isLiked = likedComments.has(commentId);
-    
-    // Optimistic Update
-    const updatedComments = comments.map(c => 
+
+    const updatedComments = comments.map((c) =>
       c.id === commentId ? { ...c, likes: isLiked ? Math.max(0, c.likes - 1) : c.likes + 1 } : c
     );
     setComments(updatedComments);
-    
-    // Update Local State & Storage
+
     const newLikedSet = new Set(likedComments);
     if (isLiked) {
       newLikedSet.delete(commentId);
@@ -339,33 +361,19 @@ function CommentSection({ gameId, gameName, gameSlug }) {
     localStorage.setItem('liked_comments', JSON.stringify([...newLikedSet]));
 
     try {
-      // 1. Interact with database based on user login status
       if (user) {
         if (isLiked) {
-           await supabase
-            .from('comment_likes')
-            .delete()
-            .eq('user_id', user.id)
-            .eq('comment_id', commentId);
+          await supabase.from('comment_likes').delete().eq('user_id', user.id).eq('comment_id', commentId);
         } else {
-           await supabase
-            .from('comment_likes')
-            .insert({
-              user_id: user.id,
-              comment_id: commentId
-            });
+          await supabase.from('comment_likes').insert({ user_id: user.id, comment_id: commentId });
         }
       }
 
-      // 2. Update likes count in public.comments table
-      const targetComment = updatedComments.find(c => c.id === commentId);
-      await supabase
-        .from('comments')
-        .update({ likes: targetComment.likes })
-        .eq('id', commentId);
+      const targetComment = updatedComments.find((c) => c.id === commentId);
+      await supabase.from('comments').update({ likes: targetComment.likes }).eq('id', commentId);
 
       if (!isLiked && user) {
-        const commentLiked = comments.find(c => c.id === commentId);
+        const commentLiked = comments.find((c) => c.id === commentId);
         if (commentLiked?.author_user_id && commentLiked.author_user_id !== user.id) {
           const link = gameSlug ? `/oyun/${gameSlug}` : '#yorumlar';
           await supabase.from('notifications').insert({
@@ -374,42 +382,14 @@ function CommentSection({ gameId, gameName, gameSlug }) {
             title: 'Yorumun beğenildi',
             content: `${currentUserName} yorumunu beğendi.`,
             link,
-            icon: '❤️'
+            icon: '❤️',
           });
         }
       }
-
-      if (!isLiked) toast.success('Beğenildi');
     } catch (error) {
-       console.error('Like error:', error);
-       // Revert in case of total failure? usually fine to leave optimistic state 
-       // unless strict consistency is needed.
+      console.error('Like error:', error);
     }
   };
-
-  // Stats
-  const averageRating = comments.length > 0
-    ? (comments.reduce((sum, c) => sum + c.rating, 0) / comments.length).toFixed(1)
-    : 0;
-
-  const ratingCounts = [5, 4, 3, 2, 1].map(star => ({
-    star,
-    count: comments.filter(c => c.rating === star).length,
-    percentage: comments.length ? (comments.filter(c => c.rating === star).length / comments.length) * 100 : 0
-  }));
-
-  // Avatar colors for current user form
-  const myAvatarColor = getAvatarColor(currentUserName);
-  const myInitials = getInitials(currentUserName);
-
-  const formRef = useRef(null);
-
-  const handleOpenForm = () => {
-    setShowForm(true);
-    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-  };
-
-  const handleCloseForm = () => setShowForm(false);
 
   const visibleComments = useMemo(
     () => sortedComments.slice(0, visibleCount),
@@ -418,202 +398,113 @@ function CommentSection({ gameId, gameName, gameSlug }) {
   const hasMoreComments = sortedComments.length > visibleCount;
 
   const sortOptions = [
-    { value: 'newest', label: 'En Yeniler' },
-    { value: 'popular', label: 'En Popüler' },
-    { value: 'highest', label: 'En Yüksek Puan' },
-    { value: 'oldest', label: 'En Eskiler' },
-    { value: 'lowest', label: 'En Düşük Puan' },
+    { value: 'popular', label: 'En popüler' },
+    { value: 'newest', label: 'En yeni' },
+    { value: 'oldest', label: 'En eski' },
+    { value: 'highest', label: 'En yüksek puan' },
+    { value: 'lowest', label: 'En düşük puan' },
   ];
 
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-warm-200/70 shadow-soft overflow-hidden w-full">
-      {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-cream-100 via-white to-amber-50/60">
-        <div className="absolute -top-16 -right-16 w-48 h-48 bg-amber-300/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-8">
-            <div className="min-w-0">
-              <h2 className="text-xl sm:text-2xl md:text-[1.75rem] font-extrabold text-warm-900 flex items-center gap-3 mb-4 tracking-tight leading-tight">
-                <span className="inline-flex items-center justify-center w-11 h-11 bg-gradient-to-br from-orange-500 to-red-500 text-white rounded-2xl shadow-warm-glow shrink-0">
-                  <MessageCircle size={20} aria-hidden="true" />
-                </span>
-                <span className="truncate">Oyuncu Yorumları</span>
-              </h2>
-              <div className="flex items-baseline gap-3">
-                <span className="text-4xl sm:text-5xl font-extrabold text-warm-900 tracking-tight tabular-nums">{averageRating}</span>
-                <div className="flex flex-col min-w-0">
-                  <div className="flex items-center gap-0.5 sm:gap-1">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star
-                        key={s}
-                        size={16}
-                        className={`shrink-0 ${s <= Math.round(averageRating) ? 'text-accent-400 fill-accent-400' : 'text-warm-300 fill-warm-100'}`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs sm:text-sm text-warm-500 font-medium mt-0.5">{comments.length} değerlendirme</span>
-                </div>
-              </div>
-            </div>
-
-            {comments.length > 0 && (
-              <div className="flex-1 w-full min-w-0 max-w-xs space-y-1.5 sm:space-y-2">
-                {ratingCounts.map(({ star, count, percentage }) => (
-                  <div key={star} className="flex items-center gap-2 sm:gap-3">
-                    <span className="flex items-center gap-0.5 w-6 sm:w-8 text-xs sm:text-sm font-semibold text-warm-600 shrink-0 tabular-nums">
-                      {star}
-                      <Star size={10} className="text-accent-400 fill-accent-400 hidden sm:block" />
-                    </span>
-                    <div className="flex-1 min-w-0 h-1.5 sm:h-2 bg-warm-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-accent-400 to-orange-500 rounded-full transition-all duration-700"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                    <span className="w-4 sm:w-6 text-right text-xs text-warm-500 font-medium shrink-0 tabular-nums">{count}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+    <section id="yorumlar" className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden w-full">
+      {/* Başlık — YouTube tarzı */}
+      <div className="px-4 sm:px-6 pt-5 pb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 tabular-nums">
+          {loading ? '…' : `${comments.length} yorum`}
+        </h2>
+        {comments.length > 0 && (
+          <label className="flex items-center gap-2 text-sm text-gray-600 shrink-0">
+            <span className="font-medium whitespace-nowrap">Sıralama ölçütü:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-transparent font-semibold text-gray-900 border-none outline-none cursor-pointer pr-1"
+            >
+              {sortOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
 
-      {/* Ana içerik */}
-      <div className="px-4 py-5 sm:px-6 sm:py-6 md:px-10 md:py-8">
-        {/* Yorum Yaz */}
-        <div ref={formRef} className="mb-8 sm:mb-10">
-          {!showForm ? (
-            <button
-              type="button"
-              onClick={handleOpenForm}
-              className="w-full py-5 px-4 sm:px-6 rounded-2xl border-2 border-dashed border-warm-200 hover:border-orange-300 hover:bg-gradient-to-br hover:from-cream-100 hover:to-orange-50 transition-all duration-500 ease-spring flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 group"
-            >
-              <div className="flex items-center gap-3 sm:gap-4 sm:flex-1">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-orange-50 flex items-center justify-center shrink-0 group-hover:bg-gradient-to-br group-hover:from-orange-500 group-hover:to-red-500 group-hover:text-white group-hover:scale-105 group-hover:-rotate-3 transition-all duration-500 ease-spring text-orange-600">
-                  <MessageCircle size={24} />
+      <div className="px-4 sm:px-6 pb-6">
+        {/* Yorum yaz — YouTube tarzı composer */}
+        <div ref={composerRef} className="flex gap-3 sm:gap-4 mb-8">
+          <Avatar name={currentUserName} avatarUrl={currentUserAvatar} />
+          <div className="flex-1 min-w-0">
+            {!composerOpen ? (
+              <button
+                type="button"
+                onClick={() => setComposerOpen(true)}
+                className="w-full text-left pb-2 border-b border-gray-300 text-sm text-gray-500 hover:border-gray-900 transition-colors"
+              >
+                Yorum ekleyin…
+              </button>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <div className="flex items-center gap-2 pb-1">
+                  <span className="text-xs text-gray-500 font-medium">Puanın:</span>
+                  <StarRating
+                    rating={newComment.rating}
+                    onRatingChange={(r) => setNewComment({ ...newComment, rating: r })}
+                    size={22}
+                  />
                 </div>
-                <div className="flex-1 min-w-0 text-left">
-                  <p className="font-extrabold text-warm-900 text-base sm:text-lg tracking-tight">Deneyimini paylaş</p>
-                  <p className="text-xs sm:text-sm text-warm-500 truncate sm:whitespace-normal">Bu oyun hakkında ne düşünüyorsun?</p>
-                </div>
-              </div>
-              <span className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-bold text-sm text-center shadow-warm-glow group-hover:shadow-warm-glow-lg group-hover:-translate-y-0.5 transition-all shrink-0">
-                Yorum Yaz
-              </span>
-            </button>
-          ) : (
-            <div className="rounded-2xl border border-orange-200/70 bg-gradient-to-br from-cream-100 via-white to-amber-50/40 overflow-hidden shadow-soft">
-              <div className="p-4 sm:p-5 bg-white/80 border-b border-warm-100 flex items-center justify-between backdrop-blur-sm">
-                <h3 className="font-extrabold text-warm-900 text-sm sm:text-base tracking-tight">Yorumunu yaz</h3>
-                <button type="button" onClick={handleCloseForm} className="text-xs sm:text-sm text-warm-500 hover:text-warm-800 font-semibold px-3 py-1.5 hover:bg-warm-100 rounded-lg transition-colors">
-                  Vazgeç
-                </button>
-              </div>
-              <div className="p-4 sm:p-6">
-                <div className="flex items-center gap-3 mb-5 p-3 sm:p-4 bg-white rounded-2xl border border-warm-100 shadow-soft">
-                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-white text-sm font-bold overflow-hidden shrink-0 ${!currentUserAvatar && myAvatarColor} ring-2 ring-white shadow-soft`}>
-                    {currentUserAvatar ? (
-                      <img src={currentUserAvatar} alt="Profile" className="w-full h-full object-cover" />
-                    ) : (
-                      myInitials
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] sm:text-xs text-warm-400 font-bold uppercase tracking-wider">Yorum Yapan</p>
-                    <p className="font-extrabold text-warm-900 text-sm sm:text-base truncate tracking-tight">{currentUserName}</p>
-                  </div>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-                  <div>
-                    <label className="block text-xs sm:text-sm font-bold text-warm-700 mb-2 tracking-wide uppercase">Puanın</label>
-                    <div className="p-3 sm:p-4 bg-white rounded-xl border border-warm-200">
-                      <StarRating
-                        rating={newComment.rating}
-                        onRatingChange={(r) => setNewComment({ ...newComment, rating: r })}
-                        size={26}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs sm:text-sm font-bold text-warm-700 mb-2 tracking-wide uppercase">
-                      Yorumun
-                      <span className="ml-2 text-warm-400 font-medium normal-case tracking-normal text-xs">
-                        ({newComment.comment.trim().length}/{COMMENT_MAX_LENGTH})
-                      </span>
-                    </label>
-                    <textarea
-                      value={newComment.comment}
-                      onChange={(e) => setNewComment({ ...newComment, comment: e.target.value.slice(0, COMMENT_MAX_LENGTH) })}
-                      rows="4"
-                      maxLength={COMMENT_MAX_LENGTH}
-                      className="w-full p-4 bg-white border border-warm-200 rounded-xl text-sm sm:text-base focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none resize-none transition-all placeholder:text-warm-400 leading-relaxed"
-                      placeholder="Oyun hakkında ne düşünüyorsun? (en az 10 karakter)"
-                    />
-                  </div>
+                <textarea
+                  autoFocus
+                  value={newComment.comment}
+                  onChange={(e) =>
+                    setNewComment({ ...newComment, comment: e.target.value.slice(0, COMMENT_MAX_LENGTH) })
+                  }
+                  rows={3}
+                  maxLength={COMMENT_MAX_LENGTH}
+                  placeholder="Oyun hakkında ne düşünüyorsun?"
+                  className="w-full bg-transparent border-b border-gray-300 pb-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-900 outline-none resize-none leading-relaxed"
+                />
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setComposerOpen(false);
+                      setNewComment({ rating: 0, comment: '' });
+                    }}
+                    className="px-4 py-2 text-sm font-semibold text-gray-700 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    İptal
+                  </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm sm:text-base rounded-xl font-bold hover:from-orange-600 hover:to-red-600 transition-all shadow-warm-glow hover:shadow-warm-glow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    {submitting ? 'Gönderiliyor...' : 'Yorumu Gönder'}
+                    {submitting ? 'Gönderiliyor…' : 'Yorum yap'}
                   </button>
-                </form>
-              </div>
-            </div>
-          )}
+                </div>
+              </form>
+            )}
+          </div>
         </div>
 
-        {/* Sıralama */}
-        {comments.length > 0 && (
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-warm-100">
-            <p className="text-xs sm:text-sm font-medium text-warm-600">
-              <span className="font-bold text-warm-900 tabular-nums">{comments.length}</span> topluluk yorumu
-            </p>
-            <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1 -mx-1 sm:mx-0 scrollbar-hide">
-              {sortOptions.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setSortBy(opt.value)}
-                  className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap shrink-0 ${
-                    sortBy === opt.value
-                      ? 'bg-charcoal-900 text-white shadow-soft-md'
-                      : 'bg-warm-100 text-warm-600 hover:bg-warm-200 hover:text-warm-900'
-                  }`}
-                >
-                  {opt.label}
-                </button>
+        {/* Yorum listesi */}
+        <div ref={newCommentRef} className="space-y-6">
+          {loading ? (
+            <div className="space-y-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-4 animate-pulse">
+                  <div className="w-10 h-10 rounded-full bg-gray-200 shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 bg-gray-200 rounded w-1/4" />
+                    <div className="h-3 bg-gray-200 rounded w-full" />
+                    <div className="h-3 bg-gray-200 rounded w-3/4" />
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* Yorum listesi */}
-        <div ref={newCommentRef} className="space-y-4 sm:space-y-6">
-          {comments.length === 0 && !loading ? (
-            <div className="relative overflow-hidden text-center py-12 sm:py-16 px-4 sm:px-6 rounded-2xl bg-gradient-to-br from-cream-100 via-white to-orange-50 border border-warm-200/70">
-              <div className="absolute -top-12 -right-12 w-48 h-48 bg-orange-200/30 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
-
-              <div className="relative max-w-md mx-auto">
-                <div className="w-16 h-16 rounded-2xl bg-white shadow-soft border border-warm-100 flex items-center justify-center mx-auto mb-5">
-                  <MessageCircle size={28} className="text-orange-600" />
-                </div>
-                <h3 className="text-2xl font-extrabold text-warm-900 mb-2 tracking-tight">İlk yorumu sen yaz</h3>
-                <p className="text-warm-600 leading-relaxed mb-6 max-w-sm mx-auto">
-                  Bu oyunu deneyimledin mi? Görüşlerin diğer oyunculara yol gösterecek.
-                </p>
-                <button
-                  type="button"
-                  onClick={handleOpenForm}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold hover:from-orange-600 hover:to-red-600 transition-all shadow-warm-glow hover:shadow-warm-glow-lg hover:-translate-y-0.5 ease-spring duration-300"
-                >
-                  <MessageCircle size={18} />
-                  Yorum Yazmaya Başla
-                </button>
-              </div>
-            </div>
+          ) : comments.length === 0 ? (
+            <p className="text-sm text-gray-500 py-4">Henüz yorum yok. İlk yorumu sen yaz!</p>
           ) : (
             <>
               {visibleComments.map((comment) => (
@@ -626,251 +517,332 @@ function CommentSection({ gameId, gameName, gameSlug }) {
                   replyText={replyText}
                   setReplyText={setReplyText}
                   handleReplySubmit={handleReplySubmit}
-                  currentUserIdentity={currentUserName}
+                  currentUserName={currentUserName}
                   currentUserAvatar={currentUserAvatar}
-                  isLoggedIn={!!user}
                   likedComments={likedComments}
                   replyingSubmitting={replyingSubmitting}
                 />
               ))}
               {hasMoreComments && (
-                <div className="text-center pt-3 sm:pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setVisibleCount((c) => c + INITIAL_COMMENTS_SHOW)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 text-xs sm:text-sm font-bold text-orange-600 hover:text-orange-700 hover:bg-orange-50 border border-warm-200 hover:border-orange-200 rounded-xl transition-all duration-300 ease-spring bg-white shadow-soft"
-                  >
-                    Daha fazla yorum göster ({sortedComments.length - visibleCount} kaldı)
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((c) => c + INITIAL_COMMENTS_SHOW)}
+                  className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-gray-900 py-2"
+                >
+                  <ChevronDown size={18} />
+                  Daha fazla yorum göster ({sortedComments.length - visibleCount})
+                </button>
               )}
             </>
           )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ActionBar({ likeCount, isLiked, onLike, onReply, replyLabel = 'Yanıtla' }) {
+  return (
+    <div className="flex items-center gap-1 mt-1">
+      <button
+        type="button"
+        onClick={onLike}
+        className={`group flex items-center gap-1.5 p-2 rounded-full hover:bg-gray-100 transition-colors ${isLiked ? 'text-gray-900' : 'text-gray-600'}`}
+        aria-label="Beğen"
+      >
+        <ThumbsUp size={16} className={isLiked ? 'fill-current' : ''} />
+        {likeCount > 0 && <span className="text-xs font-medium tabular-nums">{likeCount}</span>}
+      </button>
+      <button
+        type="button"
+        className="p-2 rounded-full text-gray-600 hover:bg-gray-100 transition-colors"
+        aria-label="Beğenme"
+        tabIndex={-1}
+      >
+        <ThumbsDown size={16} />
+      </button>
+      <button
+        type="button"
+        onClick={onReply}
+        className="px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+      >
+        {replyLabel}
+      </button>
+    </div>
+  );
+}
+
+function ReplyForm({
+  mentionName,
+  replyText,
+  setReplyText,
+  onCancel,
+  onSubmit,
+  submitting,
+  currentUserName,
+  currentUserAvatar,
+}) {
+  return (
+    <div className="flex gap-3 mt-3">
+      <Avatar name={currentUserName} avatarUrl={currentUserAvatar} size="sm" />
+      <div className="flex-1 min-w-0">
+        {mentionName && (
+          <p className="text-xs text-gray-500 mb-1">
+            <span className="text-blue-600 font-medium">@{mentionName}</span>
+          </p>
+        )}
+        <textarea
+          autoFocus
+          value={replyText}
+          onChange={(e) => setReplyText(e.target.value.slice(0, COMMENT_MAX_LENGTH))}
+          rows={2}
+          placeholder="Yanıt ekle…"
+          className="w-full bg-transparent border-b border-gray-300 pb-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-900 outline-none resize-none"
+        />
+        <div className="flex justify-end gap-2 mt-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-3 py-1.5 text-xs font-semibold text-gray-700 rounded-full hover:bg-gray-100"
+          >
+            İptal
+          </button>
+          <button
+            type="button"
+            onClick={onSubmit}
+            disabled={submitting || !replyText.trim()}
+            className="px-3 py-1.5 text-xs font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-800 disabled:opacity-50"
+          >
+            {submitting ? '…' : 'Yanıtla'}
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-function CommentItem({ comment, handleLike, replyingTo, setReplyingTo, replyText, setReplyText, handleReplySubmit, currentUserIdentity, currentUserAvatar, isLoggedIn, likedComments, replyingSubmitting }) {
+function CommentItem({
+  comment,
+  handleLike,
+  replyingTo,
+  setReplyingTo,
+  replyText,
+  setReplyText,
+  handleReplySubmit,
+  currentUserName,
+  currentUserAvatar,
+  likedComments,
+  replyingSubmitting,
+}) {
+  const [repliesExpanded, setRepliesExpanded] = useState(false);
+  const [visibleReplyCount, setVisibleReplyCount] = useState(INITIAL_REPLIES_SHOW);
   const isReplying = replyingTo === comment.id;
-  const avatarColor = getAvatarColor(comment.name);
-  const initials = getInitials(comment.name);
   const isLiked = likedComments?.has(comment.id);
+  const replyCount = comment.replies?.length || 0;
+  const visibleReplies = repliesExpanded
+    ? comment.replies?.slice(0, visibleReplyCount) || []
+    : [];
 
   return (
-    <article className="group rounded-2xl border border-warm-200/70 bg-cream-50 hover:bg-cream-100/60 transition-colors duration-300 overflow-hidden">
-      <div className="p-4 sm:p-6">
-        <div className="flex gap-3 sm:gap-4">
-          {/* Avatar */}
-          <div className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white text-sm font-bold shadow-soft ring-2 ring-white overflow-hidden ${!comment.avatar && avatarColor}`}>
-            {comment.avatar ? (
-              <img src={comment.avatar} alt={comment.name} className="w-full h-full object-cover" />
-            ) : (
-              initials
-            )}
-          </div>
+    <article className="flex gap-3 sm:gap-4">
+      <Avatar name={comment.name} avatarUrl={comment.avatar} />
 
-          <div className="flex-1 min-w-0 overflow-hidden">
-            <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
-              <div className="min-w-0">
-                <h4 className="font-extrabold text-warm-900 text-sm sm:text-base flex flex-wrap items-center gap-1.5 sm:gap-2 tracking-tight">
-                  <span className="truncate max-w-[140px] sm:max-w-none">{comment.name}</span>
-                  {comment.isTestimonial && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-200 text-[10px] sm:text-xs font-bold rounded-md shrink-0 uppercase tracking-wider">
-                      <CheckCircle2 size={10} /> Onaylı
-                    </span>
-                  )}
-                </h4>
-                <span className="text-[11px] sm:text-xs text-warm-500 font-medium">{comment.date}</span>
-              </div>
-              <div className="flex items-center gap-0.5 shrink-0">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star
-                    key={s}
-                    size={12}
-                    className={`shrink-0 ${s <= comment.rating ? 'text-accent-400 fill-accent-400' : 'text-warm-300 fill-warm-100'}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <p className="text-warm-700 leading-[1.65] text-sm sm:text-[15px] mb-4 break-words tracking-[-0.005em]">
-              {comment.comment}
-            </p>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              <button
-                onClick={() => handleLike(comment.id)}
-                className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ease-spring ${
-                  isLiked ? 'bg-orange-100 text-orange-700 shadow-soft' : 'bg-white border border-warm-200 text-warm-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
-                }`}
-              >
-                <ThumbsUp size={14} className={`shrink-0 ${isLiked ? 'fill-orange-600' : ''}`} />
-                <span>{comment.likes > 0 ? comment.likes : 'Beğen'}</span>
-              </button>
-              <button
-                onClick={() => setReplyingTo(isReplying ? null : comment.id)}
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold text-warm-600 bg-white border border-warm-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition-all duration-300 ease-spring"
-              >
-                <Reply size={14} className="shrink-0" />
-                Yanıtla
-              </button>
-            </div>
-
-            {/* Yanıt formu - MOBİL */}
-            {isReplying && (
-              <div className="mt-4 sm:mt-5 p-3 sm:p-4 bg-orange-50/50 sm:bg-white rounded-lg sm:rounded-xl border border-orange-200 sm:border-gray-200 shadow-sm w-full max-w-full overflow-hidden">
-                <p className="text-xs sm:text-sm text-gray-700 mb-2 break-words">
-                  <Reply size={12} className="inline mr-1 text-orange-600" />
-                  <span className="font-semibold text-orange-600">@{comment.name}</span> kullanıcısına
-                </p>
-                <textarea
-                  placeholder="Yanıtınızı yazın..."
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  rows="3"
-                  maxLength={COMMENT_MAX_LENGTH}
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 bg-white border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none resize-none mb-2"
-                />
-                <div className="flex gap-2 w-full">
-                  <button
-                    type="button"
-                    onClick={() => setReplyingTo(null)}
-                    className="flex-1 sm:flex-none px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 bg-white sm:bg-gray-100 border border-gray-200 sm:border-0 rounded-lg hover:bg-gray-50 sm:hover:bg-gray-200 transition-colors"
-                  >
-                    İptal
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleReplySubmit(comment.id)}
-                    disabled={replyingSubmitting || !replyText.trim()}
-                    className="flex-1 sm:flex-none px-3 py-2 text-xs sm:text-sm font-semibold text-white bg-orange-600 rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {replyingSubmitting ? '⏳' : 'Gönder'}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Yanıtlar - MOBİL TASARIM */}
-            {comment.replies && comment.replies.length > 0 && (
-              <div className="mt-4 space-y-3 w-full max-w-full overflow-hidden">
-                {comment.replies.map((reply) => (
-                  <ReplyItem
-                    key={reply.id}
-                    reply={reply}
-                    commentId={comment.id}
-                    handleReplySubmit={handleReplySubmit}
-                    replyingTo={replyingTo}
-                    setReplyingTo={setReplyingTo}
-                    replyText={replyText}
-                    setReplyText={setReplyText}
-                    currentUserIdentity={currentUserIdentity}
-                    currentUserAvatar={currentUserAvatar}
-                    isLoggedIn={isLoggedIn}
-                    replyingSubmitting={replyingSubmitting}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+          <span className="text-sm font-semibold text-gray-900">@{comment.name.replace(/\s+/g, '').toLowerCase()}</span>
+          {comment.isTestimonial && (
+            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wide">Onaylı</span>
+          )}
+          <span className="text-xs text-gray-500">{formatRelativeTime(comment.dateObj)}</span>
+          {comment.rating > 0 && (
+            <span className="text-xs text-amber-600 font-medium">★ {comment.rating}/5</span>
+          )}
         </div>
+
+        <p className="text-sm text-gray-900 leading-relaxed mt-1 break-words whitespace-pre-wrap">
+          {comment.comment}
+        </p>
+
+        <ActionBar
+          likeCount={comment.likes}
+          isLiked={isLiked}
+          onLike={() => handleLike(comment.id)}
+          onReply={() => setReplyingTo(isReplying ? null : comment.id)}
+        />
+
+        {isReplying && (
+          <ReplyForm
+            mentionName={comment.name}
+            replyText={replyText}
+            setReplyText={setReplyText}
+            onCancel={() => setReplyingTo(null)}
+            onSubmit={() => handleReplySubmit(comment.id, null, comment.name)}
+            submitting={replyingSubmitting}
+            currentUserName={currentUserName}
+            currentUserAvatar={currentUserAvatar}
+          />
+        )}
+
+        {replyCount > 0 && !repliesExpanded && (
+          <button
+            type="button"
+            onClick={() => setRepliesExpanded(true)}
+            className="flex items-center gap-2 mt-2 ml-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
+          >
+            <ChevronDown size={18} />
+            {replyCount} yanıt
+          </button>
+        )}
+
+        {repliesExpanded && replyCount > 0 && (
+          <div className="mt-3 space-y-4 pl-1 border-l-2 border-gray-200 ml-3">
+            {visibleReplies.map((reply) => (
+              <ReplyItem
+                key={reply.id}
+                reply={reply}
+                commentId={comment.id}
+                parentName={comment.name}
+                handleReplySubmit={handleReplySubmit}
+                replyingTo={replyingTo}
+                setReplyingTo={setReplyingTo}
+                replyText={replyText}
+                setReplyText={setReplyText}
+                currentUserName={currentUserName}
+                currentUserAvatar={currentUserAvatar}
+                replyingSubmitting={replyingSubmitting}
+              />
+            ))}
+
+            {visibleReplyCount < replyCount && (
+              <button
+                type="button"
+                onClick={() => setVisibleReplyCount((c) => c + INITIAL_REPLIES_SHOW)}
+                className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 ml-12"
+              >
+                <ChevronDown size={18} />
+                Daha fazla yanıt göster
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setRepliesExpanded(false);
+                setVisibleReplyCount(INITIAL_REPLIES_SHOW);
+              }}
+              className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 ml-12"
+            >
+              <ChevronUp size={18} />
+              Yanıtları gizle
+            </button>
+          </div>
+        )}
       </div>
     </article>
   );
 }
 
-function ReplyItem({ reply, commentId, handleReplySubmit, replyingTo, setReplyingTo, replyText, setReplyText, currentUserIdentity, currentUserAvatar, isLoggedIn, replyingSubmitting }) {
+function ReplyItem({
+  reply,
+  commentId,
+  parentName,
+  handleReplySubmit,
+  replyingTo,
+  setReplyingTo,
+  replyText,
+  setReplyText,
+  currentUserName,
+  currentUserAvatar,
+  replyingSubmitting,
+}) {
+  const [nestedExpanded, setNestedExpanded] = useState(false);
   const isReplying = replyingTo === reply.id;
-  const avatarColor = getAvatarColor(reply.name);
-  const initials = getInitials(reply.name);
+  const nestedCount = reply.replies?.length || 0;
 
   return (
-    <div className="w-full max-w-full overflow-hidden">
-      {/* MOBİL: Yanıt kartı - yatay scroll önleme */}
-      <div className="bg-gradient-to-r from-orange-50/30 to-transparent border-l-4 border-orange-400/50 pl-3 pr-2 py-2.5 sm:py-3 rounded-r-lg w-full">
-        <div className="flex items-start gap-2 mb-1.5 min-w-0">
-          <div className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold shadow-sm overflow-hidden ${!reply.avatar && avatarColor}`}>
-            {reply.avatar ? (
-              <img src={reply.avatar} alt={reply.name} className="w-full h-full object-cover" />
-            ) : (
-              initials
-            )}
-          </div>
-          <div className="flex-1 min-w-0 overflow-hidden">
-            <div className="flex items-center gap-2 mb-0.5">
-              <h5 className="font-bold text-gray-900 text-xs truncate">{reply.name}</h5>
-              <span className="text-[10px] text-gray-400 shrink-0">{reply.time}</span>
-            </div>
-            <p className="text-gray-700 text-xs leading-relaxed break-words overflow-hidden">{reply.text}</p>
-          </div>
+    <div className="flex gap-3 ml-2">
+      <Avatar name={reply.name} avatarUrl={reply.avatar} size="sm" />
+
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-baseline gap-x-2">
+          <span className="text-xs font-semibold text-gray-900">
+            @{reply.name.replace(/\s+/g, '').toLowerCase()}
+          </span>
+          <span className="text-[11px] text-gray-500">
+            {reply.dateObj ? formatRelativeTime(reply.dateObj) : reply.time || reply.date}
+          </span>
         </div>
-        
+
+        <p className="text-sm text-gray-900 leading-relaxed mt-0.5 break-words">
+          {(reply.mentionName || parentName) && (
+            <span className="text-blue-600 font-medium mr-1">
+              @{String(reply.mentionName || parentName).replace(/\s+/g, '').toLowerCase()}
+            </span>
+          )}
+          {reply.text}
+        </p>
+
         <button
+          type="button"
           onClick={() => setReplyingTo(isReplying ? null : reply.id)}
-          className="ml-9 text-[10px] font-semibold text-orange-600 hover:text-orange-700 transition-colors flex items-center gap-1"
+          className="mt-1 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <Reply size={10} />
           Yanıtla
         </button>
-      </div>
 
-      {/* Yanıt formu - iç içe yanıt */}
-      {isReplying && (
-        <div className="mt-2 ml-2 p-2.5 bg-orange-50/50 rounded-lg border border-orange-200 w-full max-w-full overflow-hidden">
-          <p className="text-[10px] text-gray-600 mb-2 break-words">
-            <Reply size={10} className="inline mr-0.5" />
-            <span className="font-semibold text-orange-600">@{reply.name}</span>
-          </p>
-          <textarea
-            placeholder="Yanıtınız..."
-            value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-            rows="2"
-            className="w-full mb-2 px-2.5 py-2 bg-white border border-gray-200 rounded text-xs focus:ring-2 focus:ring-orange-500 outline-none resize-none"
+        {isReplying && (
+          <ReplyForm
+            mentionName={reply.name}
+            replyText={replyText}
+            setReplyText={setReplyText}
+            onCancel={() => setReplyingTo(null)}
+            onSubmit={() => handleReplySubmit(commentId, reply.id, reply.name)}
+            submitting={replyingSubmitting}
+            currentUserName={currentUserName}
+            currentUserAvatar={currentUserAvatar}
           />
-          <div className="flex gap-1.5">
-            <button 
-              type="button" 
-              onClick={() => setReplyingTo(null)} 
-              className="flex-1 px-2 py-1.5 text-[10px] font-semibold bg-white border border-gray-200 rounded hover:bg-gray-50"
-            >
-              İptal
-            </button>
+        )}
+
+        {nestedCount > 0 && !nestedExpanded && (
+          <button
+            type="button"
+            onClick={() => setNestedExpanded(true)}
+            className="flex items-center gap-1 mt-2 text-xs font-semibold text-blue-600 hover:text-blue-700"
+          >
+            <ChevronDown size={16} />
+            {nestedCount} yanıt
+          </button>
+        )}
+
+        {nestedExpanded && nestedCount > 0 && (
+          <div className="mt-2 space-y-3 pl-1 border-l-2 border-gray-200 ml-1">
+            {reply.replies.map((nested) => (
+              <ReplyItem
+                key={nested.id}
+                reply={nested}
+                commentId={commentId}
+                parentName={reply.name}
+                handleReplySubmit={handleReplySubmit}
+                replyingTo={replyingTo}
+                setReplyingTo={setReplyingTo}
+                replyText={replyText}
+                setReplyText={setReplyText}
+                currentUserName={currentUserName}
+                currentUserAvatar={currentUserAvatar}
+                replyingSubmitting={replyingSubmitting}
+              />
+            ))}
             <button
               type="button"
-              onClick={() => handleReplySubmit(commentId, reply.id)}
-              disabled={replyingSubmitting || !replyText.trim()}
-              className="flex-1 px-2 py-1.5 text-[10px] font-semibold bg-orange-600 text-white rounded hover:bg-orange-700 disabled:opacity-50"
+              onClick={() => setNestedExpanded(false)}
+              className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 ml-8"
             >
-              {replyingSubmitting ? '⏳' : 'Gönder'}
+              <ChevronUp size={16} />
+              Yanıtları gizle
             </button>
           </div>
-        </div>
-      )}
-
-      {/* İç içe yanıtlar */}
-      {reply.replies && reply.replies.length > 0 && (
-        <div className="ml-4 mt-2 space-y-2 w-full max-w-full overflow-hidden">
-          {reply.replies.map((nestedReply) => (
-            <ReplyItem
-              key={nestedReply.id}
-              reply={nestedReply}
-              commentId={commentId}
-              handleReplySubmit={handleReplySubmit}
-              replyingTo={replyingTo}
-              setReplyingTo={setReplyingTo}
-              replyText={replyText}
-              setReplyText={setReplyText}
-              currentUserIdentity={currentUserIdentity}
-              currentUserAvatar={currentUserAvatar}
-              isLoggedIn={isLoggedIn}
-              replyingSubmitting={replyingSubmitting}
-            />
-          ))}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
