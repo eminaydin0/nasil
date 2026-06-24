@@ -182,7 +182,12 @@ function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-cream-50 py-12 font-sans">
-      <SEO title="Profilim - Kuralı Ne?" description="Hesabınız, favorileriniz ve profil ayarları" url="/profil" />
+      <SEO
+        title="Profilim - Kuralı Ne?"
+        description="Hesabınız, favorileriniz ve profil ayarları"
+        url="/profil"
+        noindex
+      />
 
       <div className="container mx-auto px-4">
         <Breadcrumb items={breadcrumbs} className="mb-6" />

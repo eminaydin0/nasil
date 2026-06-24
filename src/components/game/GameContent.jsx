@@ -16,14 +16,14 @@ export default function GameContent({ game }) {
             Oyun Hakkında
           </h2>
         </header>
-        <p className="text-warm-700 text-[15px] md:text-base leading-[1.75] tracking-[-0.005em]">
+        <p className="game-description text-warm-700 text-[15px] md:text-base leading-[1.75] tracking-[-0.005em]">
           {game.description}
         </p>
       </article>
 
       {/* Oyun Kuralları */}
       {rules.length > 0 && (
-        <article className="bg-white rounded-2xl shadow-soft border border-warm-200/70 p-6 md:p-8">
+        <article className="game-rules bg-white rounded-2xl shadow-soft border border-warm-200/70 p-6 md:p-8">
           <header className="flex items-center gap-3 mb-5">
             <span className="inline-flex items-center justify-center w-10 h-10 bg-rose-50 text-rose-600 rounded-xl shadow-soft">
               <ListOrdered size={18} aria-hidden="true" />
@@ -35,7 +35,7 @@ export default function GameContent({ game }) {
 
           <ol className="space-y-3.5">
             {rules.map((rule, index) => (
-              <li key={index} className="flex gap-3.5 group">
+              <li key={index} id={`adim-${index + 1}`} className="flex gap-3.5 group scroll-mt-24">
                 {/* Numara çipi - gradient orange */}
                 <span className="shrink-0 w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 text-white rounded-xl flex items-center justify-center font-extrabold text-sm shadow-warm-glow tabular-nums transition-transform duration-300 ease-spring group-hover:scale-105">
                   {index + 1}

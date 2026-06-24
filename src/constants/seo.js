@@ -247,6 +247,17 @@ export function generateGameSchema(game, options = {}) {
   return schema;
 }
 
+function getVideoEmbedUrl(url) {
+  if (!url) return null;
+  const ytMatch = String(url).match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]+)/
+  );
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+  const vimeoMatch = String(url).match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+  return url;
+}
+
 // VideoObject schema - YouTube/Vimeo video icin rich snippet
 export function generateVideoSchema(game) {
   if (!game?.videoUrl) return null;
@@ -255,6 +266,7 @@ export function generateVideoSchema(game) {
   const description = game.shortDescription
     ? `${game.name} oyununun nasıl oynandığını adım adım anlatan video. ${game.shortDescription}`
     : `${game.name} oyununun nasıl oynandığını anlatan video.`;
+  const embedUrl = getVideoEmbedUrl(game.videoUrl);
 
   return {
     '@context': 'https://schema.org',
@@ -263,7 +275,7 @@ export function generateVideoSchema(game) {
     description,
     thumbnailUrl: game.image,
     contentUrl: game.videoUrl,
-    embedUrl: game.videoUrl,
+    embedUrl,
     uploadDate: game.createdAt || game.updatedAt || new Date().toISOString(),
     inLanguage: SITE_CONFIG.language,
     publisher: {

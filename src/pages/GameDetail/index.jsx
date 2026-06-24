@@ -10,6 +10,7 @@ import GameSidebar from '../../components/game/GameSidebar';
 import VideoSection from '../../components/game/VideoSection';
 import FAQAccordion from '../../components/game/FAQAccordion';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
+import ErrorPage from '../ErrorPage';
 import { trackPageView, trackGameView } from '../../utils/analytics';
 import { useGame } from '../../hooks/useGame';
 import { supabase } from '../../lib/supabase';
@@ -105,8 +106,18 @@ function GameDetail() {
     return buildGameSeoMeta(game, { aggregateRating });
   }, [game, aggregateRating]);
 
-  if (!game || loading) {
+  if (loading) {
     return <SkeletonLoader type="game-detail" />;
+  }
+
+  if (!game) {
+    return (
+      <ErrorPage
+        status={404}
+        title="Oyun Bulunamadı"
+        message="Aradığınız oyun rehberi mevcut değil veya kaldırılmış olabilir."
+      />
+    );
   }
 
   return (

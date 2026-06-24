@@ -169,7 +169,8 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
               <SocialShare game={game} />
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-warm-900 mb-3 leading-[1.05] tracking-tight">
-              {game.name}
+              {game.name}{' '}
+              <span className="text-orange-600">Kuralı Ne?</span>
             </h1>
             <p className="text-warm-600 text-base md:text-lg leading-relaxed">
               {game.shortDescription}

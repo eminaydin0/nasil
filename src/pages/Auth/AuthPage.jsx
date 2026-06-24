@@ -125,6 +125,8 @@ function AuthPage() {
       <SEO
         title={isLogin ? 'Giriş Yap - Kuralı Ne?' : 'Kayıt Ol - Kuralı Ne?'}
         description={isLogin ? 'Hesabınıza giriş yapın' : 'Yeni hesap oluşturun'}
+        url="/auth"
+        noindex
       />
       <div className="relative min-h-[80vh] overflow-hidden bg-cream-100 px-4 py-12 sm:px-6 lg:px-8 font-sans">
         {/* Sicak arkaplan */}
