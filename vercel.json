@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "redirects": [
+    { "source": "/admin", "destination": "/admin-panel", "permanent": true },
+    { "source": "/admin/", "destination": "/admin-panel", "permanent": true }
+  ]
+}

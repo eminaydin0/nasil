@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import CookieConsent from './components/common/CookieConsent';
@@ -83,7 +83,9 @@ function App() {
           />
         <Routes>
           {/* Admin Panel Route - No Header/Footer */}
+          <Route path="/admin" element={<Navigate to="/admin-panel" replace />} />
           <Route path="/admin-panel" element={<AdminPanel />} />
+          <Route path="/admin-panel/*" element={<AdminPanel />} />
           
           {/* Main Site Routes - With Header/Footer */}
           <Route path="/*" element={
