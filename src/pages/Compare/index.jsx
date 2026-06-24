@@ -60,9 +60,9 @@ function ComparisonCell({ valueA, valueB, betterIndex }) {
   const a = `flex-1 p-4 ${betterIndex === 0 ? 'bg-green-50' : ''}`;
   const b = `flex-1 p-4 ${betterIndex === 1 ? 'bg-green-50' : ''}`;
   return (
-    <div className="flex items-stretch border-b border-gray-100 last:border-b-0">
+    <div className="flex items-stretch border-b border-warm-100 last:border-b-0">
       <div className={a}>{valueA}</div>
-      <div className="w-px bg-gray-100" />
+      <div className="w-px bg-warm-100" />
       <div className={b}>{valueB}</div>
     </div>
   );
@@ -71,7 +71,7 @@ function ComparisonCell({ valueA, valueB, betterIndex }) {
 function ComparisonRow({ label, icon, valueA, valueB, betterIndex }) {
   return (
     <div className="bg-white">
-      <div className="px-4 pt-4 pb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-500 border-b border-gray-100">
+      <div className="px-4 pt-4 pb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-warm-500 border-b border-warm-100">
         {icon}
         <span>{label}</span>
       </div>
@@ -84,9 +84,9 @@ function GameHeaderCard({ game }) {
   return (
     <Link
       to={`/oyun/${game.slug}`}
-      className="block group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-shadow"
+      className="block group bg-white rounded-2xl overflow-hidden border border-warm-100 shadow-sm hover:shadow-lg transition-shadow"
     >
-      <div className="aspect-[16/9] bg-gray-100 overflow-hidden">
+      <div className="aspect-[16/9] bg-warm-100 overflow-hidden">
         <img
           src={game.image}
           alt={game.name}
@@ -103,10 +103,10 @@ function GameHeaderCard({ game }) {
       </div>
       <div className="p-5">
         <span className="text-xs font-semibold text-orange-600 uppercase tracking-wide">{game.category}</span>
-        <h2 className="text-xl font-bold text-gray-900 mt-1 mb-2 group-hover:text-orange-600 transition-colors">
+        <h2 className="text-xl font-bold text-warm-900 mt-1 mb-2 group-hover:text-orange-600 transition-colors">
           {game.name}
         </h2>
-        <p className="text-sm text-gray-600 line-clamp-2">{game.shortDescription}</p>
+        <p className="text-sm text-warm-600 line-clamp-2">{game.shortDescription}</p>
         <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-orange-600">
           Detay sayfasını gör <ArrowRight size={14} />
         </span>
@@ -215,10 +215,10 @@ export default function ComparePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Karşılaştırma yükleniyor...</p>
+          <p className="text-warm-600">Karşılaştırma yükleniyor...</p>
         </div>
       </div>
     );
@@ -226,13 +226,13 @@ export default function ComparePage() {
 
   if (error || !gameA || !gameB) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="max-w-md text-center bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+      <div className="min-h-screen bg-cream-50 flex items-center justify-center px-4">
+        <div className="max-w-md text-center bg-white rounded-2xl p-8 border border-warm-100 shadow-sm">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center">
             <Sparkles className="text-red-500" size={28} />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Karşılaştırma yapılamadı</h1>
-          <p className="text-gray-600 mb-6">{error || 'Oyunlardan biri bulunamadı.'}</p>
+          <h1 className="text-2xl font-bold text-warm-900 mb-2">Karşılaştırma yapılamadı</h1>
+          <p className="text-warm-600 mb-6">{error || 'Oyunlardan biri bulunamadı.'}</p>
           <button
             onClick={() => navigate('/oyunlar')}
             className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-semibold transition-colors"
@@ -269,7 +269,7 @@ export default function ComparePage() {
   const verdictB = simplerIndex === 1 ? 'Daha hızlı öğrenilir' : popularIndex === 1 ? 'Daha çok beğeniliyor' : moreContentIndex === 1 ? 'Daha derin içerik' : 'Klasik bir alternatif';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cream-50">
       <SEO
         title={seoMeta.title}
         description={seoMeta.description}
@@ -289,10 +289,10 @@ export default function ComparePage() {
             <Trophy size={14} />
             Karşılaştırma
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 mt-3 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-black text-warm-900 mt-3 tracking-tight">
             {gameA.name} <span className="text-orange-500">vs</span> {gameB.name}
           </h1>
-          <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
+          <p className="text-warm-600 mt-2 max-w-2xl mx-auto">
             İki oyunun kuralları, oyuncu sayısı, zorluk seviyesi ve süresi yan yana. Sana hangisi daha uygun?
           </p>
         </header>
@@ -302,19 +302,19 @@ export default function ComparePage() {
           <GameHeaderCard game={gameB} />
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm divide-y divide-gray-100 mb-6">
+        <div className="bg-white border border-warm-100 rounded-2xl overflow-hidden shadow-sm divide-y divide-warm-100 mb-6">
           <ComparisonRow
             label="Kategori"
             icon={<Tag size={14} />}
-            valueA={<span className="font-semibold text-gray-900">{gameA.category}</span>}
-            valueB={<span className="font-semibold text-gray-900">{gameB.category}</span>}
+            valueA={<span className="font-semibold text-warm-900">{gameA.category}</span>}
+            valueB={<span className="font-semibold text-warm-900">{gameB.category}</span>}
             betterIndex={-1}
           />
           <ComparisonRow
             label="Oyuncu sayısı"
             icon={<Users size={14} />}
-            valueA={<span className="font-semibold text-gray-900">{gameA.players}</span>}
-            valueB={<span className="font-semibold text-gray-900">{gameB.players}</span>}
+            valueA={<span className="font-semibold text-warm-900">{gameA.players}</span>}
+            valueB={<span className="font-semibold text-warm-900">{gameB.players}</span>}
             betterIndex={playersA === playersB ? -1 : (playersA > playersB ? 0 : 1)}
           />
           <ComparisonRow
@@ -327,8 +327,8 @@ export default function ComparePage() {
           <ComparisonRow
             label="Oyun süresi"
             icon={<Sparkles size={14} />}
-            valueA={gameA.playTimeMinutes ? <PlayTimeBadge minutes={gameA.playTimeMinutes} /> : <span className="text-gray-400 text-sm">—</span>}
-            valueB={gameB.playTimeMinutes ? <PlayTimeBadge minutes={gameB.playTimeMinutes} /> : <span className="text-gray-400 text-sm">—</span>}
+            valueA={gameA.playTimeMinutes ? <PlayTimeBadge minutes={gameA.playTimeMinutes} /> : <span className="text-warm-400 text-sm">—</span>}
+            valueB={gameB.playTimeMinutes ? <PlayTimeBadge minutes={gameB.playTimeMinutes} /> : <span className="text-warm-400 text-sm">—</span>}
             betterIndex={
               !gameA.playTimeMinutes || !gameB.playTimeMinutes
                 ? -1
@@ -338,15 +338,15 @@ export default function ComparePage() {
           <ComparisonRow
             label="Kural sayısı"
             icon={<ListChecks size={14} />}
-            valueA={<span className="font-semibold text-gray-900">{rulesCountA} kural</span>}
-            valueB={<span className="font-semibold text-gray-900">{rulesCountB} kural</span>}
+            valueA={<span className="font-semibold text-warm-900">{rulesCountA} kural</span>}
+            valueB={<span className="font-semibold text-warm-900">{rulesCountB} kural</span>}
             betterIndex={rulesCountA === rulesCountB ? -1 : (rulesCountA < rulesCountB ? 0 : 1)}
           />
           <ComparisonRow
             label="İpucu sayısı"
             icon={<Lightbulb size={14} />}
-            valueA={<span className="font-semibold text-gray-900">{tipsCountA} ipucu</span>}
-            valueB={<span className="font-semibold text-gray-900">{tipsCountB} ipucu</span>}
+            valueA={<span className="font-semibold text-warm-900">{tipsCountA} ipucu</span>}
+            valueB={<span className="font-semibold text-warm-900">{tipsCountB} ipucu</span>}
             betterIndex={tipsCountA === tipsCountB ? -1 : (tipsCountA > tipsCountB ? 0 : 1)}
           />
           <ComparisonRow
@@ -356,22 +356,22 @@ export default function ComparePage() {
               gameA.ratingCount > 0 ? (
                 <div className="flex items-center gap-2">
                   <Star className="text-yellow-400 fill-yellow-400" size={18} />
-                  <span className="font-bold text-gray-900">{ratingA.toFixed(1)}</span>
-                  <span className="text-xs text-gray-500">({gameA.ratingCount} oy)</span>
+                  <span className="font-bold text-warm-900">{ratingA.toFixed(1)}</span>
+                  <span className="text-xs text-warm-500">({gameA.ratingCount} oy)</span>
                 </div>
               ) : (
-                <span className="text-gray-400 text-sm">Henüz oy yok</span>
+                <span className="text-warm-400 text-sm">Henüz oy yok</span>
               )
             }
             valueB={
               gameB.ratingCount > 0 ? (
                 <div className="flex items-center gap-2">
                   <Star className="text-yellow-400 fill-yellow-400" size={18} />
-                  <span className="font-bold text-gray-900">{ratingB.toFixed(1)}</span>
-                  <span className="text-xs text-gray-500">({gameB.ratingCount} oy)</span>
+                  <span className="font-bold text-warm-900">{ratingB.toFixed(1)}</span>
+                  <span className="text-xs text-warm-500">({gameB.ratingCount} oy)</span>
                 </div>
               ) : (
-                <span className="text-gray-400 text-sm">Henüz oy yok</span>
+                <span className="text-warm-400 text-sm">Henüz oy yok</span>
               )
             }
             betterIndex={popularIndex}
@@ -382,14 +382,14 @@ export default function ComparePage() {
           aria-labelledby="kararim-baslik"
           className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-6 mb-6"
         >
-          <h2 id="kararim-baslik" className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 id="kararim-baslik" className="text-xl font-bold text-warm-900 mb-4 flex items-center gap-2">
             <Trophy className="text-orange-500" size={22} />
             Hangisi sana göre?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl p-4 border border-gray-100">
-              <h3 className="text-base font-bold text-gray-900 mb-1">{gameA.name}</h3>
-              <p className="text-sm text-gray-600 mb-3">{verdictA}.</p>
+            <div className="bg-white rounded-xl p-4 border border-warm-100">
+              <h3 className="text-base font-bold text-warm-900 mb-1">{gameA.name}</h3>
+              <p className="text-sm text-warm-600 mb-3">{verdictA}.</p>
               <Link
                 to={`/oyun/${gameA.slug}`}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-orange-600 hover:text-orange-700"
@@ -397,9 +397,9 @@ export default function ComparePage() {
                 Kuralları öğren <ArrowRight size={14} />
               </Link>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-gray-100">
-              <h3 className="text-base font-bold text-gray-900 mb-1">{gameB.name}</h3>
-              <p className="text-sm text-gray-600 mb-3">{verdictB}.</p>
+            <div className="bg-white rounded-xl p-4 border border-warm-100">
+              <h3 className="text-base font-bold text-warm-900 mb-1">{gameB.name}</h3>
+              <p className="text-sm text-warm-600 mb-3">{verdictB}.</p>
               <Link
                 to={`/oyun/${gameB.slug}`}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-orange-600 hover:text-orange-700"
@@ -411,10 +411,10 @@ export default function ComparePage() {
         </section>
 
         <section className="text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-warm-500">
             Başka bir karşılaştırma denemek ister misin? <Link to="/oyunlar" className="text-orange-600 font-semibold hover:underline">Tüm oyunlara göz at →</Link>
           </p>
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-xs text-warm-400 mt-2">
             <a
               href={`${SITE_CONFIG.url}/karsilastir/${gameA.slug}-vs-${gameB.slug}`}
               className="hover:underline"

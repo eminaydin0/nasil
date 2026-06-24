@@ -88,8 +88,8 @@ function SocialShare({ game }) {
           />
           
           {/* Dropdown */}
-          <div className="absolute top-full mt-2 right-0 bg-white rounded-xl shadow-2xl border border-gray-100 p-3 z-50 min-w-[240px]">
-            <p className="text-xs font-semibold text-gray-700 mb-3 px-2">Paylaşım Seçenekleri</p>
+          <div className="absolute top-full mt-2 right-0 bg-white rounded-xl shadow-2xl border border-warm-100 p-3 z-50 min-w-[240px]">
+            <p className="text-xs font-semibold text-warm-700 mb-3 px-2">Paylaşım Seçenekleri</p>
             
             <div className="space-y-1">
               {/* WhatsApp */}
@@ -100,7 +100,7 @@ function SocialShare({ game }) {
                 <div className="w-9 h-9 bg-green-500 rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                   <MessageCircle size={18} />
                 </div>
-                <span className="text-sm font-medium text-gray-700">WhatsApp</span>
+                <span className="text-sm font-medium text-warm-700">WhatsApp</span>
               </button>
 
               {/* Facebook */}
@@ -111,7 +111,7 @@ function SocialShare({ game }) {
                 <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                   <Facebook size={18} />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Facebook</span>
+                <span className="text-sm font-medium text-warm-700">Facebook</span>
               </button>
 
               {/* Twitter */}
@@ -122,18 +122,18 @@ function SocialShare({ game }) {
                 <div className="w-9 h-9 bg-sky-500 rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                   <Twitter size={18} />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Twitter (X)</span>
+                <span className="text-sm font-medium text-warm-700">Twitter (X)</span>
               </button>
 
               {/* Copy Link */}
               <button
                 onClick={handleCopyLink}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-cream-50 transition-colors group"
               >
-                <div className="w-9 h-9 bg-gray-700 rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                <div className="w-9 h-9 bg-warm-700 rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                   {copied ? <Check size={18} /> : <LinkIcon size={18} />}
                 </div>
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-warm-700">
                   {copied ? 'Kopyalandı!' : 'Linki Kopyala'}
                 </span>
               </button>

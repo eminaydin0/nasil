@@ -144,7 +144,7 @@ export default function DiceRoller() {
                   <div className="text-center relative z-10">
                     <div className="inline-flex items-center gap-2 mb-2">
                       <div className="h-px w-8 bg-gradient-to-r from-transparent to-gray-500" />
-                      <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                      <span className="text-warm-400 text-xs font-semibold uppercase tracking-wider">
                         Toplam
                       </span>
                       <div className="h-px w-8 bg-gradient-to-l from-transparent to-gray-500" />
@@ -160,9 +160,9 @@ export default function DiceRoller() {
               ) : (
                 <div className="text-center relative z-10">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-gray-700 border-dashed rounded-2xl flex items-center justify-center mx-auto mb-5 bg-gray-800/40">
-                    <Dices size={40} className="text-gray-500" />
+                    <Dices size={40} className="text-warm-500" />
                   </div>
-                  <p className="text-gray-300 text-base font-medium">
+                  <p className="text-warm-300 text-base font-medium">
                     Zar atmaya hazır...
                   </p>
                   <p className="mt-2 text-sm text-warm-500">
@@ -180,7 +180,7 @@ export default function DiceRoller() {
                 className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 ${
                   numDice === 1
                     ? "border-orange-500 bg-orange-600 text-white shadow-md shadow-orange-900/10"
-                    : "border-orange-100 bg-white text-gray-700 hover:bg-orange-50/50"
+                    : "border-orange-100 bg-white text-warm-700 hover:bg-orange-50/50"
                 }`}
               >
                 <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
@@ -195,7 +195,7 @@ export default function DiceRoller() {
                 className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 ${
                   numDice === 2
                     ? "border-orange-500 bg-orange-600 text-white shadow-md shadow-orange-900/10"
-                    : "border-orange-100 bg-white text-gray-700 hover:bg-orange-50/50"
+                    : "border-orange-100 bg-white text-warm-700 hover:bg-orange-50/50"
                 }`}
               >
                 <div className="flex items-center justify-center gap-2 text-sm sm:text-base">

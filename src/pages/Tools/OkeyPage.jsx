@@ -10,12 +10,12 @@ export default function OkeyPage() {
 
   const helpContent = (
     <>
-      <h3 className="font-bold text-gray-900 mb-4">Kurallar ve Kullanım</h3>
+      <h3 className="font-bold text-warm-900 mb-4">Kurallar ve Kullanım</h3>
       <div className="space-y-3">
-        <p className="text-gray-600">
+        <p className="text-warm-600">
           Bu araç klasik "Düşmeli Okey" (genellikle 20 puandan düşülerek oynanan) versiyonu için tasarlanmıştır.
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-gray-600">
+        <ul className="list-disc pl-5 space-y-2 text-warm-600">
           <li>Başlangıç puanını değiştirebilirsiniz (Örn: 30 veya 40).</li>
           <li><strong>Normal Bitiş:</strong> Kaybedenlerden 2 puan düşer.</li>
           <li><strong>Okey/Çift:</strong> Kaybedenlerden 4 puan düşer.</li>

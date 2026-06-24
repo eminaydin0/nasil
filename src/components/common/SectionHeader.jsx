@@ -32,7 +32,7 @@ function SectionHeader({
               <Icon className={`w-6 h-6 ${iconColor}`} />
             </div>
           )}
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-bold text-warm-900">
             {title}
           </h2>
         </div>

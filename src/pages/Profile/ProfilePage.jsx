@@ -94,15 +94,15 @@ function ProfilePage() {
     <>
       <SEO title="Profilim - Kuralı Ne?" description="Kullanıcı profili" />
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 border-b pb-4">Profilim</h1>
+        <h1 className="text-3xl font-bold text-warm-900 mb-8 border-b pb-4">Profilim</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Sol Panel: Kullanıcı Kartı */}
           <div className="md:col-span-1">
-            <div className="bg-white rounded-xl shadow-lg p-6 text-center border border-gray-100 relative overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg p-6 text-center border border-warm-100 relative overflow-hidden">
               
               <div className="relative inline-block mx-auto mb-4 group">
-                 <div className={`w-32 h-32 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-xl ${!currentAvatar ? 'bg-orange-100' : 'bg-gray-100'}`}>
+                 <div className={`w-32 h-32 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-xl ${!currentAvatar ? 'bg-orange-100' : 'bg-warm-100'}`}>
                     {currentAvatar ? (
                       <img src={currentAvatar} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
@@ -120,15 +120,15 @@ function ProfilePage() {
                  </button>
               </div>
 
-              <h2 className="text-xl font-bold text-gray-800 break-all mb-1">
+              <h2 className="text-xl font-bold text-warm-800 break-all mb-1">
                 {user.user_metadata?.full_name || user.email.split('@')[0]}
               </h2>
-              <p className="text-sm text-gray-500 mb-6">{user.email}</p>
+              <p className="text-sm text-warm-500 mb-6">{user.email}</p>
               
               {/* Avatar Selection Grid */}
               {isEditingAvatar && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-xl animate-fade-in border border-gray-200">
-                   <h3 className="text-sm font-bold text-gray-700 mb-3 block">Bir Avatar Seç</h3>
+                <div className="mb-6 p-4 bg-cream-50 rounded-xl animate-fade-in border border-warm-200">
+                   <h3 className="text-sm font-bold text-warm-700 mb-3 block">Bir Avatar Seç</h3>
                    <div className="grid grid-cols-4 gap-2">
                       {AVATAR_OPTIONS.map((avatar, index) => (
                         <button
@@ -136,7 +136,7 @@ function ProfilePage() {
                           onClick={() => handleAvatarSelect(avatar)}
                           disabled={loading}
                           className={`aspect-square rounded-full overflow-hidden border-2 transition-all hover:scale-110 active:scale-95 bg-white
-                             ${currentAvatar === avatar ? 'border-orange-500 ring-2 ring-orange-200' : 'border-transparent hover:border-gray-300'}
+                             ${currentAvatar === avatar ? 'border-orange-500 ring-2 ring-orange-200' : 'border-transparent hover:border-warm-300'}
                           `}
                         >
                           <img src={avatar} alt={`Avatar ${index}`} className="w-full h-full object-cover" />
@@ -161,65 +161,65 @@ function ProfilePage() {
 
           {/* Sağ Panel: Detaylar */}
           <div className="md:col-span-2 space-y-6">
-            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-xl shadow-md p-6 border border-warm-100">
+              <h3 className="text-lg font-semibold text-warm-900 mb-4 flex items-center gap-2">
                 <User size={20} className="text-orange-500" />
                 Hesap Bilgileri
               </h3>
               
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-4 p-3 bg-cream-50 rounded-lg">
                   <div className="bg-white p-2 rounded-full shadow-xs">
-                    <User size={18} className="text-gray-500" />
+                    <User size={18} className="text-warm-500" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Ad Soyad</p>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-xs text-warm-500">Ad Soyad</p>
+                    <p className="text-sm font-medium text-warm-900">
                       {user.user_metadata?.full_name || '-'}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-4 p-3 bg-cream-50 rounded-lg">
                   <div className="bg-white p-2 rounded-full shadow-xs">
-                    <Mail size={18} className="text-gray-500" />
+                    <Mail size={18} className="text-warm-500" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">E-posta Adresi</p>
-                    <p className="text-sm font-medium text-gray-900">{user.email}</p>
+                    <p className="text-xs text-warm-500">E-posta Adresi</p>
+                    <p className="text-sm font-medium text-warm-900">{user.email}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-4 p-3 bg-cream-50 rounded-lg">
                   <div className="bg-white p-2 rounded-full shadow-xs">
-                    <Shield size={18} className="text-gray-500" />
+                    <Shield size={18} className="text-warm-500" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Hesap Durumu</p>
+                    <p className="text-xs text-warm-500">Hesap Durumu</p>
                     <p className="text-sm font-medium text-emerald-600">Aktif</p>
                   </div>
                 </div>
 
                 {user.user_metadata?.birth_year && (
-                  <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-4 p-3 bg-cream-50 rounded-lg">
                     <div className="bg-white p-2 rounded-full shadow-xs">
-                      <Settings size={18} className="text-gray-500" />
+                      <Settings size={18} className="text-warm-500" />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Doğum Yılı</p>
-                      <p className="text-sm font-medium text-gray-900">{user.user_metadata.birth_year}</p>
+                      <p className="text-xs text-warm-500">Doğum Yılı</p>
+                      <p className="text-sm font-medium text-warm-900">{user.user_metadata.birth_year}</p>
                     </div>
                   </div>
                 )}
 
                 {user.user_metadata?.gender && (
-                  <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-4 p-3 bg-cream-50 rounded-lg">
                     <div className="bg-white p-2 rounded-full shadow-xs">
-                      <User size={18} className="text-gray-500" />
+                      <User size={18} className="text-warm-500" />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Cinsiyet</p>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-xs text-warm-500">Cinsiyet</p>
+                      <p className="text-sm font-medium text-warm-900">
                         {user.user_metadata.gender === 'male' ? 'Erkek' : 
                          user.user_metadata.gender === 'female' ? 'Kadın' : 'Diğer'}
                       </p>

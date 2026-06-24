@@ -68,7 +68,7 @@ export default function TeamGenerator() {
               onChange={(e) => setTeamCount(Number(e.target.value))}
               className={tool.range}
             />
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
+            <div className="flex justify-between text-xs text-warm-400 mt-1">
               <span>2 Takım</span>
               <span>5 Takım</span>
             </div>

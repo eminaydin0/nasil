@@ -55,27 +55,27 @@ function CookieConsent() {
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-gray-900">Çerez Ayarları</h3>
-                <button onClick={() => setShowDetails(false)} className="p-1 hover:bg-gray-100 rounded">
+                <h3 className="font-bold text-warm-900">Çerez Ayarları</h3>
+                <button onClick={() => setShowDetails(false)} className="p-1 hover:bg-warm-100 rounded">
                   <X size={20} />
                 </button>
               </div>
               <div className="space-y-3 mb-6">
-                <div className="p-3 bg-gray-50 rounded-lg flex justify-between items-center">
+                <div className="p-3 bg-cream-50 rounded-lg flex justify-between items-center">
                   <div>
                     <p className="font-medium text-sm">Zorunlu</p>
-                    <p className="text-xs text-gray-500">Site işlevselliği için</p>
+                    <p className="text-xs text-warm-500">Site işlevselliği için</p>
                   </div>
                   <span className="text-xs font-bold text-green-600">Aktif</span>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg flex justify-between items-center">
+                <div className="p-3 bg-cream-50 rounded-lg flex justify-between items-center">
                   <div>
                     <p className="font-medium text-sm">Analitik</p>
-                    <p className="text-xs text-gray-500">İstatistikler için</p>
+                    <p className="text-xs text-warm-500">İstatistikler için</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" className="sr-only peer" defaultChecked />
-                    <div className="w-9 h-5 bg-gray-300 peer-focus:ring-2 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-0.5 after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                    <div className="w-9 h-5 bg-warm-300 peer-focus:ring-2 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-0.5 after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
                   </label>
                 </div>
               </div>
@@ -83,7 +83,7 @@ function CookieConsent() {
                 <button onClick={acceptAll} className="flex-1 py-2.5 bg-orange-600 text-white rounded-lg font-medium text-sm hover:bg-orange-700">
                   Kaydet
                 </button>
-                <button onClick={acceptNecessary} className="py-2.5 px-4 bg-gray-100 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-200">
+                <button onClick={acceptNecessary} className="py-2.5 px-4 bg-warm-100 text-warm-700 rounded-lg font-medium text-sm hover:bg-warm-200">
                   Reddet
                 </button>
               </div>
@@ -95,13 +95,13 @@ function CookieConsent() {
       {/* Alt Bar - Minimal, arka plan görünür */}
       <div className="fixed bottom-0 left-0 right-0 z-50 px-3 sm:px-4 pb-3 sm:pb-4 pointer-events-none">
         <div className="max-w-4xl mx-auto pointer-events-auto animate-slide-up">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4 sm:py-3 sm:px-4 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-gray-200/80">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4 sm:py-3 sm:px-4 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-warm-200/80">
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div className="hidden sm:flex shrink-0 p-1.5 bg-orange-100 rounded-lg">
                 <Cookie size={18} className="text-orange-600" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm text-gray-700 truncate sm:line-clamp-2">
+                <p className="text-sm text-warm-700 truncate sm:line-clamp-2">
                   Çerezler kullanıyoruz. Sitemizi kullanarak kabul etmiş olursunuz.{' '}
                   <Link to="/cerez-politikasi" className="text-orange-600 hover:underline whitespace-nowrap">Detay</Link>
                 </p>
@@ -110,13 +110,13 @@ function CookieConsent() {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setShowDetails(true)}
-                className="text-xs sm:text-sm text-gray-500 hover:text-gray-700 px-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                className="text-xs sm:text-sm text-warm-500 hover:text-warm-700 px-3 py-1.5 hover:bg-warm-100 rounded-lg transition-colors"
               >
                 Ayarlar
               </button>
               <button
                 onClick={acceptNecessary}
-                className="text-xs sm:text-sm text-gray-600 hover:text-gray-800 px-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                className="text-xs sm:text-sm text-warm-600 hover:text-warm-800 px-3 py-1.5 hover:bg-warm-100 rounded-lg transition-colors"
               >
                 Reddet
               </button>

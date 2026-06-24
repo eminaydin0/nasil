@@ -62,11 +62,11 @@ export default function AddToHomeScreen() {
 
   return (
     <div className="fixed bottom-20 left-4 right-4 z-[9999] sm:left-auto sm:right-4 sm:max-w-sm animate-slideUp">
-      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xl border border-warm-200 overflow-hidden">
         <div className="p-4 pr-12 relative">
           <button
             onClick={handleDismiss}
-            className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+            className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-warm-100 text-warm-400 hover:text-warm-600 transition-colors"
             aria-label="Kapat"
           >
             <X size={18} />
@@ -77,8 +77,8 @@ export default function AddToHomeScreen() {
               <Smartphone className="text-orange-600" size={24} />
             </div>
             <div>
-              <p className="font-bold text-gray-900 text-sm">Ana ekranınıza ekleyin</p>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="font-bold text-warm-900 text-sm">Ana ekranınıza ekleyin</p>
+              <p className="text-xs text-warm-500 mt-0.5">
                 {isIOSDevice ? (
                   <>
                     Hızlı erişim için <span className="font-semibold text-orange-600">Paylaş</span> butonuna
@@ -95,7 +95,7 @@ export default function AddToHomeScreen() {
 
           <div className="flex gap-2 mt-4">
             {isIOSDevice ? (
-              <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-xl text-xs text-gray-600">
+              <div className="flex items-center gap-2 px-3 py-2 bg-warm-100 rounded-xl text-xs text-warm-600">
                 <Share2 size={16} className="text-orange-500 shrink-0" />
                 <span>Paylaş → Ana Ekrana Ekle</span>
               </div>

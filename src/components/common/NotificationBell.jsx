@@ -121,7 +121,7 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={handleBellClick}
-        className="relative p-2 rounded-full text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-colors"
+        className="relative p-2 rounded-full text-warm-700 hover:text-orange-600 hover:bg-orange-50 transition-colors"
         title="Bildirimler"
         aria-label="Bildirimler"
       >
@@ -134,9 +134,9 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 max-h-[min(400px,70vh)] bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50 flex flex-col">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
-            <span className="font-semibold text-gray-800">Bildirimler</span>
+        <div className="absolute right-0 top-full mt-2 w-80 max-h-[min(400px,70vh)] bg-white rounded-xl shadow-xl border border-warm-200 overflow-hidden z-50 flex flex-col">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-warm-100 bg-cream-50">
+            <span className="font-semibold text-warm-800">Bildirimler</span>
             {unreadCount > 0 && (
               <button
                 type="button"
@@ -149,15 +149,15 @@ export default function NotificationBell() {
           </div>
           <div className="overflow-y-auto flex-1">
             {loading ? (
-              <div className="p-4 text-center text-gray-500 text-sm">
+              <div className="p-4 text-center text-warm-500 text-sm">
                 Yükleniyor...
               </div>
             ) : notifications.length === 0 ? (
-              <div className="p-6 text-center text-gray-500 text-sm">
+              <div className="p-6 text-center text-warm-500 text-sm">
                 Henüz bildirim yok.
               </div>
             ) : (
-              <ul className="divide-y divide-gray-100">
+              <ul className="divide-y divide-warm-100">
                 {notifications.map((n) => (
                   <li key={n.id}>
                     {n.link ? (
@@ -173,13 +173,13 @@ export default function NotificationBell() {
                           {n.icon || ICON_MAP[n.type] || '📌'}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p className="text-sm font-medium text-warm-900 truncate">
                             {n.title}
                           </p>
-                          <p className="text-xs text-gray-500 line-clamp-2">
+                          <p className="text-xs text-warm-500 line-clamp-2">
                             {n.content}
                           </p>
-                          <p className="text-xs text-gray-400 mt-0.5">
+                          <p className="text-xs text-warm-400 mt-0.5">
                             {formatTime(n.created_at)}
                           </p>
                         </div>
@@ -194,13 +194,13 @@ export default function NotificationBell() {
                           {n.icon || ICON_MAP[n.type] || '📌'}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p className="text-sm font-medium text-warm-900 truncate">
                             {n.title}
                           </p>
-                          <p className="text-xs text-gray-500 line-clamp-2">
+                          <p className="text-xs text-warm-500 line-clamp-2">
                             {n.content}
                           </p>
-                          <p className="text-xs text-gray-400 mt-0.5">
+                          <p className="text-xs text-warm-400 mt-0.5">
                             {formatTime(n.created_at)}
                           </p>
                         </div>

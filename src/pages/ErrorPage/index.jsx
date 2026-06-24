@@ -39,8 +39,8 @@ function ErrorPage({ status = 404, title, message }) {
           <span className="text-8xl font-black text-orange-100 select-none">{status}</span>
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-3">{displayTitle}</h1>
-        <p className="text-gray-600 mb-8 leading-relaxed">{displayMessage}</p>
+        <h1 className="text-2xl font-bold text-warm-900 mb-3">{displayTitle}</h1>
+        <p className="text-warm-600 mb-8 leading-relaxed">{displayMessage}</p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
@@ -53,7 +53,7 @@ function ErrorPage({ status = 404, title, message }) {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-100 text-warm-700 rounded-xl font-semibold hover:bg-warm-200 transition-colors"
           >
             <ArrowLeft size={20} />
             Geri Dön
@@ -67,8 +67,8 @@ function ErrorPage({ status = 404, title, message }) {
           </Link>
         </div>
 
-        <div className="mt-10 pt-8 border-t border-gray-100">
-          <p className="text-sm text-gray-500 mb-3">Popüler sayfalar</p>
+        <div className="mt-10 pt-8 border-t border-warm-100">
+          <p className="text-sm text-warm-500 mb-3">Popüler sayfalar</p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link to="/oyunlar" className="text-orange-600 hover:text-orange-700 text-sm font-medium">
               Oyunlar

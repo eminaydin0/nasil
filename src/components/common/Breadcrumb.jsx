@@ -32,9 +32,9 @@ const Breadcrumb = ({
   // Ayırıcı bileşeni
   const Separator = () => (
     separator === 'chevron' ? (
-      <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
+      <ChevronRight className="w-4 h-4 text-warm-400 shrink-0" />
     ) : (
-      <span className="text-gray-400 mx-1">/</span>
+      <span className="text-warm-400 mx-1">/</span>
     )
   );
 
@@ -66,7 +66,7 @@ const Breadcrumb = ({
               {isLast ? (
                 // Son öğe - aktif sayfa (link değil)
                 <span 
-                  className="text-gray-900 font-medium truncate max-w-[200px]"
+                  className="text-warm-900 font-medium truncate max-w-[200px]"
                   itemProp="name"
                   aria-current="page"
                 >
@@ -76,7 +76,7 @@ const Breadcrumb = ({
                 // Link olan öğeler
                 <Link
                   to={item.url}
-                  className="text-gray-500 hover:text-orange-600 transition-colors flex items-center gap-1 group"
+                  className="text-warm-500 hover:text-orange-600 transition-colors flex items-center gap-1 group"
                   itemProp="item"
                 >
                   {isHome && (

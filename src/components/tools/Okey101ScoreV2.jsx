@@ -390,7 +390,7 @@ export default function Okey101Score() {
               {isPartners ? 'Eşli' : 'Tekli'}
             </span>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-medium text-gray-600">Kaç el?</span>
+              <span className="text-sm font-medium text-warm-600">Kaç el?</span>
               <span className="rounded-lg bg-orange-600 px-3 py-1.5 text-sm font-bold text-white shadow-sm">
                 {gameLimit} el
               </span>
@@ -465,7 +465,7 @@ export default function Okey101Score() {
                     </th>
                   ))
                 )}
-                <th className="p-2 sm:p-3 md:p-4 w-12 sm:w-14 md:w-16 text-center text-gray-300">
+                <th className="p-2 sm:p-3 md:p-4 w-12 sm:w-14 md:w-16 text-center text-warm-300">
                   <span className="sr-only">İşlem</span>
                 </th>
               </tr>
@@ -476,9 +476,9 @@ export default function Okey101Score() {
         {/* Geçmiş */}
         <div className="flex-1 min-h-0 overflow-auto bg-cream-100/70">
           {rounds.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full min-h-[120px] text-gray-400 px-4 py-8">
-              <p className="text-sm font-medium text-gray-500">Henüz el girilmedi</p>
-              <p className="text-xs text-gray-400 mt-1 text-center">Aşağıdan puanları girip kaydedin</p>
+            <div className="flex flex-col items-center justify-center h-full min-h-[120px] text-warm-400 px-4 py-8">
+              <p className="text-sm font-medium text-warm-500">Henüz el girilmedi</p>
+              <p className="text-xs text-warm-400 mt-1 text-center">Aşağıdan puanları girip kaydedin</p>
             </div>
           ) : (
             <div ref={historyRef} className="p-2 sm:p-3 overflow-x-auto">
@@ -507,8 +507,8 @@ export default function Okey101Score() {
 
                     return (
                       <tr key={rIdx} className={`border-b border-orange-100/80 hover:bg-orange-50/30 transition-colors ${isPenalty ? 'bg-orange-50/50' : 'bg-white'}`}>
-                        <td className="p-2 sm:p-3 md:p-4 w-12 sm:w-16 md:w-20 text-center font-semibold text-xs sm:text-sm text-gray-600 border-r border-orange-100 bg-orange-50/30">
-                          {isPenalty ? <span className="text-orange-500">-</span> : <span className="text-gray-700">{elNumber}</span>}
+                        <td className="p-2 sm:p-3 md:p-4 w-12 sm:w-16 md:w-20 text-center font-semibold text-xs sm:text-sm text-warm-600 border-r border-orange-100 bg-orange-50/30">
+                          {isPenalty ? <span className="text-orange-500">-</span> : <span className="text-warm-700">{elNumber}</span>}
                         </td>
                         {displayScores.map((score, sIdx) => {
                           const isZero = score === 0;
@@ -519,16 +519,16 @@ export default function Okey101Score() {
                             <td key={sIdx} className={`p-2 sm:p-3 md:p-4 text-center font-bold text-sm sm:text-base md:text-lg ${
                               isNegative ? 'text-orange-600' : 
                               isPositive ? 'text-rose-600' : 
-                              'text-gray-400'
+                              'text-warm-400'
                             }`}>
-                              {isZero ? <span className="text-gray-300">-</span> : score}
+                              {isZero ? <span className="text-warm-300">-</span> : score}
                             </td>
                           );
                         })}
                         <td className="p-2 sm:p-3 md:p-4 text-center">
                           <button 
                             onClick={() => deleteRound(rIdx)}
-                            className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-orange-50 hover:text-orange-700 sm:p-1.5"
+                            className="rounded-lg p-1 text-warm-400 transition-colors hover:bg-orange-50 hover:text-orange-700 sm:p-1.5"
                             title="Eli Sil"
                           >
                             <Trash2 size={14} className="sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />
@@ -543,12 +543,12 @@ export default function Okey101Score() {
                   <td className="p-2 sm:p-3 md:p-4 w-12 sm:w-16 md:w-20 text-center font-bold text-xs sm:text-sm md:text-base text-orange-900 border-r border-orange-100">Toplam</td>
                   {isPartners ? (
                     <>
-                      <td className="p-2 sm:p-3 md:p-4 text-center font-black text-base sm:text-lg md:text-xl text-gray-900">{teamTotals[0]}</td>
-                      <td className="p-2 sm:p-3 md:p-4 text-center font-black text-base sm:text-lg md:text-xl text-gray-900">{teamTotals[1]}</td>
+                      <td className="p-2 sm:p-3 md:p-4 text-center font-black text-base sm:text-lg md:text-xl text-warm-900">{teamTotals[0]}</td>
+                      <td className="p-2 sm:p-3 md:p-4 text-center font-black text-base sm:text-lg md:text-xl text-warm-900">{teamTotals[1]}</td>
                     </>
                   ) : (
                     totals.map((total, idx) => (
-                      <td key={idx} className="p-2 sm:p-3 md:p-4 text-center font-black text-base sm:text-lg md:text-xl text-gray-900">{total}</td>
+                      <td key={idx} className="p-2 sm:p-3 md:p-4 text-center font-black text-base sm:text-lg md:text-xl text-warm-900">{total}</td>
                     ))
                   )}
                   <td className="p-2 sm:p-3 md:p-4"></td>
@@ -577,7 +577,7 @@ export default function Okey101Score() {
                           newInputs[0] = e.target.value;
                           setTeamInputs(newInputs);
                         }}
-                        className="w-full rounded-xl border-2 border-gray-200 p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:p-2.5 md:p-3 sm:text-lg md:text-xl"
+                        className="w-full rounded-xl border-2 border-warm-200 p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:p-2.5 md:p-3 sm:text-lg md:text-xl"
                       />
                       <div className="flex gap-1 sm:gap-1.5 mt-2 sm:mt-2.5">
                         <button onClick={() => setPreset(0, PRESETS.BITTI)} className="flex-1 rounded-lg bg-orange-100 px-1.5 py-1.5 text-[10px] font-bold text-orange-800 shadow-sm transition-colors hover:bg-orange-200 sm:px-2 sm:py-2 md:px-2.5 sm:text-xs">Bitti</button>
@@ -596,7 +596,7 @@ export default function Okey101Score() {
                           newInputs[1] = e.target.value;
                           setTeamInputs(newInputs);
                         }}
-                        className="w-full rounded-xl border-2 border-gray-200 p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:p-2.5 md:p-3 sm:text-lg md:text-xl"
+                        className="w-full rounded-xl border-2 border-warm-200 p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:p-2.5 md:p-3 sm:text-lg md:text-xl"
                       />
                       <div className="flex gap-1 sm:gap-1.5 mt-2 sm:mt-2.5">
                         <button onClick={() => setPreset(1, PRESETS.BITTI)} className="flex-1 rounded-lg bg-orange-100 px-1.5 py-1.5 text-[10px] font-bold text-orange-800 shadow-sm transition-colors hover:bg-orange-200 sm:px-2 sm:py-2 md:px-2.5 sm:text-xs">Bitti</button>
@@ -615,7 +615,7 @@ export default function Okey101Score() {
                         placeholder="0"
                         onChange={(e) => updateCurrentScore(idx, e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && addRound()}
-                        className="w-full rounded-xl border-2 border-gray-200 p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:p-2.5 md:p-3 sm:text-lg md:text-xl"
+                        className="w-full rounded-xl border-2 border-warm-200 p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:p-2.5 md:p-3 sm:text-lg md:text-xl"
                       />
                       <div className="flex gap-1 sm:gap-1.5 mt-2 sm:mt-2.5">
                         <button onClick={() => setPreset(idx, PRESETS.BITTI)} className="flex-1 rounded-lg bg-orange-100 px-1.5 py-1.5 text-[10px] font-bold text-orange-800 shadow-sm transition-colors hover:bg-orange-200 sm:px-2 sm:py-2 md:px-2.5 sm:text-xs">Bitti</button>
@@ -645,7 +645,7 @@ export default function Okey101Score() {
               onChange={(e) => setIsPenaltyRound(e.target.checked)}
               className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-600 focus:ring-orange-500 rounded"
             />
-            <span className="text-xs sm:text-sm font-medium text-gray-700">Ceza Eli</span>
+            <span className="text-xs sm:text-sm font-medium text-warm-700">Ceza Eli</span>
           </label>
         </div>
       </div>

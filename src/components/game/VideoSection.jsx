@@ -51,21 +51,21 @@ export default function VideoSection({ game }) {
     <section
       id="video-anlatim"
       aria-labelledby="video-anlatim-baslik"
-      className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100"
+      className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-warm-100"
     >
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-sm">
           <PlayCircle className="text-white" size={22} />
         </div>
         <div>
-          <h2 id="video-anlatim-baslik" className="text-lg font-bold text-gray-900">
+          <h2 id="video-anlatim-baslik" className="text-lg font-bold text-warm-900">
             Video Anlatım
           </h2>
-          <p className="text-xs text-gray-500">{title}</p>
+          <p className="text-xs text-warm-500">{title}</p>
         </div>
       </div>
 
-      <div className="relative w-full overflow-hidden rounded-xl bg-gray-900" style={{ aspectRatio: '16 / 9' }}>
+      <div className="relative w-full overflow-hidden rounded-xl bg-charcoal-900" style={{ aspectRatio: '16 / 9' }}>
         <iframe
           src={embedUrl}
           title={title}

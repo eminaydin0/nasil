@@ -9,11 +9,9 @@ import GameContent from '../../components/game/GameContent';
 import GameSidebar from '../../components/game/GameSidebar';
 import VideoSection from '../../components/game/VideoSection';
 import FAQAccordion from '../../components/game/FAQAccordion';
-import QuickRating from '../../components/game/QuickRating';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import { trackPageView, trackGameView } from '../../utils/analytics';
 import { useGame } from '../../hooks/useGame';
-import { useGameRating } from '../../hooks/useGameRating';
 import { supabase } from '../../lib/supabase';
 import {
   generateGameSchema,
@@ -28,12 +26,33 @@ function GameDetail() {
   const { game, loading, viewCount } = useGame(slug);
   const [games, setGames] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
-  const { count: ratingCount, average: ratingAverage } = useGameRating(game?.id);
+  const [commentRatingStats, setCommentRatingStats] = useState({ count: 0, average: 0 });
 
   useEffect(() => {
     window.scrollTo(0, 0);
     loadAllGames();
   }, []);
+
+  useEffect(() => {
+    if (!game?.id) return;
+
+    const loadCommentRatings = async () => {
+      const { data } = await supabase
+        .from('comments')
+        .select('rating')
+        .eq('game_id', game.id);
+
+      const ratings = (data || []).filter((c) => c.rating > 0);
+      setCommentRatingStats({
+        count: ratings.length,
+        average: ratings.length
+          ? ratings.reduce((sum, c) => sum + c.rating, 0) / ratings.length
+          : 0,
+      });
+    };
+
+    loadCommentRatings();
+  }, [game?.id]);
 
   const loadAllGames = async () => {
     try {
@@ -72,8 +91,8 @@ function GameDetail() {
   const structuredData = useMemo(() => {
     if (!game) return null;
 
-    const aggregateRating = ratingCount > 0
-      ? { count: ratingCount, average: ratingAverage }
+    const aggregateRating = commentRatingStats.count > 0
+      ? { count: commentRatingStats.count, average: commentRatingStats.average }
       : null;
 
     const schemas = [
@@ -119,7 +138,7 @@ function GameDetail() {
     ].filter(Boolean);
 
     return schemas;
-  }, [game, ratingCount, ratingAverage]);
+  }, [game, commentRatingStats]);
 
   // Breadcrumb items
   const breadcrumbs = useMemo(() => {
@@ -155,7 +174,7 @@ function GameDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cream-50">
       <SEO
         title={seoMeta.title}
         description={seoMeta.description}
@@ -183,8 +202,6 @@ function GameDetail() {
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
         <GameInfo game={game} />
-
-        <QuickRating gameId={game.id} gameName={game.name} className="mb-6" />
 
         <VideoSection game={game} />
 

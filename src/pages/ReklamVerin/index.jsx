@@ -58,7 +58,7 @@ function ReklamVerin() {
   const breadcrumbs = [{ name: 'Reklam Verin', url: null }];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-cream-50 py-12">
       <SEO
         title={PAGE_SEO.reklamVerin.title}
         description={PAGE_SEO.reklamVerin.description}
@@ -78,16 +78,16 @@ function ReklamVerin() {
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-warm-100 overflow-hidden">
             <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border-b border-emerald-100 px-8 py-8">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-14 h-14 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg">
                   <Megaphone size={28} />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-black text-gray-900">{content.title}</h1>
+                  <h1 className="text-2xl font-black text-warm-900">{content.title}</h1>
                   {content.subtitle && (
-                    <p className="text-gray-600 text-sm mt-1 flex items-center gap-2">
+                    <p className="text-warm-600 text-sm mt-1 flex items-center gap-2">
                       <Calendar size={16} />
                       {content.subtitle}
                     </p>
@@ -107,13 +107,13 @@ function ReklamVerin() {
                     const isHeading = /^\d+\.\s+\S+/.test(para.trim()) && para.length < 100 && !para.trim().endsWith('.');
                     if (isHeading) {
                       return (
-                        <h2 key={i} className="text-lg font-bold text-gray-900 mt-8 mb-3 first:mt-0">
+                        <h2 key={i} className="text-lg font-bold text-warm-900 mt-8 mb-3 first:mt-0">
                           {para}
                         </h2>
                       );
                     }
                     return (
-                      <p key={i} className="text-gray-700 leading-relaxed mb-4 whitespace-pre-line">
+                      <p key={i} className="text-warm-700 leading-relaxed mb-4 whitespace-pre-line">
                         {para}
                       </p>
                     );
@@ -137,7 +137,7 @@ function ReklamVerin() {
             <Link to="/hakkimizda" className="text-emerald-600 hover:text-emerald-700 font-medium">
               Hakkımızda
             </Link>
-            <span className="text-gray-300">|</span>
+            <span className="text-warm-300">|</span>
             <Link to="/iletisim" className="text-emerald-600 hover:text-emerald-700 font-medium">
               İletişim
             </Link>

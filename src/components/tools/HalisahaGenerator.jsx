@@ -130,11 +130,11 @@ export default function HalisahaGenerator() {
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Takım A Forması</label>
+              <label className="text-sm text-warm-700">Takım A Forması</label>
               <input type="color" value={teamAColor} onChange={e => setTeamAColor(e.target.value)} className="w-10 h-8 p-0 border-0" />
             </div>
             <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Takım B Forması</label>
+              <label className="text-sm text-warm-700">Takım B Forması</label>
               <input type="color" value={teamBColor} onChange={e => setTeamBColor(e.target.value)} className="w-10 h-8 p-0 border-0" />
             </div>
           </div>

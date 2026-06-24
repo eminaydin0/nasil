@@ -14,36 +14,36 @@ export default function ScoreBoardPage() {
         <div className="p-2 bg-orange-100 rounded-lg">
           <Trophy className="w-5 h-5 text-orange-600" />
         </div>
-        <h3 className="text-xl font-bold text-gray-900">Nasıl Kullanılır?</h3>
+        <h3 className="text-xl font-bold text-warm-900">Nasıl Kullanılır?</h3>
       </div>
 
-      <p className="text-gray-600 mb-4 leading-relaxed">
+      <p className="text-warm-600 mb-4 leading-relaxed">
         Herhangi bir oyun için hızlıca skor tutmanız gerektiğinde kullanabilirsiniz.
       </p>
 
       <div className="space-y-3">
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-          <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+        <div className="bg-cream-50 p-4 rounded-xl border border-warm-100">
+          <h4 className="font-semibold text-warm-900 mb-2 flex items-center gap-2">
             <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
             Oyuncu İsimleri
           </h4>
-          <p className="text-sm text-gray-600">İsimleri değiştirmek için üzerine tıklayın</p>
+          <p className="text-sm text-warm-600">İsimleri değiştirmek için üzerine tıklayın</p>
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-          <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+        <div className="bg-cream-50 p-4 rounded-xl border border-warm-100">
+          <h4 className="font-semibold text-warm-900 mb-2 flex items-center gap-2">
             <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
             Puan Güncelleme
           </h4>
-          <p className="text-sm text-gray-600">+ ve - butonlarıyla puanı kolayca güncelleyin</p>
+          <p className="text-sm text-warm-600">+ ve - butonlarıyla puanı kolayca güncelleyin</p>
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-          <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+        <div className="bg-cream-50 p-4 rounded-xl border border-warm-100">
+          <h4 className="font-semibold text-warm-900 mb-2 flex items-center gap-2">
             <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
             Oyuncu Ekleme
           </h4>
-          <p className="text-sm text-gray-600">"Oyuncu Ekle" ile dilediğiniz kadar kişi ekleyin</p>
+          <p className="text-sm text-warm-600">"Oyuncu Ekle" ile dilediğiniz kadar kişi ekleyin</p>
         </div>
       </div>
 

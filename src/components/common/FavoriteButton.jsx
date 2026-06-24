@@ -28,7 +28,7 @@ export default function FavoriteButton({
       className={`group relative inline-flex items-center gap-2 p-2 rounded-full transition-all duration-300 ${
         favorite 
           ? 'bg-red-100 text-red-600 hover:bg-red-200 hover:scale-110' 
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105'
+          : 'bg-warm-100 text-warm-600 hover:bg-warm-200 hover:scale-105'
       } ${isAnimating ? 'animate-bounce' : ''} ${className}`}
       title={favorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
       aria-label={favorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}

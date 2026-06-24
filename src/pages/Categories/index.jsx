@@ -90,7 +90,7 @@ function CategoryPage() {
     red: { bg: 'bg-red-100', text: 'text-red-700', icon: 'text-red-600' },
     orange: { bg: 'bg-orange-100', text: 'text-orange-700', icon: 'text-orange-600' },
     indigo: { bg: 'bg-indigo-100', text: 'text-indigo-700', icon: 'text-indigo-600' },
-    gray: { bg: 'bg-gray-100', text: 'text-gray-700', icon: 'text-gray-600' }
+    gray: { bg: 'bg-warm-100', text: 'text-warm-700', icon: 'text-warm-600' }
   };
   
   const colorClass = colorClasses[config.color] || colorClasses.gray;
@@ -119,9 +119,9 @@ function CategoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-cream-50">
         <div className="container mx-auto px-4 py-12">
-          <div className="h-48 bg-gray-200 rounded-2xl animate-shimmer mb-8"></div>
+          <div className="h-48 bg-warm-200 rounded-2xl animate-shimmer mb-8"></div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <SkeletonLoader type="game-card" />
             <SkeletonLoader type="game-card" />
@@ -134,7 +134,7 @@ function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cream-50">
       <SEO 
         title={seoMeta.title}
         description={seoMeta.description}
@@ -145,7 +145,7 @@ function CategoryPage() {
       />
       
       {/* Header Section - GameDetail Style */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-warm-200">
         <div className="container mx-auto px-4 py-12">
           {/* Breadcrumb */}
           <Breadcrumb items={breadcrumbs} className="mb-6" />
@@ -153,7 +153,7 @@ function CategoryPage() {
           <div className="grid md:grid-cols-3 gap-6">
             {/* Category Icon/Image */}
             <div className="md:col-span-1">
-              <div className="aspect-video w-full bg-gray-100 rounded-xl overflow-hidden relative">
+              <div className="aspect-video w-full bg-warm-100 rounded-xl overflow-hidden relative">
                 <img 
                   src={config.image} 
                   alt={`${decodedCategoryName} Oyunları`}
@@ -175,13 +175,13 @@ function CategoryPage() {
                 <span className={`px-3 py-1 ${colorClass.bg} ${colorClass.text} text-xs font-medium rounded-lg`}>
                   {decodedCategoryName}
                 </span>
-                <span className="flex items-center text-gray-500 text-xs">
+                <span className="flex items-center text-warm-500 text-xs">
                   <Eye size={14} className="mr-1" aria-hidden="true" />
                   {games.length} oyun
                 </span>
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{decodedCategoryName} Oyunları</h1>
-              <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
+              <h1 className="text-3xl font-bold text-warm-900 mb-2">{decodedCategoryName} Oyunları</h1>
+              <p className="text-warm-600 text-sm leading-relaxed">{description}</p>
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@ function CategoryPage() {
       {/* Games Grid - HomePage Style */}
       <div className="container mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-warm-900 flex items-center gap-2">
             <Filter className="text-orange-600" aria-hidden="true" />
             {games.length} Oyun Listeleniyor
           </h2>
@@ -211,10 +211,10 @@ function CategoryPage() {
             })}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
+          <div className="text-center py-20 bg-white rounded-2xl border border-warm-100">
             <div className="text-6xl mb-6" role="img" aria-label="Arama">🔍</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Oyun bulunamadı</h3>
-            <p className="text-gray-500">Bu kategoride henüz oyun eklenmemiş.</p>
+            <h3 className="text-xl font-bold text-warm-900 mb-2">Oyun bulunamadı</h3>
+            <p className="text-warm-500">Bu kategoride henüz oyun eklenmemiş.</p>
             <button
               onClick={() => navigate('/oyunlar')}
               className="mt-6 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"

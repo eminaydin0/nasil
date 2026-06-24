@@ -36,9 +36,9 @@ export default function GameSidebar({ game, games }) {
         <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl shadow-sm p-5 border border-orange-100">
           <div className="flex items-center gap-2 mb-3">
             <GitCompareArrows className="text-orange-500" size={18} />
-            <h3 className="font-semibold text-gray-900 text-sm">Karşılaştır</h3>
+            <h3 className="font-semibold text-warm-900 text-sm">Karşılaştır</h3>
           </div>
-          <p className="text-xs text-gray-600 mb-3">
+          <p className="text-xs text-warm-600 mb-3">
             {game.name} ile başka oyunlar arasındaki farkları yan yana incele.
           </p>
           <div className="space-y-2">
@@ -48,8 +48,8 @@ export default function GameSidebar({ game, games }) {
                 to={`/karsilastir/${game.slug}-vs-${other.slug}`}
                 className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-white/80 hover:bg-white border border-orange-100 hover:border-orange-300 transition-all group"
               >
-                <span className="text-sm font-medium text-gray-900 truncate">
-                  <span className="text-gray-500">{game.name} vs</span> {other.name}
+                <span className="text-sm font-medium text-warm-900 truncate">
+                  <span className="text-warm-500">{game.name} vs</span> {other.name}
                 </span>
                 <ChevronRight className="text-orange-400 group-hover:text-orange-600 shrink-0 transition-colors" size={16} />
               </Link>
@@ -60,15 +60,15 @@ export default function GameSidebar({ game, games }) {
 
       {/* Next/Previous Games */}
       {prevGame && nextGame && (
-        <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
-          <h3 className="font-semibold text-gray-900 mb-3 text-sm">Diğer Oyunlar</h3>
+        <div className="bg-white rounded-xl shadow-sm p-5 border border-warm-100">
+          <h3 className="font-semibold text-warm-900 mb-3 text-sm">Diğer Oyunlar</h3>
           <div className="space-y-2">
             <Link
               to={`/oyun/${prevGame.slug}`}
               className="block group"
             >
-              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="w-14 h-14 shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-cream-50 transition-colors">
+                <div className="w-14 h-14 shrink-0 bg-warm-100 rounded-lg overflow-hidden">
                   <img
                     src={prevGame.image}
                     alt={prevGame.name}
@@ -80,12 +80,12 @@ export default function GameSidebar({ game, games }) {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-500 mb-0.5">Önceki</p>
-                  <p className="font-medium text-gray-900 group-hover:text-gray-700 transition-colors truncate text-sm">
+                  <p className="text-xs text-warm-500 mb-0.5">Önceki</p>
+                  <p className="font-medium text-warm-900 group-hover:text-warm-700 transition-colors truncate text-sm">
                     {prevGame.name}
                   </p>
                 </div>
-                <ChevronRight className="text-gray-400 transform rotate-180 shrink-0" size={18} />
+                <ChevronRight className="text-warm-400 transform rotate-180 shrink-0" size={18} />
               </div>
             </Link>
 
@@ -93,8 +93,8 @@ export default function GameSidebar({ game, games }) {
               to={`/oyun/${nextGame.slug}`}
               className="block group"
             >
-              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="w-14 h-14 shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-cream-50 transition-colors">
+                <div className="w-14 h-14 shrink-0 bg-warm-100 rounded-lg overflow-hidden">
                   <img
                     src={nextGame.image}
                     alt={nextGame.name}
@@ -106,12 +106,12 @@ export default function GameSidebar({ game, games }) {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-500 mb-0.5">Sonraki</p>
-                  <p className="font-medium text-gray-900 group-hover:text-gray-700 transition-colors truncate text-sm">
+                  <p className="text-xs text-warm-500 mb-0.5">Sonraki</p>
+                  <p className="font-medium text-warm-900 group-hover:text-warm-700 transition-colors truncate text-sm">
                     {nextGame.name}
                   </p>
                 </div>
-                <ChevronRight className="text-gray-400 shrink-0" size={18} />
+                <ChevronRight className="text-warm-400 shrink-0" size={18} />
               </div>
             </Link>
           </div>

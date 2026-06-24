@@ -3,7 +3,7 @@ import ScoreTable101 from "../../components/game/ScoreTable101";
 
 const Okey101ScorePage = () => {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-cream-50 flex flex-col items-center justify-center">
       <ScoreTable101 />
     </div>
   );

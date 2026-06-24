@@ -53,10 +53,10 @@ function GameRecommendations({ currentGame, allGames }) {
         <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
           <Sparkles className="text-white" size={18} />
         </div>
-        <h3 className="font-bold text-gray-900">Bunu Beğendiyseniz</h3>
+        <h3 className="font-bold text-warm-900">Bunu Beğendiyseniz</h3>
       </div>
       
-      <p className="text-sm text-gray-600 mb-4">Sizin için önerilen benzer oyunlar:</p>
+      <p className="text-sm text-warm-600 mb-4">Sizin için önerilen benzer oyunlar:</p>
       
       <div className="space-y-3">
         {similarGames.map((game) => (
@@ -76,17 +76,17 @@ function GameRecommendations({ currentGame, allGames }) {
                 height="64"
               />
               <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-gray-900 group-hover:text-orange-600 transition-colors text-sm mb-1 truncate">
+                <h4 className="font-semibold text-warm-900 group-hover:text-orange-600 transition-colors text-sm mb-1 truncate">
                   {game.name}
                 </h4>
-                <p className="text-xs text-gray-600 line-clamp-2">
+                <p className="text-xs text-warm-600 line-clamp-2">
                   {game.shortDescription}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs px-2 py-0.5 bg-orange-100 text-orange-700 rounded">
                     {game.category}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-warm-500">
                     {game.difficulty}
                   </span>
                 </div>

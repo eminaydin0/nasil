@@ -58,7 +58,7 @@ function PrivacyPolicy() {
   const breadcrumbs = [{ name: 'Gizlilik Politikası', url: null }];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-cream-50 py-12">
       <SEO
         title={PAGE_SEO.privacy.title}
         description={PAGE_SEO.privacy.description}
@@ -78,16 +78,16 @@ function PrivacyPolicy() {
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-warm-100 overflow-hidden">
             <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-b border-indigo-100 px-8 py-8">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-14 h-14 bg-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg">
                   <Shield size={28} />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-black text-gray-900">{content.title}</h1>
+                  <h1 className="text-2xl font-black text-warm-900">{content.title}</h1>
                   {content.subtitle && (
-                    <p className="text-gray-600 text-sm mt-1 flex items-center gap-2">
+                    <p className="text-warm-600 text-sm mt-1 flex items-center gap-2">
                       <Calendar size={16} />
                       {content.subtitle}
                     </p>
@@ -107,13 +107,13 @@ function PrivacyPolicy() {
                     const isHeading = /^\d+\.\s+\S+/.test(para.trim()) && para.length < 100 && !para.trim().endsWith('.');
                     if (isHeading) {
                       return (
-                        <h2 key={i} className="text-lg font-bold text-gray-900 mt-8 mb-3 first:mt-0">
+                        <h2 key={i} className="text-lg font-bold text-warm-900 mt-8 mb-3 first:mt-0">
                           {para}
                         </h2>
                       );
                     }
                     return (
-                      <p key={i} className="text-gray-700 leading-relaxed mb-4 whitespace-pre-line">
+                      <p key={i} className="text-warm-700 leading-relaxed mb-4 whitespace-pre-line">
                         {para}
                       </p>
                     );
@@ -130,14 +130,14 @@ function PrivacyPolicy() {
             >
               Kullanım Koşulları
             </Link>
-            <span className="text-gray-300">|</span>
+            <span className="text-warm-300">|</span>
             <Link
               to="/cerez-politikasi"
               className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium"
             >
               Çerez Politikası
             </Link>
-            <span className="text-gray-300">|</span>
+            <span className="text-warm-300">|</span>
             <Link
               to="/iletisim"
               className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-medium"

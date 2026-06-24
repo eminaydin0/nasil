@@ -18,7 +18,7 @@ function StarRating({ rating, onRatingChange, readOnly = false }) {
             className={`${
               star <= rating
                 ? 'fill-yellow-400 text-yellow-400'
-                : 'text-gray-300'
+                : 'text-warm-300'
             } transition-colors`}
           />
         </button>

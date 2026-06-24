@@ -53,31 +53,31 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="min-h-screen bg-cream-50 flex items-center justify-center px-4">
           <div className="max-w-md w-full">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
+            <div className="bg-white rounded-2xl shadow-lg border border-warm-100 p-8 text-center">
               {/* Icon */}
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <AlertTriangle size={32} className="text-red-500" />
               </div>
 
               {/* Title */}
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl font-bold text-warm-900 mb-2">
                 Bir Şeyler Ters Gitti
               </h1>
 
               {/* Description */}
-              <p className="text-gray-600 mb-6">
+              <p className="text-warm-600 mb-6">
                 Üzgünüz, beklenmeyen bir hata oluştu. Ekibimiz otomatik olarak bilgilendirildi.
               </p>
 
               {/* Error Details (only in development) */}
               {import.meta.env.DEV && this.state.error && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-lg text-left">
+                <div className="mb-6 p-4 bg-cream-50 rounded-lg text-left">
                   <p className="text-xs font-mono text-red-600 mb-2">
                     {this.state.error.toString()}
                   </p>
-                  <details className="text-xs text-gray-600">
+                  <details className="text-xs text-warm-600">
                     <summary className="cursor-pointer font-semibold">
                       Stack Trace
                     </summary>
@@ -99,7 +99,7 @@ class ErrorBoundary extends Component {
                 </button>
                 <button
                   onClick={this.handleGoHome}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-warm-100 text-warm-700 rounded-xl font-semibold hover:bg-warm-200 transition-colors"
                 >
                   <Home size={18} />
                   Ana Sayfa
@@ -107,7 +107,7 @@ class ErrorBoundary extends Component {
               </div>
 
               {/* Support link */}
-              <p className="text-sm text-gray-500 mt-6">
+              <p className="text-sm text-warm-500 mt-6">
                 Sorun devam ederse{' '}
                 <a href="/iletisim" className="text-orange-600 hover:text-orange-700 underline">
                   bize bildirin

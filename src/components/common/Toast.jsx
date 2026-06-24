@@ -45,7 +45,7 @@ const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
       <p className="font-medium text-sm">{message}</p>
       <button
         onClick={handleClose}
-        className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+        className="ml-2 text-warm-400 hover:text-warm-600 transition-colors"
       >
         <X size={16} />
       </button>

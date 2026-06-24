@@ -406,19 +406,19 @@ function CommentSection({ gameId, gameName, gameSlug }) {
   ];
 
   return (
-    <section id="yorumlar" className="bg-white rounded-2xl border border-gray-200/80 overflow-hidden w-full">
+    <section id="yorumlar" className="bg-white rounded-2xl border border-warm-200/80 overflow-hidden w-full">
       {/* Başlık — YouTube tarzı */}
       <div className="px-4 sm:px-6 pt-5 pb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900 tabular-nums">
+        <h2 className="text-lg sm:text-xl font-bold text-warm-900 tabular-nums">
           {loading ? '…' : `${comments.length} yorum`}
         </h2>
         {comments.length > 0 && (
-          <label className="flex items-center gap-2 text-sm text-gray-600 shrink-0">
+          <label className="flex items-center gap-2 text-sm text-warm-600 shrink-0">
             <span className="font-medium whitespace-nowrap">Sıralama ölçütü:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-transparent font-semibold text-gray-900 border-none outline-none cursor-pointer pr-1"
+              className="bg-transparent font-semibold text-warm-900 border-none outline-none cursor-pointer pr-1"
             >
               {sortOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -439,14 +439,14 @@ function CommentSection({ gameId, gameName, gameSlug }) {
               <button
                 type="button"
                 onClick={() => setComposerOpen(true)}
-                className="w-full text-left pb-2 border-b border-gray-300 text-sm text-gray-500 hover:border-gray-900 transition-colors"
+                className="w-full text-left pb-2 border-b border-warm-300 text-sm text-warm-500 hover:border-charcoal-900 transition-colors"
               >
                 Yorum ekleyin…
               </button>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div className="flex items-center gap-2 pb-1">
-                  <span className="text-xs text-gray-500 font-medium">Puanın:</span>
+                  <span className="text-xs text-warm-500 font-medium">Puanın:</span>
                   <StarRating
                     rating={newComment.rating}
                     onRatingChange={(r) => setNewComment({ ...newComment, rating: r })}
@@ -462,7 +462,7 @@ function CommentSection({ gameId, gameName, gameSlug }) {
                   rows={3}
                   maxLength={COMMENT_MAX_LENGTH}
                   placeholder="Oyun hakkında ne düşünüyorsun?"
-                  className="w-full bg-transparent border-b border-gray-300 pb-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-900 outline-none resize-none leading-relaxed"
+                  className="w-full bg-transparent border-b border-warm-300 pb-2 text-sm text-warm-900 placeholder:text-warm-500 focus:border-charcoal-900 outline-none resize-none leading-relaxed"
                 />
                 <div className="flex items-center justify-end gap-2 pt-1">
                   <button
@@ -471,14 +471,14 @@ function CommentSection({ gameId, gameName, gameSlug }) {
                       setComposerOpen(false);
                       setNewComment({ rating: 0, comment: '' });
                     }}
-                    className="px-4 py-2 text-sm font-semibold text-gray-700 rounded-full hover:bg-gray-100 transition-colors"
+                    className="px-4 py-2 text-sm font-semibold text-warm-700 rounded-full hover:bg-warm-100 transition-colors"
                   >
                     İptal
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 text-sm font-semibold text-white bg-charcoal-900 rounded-full hover:bg-charcoal-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {submitting ? 'Gönderiliyor…' : 'Yorum yap'}
                   </button>
@@ -494,17 +494,17 @@ function CommentSection({ gameId, gameName, gameSlug }) {
             <div className="space-y-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex gap-4 animate-pulse">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 shrink-0" />
+                  <div className="w-10 h-10 rounded-full bg-warm-200 shrink-0" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-3 bg-gray-200 rounded w-1/4" />
-                    <div className="h-3 bg-gray-200 rounded w-full" />
-                    <div className="h-3 bg-gray-200 rounded w-3/4" />
+                    <div className="h-3 bg-warm-200 rounded w-1/4" />
+                    <div className="h-3 bg-warm-200 rounded w-full" />
+                    <div className="h-3 bg-warm-200 rounded w-3/4" />
                   </div>
                 </div>
               ))}
             </div>
           ) : comments.length === 0 ? (
-            <p className="text-sm text-gray-500 py-4">Henüz yorum yok. İlk yorumu sen yaz!</p>
+            <p className="text-sm text-warm-500 py-4">Henüz yorum yok. İlk yorumu sen yaz!</p>
           ) : (
             <>
               {visibleComments.map((comment) => (
@@ -527,7 +527,7 @@ function CommentSection({ gameId, gameName, gameSlug }) {
                 <button
                   type="button"
                   onClick={() => setVisibleCount((c) => c + INITIAL_COMMENTS_SHOW)}
-                  className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-gray-900 py-2"
+                  className="flex items-center gap-2 text-sm font-semibold text-warm-700 hover:text-warm-900 py-2"
                 >
                   <ChevronDown size={18} />
                   Daha fazla yorum göster ({sortedComments.length - visibleCount})
@@ -547,7 +547,7 @@ function ActionBar({ likeCount, isLiked, onLike, onReply, replyLabel = 'Yanıtla
       <button
         type="button"
         onClick={onLike}
-        className={`group flex items-center gap-1.5 p-2 rounded-full hover:bg-gray-100 transition-colors ${isLiked ? 'text-gray-900' : 'text-gray-600'}`}
+        className={`group flex items-center gap-1.5 p-2 rounded-full hover:bg-warm-100 transition-colors ${isLiked ? 'text-warm-900' : 'text-warm-600'}`}
         aria-label="Beğen"
       >
         <ThumbsUp size={16} className={isLiked ? 'fill-current' : ''} />
@@ -555,7 +555,7 @@ function ActionBar({ likeCount, isLiked, onLike, onReply, replyLabel = 'Yanıtla
       </button>
       <button
         type="button"
-        className="p-2 rounded-full text-gray-600 hover:bg-gray-100 transition-colors"
+        className="p-2 rounded-full text-warm-600 hover:bg-warm-100 transition-colors"
         aria-label="Beğenme"
         tabIndex={-1}
       >
@@ -564,7 +564,7 @@ function ActionBar({ likeCount, isLiked, onLike, onReply, replyLabel = 'Yanıtla
       <button
         type="button"
         onClick={onReply}
-        className="px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+        className="px-3 py-2 text-xs font-semibold text-warm-600 hover:bg-warm-100 rounded-full transition-colors"
       >
         {replyLabel}
       </button>
@@ -587,8 +587,8 @@ function ReplyForm({
       <Avatar name={currentUserName} avatarUrl={currentUserAvatar} size="sm" />
       <div className="flex-1 min-w-0">
         {mentionName && (
-          <p className="text-xs text-gray-500 mb-1">
-            <span className="text-blue-600 font-medium">@{mentionName}</span>
+          <p className="text-xs text-warm-500 mb-1">
+            <span className="text-orange-600 font-medium">{mentionName}</span> yanıtlanıyor
           </p>
         )}
         <textarea
@@ -597,13 +597,13 @@ function ReplyForm({
           onChange={(e) => setReplyText(e.target.value.slice(0, COMMENT_MAX_LENGTH))}
           rows={2}
           placeholder="Yanıt ekle…"
-          className="w-full bg-transparent border-b border-gray-300 pb-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-900 outline-none resize-none"
+          className="w-full bg-transparent border-b border-warm-300 pb-2 text-sm text-warm-900 placeholder:text-warm-500 focus:border-charcoal-900 outline-none resize-none"
         />
         <div className="flex justify-end gap-2 mt-2">
           <button
             type="button"
             onClick={onCancel}
-            className="px-3 py-1.5 text-xs font-semibold text-gray-700 rounded-full hover:bg-gray-100"
+            className="px-3 py-1.5 text-xs font-semibold text-warm-700 rounded-full hover:bg-warm-100"
           >
             İptal
           </button>
@@ -611,7 +611,7 @@ function ReplyForm({
             type="button"
             onClick={onSubmit}
             disabled={submitting || !replyText.trim()}
-            className="px-3 py-1.5 text-xs font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-800 disabled:opacity-50"
+            className="px-3 py-1.5 text-xs font-semibold text-white bg-charcoal-900 rounded-full hover:bg-charcoal-800 disabled:opacity-50"
           >
             {submitting ? '…' : 'Yanıtla'}
           </button>
@@ -649,17 +649,17 @@ function CommentItem({
 
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          <span className="text-sm font-semibold text-gray-900">@{comment.name.replace(/\s+/g, '').toLowerCase()}</span>
+          <span className="text-sm font-semibold text-warm-900">{comment.name}</span>
           {comment.isTestimonial && (
-            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wide">Onaylı</span>
+            <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wide">Onaylı</span>
           )}
-          <span className="text-xs text-gray-500">{formatRelativeTime(comment.dateObj)}</span>
+          <span className="text-xs text-warm-500">{formatRelativeTime(comment.dateObj)}</span>
           {comment.rating > 0 && (
             <span className="text-xs text-amber-600 font-medium">★ {comment.rating}/5</span>
           )}
         </div>
 
-        <p className="text-sm text-gray-900 leading-relaxed mt-1 break-words whitespace-pre-wrap">
+        <p className="text-sm text-warm-900 leading-relaxed mt-1 break-words whitespace-pre-wrap">
           {comment.comment}
         </p>
 
@@ -687,7 +687,7 @@ function CommentItem({
           <button
             type="button"
             onClick={() => setRepliesExpanded(true)}
-            className="flex items-center gap-2 mt-2 ml-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
+            className="flex items-center gap-2 mt-2 ml-1 text-sm font-semibold text-orange-600 hover:text-orange-700"
           >
             <ChevronDown size={18} />
             {replyCount} yanıt
@@ -695,7 +695,7 @@ function CommentItem({
         )}
 
         {repliesExpanded && replyCount > 0 && (
-          <div className="mt-3 space-y-4 pl-1 border-l-2 border-gray-200 ml-3">
+          <div className="mt-3 space-y-4 pl-1 border-l-2 border-warm-200 ml-3">
             {visibleReplies.map((reply) => (
               <ReplyItem
                 key={reply.id}
@@ -717,7 +717,7 @@ function CommentItem({
               <button
                 type="button"
                 onClick={() => setVisibleReplyCount((c) => c + INITIAL_REPLIES_SHOW)}
-                className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 ml-12"
+                className="flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700 ml-12"
               >
                 <ChevronDown size={18} />
                 Daha fazla yanıt göster
@@ -730,7 +730,7 @@ function CommentItem({
                 setRepliesExpanded(false);
                 setVisibleReplyCount(INITIAL_REPLIES_SHOW);
               }}
-              className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 ml-12"
+              className="flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700 ml-12"
             >
               <ChevronUp size={18} />
               Yanıtları gizle
@@ -765,18 +765,16 @@ function ReplyItem({
 
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-baseline gap-x-2">
-          <span className="text-xs font-semibold text-gray-900">
-            @{reply.name.replace(/\s+/g, '').toLowerCase()}
-          </span>
-          <span className="text-[11px] text-gray-500">
+          <span className="text-xs font-semibold text-warm-900">{reply.name}</span>
+          <span className="text-[11px] text-warm-500">
             {reply.dateObj ? formatRelativeTime(reply.dateObj) : reply.time || reply.date}
           </span>
         </div>
 
-        <p className="text-sm text-gray-900 leading-relaxed mt-0.5 break-words">
+        <p className="text-sm text-warm-900 leading-relaxed mt-0.5 break-words">
           {(reply.mentionName || parentName) && (
-            <span className="text-blue-600 font-medium mr-1">
-              @{String(reply.mentionName || parentName).replace(/\s+/g, '').toLowerCase()}
+            <span className="text-orange-600 font-medium mr-1">
+              {reply.mentionName || parentName}
             </span>
           )}
           {reply.text}
@@ -785,7 +783,7 @@ function ReplyItem({
         <button
           type="button"
           onClick={() => setReplyingTo(isReplying ? null : reply.id)}
-          className="mt-1 px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+          className="mt-1 px-2 py-1 text-xs font-semibold text-warm-600 hover:bg-warm-100 rounded-full transition-colors"
         >
           Yanıtla
         </button>
@@ -807,7 +805,7 @@ function ReplyItem({
           <button
             type="button"
             onClick={() => setNestedExpanded(true)}
-            className="flex items-center gap-1 mt-2 text-xs font-semibold text-blue-600 hover:text-blue-700"
+            className="flex items-center gap-1 mt-2 text-xs font-semibold text-orange-600 hover:text-orange-700"
           >
             <ChevronDown size={16} />
             {nestedCount} yanıt
@@ -815,7 +813,7 @@ function ReplyItem({
         )}
 
         {nestedExpanded && nestedCount > 0 && (
-          <div className="mt-2 space-y-3 pl-1 border-l-2 border-gray-200 ml-1">
+          <div className="mt-2 space-y-3 pl-1 border-l-2 border-warm-200 ml-1">
             {reply.replies.map((nested) => (
               <ReplyItem
                 key={nested.id}
@@ -835,7 +833,7 @@ function ReplyItem({
             <button
               type="button"
               onClick={() => setNestedExpanded(false)}
-              className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 ml-8"
+              className="flex items-center gap-1 text-xs font-semibold text-orange-600 hover:text-orange-700 ml-8"
             >
               <ChevronUp size={16} />
               Yanıtları gizle
