@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { RotateCcw, Save, Award, Trash2, Users } from 'lucide-react';
 import { showSuccess, showError, showInfo } from '../../utils/toast';
+import ToolTableScroll from './ToolTableScroll';
 
 export default function Okey101Score() {
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -233,7 +234,7 @@ export default function Okey101Score() {
   // Setup Screen
   if (!isGameStarted) {
     return (
-      <div className="p-6 sm:p-8">
+      <div className="p-4 sm:p-8">
         <div className="mb-8 text-center">
           <Award className="mx-auto mb-3 h-10 w-10 text-orange-600" aria-hidden />
           <h2 className="text-2xl font-extrabold tracking-tight text-warm-900 sm:text-3xl">
@@ -370,10 +371,33 @@ export default function Okey101Score() {
   }
 
   const thInputClass =
-    'w-full text-center font-bold text-sm sm:text-base md:text-lg text-charcoal-900 bg-white border-2 border-warm-200 rounded-xl px-2 py-2 sm:py-2.5 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 placeholder:text-warm-400';
+    'w-full min-w-0 text-center font-bold text-sm sm:text-base md:text-lg text-charcoal-900 bg-white border-2 border-warm-200 rounded-xl px-2 py-2 sm:py-2.5 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 placeholder:text-warm-400';
+
+  const columnLabels = isPartners
+    ? teamNames
+    : players.map((p, i) => p || `Oyuncu ${i + 1}`);
+
+  const presetBtn =
+    'rounded-lg px-2 py-2 text-[11px] font-bold transition-colors sm:text-xs';
+
+  const renderPresetRow = (playerIdx) =>
+    isPartners ? (
+      <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap sm:gap-1.5">
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.BITTI)} className={`${presetBtn} bg-orange-100 text-orange-800 hover:bg-orange-200`}>Bitti</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.OKEY_BITTI)} className={`${presetBtn} bg-orange-600 text-white hover:bg-orange-700`}>Okey</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.ISLER)} className={`${presetBtn} border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100`}>İşler</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.ACMADI)} className={`${presetBtn} bg-rose-100 text-rose-700 hover:bg-rose-200`}>Açmadı</button>
+      </div>
+    ) : (
+      <div className="grid grid-cols-3 gap-1.5">
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.BITTI)} className={`${presetBtn} bg-orange-100 text-orange-800 hover:bg-orange-200`}>Bitti</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.ACMADI)} className={`${presetBtn} bg-rose-100 text-rose-700 hover:bg-rose-200`}>Açmadı</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.ISLER)} className={`${presetBtn} border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100`}>İşler</button>
+      </div>
+    );
 
   return (
-    <div className="min-w-0">
+    <div className="min-w-0 overflow-x-clip">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-warm-100 bg-cream-50 px-4 py-3 sm:gap-3 sm:px-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             <span className="inline-flex items-center gap-2 rounded-xl border-2 border-orange-500 bg-orange-50 px-3 py-2 text-sm font-bold text-orange-800">
@@ -414,9 +438,142 @@ export default function Okey101Score() {
           </div>
         )}
 
+        {/* Mobil — kart düzeni */}
+        <div className="md:hidden">
+          <div className="grid grid-cols-2 gap-2 border-b border-warm-100 bg-gradient-to-b from-orange-50/80 to-white p-3">
+            {columnLabels.map((label, idx) => (
+              <div key={idx} className="min-w-0 rounded-xl border border-warm-200/70 bg-white p-2.5 text-center">
+                {isPartners ? (
+                  <input
+                    type="text"
+                    value={teamNames[idx]}
+                    onChange={(e) => updateTeamName(idx, e.target.value)}
+                    className="w-full min-w-0 truncate bg-transparent text-center text-sm font-bold text-charcoal-900 outline-none"
+                    placeholder={`${idx + 1}. Takım`}
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    value={players[idx]}
+                    onChange={(e) => updateName(idx, e.target.value)}
+                    className="w-full min-w-0 truncate bg-transparent text-center text-sm font-bold text-charcoal-900 outline-none"
+                    placeholder={`Oyuncu ${idx + 1}`}
+                  />
+                )}
+                <p className="mt-1 text-lg font-black tabular-nums text-orange-700">
+                  {isPartners ? teamTotals[idx] : totals[idx]}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div ref={historyRef} className="max-h-[min(280px,40vh)] space-y-2 overflow-y-auto bg-cream-50/50 p-3">
+            {rounds.length === 0 ? (
+              <p className="py-8 text-center text-sm text-warm-500">Henüz el girilmedi</p>
+            ) : (
+              rounds.map((roundData, rIdx) => {
+                const isLegacy = Array.isArray(roundData);
+                const roundScores = isLegacy ? roundData : roundData.scores;
+                const isPenalty = !isLegacy && roundData.isPenalty;
+                let displayScores = [];
+                if (isPartners) {
+                  const [t1, t2] = getTeamsIndices();
+                  displayScores = [
+                    (roundScores[t1[0]] || 0) + (roundScores[t1[1]] || 0),
+                    (roundScores[t2[0]] || 0) + (roundScores[t2[1]] || 0),
+                  ];
+                } else {
+                  displayScores = roundScores;
+                }
+                const elNumber = rounds.slice(0, rIdx + 1).filter((r) => {
+                  if (Array.isArray(r)) return true;
+                  return !r.isPenalty;
+                }).length;
+
+                return (
+                  <div
+                    key={rIdx}
+                    className={`rounded-xl border p-3 ${isPenalty ? 'border-orange-200 bg-orange-50/60' : 'border-warm-200/70 bg-white'}`}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-xs font-bold text-warm-600">
+                        {isPenalty ? 'Ceza eli' : `${elNumber}. el`}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => deleteRound(rIdx)}
+                        className="rounded-lg p-1 text-warm-400 hover:bg-orange-50 hover:text-orange-700"
+                        aria-label="Eli sil"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {displayScores.map((score, sIdx) => (
+                        <div key={sIdx} className="rounded-lg bg-cream-50 px-2 py-1.5 text-center">
+                          <p className="truncate text-[10px] font-medium text-warm-500">{columnLabels[sIdx]}</p>
+                          <p className={`text-base font-bold tabular-nums ${score < 0 ? 'text-orange-600' : score > 0 ? 'text-rose-600' : 'text-warm-400'}`}>
+                            {score === 0 ? '—' : score}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          <div className="space-y-3 border-t border-warm-100 bg-white p-3">
+            {(isPartners ? [0, 1] : [0, 1, 2, 3]).map((idx) => (
+              <div key={idx} className="rounded-xl border border-warm-200/70 bg-cream-50/50 p-3">
+                <label className="mb-2 block truncate text-xs font-bold text-warm-700">
+                  {columnLabels[idx]}
+                </label>
+                <input
+                  type="number"
+                  value={isPartners ? teamInputs[idx] : currentScores[idx]}
+                  placeholder="0"
+                  onChange={(e) => {
+                    if (isPartners) {
+                      const next = [...teamInputs];
+                      next[idx] = e.target.value;
+                      setTeamInputs(next);
+                    } else {
+                      updateCurrentScore(idx, e.target.value);
+                    }
+                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && addRound()}
+                  className="mb-2 w-full rounded-xl border-2 border-warm-200 bg-white p-2.5 text-center text-lg font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                />
+                {renderPresetRow(idx)}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addRound}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 py-3 font-bold text-white hover:bg-orange-700"
+            >
+              <Save size={18} />
+              Eli kaydet
+            </button>
+            <label className="flex cursor-pointer items-center justify-center gap-2 py-1">
+              <input
+                type="checkbox"
+                checked={isPenaltyRound}
+                onChange={(e) => setIsPenaltyRound(e.target.checked)}
+                className="h-4 w-4 rounded text-orange-600 focus:ring-orange-500"
+              />
+              <span className="text-sm font-medium text-warm-700">Ceza eli</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Masaüstü — tablo */}
+        <div className="hidden md:block">
         {/* Tablo başlığı — kurulumdaki input kutularıyla aynı köşe/border */}
-        <div className="border-b border-warm-100 overflow-x-auto">
-          <table className="w-full min-w-[480px]">
+        <ToolTableScroll showHint={false} className="border-b border-warm-100">
+          <table className="w-full min-w-[520px]">
             <thead>
               <tr>
               <th className="w-12 border-r border-warm-100 bg-gradient-to-b from-orange-50 to-amber-50/50 p-2 text-center text-xs font-black uppercase tracking-wide text-orange-900 sm:w-16 md:w-20 md:text-sm">
@@ -462,7 +619,7 @@ export default function Okey101Score() {
               </tr>
             </thead>
           </table>
-        </div>
+        </ToolTableScroll>
 
         {/* Geçmiş */}
         <div className="max-h-[min(360px,50vh)] overflow-y-auto bg-cream-50/50">
@@ -472,8 +629,8 @@ export default function Okey101Score() {
               <p className="text-xs text-warm-400 mt-1 text-center">Aşağıdan puanları girip kaydedin</p>
             </div>
           ) : (
-            <div ref={historyRef} className="overflow-x-auto p-2 sm:p-3">
-              <table className="w-full min-w-[480px]">
+            <ToolTableScroll showHint={false} className="p-2 sm:p-3">
+              <table className="w-full min-w-[520px]">
                 <tbody>
                   {rounds.map((roundData, rIdx) => {
                     const isLegacy = Array.isArray(roundData);
@@ -546,14 +703,14 @@ export default function Okey101Score() {
                 </tr>
               </tfoot>
             </table>
-          </div>
-        )}
-      </div>
+            </ToolTableScroll>
+          )}
+        </div>
 
         {/* Alt giriş — kurulumdaki input stilleri */}
-        <div className="border-t border-warm-100 bg-white p-2 sm:p-3 md:p-4">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[480px]">
+        <div className="hidden border-t border-warm-100 bg-white md:block p-2 sm:p-3 md:p-4">
+        <ToolTableScroll showHint={false}>
+          <table className="w-full min-w-[520px]">
             <tbody>
               <tr>
                 {isPartners ? (
@@ -627,7 +784,7 @@ export default function Okey101Score() {
               </tr>
             </tbody>
           </table>
-        </div>
+        </ToolTableScroll>
         <div className="flex items-center justify-center gap-2 sm:gap-3 mt-3 sm:mt-4 pb-1 sm:pb-2">
           <label className="flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-1.5 transition-colors hover:bg-orange-50 sm:gap-2 sm:px-4 sm:py-2">
             <input 
@@ -640,6 +797,7 @@ export default function Okey101Score() {
           </label>
         </div>
       </div>
+        </div>
     </div>
   );
 }

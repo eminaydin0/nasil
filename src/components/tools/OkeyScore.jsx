@@ -41,8 +41,8 @@ export default function OkeyScore() {
 
   return (
     <GameTableContainer onReset={resetGame}>
-      <div className="space-y-8 p-5 sm:p-8">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="min-w-0 space-y-6 overflow-x-clip p-4 sm:p-8">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
           {players.map((player, idx) => (
             <div
               key={idx}
@@ -77,7 +77,7 @@ export default function OkeyScore() {
                   key={idx}
                   type="button"
                   onClick={() => setWinner(idx)}
-                  className={`truncate rounded-xl border-2 px-3 py-3 text-xs font-bold transition-all sm:text-sm ${winner === idx ? `${tool.toggleOn}` : `${tool.toggleOff}`}`}
+                  className={`min-w-0 truncate rounded-xl border-2 px-2 py-2.5 text-xs font-bold transition-all sm:px-3 sm:py-3 sm:text-sm ${winner === idx ? `${tool.toggleOn}` : `${tool.toggleOff}`}`}
                 >
                   {player}
                 </button>

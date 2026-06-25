@@ -37,7 +37,7 @@ export default function ToolLayout({
   );
 
   return (
-    <div className="min-h-screen bg-cream-50 py-8 sm:py-12">
+    <div className="min-h-screen overflow-x-clip bg-cream-50 py-6 sm:py-12">
       <SEO
         title={toolSeo.title}
         description={toolSeo.description}
@@ -47,7 +47,7 @@ export default function ToolLayout({
         breadcrumbs={breadcrumbs}
       />
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto min-w-0 px-3 sm:px-4">
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
         {/* Başlık */}
@@ -96,8 +96,8 @@ export default function ToolLayout({
 
         {/* İçerik + yan panel */}
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-          <div className="min-w-0 space-y-6">
-            <div className="overflow-hidden rounded-2xl border border-warm-200/70 bg-white shadow-soft">
+          <div className="min-w-0 space-y-6 overflow-x-clip">
+            <div className="min-w-0 overflow-x-clip rounded-2xl border border-warm-200/70 bg-white shadow-soft">
               {children}
             </div>
 

@@ -34,7 +34,7 @@ export default function TeamGenerator() {
   };
 
   return (
-    <div className="p-6 sm:p-8">
+    <div className="min-w-0 overflow-x-clip p-4 sm:p-8">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="flex flex-col gap-4">
           <div>
@@ -77,7 +77,7 @@ export default function TeamGenerator() {
           </button>
         </div>
 
-        <div className={`${tool.panel} max-h-[420px]`}>
+        <div className={`${tool.panel} max-h-[min(420px,55vh)] min-h-[200px]`}>
            {teams.length > 0 ? (
              <div className="space-y-4">
                {teams.map((team, idx) => {

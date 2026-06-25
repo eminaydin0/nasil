@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import GameTableContainer from '../common/GameTableContainer';
+import ToolTableScroll from './ToolTableScroll';
 import { tool } from './toolStyles';
 import { showSuccess } from '../../utils/toast';
 
@@ -51,18 +52,18 @@ export default function BatakScore() {
 
   return (
     <GameTableContainer onReset={resetGame}>
-      <div className="p-5 sm:p-8">
-        <div className="overflow-x-auto rounded-2xl border border-warm-200/70 bg-white/90 shadow-soft">
-          <table className="w-full text-center text-sm">
+      <div className="min-w-0 overflow-x-clip p-4 sm:p-8">
+        <ToolTableScroll>
+          <table className="w-full min-w-[320px] text-center text-sm sm:min-w-0">
             <thead>
               <tr className="border-b border-orange-100/80 bg-gradient-to-r from-orange-50 via-cream-50 to-amber-50/40">
                 {players.map((player, idx) => (
-                  <th key={idx} className="p-4 pb-3">
+                  <th key={idx} className="min-w-[4.5rem] p-2 sm:p-4 sm:pb-3">
                     <input
                       type="text"
                       value={player}
                       onChange={(e) => updatePlayerName(idx, e.target.value)}
-                      className="w-full rounded-xl border-2 border-warm-200/80 bg-white px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide text-charcoal-800 outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-500/20 sm:text-[13px] sm:normal-case sm:tracking-normal"
+                      className="w-full min-w-0 rounded-xl border-2 border-warm-200/80 bg-white px-2 py-2 text-center text-[11px] font-bold uppercase tracking-wide text-charcoal-800 outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-500/20 sm:px-3 sm:py-2.5 sm:text-[13px] sm:normal-case sm:tracking-normal"
                     />
                   </th>
                 ))}
@@ -75,7 +76,7 @@ export default function BatakScore() {
                   className="border-b border-warm-100 bg-white/60 transition-colors odd:bg-cream-50/50 hover:bg-orange-50/25"
                 >
                   {round.map((score, scoreIdx) => (
-                    <td key={scoreIdx} className="px-3 py-3 font-semibold tabular-nums">
+                    <td key={scoreIdx} className="px-2 py-2.5 font-semibold tabular-nums sm:px-3 sm:py-3">
                       {score}
                     </td>
                   ))}
@@ -83,7 +84,7 @@ export default function BatakScore() {
               ))}
               <tr className="border-t-2 border-orange-300/70 bg-gradient-to-br from-orange-500/12 via-orange-50/65 to-transparent">
                 {currentRound.map((val, idx) => (
-                  <td key={idx} className="p-3">
+                  <td key={idx} className="p-2 sm:p-3">
                     <input
                       type="number"
                       value={val}
@@ -99,18 +100,29 @@ export default function BatakScore() {
             <tfoot>
               <tr className="border-t-2 border-orange-400/70 bg-charcoal-900 text-cream-50">
                 {totals.map((total, idx) => (
-                  <td key={idx} className="py-4 font-display text-lg font-black tabular-nums sm:text-xl">
+                  <td key={idx} className="py-3 font-display text-base font-black tabular-nums sm:py-4 sm:text-xl">
                     {total}
                   </td>
                 ))}
               </tr>
             </tfoot>
           </table>
+        </ToolTableScroll>
+
+        {/* Mobil: tur ekleme */}
+        <div className="mt-4 sm:hidden">
+          <button
+            onClick={addRound}
+            className={`${tool.primaryBtn} rounded-xl`}
+          >
+            <Plus size={18} />
+            Turu Ekle
+          </button>
         </div>
 
         <button
           onClick={addRound}
-          className={`${tool.primaryBtn} mt-6 rounded-xl`}
+          className={`${tool.primaryBtn} mt-6 hidden rounded-xl sm:flex`}
         >
           <Plus size={18} />
           Turu Ekle

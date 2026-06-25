@@ -28,7 +28,7 @@ function ToolCard({ title, description, icon: Icon, link, badge, color = 'orange
   return (
     <Link
       to={link}
-      className="group relative flex h-full flex-col rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-200 hover:shadow-soft-md focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
+      className="group relative flex h-full min-w-0 flex-col rounded-2xl border border-warm-200/70 bg-white p-4 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-200 hover:shadow-soft-md focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 sm:p-6"
     >
       <div
         className={`pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br ${c.accent} opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-10`}
@@ -68,7 +68,7 @@ export default function ToolsPage() {
   const breadcrumbs = [{ name: 'Oyun Araçları', url: null }];
 
   return (
-    <div className="min-h-screen bg-cream-50 py-8 sm:py-12">
+    <div className="min-h-screen overflow-x-clip bg-cream-50 py-6 sm:py-12">
       <SEO
         title={PAGE_SEO.tools.title}
         description={PAGE_SEO.tools.description}
@@ -76,7 +76,7 @@ export default function ToolsPage() {
         url="/araclar"
       />
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto min-w-0 px-3 sm:px-4">
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
         {/* Giriş */}
@@ -100,7 +100,7 @@ export default function ToolsPage() {
         </div>
 
         {/* Öne çıkanlar */}
-        <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mb-10 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:grid-cols-4">
           {TOOL_HIGHLIGHTS.map(({ label, sub }, i) => {
             const Icon = HIGHLIGHT_ICONS[i];
             return (
@@ -120,7 +120,7 @@ export default function ToolsPage() {
         {grouped.map(({ key, label, items }) => (
           <section key={key} className="mb-10">
             <h2 className="mb-4 text-lg font-extrabold text-warm-900">{label}</h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               {items.map((tool) => (
                 <ToolCard key={tool.id} {...tool} />
               ))}

@@ -60,7 +60,7 @@ export default function ScoreBoard() {
 
   return (
     <GameTableContainer onReset={resetScores}>
-      <div className="space-y-4 p-5 sm:p-8">
+      <div className="min-w-0 space-y-3 overflow-x-clip p-4 sm:space-y-4 sm:p-8">
         {sortedPlayers.map((player, index) => {
           const podium = podiumStyle(index);
           const badge = rankBadge(index);

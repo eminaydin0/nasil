@@ -265,3 +265,40 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
 }
+
+/* Araç tabloları — yatay kaydırma sayfa geneline taşmaz */
+.tool-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tool-table-scroll::-webkit-scrollbar {
+  height: 5px;
+}
+
+/* Halı saha — hafif 3D perspektif (mobilde düz) */
+.pitch-perspective {
+  perspective: 900px;
+}
+
+@media (max-width: 639px) {
+  .pitch-perspective {
+    perspective: none;
+  }
+  .pitch-perspective-inner {
+    transform: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .pitch-perspective-inner {
+    transform: rotateX(10deg);
+    transform-origin: center center;
+    transition: transform 0.35s ease;
+  }
+  .pitch-perspective:hover .pitch-perspective-inner {
+    transform: rotateX(6deg);
+  }
+}

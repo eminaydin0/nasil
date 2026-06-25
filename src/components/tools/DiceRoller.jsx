@@ -72,7 +72,7 @@ export default function DiceRoller() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative min-w-0 overflow-x-clip">
       {showConfetti && (
         <div className="pointer-events-none absolute inset-0 z-50 overflow-hidden rounded-2xl">
           {[...Array(30)].map((_, i) => (
@@ -90,10 +90,10 @@ export default function DiceRoller() {
         </div>
       )}
 
-      <div className="p-6 sm:p-8">
+      <div className="p-4 sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
-          <div className="min-w-0 flex-1 space-y-6">
-            <div className="relative flex min-h-[280px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-warm-200 bg-charcoal-900 p-8 sm:p-12">
+          <div className="min-w-0 flex-1 space-y-4 sm:space-y-6">
+            <div className="relative flex min-h-[220px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-warm-200 bg-charcoal-900 p-5 sm:min-h-[280px] sm:p-12">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(249,115,22,0.12),transparent_55%)]" />
 
               {result ? (
@@ -105,7 +105,7 @@ export default function DiceRoller() {
                         className={`relative ${isRolling ? 'animate-roll' : 'animate-land'}`}
                         style={{ animationDelay: `${idx * 0.1}s` }}
                       >
-                        <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border-2 border-orange-100/30 bg-gradient-to-br from-white to-cream-50 shadow-xl sm:h-28 sm:w-28">
+                        <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-orange-100/30 bg-gradient-to-br from-white to-cream-50 shadow-xl sm:h-28 sm:w-28">
                           <div className="grid grid-cols-3 gap-2 p-3 sm:p-4">
                             {getDiceDots(val).map(([row, col], i) => (
                               <div
