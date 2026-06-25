@@ -53,7 +53,7 @@ export const SITE_TOOLS = [
   {
     id: 'halisaha-takim-olusturucu',
     title: 'Halısaha Takım Oluşturucu',
-    description: '5v5, 6v6 veya 7v7. Forma renkleriyle sahada iki takım oluşturun.',
+    description: '5v5–11v11 hazır taktiklerle diziliş kurun, PNG indirin.',
     icon: Users,
     link: '/araclar/halisaha-takim-olusturucu',
     color: 'emerald',

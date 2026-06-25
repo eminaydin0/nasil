@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
-import { clampPitchPosition, colorToTextContrast } from './halisahaFormations';
+import { clampPitchPosition, colorToTextContrast, getPlayerJerseyColor } from './halisahaFormations';
 
 const FIELD_ID = 'halisaha-field';
 
@@ -56,7 +56,8 @@ function PitchMarkings() {
 
 function DraggablePlayer({
   player,
-  color,
+  teamColor,
+  compact = false,
   isDragging,
   isEditing,
   onPointerDown,
@@ -66,21 +67,38 @@ function DraggablePlayer({
 }) {
   const displayName = player.name.trim() || player.role;
   const label = player.name.trim() ? player.name.split(' ')[0] : player.role;
+  const jerseyColor = getPlayerJerseyColor(player, teamColor);
 
   return (
     <div
-      className="absolute z-10 flex w-[4.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center touch-none select-none sm:w-[5rem]"
+      className={`absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center touch-none select-none ${
+        compact ? 'w-[3.25rem] sm:w-[3.75rem]' : 'w-[4.5rem] sm:w-[5rem]'
+      }`}
       style={{ left: `${player.x}%`, top: `${player.y}%` }}
     >
-      <button
-        type="button"
-        aria-label={`${displayName} — sürüklemek için basılı tut`}
-        onPointerDown={(e) => onPointerDown(player.id, e)}
-        className={`h-9 w-9 cursor-grab rounded-full border-[2.5px] border-white shadow-[0_2px_10px_rgba(0,0,0,0.4)] transition-transform active:cursor-grabbing sm:h-10 sm:w-10 ${
-          isDragging ? 'z-20 scale-110 ring-2 ring-orange-300 ring-offset-1 ring-offset-transparent' : ''
-        }`}
-        style={{ backgroundColor: color }}
-      />
+      <div className="relative">
+        <button
+          type="button"
+          aria-label={`${displayName}${player.isCaptain ? ' — kaptan' : ''} — sürüklemek için basılı tut`}
+          onPointerDown={(e) => onPointerDown(player.id, e)}
+          className={`cursor-grab rounded-full border-[2.5px] border-white shadow-[0_2px_10px_rgba(0,0,0,0.4)] transition-transform active:cursor-grabbing ${
+            compact ? 'h-7 w-7 sm:h-8 sm:w-8' : 'h-9 w-9 sm:h-10 sm:w-10'
+          } ${
+            isDragging ? 'z-20 scale-110 ring-2 ring-orange-300 ring-offset-1 ring-offset-transparent' : ''
+          } ${player.isCaptain ? 'ring-2 ring-orange-400 ring-offset-1 ring-offset-transparent' : ''}`}
+          style={{ backgroundColor: jerseyColor }}
+        />
+        {player.isCaptain ? (
+          <span
+            className={`pointer-events-none absolute -right-1 -top-1 grid place-items-center rounded-full bg-charcoal-900 font-black text-orange-400 ring-[1.5px] ring-white ${
+              compact ? 'h-3.5 w-3.5 text-[7px]' : 'h-4 w-4 text-[8px]'
+            }`}
+            aria-hidden
+          >
+            C
+          </span>
+        ) : null}
+      </div>
 
       {isEditing ? (
         <input
@@ -101,7 +119,9 @@ function DraggablePlayer({
           type="button"
           onClick={() => onStartEdit(player.id)}
           onPointerDown={(e) => e.stopPropagation()}
-          className="mt-1 max-w-full truncate rounded px-1 py-0.5 text-center text-[10px] font-bold leading-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] hover:underline sm:text-[11px]"
+          className={`mt-1 max-w-full truncate rounded px-0.5 py-0.5 text-center font-bold leading-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] hover:underline ${
+            compact ? 'text-[9px]' : 'text-[10px] sm:text-[11px]'
+          }`}
         >
           {player.name.trim() ? label : `${player.role} · isim ver`}
         </button>
@@ -120,6 +140,7 @@ export default function HalisahaPitch({
   const fieldRef = useRef(null);
   const [draggingId, setDraggingId] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const compact = players.length >= 9;
 
   const movePlayer = useCallback(
     (clientX, clientY, playerId) => {
@@ -156,7 +177,7 @@ export default function HalisahaPitch({
 
   return (
     <div
-      className={`mx-auto w-full max-w-[320px] sm:max-w-[360px] ${perspective ? 'pitch-perspective' : ''}`}
+      className={`mx-auto w-full max-w-[min(100%,300px)] sm:max-w-[min(100%,380px)] lg:max-w-[min(100%,440px)] ${perspective ? 'pitch-perspective' : ''}`}
     >
       <div className={perspective ? 'pitch-perspective-inner' : ''}>
         <div className="relative overflow-hidden rounded-xl shadow-[0_12px_40px_rgba(0,0,0,0.45)] ring-1 ring-white/10">
@@ -184,7 +205,8 @@ export default function HalisahaPitch({
               <DraggablePlayer
                 key={player.id}
                 player={player}
-                color={color}
+                teamColor={color}
+                compact={compact}
                 isDragging={draggingId === player.id}
                 isEditing={editingId === player.id}
                 onPointerDown={handlePointerDown}
@@ -197,8 +219,8 @@ export default function HalisahaPitch({
         </div>
       </div>
 
-      <p className="mt-2 text-center text-[10px] font-medium text-white/50 sm:text-[11px]">
-        Yuvarlağı sürükle · isme dokunarak düzenle
+      <p className="mt-1 text-center text-[10px] font-medium text-white/45">
+        Yuvarlağı sürükle · isme dokunarak düzenle · kadroda kaptan seç
       </p>
     </div>
   );

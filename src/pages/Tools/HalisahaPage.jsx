@@ -11,11 +11,11 @@ export default function HalisahaPage() {
   return (
     <ToolLayout
       title="Halısaha Takımı Oluşturucu"
-      description="Küçük saha maçları için hızlı takım kurma aracı. 5v5, 6v6, 7v7 formatlarını destekler."
+      description="5v5'ten 11v11'e kadar hazır taktiklerle diziliş kurun, isim verin ve PNG indirin."
       icon={Users}
       iconColor="orange"
       seoTitle="Halısaha Takımı Oluşturucu"
-      seoDescription="Küçük saha maçları için hızlı takım kurma aracı. 5v5, 6v6, 7v7 formatlarını destekler."
+      seoDescription="5v5'ten 11v11'e kadar halı saha diziliş editörü. Hazır taktikler, kaptan, forma renkleri ve PNG indirme."
       seoUrl="/araclar/halisaha-takim-olusturucu"
     >
       <HalisahaGenerator />
