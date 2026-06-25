@@ -22,14 +22,14 @@ INSERT INTO admin_users (username, password_hash, email, full_name)
 VALUES (
   'admin',
   'HASH_BURAYA_GELECEK',  -- Adım 2'de oluşturduğunuz hash
-  'admin@nasiloynanir.com',
+  'admin@kuraline.xyz',
   'Admin User'
 );
 ```
 
 ## Adım 4: Test Edin
 
-1. `http://localhost:5162/admin` adresine gidin
+1. Canlı: `https://kuraline.xyz/admin-panel` — yerel geliştirme: `http://localhost:3060/admin-panel`
 2. Kullanıcı adı: `admin`
 3. Şifre: Adım 2'de belirlediğiniz şifre
 

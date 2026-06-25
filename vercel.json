@@ -4,6 +4,7 @@
   ],
   "redirects": [
     { "source": "/admin", "destination": "/admin-panel", "permanent": true },
-    { "source": "/admin/", "destination": "/admin-panel", "permanent": true }
+    { "source": "/admin/", "destination": "/admin-panel", "permanent": true },
+    { "source": "/:path*", "has": [{ "type": "host", "value": "www.kuraline.xyz" }], "destination": "https://kuraline.xyz/:path*", "permanent": true }
   ]
 }

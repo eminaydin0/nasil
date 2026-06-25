@@ -116,7 +116,7 @@ INSERT INTO admin_users (username, password_hash, email, full_name)
 VALUES (
   'admin',  -- Kullanıcı adınız
   'HASH_BURAYA_GELECEK',  -- Yukarıda oluşturduğunuz hash
-  'admin@nasiloynanir.com',
+  'admin@kuraline.xyz',
   'Admin User'
 );
 ```
@@ -165,7 +165,7 @@ const result = await changeAdminPassword(
 
 ## 5. Test
 
-1. Admin giriş sayfasına gidin: `http://localhost:5162/admin`
+1. Admin giriş sayfasına gidin: `https://kuraline.xyz/admin-panel` (yerel: `http://localhost:3060/admin-panel`)
 2. Oluşturduğunuz kullanıcı adı ve şifre ile giriş yapın
 3. Başarılı giriş sonrası admin paneline yönlendirileceksiniz
 

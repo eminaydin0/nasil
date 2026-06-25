@@ -81,7 +81,7 @@ Bu işlem:
 ## 📋 ADIM 4: Test Etme
 
 1. Dev server'ı başlatın: `npm run dev`
-2. Admin panele giriş yapın: http://localhost:5173/admin
+2. Admin panele giriş yapın: https://kuraline.xyz/admin-panel (yerel: http://localhost:3060/admin-panel)
 3. **Yeni Oyun Ekle** veya mevcut bir oyunu düzenle
 4. **Ana Görsel** bölümünde:
    - **Bilgisayardan Yükle** butonuna tıklayın

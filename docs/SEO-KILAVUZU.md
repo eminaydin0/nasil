@@ -1,6 +1,6 @@
 # Kuralı Ne? — Kapsamlı SEO Strateji Kılavuzu
 
-> **Site:** https://nasiloynanir.com  
+> **Site:** https://kuraline.xyz  
 > **Marka:** Kuralı Ne?  
 > **Dil:** Türkçe (tr-TR)  
 > **Niş:** Geleneksel Türk oyunları kuralları + dijital oyun araçları  
@@ -614,8 +614,8 @@ IMG_2847.jpg              ✗
 
 Tek dil (tr-TR) — mevcut yapı yeterli:
 ```html
-<link rel="alternate" hreflang="tr" href="https://nasiloynanir.com/" />
-<link rel="alternate" hreflang="x-default" href="https://nasiloynanir.com/" />
+<link rel="alternate" hreflang="tr" href="https://kuraline.xyz/" />
+<link rel="alternate" hreflang="x-default" href="https://kuraline.xyz/" />
 ```
 
 ### 15.4 JavaScript SEO (kritik)
@@ -637,7 +637,7 @@ Site **CSR (Client-Side Rendering)**. Google JS render eder ama:
 | Geçersiz oyun slug → sonsuz skeleton | Soft 404, crawl budget waste | 404 + noindex |
 | Eski sitemap (araclar yok) | Sayfalar indexlenmez | `npm run generate-sitemap` |
 | Analytics consent öncesi | KVKK riski | Consent gate |
-| `GameInfo` footer "kuralin.ne" | Marka tutarsızlığı | nasiloynanir.com |
+| `GameInfo` footer "kuralin.ne" | Marka tutarsızlığı | kuraline.xyz |
 
 ---
 
@@ -697,7 +697,7 @@ node scripts/generate-sitemap.js
 
 ### Kurulum checklist
 
-- [ ] Domain property: `nasiloynanir.com`
+- [ ] Domain property: `kuraline.xyz`
 - [ ] Sitemap submit: `sitemap-index.xml`
 - [ ] URL inspection: top 10 oyun
 - [ ] Core Web Vitals raporu
@@ -751,14 +751,14 @@ node scripts/generate-sitemap.js
 
 ### Paylaşım URL yapısı
 ```
-https://nasiloynanir.com/oyun/{slug}
+https://kuraline.xyz/oyun/{slug}
 ```
 
 ### OG tag checklist (SEO.jsx — mevcut)
 
 - og:title, og:description, og:image (1200×630)
 - twitter:card = summary_large_image
-- twitter:site = @nasiloynanir
+- twitter:site = @kuraline
 
 ### Pinterest / WhatsApp
 

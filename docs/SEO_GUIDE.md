@@ -323,12 +323,12 @@ Schema'ları test etmek için:
 
 ```bash
 # Sayfa meta tag'lerini kontrol et
-curl -s "https://nasiloynanir.com/oyun/okey" | grep -E "<title>|<meta"
+curl -s "https://kuraline.xyz/oyun/okey" | grep -E "<title>|<meta"
 ```
 
 ### Sitemap Kontrolü
 
-1. `https://nasiloynanir.com/sitemap.xml` adresini ziyaret edin
+1. `https://kuraline.xyz/sitemap.xml` adresini ziyaret edin
 2. XML doğrulaması için: [XML Sitemap Validator](https://www.xml-sitemaps.com/validate-xml-sitemap.html)
 
 ### Google Search Console

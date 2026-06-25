@@ -19,7 +19,7 @@ VALUES (
   'admin',
   -- Bu basit bir hash örneği, gerçek projede bcrypt kullanılmalı
   'e10adc3949ba59abbe56e057f20f883e', -- MD5 hash of "Admin123!"
-  'admin@nasiloynanir.com',
+  'admin@kuraline.xyz',
   'Site Yöneticisi'
 ) ON CONFLICT (username) DO NOTHING;
 
