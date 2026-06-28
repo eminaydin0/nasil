@@ -10,6 +10,7 @@ import GameOfTheDay from '../../components/home/GameOfTheDay';
 import StatsSection from '../../components/home/StatsSection';
 import TestimonialsSection from '../../components/home/TestimonialsSection';
 import ToolsSection from '../../components/home/ToolsSection';
+import NewsSection from '../../components/home/NewsSection';
 import NewsletterSection from '../../components/home/NewsletterSection';
 import AboutSection from '../../components/home/AboutSection';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
@@ -206,6 +207,8 @@ function HomePage() {
           />
           {renderGameGrid(newGames)}
         </section>
+
+        <NewsSection />
 
         <section className="border-t border-warm-200/60 py-8 md:py-16">
           <ToolsSection />

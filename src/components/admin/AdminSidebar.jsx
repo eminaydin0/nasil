@@ -8,6 +8,7 @@ import {
   Sparkles,
   FolderTree,
   FileText,
+  Newspaper,
   Mail,
   Users,
   Home,
@@ -31,6 +32,7 @@ const NAV_GROUPS = [
     items: [
       { id: 'games', label: 'Oyunlar', icon: Gamepad2 },
       { id: 'categories', label: 'Kategoriler', icon: FolderTree },
+      { id: 'news', label: 'Haberler', icon: Newspaper },
       { id: 'comments', label: 'Yorumlar', icon: MessageCircle },
       { id: 'carousel', label: 'Hero Carousel', icon: Images },
       { id: 'gameoftheday', label: 'Günün Oyunu', icon: Sparkles },

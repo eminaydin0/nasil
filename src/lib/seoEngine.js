@@ -8,6 +8,7 @@ import {
   CATEGORY_SEO,
   generateGameSchema,
   generateArticleSchema,
+  generateNewsArticleSchema,
   generateVideoSchema,
   generateFAQSchema,
   generateCollectionPageSchema,
@@ -621,6 +622,184 @@ export function buildAllGamesSeoMeta(games = [], filters = {}) {
     ),
     keywords: `tüm oyunlar, oyun arşivi, ${count} oyun, geleneksel oyunlar, okey, batak, pişti, kuralı ne`,
     url: '/oyunlar',
+  };
+}
+
+// ─── Haberler ──────────────────────────────────────────────────────────────
+
+function normalizeNewsInput(post) {
+  if (!post) return null;
+  return {
+    title: post.title,
+    slug: post.slug,
+    subtitle: post.subtitle,
+    excerpt: post.excerpt,
+    content: post.content,
+    coverImage: post.coverImage || post.cover_image,
+    category: post.category,
+    tags: post.tags || [],
+    author: post.author,
+    seoTitle: post.seoTitle || post.seo_title,
+    seoDescription: post.seoDescription || post.seo_description,
+    readTimeMinutes: post.readTimeMinutes || post.read_time_minutes,
+    viewCount: post.viewCount ?? post.view_count,
+    publishedAt: post.publishedAt || post.published_at,
+    createdAt: post.createdAt || post.created_at,
+    updatedAt: post.updatedAt || post.updated_at,
+  };
+}
+
+export function buildNewsSeoMeta(post) {
+  const p = normalizeNewsInput(post);
+  if (!p) return {};
+
+  const seoTitle = p.seoTitle?.trim() || p.title;
+  const desc =
+    p.seoDescription?.trim() || p.excerpt || truncateText(stripNewsMarkdown(p.content), 160);
+  const tagStr = (p.tags || []).slice(0, 8).join(', ');
+
+  return {
+    title: seoTitle,
+    description: desc,
+    keywords: [
+      seoTitle,
+      p.category,
+      'oyun haberleri',
+      'oyun çıkış tarihi',
+      'oyun fiyatları',
+      tagStr,
+    ]
+      .filter(Boolean)
+      .join(', '),
+    tags: p.tags || [],
+    image: p.coverImage || SITE_CONFIG.defaultImage,
+    imageAlt: `${seoTitle} — ${p.category || 'Oyun Haberleri'}`,
+    url: `/haberler/${p.slug}`,
+    section: p.category,
+    author: p.author || SITE_CONFIG.name,
+    publishedTime: p.publishedAt || p.createdAt,
+    modifiedTime: p.updatedAt || p.publishedAt || p.createdAt,
+    readTimeMinutes: p.readTimeMinutes,
+  };
+}
+
+function stripNewsMarkdown(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^>\s+/gm, '')
+    .replace(/^[-*]\s+/gm, '')
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[*_~`]/g, '')
+    .trim();
+}
+
+export function extractNewsFaqsFromContent(content, title) {
+  if (!content?.trim()) return [];
+  const faqs = [];
+  const blocks = content.split(/\n\n+/);
+
+  blocks.forEach((block) => {
+    const trimmed = block.trim();
+    if (trimmed.startsWith('### ') && trimmed.includes('?')) {
+      const question = trimmed.slice(4).trim();
+      const idx = blocks.indexOf(block);
+      const next = blocks[idx + 1]?.trim();
+      if (next && !next.startsWith('#')) {
+        faqs.push({ question, answer: truncateText(next, 300) });
+      }
+    }
+  });
+
+  if (faqs.length === 0 && title) {
+    faqs.push({
+      question: `${title.replace(/\?+$/, '')}?`,
+      answer: truncateText(stripNewsMarkdown(content), 280),
+    });
+  }
+
+  return faqs.slice(0, 5);
+}
+
+export function buildNewsStructuredData(post) {
+  const p = normalizeNewsInput(post);
+  if (!p) return null;
+
+  const faqs = extractNewsFaqsFromContent(p.content, p.title);
+  const wordCount = stripNewsMarkdown(p.content).split(/\s+/).filter(Boolean).length;
+
+  const schemas = [
+    generateNewsArticleSchema({
+      title: p.seoTitle || p.title,
+      slug: p.slug,
+      subtitle: p.subtitle,
+      excerpt: p.excerpt,
+      content: p.content,
+      coverImage: p.coverImage,
+      category: p.category,
+      tags: p.tags,
+      author: p.author,
+      readTimeMinutes: p.readTimeMinutes,
+      wordCount,
+      publishedAt: p.publishedAt,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
+    }),
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      '@id': `${SITE_CONFIG.url}/haberler/${p.slug}`,
+      name: p.seoTitle || p.title,
+      description: p.seoDescription || p.excerpt,
+      url: `${SITE_CONFIG.url}/haberler/${p.slug}`,
+      inLanguage: 'tr-TR',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_CONFIG.name,
+        url: SITE_CONFIG.url,
+      },
+    },
+  ];
+
+  if (faqs.length >= 2) {
+    schemas.push(generateFAQSchema(faqs));
+  }
+
+  return schemas.filter(Boolean);
+}
+
+export function buildNewsListSeoMeta(posts = [], filters = {}) {
+  const { category, searchTerm } = filters;
+  const count = posts.length;
+  const term = searchTerm?.trim();
+
+  if (term) {
+    return {
+      title: `"${term}" Haber Arama Sonuçları`,
+      description: `"${term}" araması için ${count} haber bulundu. Oyun dünyasından güncel gelişmeler Kuralı Ne?'de.`,
+      keywords: `${term}, oyun haberleri, ${term} haber`,
+      url: '/haberler',
+    };
+  }
+
+  if (category && category !== 'Tümü') {
+    return {
+      title: `${category} Haberleri`,
+      description: `${category} kategorisinde ${count} haber. Çıkış tarihleri, fiyatlar ve oyun dünyasından son gelişmeler.`,
+      keywords: `${category}, oyun haberleri, oyun çıkış tarihi, oyun fiyatları`,
+      url: '/haberler',
+    };
+  }
+
+  return {
+    title: `Oyun Haberleri (${count})`,
+    description: truncateText(
+      `${count} oyun haberi: çıkış tarihleri, fiyatlar, indirimler ve oyun dünyasından güncel gelişmeler.`,
+      160
+    ),
+    keywords: 'oyun haberleri, oyun çıkış tarihi, oyun fiyatları, gta, konsol oyunları',
+    url: '/haberler',
   };
 }
 

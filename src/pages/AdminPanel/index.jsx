@@ -12,6 +12,7 @@ import ContentManager from '../../components/admin/ContentManager';
 import ContactManager from '../../components/admin/ContactManager';
 import UserManager from '../../components/admin/UserManager';
 import CategoryManager from '../../components/admin/CategoryManager';
+import NewsManager from '../../components/admin/NewsManager';
 import AdminDashboardTab from '../../components/admin/tabs/AdminDashboardTab';
 import AdminAnalyticsTab from '../../components/admin/tabs/AdminAnalyticsTab';
 import { supabase } from '../../lib/supabase';
@@ -99,6 +100,7 @@ function AdminPanel() {
         videoTitle: g.video_title || '',
         playTimeMinutes: g.play_time_minutes || '',
         faq: Array.isArray(g.faq) ? g.faq : [],
+        digitalInfo: g.digital_info || null,
       }));
 
       setGames(formattedGames);
@@ -232,6 +234,7 @@ function AdminPanel() {
         video_title: gameData.videoTitle ?? null,
         play_time_minutes: gameData.playTimeMinutes ?? null,
         faq: Array.isArray(gameData.faq) ? gameData.faq : [],
+        digital_info: gameData.digitalInfo ?? null,
       };
 
       if (editingGame) {
@@ -470,6 +473,7 @@ function AdminPanel() {
               {activeTab === 'carousel' && <CarouselManager games={games} />}
               {activeTab === 'gameoftheday' && <GameOfTheDayManager />}
               {activeTab === 'categories' && <CategoryManager />}
+              {activeTab === 'news' && <NewsManager />}
               {activeTab === 'content' && <ContentManager />}
               {activeTab === 'contact' && <ContactManager />}
               {activeTab === 'users' && <UserManager />}

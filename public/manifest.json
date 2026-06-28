@@ -1,10 +1,10 @@
 {
-  "id": "https://kuraline.xyz/",
+  "id": "/",
   "name": "Kuralı Ne? - Geleneksel Türk Oyunları",
   "short_name": "Kuralı Ne?",
   "description": "Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının kuralı ne? Detaylı kurallar, ipuçları ve stratejiler.",
-  "start_url": "https://kuraline.xyz/",
-  "scope": "https://kuraline.xyz/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#f97316",

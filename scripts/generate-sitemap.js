@@ -29,6 +29,7 @@ const BASE_URL = 'https://kuraline.xyz';
 const STATIC_PAGES = [
   { url: '', changefreq: 'daily', priority: '1.0' },
   { url: '/oyunlar', changefreq: 'daily', priority: '0.9' },
+  { url: '/haberler', changefreq: 'daily', priority: '0.85' },
   { url: '/araclar', changefreq: 'weekly', priority: '0.8' },
   { url: '/hakkimizda', changefreq: 'monthly', priority: '0.6' },
   { url: '/iletisim', changefreq: 'monthly', priority: '0.6' },
@@ -65,6 +66,18 @@ const generateSitemap = async () => {
 
     if (gamesError) throw gamesError;
     console.log(`✅ Fetched ${games.length} games`);
+
+    const { data: newsPosts, error: newsError } = await supabase
+      .from('news_posts')
+      .select('slug, title, cover_image, updated_at, published_at, created_at')
+      .eq('is_published', true)
+      .order('published_at', { ascending: false });
+
+    if (newsError) {
+      console.warn('⚠️ Could not fetch news posts (table may not exist yet)');
+    }
+    const publishedNews = newsPosts || [];
+    console.log(`✅ Fetched ${publishedNews.length} news posts`);
 
     // Fetch all categories
     const { data: categories, error: catError } = await supabase
@@ -137,6 +150,30 @@ const generateSitemap = async () => {
 `;
     });
 
+    // Add news pages
+    publishedNews.forEach((post) => {
+      const lastMod = post.updated_at || post.published_at || post.created_at || now;
+      const slug = encodeURIComponent(post.slug);
+
+      sitemap += `  <url>
+    <loc>${BASE_URL}/haberler/${slug}</loc>
+    <lastmod>${new Date(lastMod).toISOString()}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>`;
+
+      if (post.cover_image) {
+        sitemap += `
+    <image:image>
+      <image:loc>${post.cover_image}</image:loc>
+      <image:title>${escapeXml(post.title)}</image:title>
+    </image:image>`;
+      }
+
+      sitemap += `
+  </url>
+`;
+    });
+
     // Add category pages
     activeCategories.forEach(category => {
       if (category) {
@@ -178,9 +215,10 @@ const generateSitemap = async () => {
     console.log('\n🎉 Sitemap generation completed successfully!');
     console.log(`   - ${STATIC_PAGES.length + TOOL_PAGES.length} static pages`);
     console.log(`   - ${games.length} game pages`);
+    console.log(`   - ${publishedNews.length} news pages`);
     console.log(`   - ${activeCategories.length} category pages`);
     console.log(`   - ${comparisonPairs.length} comparison pages`);
-    console.log(`   - Total: ${STATIC_PAGES.length + TOOL_PAGES.length + games.length + activeCategories.length + comparisonPairs.length} URLs`);
+    console.log(`   - Total: ${STATIC_PAGES.length + TOOL_PAGES.length + games.length + publishedNews.length + activeCategories.length + comparisonPairs.length} URLs`);
 
   } catch (error) {
     console.error('❌ Error generating sitemap:', error);

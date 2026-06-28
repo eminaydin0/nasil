@@ -214,6 +214,35 @@ export const getTotalComments = async () => {
   return count;
 };
 
+// Storage: Haber kapak görseli yükleme
+export const uploadNewsImage = async (file, newsSlug) => {
+  try {
+    const slug =
+      (newsSlug && String(newsSlug).replace(/[^a-z0-9-]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')) ||
+      'haber';
+    const timestamp = Date.now();
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const fileName = `${slug}-${timestamp}.${fileExt}`;
+    const filePath = `news/${fileName}`;
+
+    const { error } = await supabase.storage.from('game-images').upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
+
+    if (error) {
+      console.error('Error uploading news image:', error);
+      return null;
+    }
+
+    const { data: urlData } = supabase.storage.from('game-images').getPublicUrl(filePath);
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Failed to upload news image:', error);
+    return null;
+  }
+};
+
 // Storage: Resim yükleme
 export const uploadGameImage = async (file, gameSlug) => {
   try {

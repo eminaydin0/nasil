@@ -6,6 +6,7 @@ import { supabase } from '../../lib/supabase';
 const exploreLinks = [
   { to: '/', label: 'Ana Sayfa' },
   { to: '/oyunlar', label: 'Oyunlar' },
+  { to: '/haberler', label: 'Haberler' },
   { to: '/araclar', label: 'Araçlar' },
   { to: '/hakkimizda', label: 'Hakkımızda' },
   { to: '/reklam-verin', label: 'Reklam Verin' },

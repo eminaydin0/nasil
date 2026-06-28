@@ -84,6 +84,11 @@ export const PAGE_SEO = {
     description: 'Kuralı Ne? sitesinde reklam verin. Oyunsever hedef kitlenize ulaşın. Banner, sponsorlu içerik ve özel paketler.',
     keywords: 'reklam verin, reklam, sponsorluk, banner reklam, oyun reklam',
   },
+  news: {
+    title: 'Oyun Haberleri - Çıkış Tarihleri ve Güncellemeler',
+    description: 'GTA, konsol ve PC oyunları hakkında güncel haberler. Çıkış tarihleri, fiyatlar, indirimler ve oyun dünyasından son gelişmeler.',
+    keywords: 'oyun haberleri, oyun çıkış tarihi, oyun fiyatları, gta 6, konsol oyunları, pc oyun haberleri',
+  },
 };
 
 // Kategori bazlı SEO şablonları
@@ -117,6 +122,21 @@ export const CATEGORY_SEO = {
     title: 'Zeka Oyunları - Kuralı Ne?',
     description: 'Satranç, Dama, Sudoku gibi zeka geliştiren oyunların kuralları ve stratejileri.',
     keywords: 'zeka oyunları, strateji oyunları, satranç, dama, bulmaca',
+  },
+  'PC Oyunları': {
+    title: 'PC Oyunları - Sistem Gereksinimleri & Rehber',
+    description: 'PC oyunlarının nasıl oynanır rehberleri, Steam/Epic indirme linkleri, RAM, ekran kartı ve sistem gereksinimleri.',
+    keywords: 'pc oyunları, steam oyunları, sistem gereksinimleri, ekran kartı, ram, oyun indir',
+  },
+  'Konsol Oyunları': {
+    title: 'Konsol Oyunları - PS, Xbox, Switch Rehberi',
+    description: 'PlayStation, Xbox ve Nintendo Switch oyun rehberleri, mağaza linkleri ve platform bilgileri.',
+    keywords: 'konsol oyunları, ps5 oyunları, xbox oyunları, switch oyunları, playstation',
+  },
+  'Mobil Oyunlar': {
+    title: 'Mobil Oyunlar - Android & iOS Rehberi',
+    description: 'Mobil oyun rehberleri, App Store ve Google Play linkleri, oynanış ipuçları ve cihaz gereksinimleri.',
+    keywords: 'mobil oyunlar, android oyunları, ios oyunları, app store, google play',
   },
 };
 
@@ -374,6 +394,66 @@ export function generateArticleSchema(game) {
   };
 }
 
+// Haber makalesi schema
+export function generateNewsArticleSchema(post) {
+  if (!post?.title || !post?.slug) return null;
+
+  const image = post.coverImage || SITE_CONFIG.defaultImage;
+  const published = post.publishedAt || post.createdAt;
+  const modified = post.updatedAt || published;
+  const headline = post.title;
+  const description =
+    post.excerpt || post.seoDescription || truncateTextForSchema(post.content, 160);
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline,
+    alternativeHeadline: post.subtitle || undefined,
+    description,
+    image: [image],
+    inLanguage: 'tr-TR',
+    author: {
+      '@type': 'Organization',
+      name: post.author || SITE_CONFIG.name,
+      url: SITE_CONFIG.url,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.name,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_CONFIG.url}/logo.svg`,
+      },
+    },
+    datePublished: published,
+    dateModified: modified,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${SITE_CONFIG.url}/haberler/${post.slug}`,
+    },
+    url: `${SITE_CONFIG.url}/haberler/${post.slug}`,
+    articleSection: post.category,
+    keywords: [headline, post.category, ...(post.tags || [])].filter(Boolean).join(', '),
+  };
+
+  if (post.wordCount) {
+    schema.wordCount = post.wordCount;
+  }
+
+  if (post.readTimeMinutes) {
+    schema.timeRequired = `PT${post.readTimeMinutes}M`;
+  }
+
+  return schema;
+}
+
+function truncateTextForSchema(text, max = 160) {
+  if (!text) return '';
+  const clean = String(text).replace(/\s+/g, ' ').trim();
+  return clean.length <= max ? clean : `${clean.slice(0, max - 1)}…`;
+}
+
 // Breadcrumb schema oluşturucu
 export function generateBreadcrumbSchema(items) {
   return {
@@ -518,6 +598,7 @@ export default {
   generateVideoSchema,
   generateComparisonPageSchema,
   generateArticleSchema,
+  generateNewsArticleSchema,
   generateBreadcrumbSchema,
   generateFAQSchema,
   generateItemListSchema,

@@ -18,6 +18,8 @@ import DicePage from './pages/Tools/DicePage';
 import ScoreBoardPage from './pages/Tools/ScoreBoardPage';
 import HalisahaPage from './pages/Tools/HalisahaPage';
 import Okey101ScorePage from './pages/GameDetail/Okey101ScorePage';
+import NewsPage from './pages/News';
+import NewsDetailPage from './pages/NewsDetail';
 import ComparePage from './pages/Compare';
 import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
@@ -103,6 +105,8 @@ function App() {
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/oyunlar" element={<AllGames />} />
+                  <Route path="/haberler" element={<NewsPage />} />
+                  <Route path="/haberler/:slug" element={<NewsDetailPage />} />
                   <Route path="/araclar" element={<ToolsPage />} />
                   <Route path="/araclar/okey-sayaci" element={<OkeyPage />} />
                   <Route path="/araclar/101-yazboz" element={<Okey101Page />} />

@@ -26,6 +26,7 @@ import toast from 'react-hot-toast';
 const navItems = [
   { to: '/', label: 'Ana Sayfa', exact: true },
   { to: '/oyunlar', label: 'Oyunlar', exact: false },
+  { to: '/haberler', label: 'Haberler', exact: false },
   { to: '/araclar', label: 'Araçlar', exact: false },
   { to: '/hakkimizda', label: 'Hakkımızda', exact: true },
   { to: '/iletisim', label: 'İletişim', exact: true },
@@ -40,6 +41,9 @@ function useNavActive(pathname) {
         pathname.startsWith('/oyun/') ||
         pathname.startsWith('/kategori/')
       );
+    }
+    if (to === '/haberler') {
+      return pathname === '/haberler' || pathname.startsWith('/haberler/');
     }
     if (to === '/araclar') {
       return pathname === '/araclar' || pathname.startsWith('/araclar/');

@@ -105,6 +105,18 @@ export const trackEvent = (action, category, label, value) => {
 };
 
 // Specific tracking functions
+export const trackNewsView = (title, newsId, category) => {
+  trackToSupabase(
+    'news_view',
+    {
+      news_title: title,
+      category,
+      timestamp: new Date().toISOString(),
+    },
+    newsId
+  );
+};
+
 export const trackGameView = (gameName, gameId) => {
   trackToSupabase('game_view', {
     game_name: gameName,

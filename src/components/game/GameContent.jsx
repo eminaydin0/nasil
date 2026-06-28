@@ -1,8 +1,11 @@
 import { Lightbulb, BookOpen, ListOrdered, Sparkles } from 'lucide-react';
+import { isDigitalGameCategory } from '../../constants/digitalGames';
 
 export default function GameContent({ game }) {
   const rules = Array.isArray(game?.rules) ? game.rules : [];
   const tips = Array.isArray(game?.tips) ? game.tips : [];
+  const isDigital = isDigitalGameCategory(game?.category);
+  const rulesTitle = isDigital ? 'Nasıl Oynanır' : 'Oyun Kuralları';
 
   return (
     <div className="lg:col-span-2 space-y-6">
@@ -29,7 +32,7 @@ export default function GameContent({ game }) {
               <ListOrdered size={18} aria-hidden="true" />
             </span>
             <h2 className="text-2xl md:text-[1.75rem] font-extrabold text-warm-900 tracking-tight leading-tight">
-              Oyun Kuralları
+              {rulesTitle}
             </h2>
           </header>
 

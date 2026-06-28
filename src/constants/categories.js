@@ -1,4 +1,4 @@
-import { TreePine, Home, Dice6, Spade, Package, Brain, Gamepad2 } from 'lucide-react';
+import { TreePine, Home, Dice6, Spade, Package, Brain, Gamepad2, Monitor, Smartphone } from 'lucide-react';
 
 /**
  * Kategori Tanımları - Tek Kaynak (Single Source of Truth)
@@ -62,6 +62,33 @@ export const CATEGORIES = [
     bgColor: 'bg-blue-50',
     image: 'https://images.unsplash.com/photo-1560420025-9a327c4418d4?q=80&w=1974&auto=format&fit=crop',
   },
+  {
+    id: 'pc',
+    name: 'PC Oyunları',
+    description: 'Steam, Epic ve PC platformlarındaki oyunlar. Sistem gereksinimleri, dosya boyutu ve indirme linkleri.',
+    icon: Monitor,
+    color: 'cyan',
+    bgColor: 'bg-cyan-50',
+    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop',
+  },
+  {
+    id: 'konsol',
+    name: 'Konsol Oyunları',
+    description: 'PlayStation, Xbox ve Nintendo oyunları. Platform bilgisi ve mağaza linkleri.',
+    icon: Gamepad2,
+    color: 'purple',
+    bgColor: 'bg-purple-50',
+    image: 'https://images.unsplash.com/photo-1486401899862-0fca89898f85?q=80&w=2070&auto=format&fit=crop',
+  },
+  {
+    id: 'mobil',
+    name: 'Mobil Oyunlar',
+    description: 'Android ve iOS oyunları. App Store / Google Play linkleri ve cihaz gereksinimleri.',
+    icon: Smartphone,
+    color: 'green',
+    bgColor: 'bg-green-50',
+    image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop',
+  },
 ];
 
 /** Kategori adları listesi - sıralı */
@@ -76,6 +103,7 @@ export const COLOR_TO_ICON = {
   green: TreePine,
   indigo: Brain,
   gray: Gamepad2,
+  cyan: Monitor,
 };
 
 /** Renk → bgColor sınıfı */
@@ -87,6 +115,7 @@ const COLOR_TO_BG = {
   green: 'bg-green-50',
   indigo: 'bg-indigo-50',
   gray: 'bg-gray-50',
+  cyan: 'bg-cyan-50',
 };
 
 /** İsim → config map (geriye uyumluluk için) */

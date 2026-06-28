@@ -6,6 +6,7 @@ import CommentSection from '../../components/game/CommentSection';
 import GameHeader from '../../components/game/GameHeader';
 import GameInfo from '../../components/game/GameInfo';
 import GameContent from '../../components/game/GameContent';
+import GameDigitalSection from '../../components/game/GameDigitalSection';
 import GameSidebar from '../../components/game/GameSidebar';
 import VideoSection from '../../components/game/VideoSection';
 import FAQAccordion from '../../components/game/FAQAccordion';
@@ -150,6 +151,10 @@ function GameDetail() {
         <GameInfo game={game} />
 
         <VideoSection game={game} />
+
+        <div className="mb-6">
+          <GameDigitalSection game={game} />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <GameContent game={game} />

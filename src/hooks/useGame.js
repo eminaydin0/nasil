@@ -39,6 +39,7 @@ export function useGame(slug) {
         videoTitle: gameData.video_title || null,
         playTimeMinutes: gameData.play_time_minutes || null,
         faq: Array.isArray(gameData.faq) ? gameData.faq : [],
+        digitalInfo: gameData.digital_info || null,
         createdAt: gameData.created_at,
         updatedAt: gameData.updated_at,
       };

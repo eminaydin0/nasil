@@ -4,6 +4,13 @@ import { uploadGameImage, uploadMultipleGameImages, deleteGameImage } from '../.
 import toast from 'react-hot-toast';
 import { useConfirm } from '../ui';
 import GameSeoPreview from './GameSeoPreview';
+import GameModalDigitalFields from './GameModalDigitalFields';
+import {
+  emptyDigitalInfo,
+  normalizeDigitalInfo,
+  cleanDigitalInfoForSave,
+  isDigitalGameCategory,
+} from '../../constants/digitalGames';
 
 // Slug oluşturma (Türkçe karakterleri normalize eder)
 function generateSlug(name) {
@@ -40,7 +47,8 @@ function normalizeGameToFormData(game, defaultCategory) {
       videoUrl: '',
       videoTitle: '',
       playTimeMinutes: '',
-      faq: []
+      faq: [],
+      digitalInfo: emptyDigitalInfo(),
     };
   }
 
@@ -81,7 +89,8 @@ function normalizeGameToFormData(game, defaultCategory) {
     videoUrl: game.videoUrl ?? game.video_url ?? '',
     videoTitle: game.videoTitle ?? game.video_title ?? '',
     playTimeMinutes: game.playTimeMinutes ?? game.play_time_minutes ?? '',
-    faq
+    faq,
+    digitalInfo: normalizeDigitalInfo(game.digitalInfo ?? game.digital_info),
   };
 }
 
@@ -213,6 +222,9 @@ function GameModal({ game, categories = [], onSave, onClose }) {
       playTimeMinutes: playTime,
       videoUrl: (formData.videoUrl || '').trim() || null,
       videoTitle: (formData.videoTitle || '').trim() || null,
+      digitalInfo: isDigitalGameCategory(formData.category)
+        ? cleanDigitalInfoForSave(formData.digitalInfo)
+        : null,
     });
   };
 
@@ -459,9 +471,17 @@ function GameModal({ game, categories = [], onSave, onClose }) {
             />
           </div>
 
+          <GameModalDigitalFields
+            category={formData.category}
+            digitalInfo={formData.digitalInfo}
+            onChange={(digitalInfo) => setFormData({ ...formData, digitalInfo })}
+          />
+
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">Oyun Kuralları *</label>
+              <label className="block text-sm font-medium text-gray-700">
+                {isDigitalGameCategory(formData.category) ? 'Nasıl Oynanır *' : 'Oyun Kuralları *'}
+              </label>
               <button type="button" onClick={addRule} className="text-orange-600 text-sm hover:text-orange-700">
                 + Kural Ekle
               </button>
