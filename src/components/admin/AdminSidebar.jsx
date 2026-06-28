@@ -15,6 +15,7 @@ import {
   LogOut,
   X,
   ChevronRight,
+  Smile,
 } from 'lucide-react';
 
 const LOGO_URL = '/logo.svg';
@@ -33,7 +34,8 @@ const NAV_GROUPS = [
       { id: 'games', label: 'Oyunlar', icon: Gamepad2 },
       { id: 'categories', label: 'Kategoriler', icon: FolderTree },
       { id: 'news', label: 'Haberler', icon: Newspaper },
-      { id: 'comments', label: 'Yorumlar', icon: MessageCircle },
+      { id: 'news-engagement', label: 'Haber Yorumları', icon: Smile },
+      { id: 'comments', label: 'Oyun Yorumları', icon: MessageCircle },
       { id: 'carousel', label: 'Hero Carousel', icon: Images },
       { id: 'gameoftheday', label: 'Günün Oyunu', icon: Sparkles },
       { id: 'content', label: 'Site İçeriği', icon: FileText },

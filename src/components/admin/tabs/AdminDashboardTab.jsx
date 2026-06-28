@@ -10,11 +10,16 @@ import {
   Mail,
   MessageCircle,
   Inbox,
+  Newspaper,
+  Eye,
+  Smile,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import AdminStats from '../AdminStats';
 import TopGames from '../TopGames';
 import { Donut } from '../charts';
+import { fetchNewsDashboardStats } from '../NewsEngagementManager';
 
 const CATEGORY_PALETTE = [
   '#f97316', // orange
@@ -66,6 +71,8 @@ export default function AdminDashboardTab({ stats, sortedGames, games, onTabChan
   const [contactMessages, setContactMessages] = useState([]);
   const [contactLoading, setContactLoading] = useState(true);
   const [unreadContactCount, setUnreadContactCount] = useState(0);
+  const [newsStats, setNewsStats] = useState(null);
+  const [newsLoading, setNewsLoading] = useState(true);
 
   // Kategori dagilim verisi (donut)
   const categoryData = useMemo(() => {
@@ -155,6 +162,16 @@ export default function AdminDashboardTab({ stats, sortedGames, games, onTabChan
     loadContactMessages();
   }, []);
 
+  useEffect(() => {
+    const loadNews = async () => {
+      setNewsLoading(true);
+      const data = await fetchNewsDashboardStats();
+      setNewsStats(data);
+      setNewsLoading(false);
+    };
+    loadNews();
+  }, []);
+
   const lastGames = useMemo(
     () => [...(sortedGames || [])].sort((a, b) => (b.id || 0) - (a.id || 0)).slice(0, 6),
     [sortedGames]
@@ -184,6 +201,14 @@ export default function AdminDashboardTab({ stats, sortedGames, games, onTabChan
             </button>
             <button
               type="button"
+              onClick={() => onTabChange?.('news')}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-warm-200 bg-cream-50 px-4 py-2.5 text-sm font-semibold text-warm-800 transition-all hover:bg-warm-100"
+            >
+              <Newspaper size={16} />
+              Haberler
+            </button>
+            <button
+              type="button"
               onClick={() => onTabChange?.('analytics')}
               className="inline-flex items-center gap-1.5 rounded-xl border border-warm-200 bg-cream-50 px-4 py-2.5 text-sm font-semibold text-warm-800 transition-all hover:bg-warm-100"
             >
@@ -195,6 +220,138 @@ export default function AdminDashboardTab({ stats, sortedGames, games, onTabChan
       </div>
 
       <AdminStats stats={stats} />
+
+      {/* Haberler özeti */}
+      <SectionCard
+        icon={Newspaper}
+        title="Haberler"
+        subtitle="İçerik ve etkileşim özeti"
+        action={
+          <button
+            type="button"
+            onClick={() => onTabChange?.('news')}
+            className="text-xs font-semibold text-orange-600 hover:text-orange-700"
+          >
+            Yönet →
+          </button>
+        }
+      >
+        {newsLoading ? (
+          <div className="flex justify-center py-10">
+            <Loader2 size={22} className="animate-spin text-orange-500" />
+          </div>
+        ) : !newsStats ? (
+          <EmptyState icon={Newspaper} title="Haber verisi yüklenemedi" />
+        ) : (
+          <div className="space-y-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+              {[
+                { label: 'Toplam', value: newsStats.total },
+                { label: 'Yayında', value: newsStats.published },
+                { label: 'Taslak', value: newsStats.drafts },
+                { label: 'Öne çıkan', value: newsStats.featured },
+                { label: 'Yorum', value: newsStats.commentCount },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-xl border border-warm-200/60 bg-cream-50 px-3 py-2.5 text-center"
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-wide text-warm-500">
+                    {item.label}
+                  </p>
+                  <p className="text-xl font-black text-charcoal-900">{item.value}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-warm-600">
+              <Eye size={16} className="text-orange-500" />
+              <span>
+                Toplam{' '}
+                <strong className="text-charcoal-900">
+                  {newsStats.totalViews.toLocaleString('tr-TR')}
+                </strong>{' '}
+                haber görüntülenmesi
+              </span>
+            </div>
+
+            <div className="grid gap-5 lg:grid-cols-2">
+              <div>
+                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-warm-500">
+                  En çok okunan
+                </p>
+                {newsStats.topPosts.length === 0 ? (
+                  <p className="text-sm text-warm-500">Henüz yayınlanmış haber yok</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {newsStats.topPosts.map((post, i) => (
+                      <li
+                        key={post.id}
+                        className="flex items-center gap-3 rounded-xl border border-warm-200/60 bg-cream-50 px-3 py-2"
+                      >
+                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-orange-100 text-xs font-black text-orange-700">
+                          {i + 1}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-bold text-charcoal-900">
+                            {post.title}
+                          </p>
+                          <p className="text-[11px] text-warm-500">
+                            {(post.view_count || 0).toLocaleString('tr-TR')} görüntülenme
+                          </p>
+                        </div>
+                        <Link
+                          to={`/haberler/${post.slug}`}
+                          target="_blank"
+                          className="shrink-0 text-xs font-bold text-orange-600 hover:underline"
+                        >
+                          Aç
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-xs font-bold uppercase tracking-wide text-warm-500">
+                    Son haber yorumları
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => onTabChange?.('news-engagement')}
+                    className="text-xs font-semibold text-orange-600 hover:text-orange-700"
+                  >
+                    Moderasyon →
+                  </button>
+                </div>
+                {newsStats.recentComments.length === 0 ? (
+                  <EmptyState icon={Smile} title="Henüz haber yorumu yok" hint="Yorumlar burada görünür" />
+                ) : (
+                  <div className="space-y-2">
+                    {newsStats.recentComments.map((c) => (
+                      <div
+                        key={c.id}
+                        className="rounded-xl border border-warm-200/60 bg-cream-50 p-3"
+                      >
+                        <div className="mb-1 flex items-start justify-between gap-2">
+                          <span className="text-sm font-bold text-charcoal-900">{c.name}</span>
+                          <span className="text-[11px] text-warm-500">{c.date}</span>
+                        </div>
+                        <p className="line-clamp-2 text-xs text-warm-600">{c.content}</p>
+                        <span className="mt-2 inline-block rounded-md bg-orange-100 px-1.5 py-0.5 text-[11px] font-semibold text-orange-700">
+                          {c.postTitle}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </SectionCard>
 
       {/* Top Oyunlar + Kategori Donut */}
       <div className="grid gap-5 lg:grid-cols-12">

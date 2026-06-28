@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Plus,
   Pencil,
@@ -12,13 +12,19 @@ import {
   Star,
   Upload,
   ImageIcon,
+  ExternalLink,
+  Copy,
+  Filter,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { supabase, uploadNewsImage, deleteGameImage } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 import { useConfirm } from '../ui';
 import { slugify } from '../../utils/slugify';
 import { calculateReadTimeMinutes, NEWS_CATEGORIES } from '../../utils/newsContent';
+import { analyzeNewsSeo } from '../../lib/newsAlgorithm';
 import NewsSeoPreview from './NewsSeoPreview';
+import NewsContentEditor from './NewsContentEditor';
 
 const EMPTY_FORM = {
   title: '',
@@ -51,6 +57,9 @@ function NewsManager() {
   const [slugManual, setSlugManual] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [coverPreview, setCoverPreview] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [featuredFilter, setFeaturedFilter] = useState('all');
 
   const loadData = async () => {
     try {
@@ -261,9 +270,9 @@ function NewsManager() {
   const handleDelete = async (post) => {
     const ok = await confirm({
       title: 'Haberi sil',
-      message: `"${post.title}" silinsin mi?`,
-      confirmLabel: 'Sil',
-      variant: 'danger',
+      description: `"${post.title}" silinsin mi?`,
+      confirmText: 'Sil',
+      type: 'danger',
     });
     if (!ok) return;
 
@@ -297,6 +306,67 @@ function NewsManager() {
       toast.error('Durum güncellenemedi');
     }
   };
+
+  const handleDuplicate = async (post) => {
+    const ok = await confirm({
+      title: 'Haberi kopyala',
+      description: `"${post.title}" taslağı olarak kopyalansın mı?`,
+      confirmText: 'Kopyala',
+    });
+    if (!ok) return;
+
+    try {
+      const baseSlug = `${post.slug}-kopya`;
+      let newSlug = baseSlug;
+      let n = 1;
+      while (posts.some((p) => p.slug === newSlug)) {
+        newSlug = `${baseSlug}-${n}`;
+        n += 1;
+      }
+
+      const readTime = calculateReadTimeMinutes(post.content || '');
+
+      const { error } = await supabase.from('news_posts').insert([
+        {
+          title: `${post.title} (Kopya)`,
+          slug: newSlug,
+          subtitle: post.subtitle,
+          excerpt: post.excerpt,
+          content: post.content,
+          cover_image: post.cover_image,
+          category: post.category,
+          tags: post.tags || [],
+          related_game_id: post.related_game_id,
+          author: post.author,
+          author_avatar: post.author_avatar,
+          seo_title: post.seo_title,
+          seo_description: post.seo_description,
+          read_time_minutes: readTime,
+          is_published: false,
+          is_featured: false,
+          published_at: null,
+          view_count: 0,
+        },
+      ]);
+
+      if (error) throw error;
+      toast.success('Haber kopyalandı (taslak)');
+      loadData();
+    } catch (err) {
+      console.error(err);
+      toast.error('Kopyalanamadı');
+    }
+  };
+
+  const filteredPosts = useMemo(() => {
+    return posts.filter((post) => {
+      if (statusFilter === 'published' && !post.is_published) return false;
+      if (statusFilter === 'draft' && post.is_published) return false;
+      if (categoryFilter !== 'all' && post.category !== categoryFilter) return false;
+      if (featuredFilter === 'featured' && !post.is_featured) return false;
+      return true;
+    });
+  }, [posts, statusFilter, categoryFilter, featuredFilter]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '—';
@@ -421,17 +491,11 @@ function NewsManager() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-xs font-bold text-warm-700">İçerik *</label>
-              <textarea
+              <NewsContentEditor
                 value={formData.content}
-                onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
-                rows={12}
-                className="w-full rounded-lg border border-warm-200 px-3 py-2 text-sm leading-relaxed"
-                placeholder="Paragraflar arasında boş satır. ## Başlık, ### Soru?, > alıntı, ![açıklama](url), **kalın**, [link](url)"
+                onChange={(content) => setFormData((prev) => ({ ...prev, content }))}
+                newsSlug={formData.slug || slugify(formData.title) || 'haber'}
               />
-              <p className="mt-1 text-xs text-warm-500">
-                Tahmini okuma süresi: {calculateReadTimeMinutes(formData.content)} dk
-              </p>
             </div>
 
             <div className="sm:col-span-2">
@@ -629,21 +693,80 @@ function NewsManager() {
           </p>
         </div>
       ) : (
+        <>
+          {!showForm && (
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <span className="inline-flex items-center gap-1.5 text-sm font-bold text-warm-600">
+                <Filter size={15} />
+                Filtre
+              </span>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
+              >
+                <option value="all">Tüm durumlar</option>
+                <option value="published">Yayında</option>
+                <option value="draft">Taslak</option>
+              </select>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
+              >
+                <option value="all">Tüm kategoriler</option>
+                {NEWS_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={featuredFilter}
+                onChange={(e) => setFeaturedFilter(e.target.value)}
+                className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
+              >
+                <option value="all">Tüm haberler</option>
+                <option value="featured">Sadece öne çıkan</option>
+              </select>
+              <span className="text-sm text-warm-500">
+                {filteredPosts.length} / {posts.length} haber
+              </span>
+            </div>
+          )}
+
         <div className="overflow-hidden rounded-2xl border border-warm-200 bg-white shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-[900px] text-left text-sm">
               <thead className="border-b border-warm-100 bg-cream-50 text-xs font-bold uppercase tracking-wide text-warm-500">
                 <tr>
                   <th className="px-4 py-3">Başlık</th>
                   <th className="px-4 py-3">Kategori</th>
                   <th className="px-4 py-3">Durum</th>
+                  <th className="px-4 py-3">SEO</th>
                   <th className="px-4 py-3">Görüntülenme</th>
                   <th className="px-4 py-3">Tarih</th>
                   <th className="px-4 py-3 text-right">İşlemler</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-warm-100">
-                {posts.map((post) => (
+                {filteredPosts.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-10 text-center text-warm-500">
+                      Filtreye uygun haber bulunamadı
+                    </td>
+                  </tr>
+                ) : (
+                filteredPosts.map((post) => {
+                  const seo = analyzeNewsSeo(post);
+                  const seoClass =
+                    seo.score >= 80
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : seo.score >= 60
+                        ? 'bg-amber-100 text-amber-700'
+                        : 'bg-red-100 text-red-700';
+
+                  return (
                   <tr key={post.id} className="hover:bg-cream-50/80">
                     <td className="px-4 py-3">
                       <div className="flex items-start gap-2">
@@ -678,6 +801,14 @@ function NewsManager() {
                         )}
                       </button>
                     </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-black ${seoClass}`}
+                        title={seo.issues.concat(seo.suggestions).join(' · ') || 'SEO iyi'}
+                      >
+                        {seo.score}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-warm-500">
                       {(post.view_count ?? 0).toLocaleString('tr-TR')}
                     </td>
@@ -686,6 +817,26 @@ function NewsManager() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
+                        {post.is_published && (
+                          <Link
+                            to={`/haberler/${post.slug}`}
+                            target="_blank"
+                            className="rounded-lg p-2 text-warm-500 hover:bg-blue-50 hover:text-blue-600"
+                            aria-label="Sitede gör"
+                            title="Sitede gör"
+                          >
+                            <ExternalLink size={16} />
+                          </Link>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDuplicate(post)}
+                          className="rounded-lg p-2 text-warm-500 hover:bg-cream-100 hover:text-warm-800"
+                          aria-label="Kopyala"
+                          title="Taslak olarak kopyala"
+                        >
+                          <Copy size={16} />
+                        </button>
                         <button
                           type="button"
                           onClick={() => handleEdit(post)}
@@ -705,11 +856,14 @@ function NewsManager() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })
+                )}
               </tbody>
             </table>
           </div>
         </div>
+        </>
       )}
     </div>
   );

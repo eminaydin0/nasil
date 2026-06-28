@@ -13,6 +13,9 @@ import ContactManager from '../../components/admin/ContactManager';
 import UserManager from '../../components/admin/UserManager';
 import CategoryManager from '../../components/admin/CategoryManager';
 import NewsManager from '../../components/admin/NewsManager';
+import NewsEngagementManager, {
+  fetchRecentNewsCommentCount,
+} from '../../components/admin/NewsEngagementManager';
 import AdminDashboardTab from '../../components/admin/tabs/AdminDashboardTab';
 import AdminAnalyticsTab from '../../components/admin/tabs/AdminAnalyticsTab';
 import { supabase } from '../../lib/supabase';
@@ -45,6 +48,7 @@ function AdminPanel() {
   });
   const [sortedGames, setSortedGames] = useState([]);
   const [unreadContactCount, setUnreadContactCount] = useState(0);
+  const [recentNewsCommentsCount, setRecentNewsCommentsCount] = useState(0);
 
   useEffect(() => {
     const adminData = localStorage.getItem('adminData') || sessionStorage.getItem('adminData');
@@ -55,22 +59,26 @@ function AdminPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Unread contact count for badge
+  // Unread contact + recent news comments for badges
   useEffect(() => {
     if (!isAuthenticated) return;
-    const loadUnread = async () => {
+    const loadBadges = async () => {
       try {
-        const { count } = await supabase
-          .from('contact_messages')
-          .select('id', { count: 'exact', head: true })
-          .eq('is_read', false);
-        setUnreadContactCount(count || 0);
+        const [contactRes, newsComments] = await Promise.all([
+          supabase
+            .from('contact_messages')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_read', false),
+          fetchRecentNewsCommentCount(7),
+        ]);
+        setUnreadContactCount(contactRes.count || 0);
+        setRecentNewsCommentsCount(newsComments);
       } catch (err) {
-        console.error('Unread count error:', err);
+        console.error('Badge count error:', err);
       }
     };
-    loadUnread();
-    const interval = setInterval(loadUnread, 60000);
+    loadBadges();
+    const interval = setInterval(loadBadges, 60000);
     return () => clearInterval(interval);
   }, [isAuthenticated, activeTab]);
 
@@ -420,14 +428,17 @@ function AdminPanel() {
           onClose={() => setSidebarOpen(false)}
           onLogout={handleLogout}
           gameCount={games.length}
-          badges={{ contact: unreadContactCount }}
+          badges={{
+            contact: unreadContactCount,
+            'news-engagement': recentNewsCommentsCount,
+          }}
         />
 
         <div className="flex min-w-0 flex-1 flex-col">
           <AdminTopbar
             activeTab={activeTab}
             onMenuClick={() => setSidebarOpen(true)}
-            unreadCount={unreadContactCount}
+            unreadCount={unreadContactCount + recentNewsCommentsCount}
           />
 
           <main className="flex-1 px-4 py-6 md:px-8 md:py-8">
@@ -474,6 +485,7 @@ function AdminPanel() {
               {activeTab === 'gameoftheday' && <GameOfTheDayManager />}
               {activeTab === 'categories' && <CategoryManager />}
               {activeTab === 'news' && <NewsManager />}
+              {activeTab === 'news-engagement' && <NewsEngagementManager />}
               {activeTab === 'content' && <ContentManager />}
               {activeTab === 'contact' && <ContactManager />}
               {activeTab === 'users' && <UserManager />}
