@@ -278,6 +278,200 @@ h1, h2, h3, h4, h5, h6 {
   height: 5px;
 }
 
+/* Halı saha — mobil kaydırma şeritleri */
+.halisaha-tactic-scroll,
+.halisaha-roster-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+}
+
+.halisaha-tactic-scroll::-webkit-scrollbar,
+.halisaha-roster-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Halı saha — stadyum stüdyo kabuğu */
+.halisaha-studio {
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(16, 185, 129, 0.14), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(249, 115, 22, 0.07), transparent 50%),
+    radial-gradient(ellipse 50% 35% at 0% 80%, rgba(6, 182, 212, 0.06), transparent 45%),
+    linear-gradient(180deg, #0c0f0e 0%, #0a1410 42%, #071209 100%);
+}
+
+.halisaha-studio::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.halisaha-glass {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 8px 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(16px);
+}
+
+.halisaha-toolbar {
+  background: rgba(8, 12, 10, 0.82);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(20px);
+}
+
+.halisaha-team-switch {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.halisaha-team-tab {
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.halisaha-team-tab--active {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 4px 14px rgba(0, 0, 0, 0.28);
+}
+
+.halisaha-pill {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.2s ease;
+}
+
+.halisaha-pill--active {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border-color: rgba(251, 191, 36, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(251, 191, 36, 0.15),
+    0 4px 16px rgba(249, 115, 22, 0.35);
+}
+
+.halisaha-pitch-frame {
+  position: relative;
+  padding: 0.5rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 24px 48px rgba(0, 0, 0, 0.45),
+    0 0 80px rgba(16, 185, 129, 0.08);
+}
+
+.halisaha-pitch-frame::before,
+.halisaha-pitch-frame::after {
+  content: '';
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-color: rgba(251, 191, 36, 0.35);
+  pointer-events: none;
+}
+
+.halisaha-pitch-frame::before {
+  top: 0.35rem;
+  left: 0.35rem;
+  border-top: 2px solid;
+  border-left: 2px solid;
+  border-radius: 0.35rem 0 0 0;
+}
+
+.halisaha-pitch-frame::after {
+  bottom: 0.35rem;
+  right: 0.35rem;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  border-radius: 0 0 0.35rem 0;
+}
+
+.halisaha-pitch-inner {
+  overflow: hidden;
+  border-radius: 0.875rem;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.25);
+}
+
+.halisaha-player-token {
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.95),
+    0 4px 12px rgba(0, 0, 0, 0.45),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.18),
+    inset 0 2px 4px rgba(255, 255, 255, 0.22);
+}
+
+.halisaha-player-token--drag {
+  box-shadow:
+    0 0 0 2px #fdba74,
+    0 0 20px rgba(249, 115, 22, 0.55),
+    0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.halisaha-name-tag {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.halisaha-roster-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.halisaha-roster-chip--captain {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.22) 0%, rgba(234, 88, 12, 0.12) 100%);
+  border-color: rgba(251, 191, 36, 0.45);
+  box-shadow: 0 0 16px rgba(249, 115, 22, 0.2);
+}
+
+.halisaha-dock {
+  background: rgba(8, 12, 10, 0.88);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(20px);
+}
+
+.halisaha-btn-primary {
+  background: linear-gradient(135deg, #fb923c 0%, #ea580c 55%, #dc2626 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 4px 16px rgba(234, 88, 12, 0.4);
+}
+
+.halisaha-btn-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.halisaha-settings-sheet {
+  border-top: 1px solid rgba(249, 115, 22, 0.15);
+  background: linear-gradient(180deg, #fffbf7 0%, #ffffff 100%);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.halisaha-meta-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  padding: 0.25rem 0.625rem;
+}
+
 /* Halı saha — hafif 3D perspektif (mobilde düz) */
 .pitch-perspective {
   perspective: 900px;
