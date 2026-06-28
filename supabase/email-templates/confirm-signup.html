@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>E-postanı doğrula</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f5f5f4;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f5f5f4;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:520px;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e7e5e4;box-shadow:0 4px 24px rgba(28,25,23,0.06);">
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#f97316 0%,#ea580c 55%,#dc2626 100%);padding:28px 32px;text-align:center;">
+              <p style="margin:0 0 6px;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.02em;">Kuralı Ne?</p>
+              <p style="margin:0;font-size:12px;font-weight:600;color:rgba(255,255,255,0.88);letter-spacing:0.12em;text-transform:uppercase;">Geleneksel Türk Oyunları</p>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px 32px 24px;">
+              <h1 style="margin:0 0 12px;font-size:22px;font-weight:800;color:#1c1917;line-height:1.25;letter-spacing:-0.02em;">E-postanı doğrula</h1>
+              <p style="margin:0 0 20px;font-size:15px;line-height:1.65;color:#57534e;">
+                {{ if .Data.full_name }}Merhaba <strong style="color:#1c1917;">{{ .Data.full_name }}</strong>,{{ else }}Merhaba,{{ end }}
+                <br /><br />
+                <strong style="color:#1c1917;">Kuralı Ne?</strong> hesabını oluşturduğun için teşekkürler. Hesabını aktifleştirmek için aşağıdaki butona tıkla.
+              </p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td align="center" style="padding:8px 0 24px;">
+                    <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#f97316 0%,#ea580c 100%);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:12px;box-shadow:0 4px 14px rgba(234,88,12,0.35);">
+                      E-postamı doğrula
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0 0 8px;font-size:13px;line-height:1.6;color:#78716c;">
+                Buton çalışmıyorsa bu bağlantıyı tarayıcına yapıştır:
+              </p>
+              <p style="margin:0 0 20px;font-size:12px;line-height:1.5;word-break:break-all;">
+                <a href="{{ .ConfirmationURL }}" style="color:#ea580c;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+              </p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#fff7ed;border-radius:10px;border:1px solid #fed7aa;">
+                <tr>
+                  <td style="padding:14px 16px;">
+                    <p style="margin:0;font-size:12px;line-height:1.55;color:#9a3412;">
+                      <strong>Güvenlik:</strong> Bu bağlantı tek kullanımlıktır. Kayıt olmadıysan bu e-postayı yok sayabilirsin.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 32px 28px;border-top:1px solid #f5f5f4;background-color:#fafaf9;">
+              <p style="margin:0 0 6px;font-size:12px;color:#78716c;text-align:center;">
+                Bu e-posta <strong style="color:#57534e;">{{ .Email }}</strong> adresine gönderildi.
+              </p>
+              <p style="margin:0;font-size:11px;color:#a8a29e;text-align:center;line-height:1.5;">
+                © Kuralı Ne? · <a href="https://kuraline.xyz" style="color:#ea580c;text-decoration:none;">kuraline.xyz</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

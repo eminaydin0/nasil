@@ -57,32 +57,43 @@ function StatsSection() {
   const { stats: counts } = useSiteStats();
 
   return (
-    <section className="py-12 md:py-16">
-      <div className="container mx-auto px-4">
-        <div className="bg-white rounded-3xl border border-warm-200/70 shadow-soft-lg overflow-hidden relative">
-          {/* Yumuşak iç vinyetleme */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(249,115,22,0.04),transparent_60%)] pointer-events-none" />
+    <section className="py-8 md:py-16">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="relative overflow-hidden rounded-2xl border border-warm-200/70 bg-white shadow-soft-lg sm:rounded-3xl">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(249,115,22,0.04),transparent_60%)]" />
 
           <div className="relative grid grid-cols-2 divide-x divide-y divide-warm-100 md:grid-cols-4 md:divide-y-0">
             {stats.map((stat) => {
               const Icon = stat.icon;
               const count = counts[stat.id];
               return (
-                <div key={stat.id} className="group flex flex-col items-start gap-3 p-4 transition-colors duration-300 hover:bg-cream-100/40 sm:flex-row sm:items-center sm:gap-4 sm:p-6 md:gap-5 md:p-8">
-                  {/* İkon - dairesel sıcak zemin */}
-                  <div className={`relative inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${stat.bg} shadow-soft transition-transform duration-500 ease-spring group-hover:-rotate-3 group-hover:scale-105 sm:h-14 sm:w-14`}>
-                    <Icon className="h-5 w-5 text-warm-800 sm:w-6 sm:h-6" aria-hidden="true" />
-                    <span className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${stat.accent} opacity-0 transition-opacity duration-500 group-hover:opacity-15`} />
+                <div
+                  key={stat.id}
+                  className="group flex flex-col items-center gap-2 p-3.5 text-center transition-colors duration-300 hover:bg-cream-100/40 sm:flex-row sm:items-center sm:gap-4 sm:p-6 sm:text-left md:gap-5 md:p-8"
+                >
+                  <div
+                    className={`relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${stat.bg} shadow-soft transition-transform duration-500 ease-spring group-hover:-rotate-3 group-hover:scale-105 sm:h-14 sm:w-14 sm:rounded-2xl`}
+                  >
+                    <Icon className="h-5 w-5 text-warm-800 sm:h-6 sm:w-6" aria-hidden="true" />
+                    <span
+                      className={`absolute inset-0 rounded-xl bg-gradient-to-br sm:rounded-2xl ${stat.accent} opacity-0 transition-opacity duration-500 group-hover:opacity-15`}
+                    />
                   </div>
 
                   <div className="min-w-0">
-                    <div className="flex items-baseline gap-1 leading-none">
-                      <span className="text-3xl font-extrabold tabular-nums tracking-tight text-warm-900 sm:text-4xl md:text-5xl">
+                    <div className="flex items-baseline justify-center gap-0.5 leading-none sm:justify-start">
+                      <span className="text-2xl font-extrabold tabular-nums tracking-tight text-warm-900 sm:text-4xl md:text-5xl">
                         <Counter target={count} />
                       </span>
-                      <span className={`bg-gradient-to-r text-xl font-extrabold ${stat.accent} bg-clip-text text-transparent sm:text-2xl md:text-3xl`}>+</span>
+                      <span
+                        className={`bg-gradient-to-r text-lg font-extrabold sm:text-2xl md:text-3xl ${stat.accent} bg-clip-text text-transparent`}
+                      >
+                        +
+                      </span>
                     </div>
-                    <p className="mt-1.5 truncate text-xs font-medium text-warm-500 sm:mt-2 sm:text-sm">{stat.label}</p>
+                    <p className="mt-1 truncate text-[11px] font-medium text-warm-500 sm:mt-2 sm:text-sm">
+                      {stat.label}
+                    </p>
                   </div>
                 </div>
               );

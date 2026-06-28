@@ -253,11 +253,50 @@ h1, h2, h3, h4, h5, h6 {
 .stagger-3 { animation-delay: 0.3s; animation-fill-mode: backwards; }
 .stagger-4 { animation-delay: 0.4s; animation-fill-mode: backwards; }
 
-/* Mobil güvenli alan (çentikli ekranlar) */
+/* Mobil güvenli alan (çentik / ana ekrana ekle / standalone PWA) */
+:root {
+  --header-bar-height: 4.25rem;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --app-header-offset: calc(var(--header-bar-height) + var(--safe-top));
+}
+
 @supports (padding: max(0px)) {
-  .safe-area-bottom {
-    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  :root {
+    --safe-top: max(0px, env(safe-area-inset-top));
+    --safe-bottom: max(0px, env(safe-area-inset-bottom));
+    --safe-left: max(0px, env(safe-area-inset-left));
+    --safe-right: max(0px, env(safe-area-inset-right));
   }
+
+  .safe-area-top {
+    padding-top: var(--safe-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: max(0.75rem, var(--safe-bottom));
+  }
+
+  .safe-area-x {
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
+  }
+}
+
+/* Fallback when max() unsupported */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-area-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+.safe-area-x {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 /* Yatay kaydırılabilir filtre/tab şeritleri */
@@ -470,6 +509,28 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 9999px;
   padding: 0.25rem 0.625rem;
+}
+
+/* Ana sayfa — mobil yatay kaydırma */
+.home-scroll-row {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+
+.home-scroll-row::-webkit-scrollbar {
+  display: none;
+}
+
+.home-scroll-item {
+  scroll-snap-align: start;
+}
+
+.home-quick-pill {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  box-shadow: 0 2px 12px rgba(28, 25, 23, 0.06);
+  backdrop-filter: blur(8px);
 }
 
 /* Halı saha — hafif 3D perspektif (mobilde düz) */

@@ -75,14 +75,16 @@ const COLOR_THEMES = {
   },
 };
 
-function CategoryCard({ category, count, icon: IconComponent, color = 'orange' }) {
+function CategoryCard({ category, count, icon: IconComponent, color = 'orange', compact = false }) {
   const theme = COLOR_THEMES[color] || COLOR_THEMES.orange;
   const categoryUrl = encodeURIComponent(category);
 
   return (
     <Link to={`/kategori/${categoryUrl}`} className="group block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 rounded-2xl">
       <div
-        className={`relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br ${theme.bg} border ${theme.border} transition-all duration-500 ease-spring shadow-soft hover:shadow-soft-lg ${theme.glow} hover:-translate-y-0.5`}
+        className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${theme.bg} border ${theme.border} transition-all duration-500 ease-spring shadow-soft hover:shadow-soft-lg ${theme.glow} hover:-translate-y-0.5 ${
+          compact ? 'aspect-[4/5] sm:aspect-[4/3]' : 'aspect-[4/3]'
+        }`}
       >
         {/* Glyph dekorasyon - büyük yarı saydam ikon (karakter) */}
         <div className="absolute -bottom-6 -right-6 opacity-10 group-hover:opacity-20 transition-opacity duration-500 ease-spring">
@@ -99,22 +101,20 @@ function CategoryCard({ category, count, icon: IconComponent, color = 'orange' }
         <div className={`absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br ${theme.accent} opacity-10 rounded-full blur-2xl group-hover:opacity-25 transition-opacity duration-500`} />
 
         {/* İçerik */}
-        <div className="absolute inset-0 z-10 p-5 flex flex-col justify-between">
-          {/* İkon kapsülü */}
+        <div className="absolute inset-0 z-10 flex flex-col justify-between p-3.5 sm:p-5">
           <div className="self-start">
-            <div className={`inline-flex items-center justify-center w-11 h-11 ${theme.iconBg} backdrop-blur-sm rounded-xl shadow-soft transition-all duration-500 ease-spring group-hover:scale-105`}>
-              {IconComponent && <IconComponent size={20} className={theme.iconColor} aria-hidden="true" />}
+            <div className={`inline-flex h-9 w-9 items-center justify-center sm:h-11 sm:w-11 ${theme.iconBg} rounded-xl shadow-soft backdrop-blur-sm transition-all duration-500 ease-spring group-hover:scale-105`}>
+              {IconComponent && <IconComponent size={compact ? 18 : 20} className={theme.iconColor} aria-hidden="true" />}
             </div>
           </div>
 
-          {/* Başlık + sayı */}
           <div>
-            <h3 className={`text-lg md:text-xl font-extrabold text-warm-900 mb-1 leading-tight tracking-tight transition-colors duration-300 ${theme.text}`}>
+            <h3 className={`mb-0.5 text-base font-extrabold leading-tight tracking-tight text-warm-900 transition-colors duration-300 sm:mb-1 sm:text-lg md:text-xl ${theme.text}`}>
               {category}
             </h3>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-warm-600 font-medium">{count} oyun</span>
-              <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/70 backdrop-blur-sm shadow-soft opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-spring`}>
+              <span className="text-xs font-medium text-warm-600 sm:text-sm">{count} oyun</span>
+              <span className="inline-flex h-7 w-7 translate-x-0 items-center justify-center rounded-full bg-white/70 opacity-100 shadow-soft backdrop-blur-sm transition-all duration-300 ease-spring sm:h-8 sm:w-8 sm:opacity-0 sm:translate-x-3 group-hover:sm:opacity-100 group-hover:sm:translate-x-0">
                 <ArrowRight size={14} className={theme.iconColor} aria-hidden="true" />
               </span>
             </div>

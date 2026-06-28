@@ -61,7 +61,7 @@ export default function AddToHomeScreen() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-[9999] sm:left-auto sm:right-4 sm:max-w-sm animate-slideUp">
+    <div className="safe-area-x fixed bottom-[calc(5rem+var(--safe-bottom))] left-4 right-4 z-[9999] animate-slideUp sm:bottom-20 sm:left-auto sm:right-4 sm:max-w-sm">
       <div className="bg-white rounded-2xl shadow-xl border border-warm-200 overflow-hidden">
         <div className="p-4 pr-12 relative">
           <button

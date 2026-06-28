@@ -72,8 +72,8 @@ function HeroCarousel() {
 
   if (loading) {
     return (
-      <div className="h-[360px] w-full max-w-[1400px] mx-auto animate-pulse rounded-3xl bg-gradient-to-br from-cream-100 to-cream-200 sm:h-[440px] md:h-[560px] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      <div className="mx-auto h-[min(68vh,400px)] w-full max-w-[1400px] animate-pulse rounded-2xl bg-gradient-to-br from-cream-100 to-cream-200 px-3 sm:h-[440px] sm:rounded-3xl sm:px-4 md:h-[560px] flex items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
       </div>
     );
   }
@@ -81,31 +81,33 @@ function HeroCarousel() {
   // Statik fallback hero (slide yoksa)
   if (slides.length === 0) {
     return (
-      <div className="w-full max-w-[1400px] mx-auto px-4">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-charcoal-900 via-charcoal-800 to-warm-900 shadow-soft-xl">
+      <div className="mx-auto w-full max-w-[1400px] px-3 sm:px-4">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-charcoal-900 via-charcoal-800 to-warm-900 shadow-soft-xl sm:rounded-3xl">
           {/* Aura */}
           <div className="absolute -top-32 -right-32 w-[28rem] h-[28rem] bg-orange-500/25 rounded-full blur-[120px]" />
           <div className="absolute -bottom-32 -left-32 w-[24rem] h-[24rem] bg-red-500/15 rounded-full blur-[120px]" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[44rem] h-[44rem] bg-amber-500/5 rounded-full blur-[140px]" />
 
-          <div className="relative mx-auto max-w-3xl px-5 py-14 text-center sm:px-8 sm:py-20 md:px-16 md:py-28 lg:py-32">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full mb-6 border border-white/15">
+          <div className="relative mx-auto max-w-3xl px-5 py-12 text-center sm:px-8 sm:py-20 md:px-16 md:py-28 lg:py-32">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 backdrop-blur-md sm:mb-6 sm:px-4 sm:py-2">
               <Sparkles size={14} className="text-orange-300" />
-              <span className="text-cream-100 text-xs font-bold uppercase tracking-[0.2em]">Geleneksel oyunlar arşivi</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-cream-100 sm:text-xs sm:tracking-[0.2em]">
+                Geleneksel oyunlar arşivi
+              </span>
             </div>
 
-            <h1 className="mb-6 text-3xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-4xl md:text-6xl lg:text-7xl">
+            <h1 className="mb-5 text-[1.65rem] font-extrabold leading-[1.08] tracking-tight text-white sm:mb-6 sm:text-4xl md:text-6xl lg:text-7xl">
               Her oyunun{' '}
               <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
                 kuralı burada
               </span>
             </h1>
 
-            <p className="text-cream-100/80 text-lg md:text-xl mb-10 leading-relaxed max-w-xl mx-auto">
+            <p className="mx-auto mb-8 max-w-xl text-base leading-relaxed text-cream-100/80 sm:mb-10 md:text-xl">
               Okey, batak, pişti, mangala ve fazlası — kuralları, ipuçları ve püf noktalarıyla tek çatı altında.
             </p>
 
-            <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="flex flex-col items-stretch justify-center gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
               <Link
                 to="/oyunlar"
                 className="inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 px-6 py-3.5 text-base font-bold text-white shadow-warm-glow transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-600 hover:to-red-600 hover:shadow-warm-glow-lg sm:px-8 sm:py-4"
@@ -128,8 +130,8 @@ function HeroCarousel() {
   }
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-4">
-      <div className="relative h-[360px] overflow-hidden rounded-3xl bg-gradient-to-br from-charcoal-900 via-warm-900 to-charcoal-950 shadow-soft-xl group sm:h-[440px] md:h-[560px]">
+    <div className="mx-auto w-full max-w-[1400px] px-3 sm:px-4">
+      <div className="group relative h-[min(68vh,420px)] overflow-hidden rounded-2xl bg-gradient-to-br from-charcoal-900 via-warm-900 to-charcoal-950 shadow-soft-xl sm:h-[440px] sm:rounded-3xl md:h-[560px]">
         {/* Slides */}
         {slides.map((slide, index) => (
           <div
@@ -161,43 +163,43 @@ function HeroCarousel() {
             <div className="absolute -bottom-16 -left-16 w-72 h-72 bg-amber-500/10 rounded-full blur-[100px]" />
 
             {/* Content */}
-            <div className="absolute inset-0 flex items-end p-5 sm:p-7 md:p-12 lg:p-16">
+            <div className="absolute inset-0 flex items-end p-4 pb-12 sm:p-7 sm:pb-7 md:p-12 lg:p-16">
               <div
                 className={`max-w-2xl transition-all duration-700 delay-200 ease-spring ${
-                  index === currentIndex ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                  index === currentIndex ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                 }`}
               >
                 {slide.badge && (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-5 shadow-warm-glow">
-                    <Sparkles size={14} className="text-white" />
-                    <span className="text-white font-bold text-[11px] uppercase tracking-[0.2em]">
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-3 py-1.5 shadow-warm-glow sm:mb-5 sm:px-4 sm:py-2">
+                    <Sparkles size={13} className="text-white sm:w-3.5 sm:h-3.5" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-white sm:text-[11px] sm:tracking-[0.2em]">
                       {slide.badge}
                     </span>
                   </div>
                 )}
 
-                <h2 className="mb-3 text-2xl font-extrabold leading-[1.08] tracking-tight text-white sm:mb-4 sm:text-3xl md:mb-5 md:text-5xl lg:text-6xl">
+                <h2 className="mb-2 text-xl font-extrabold leading-[1.08] tracking-tight text-white sm:mb-4 sm:text-3xl md:mb-5 md:text-5xl lg:text-6xl">
                   {slide.title}
                 </h2>
 
-                <p className="text-cream-100/85 text-base md:text-lg lg:text-xl mb-7 md:mb-8 leading-relaxed max-w-xl">
+                <p className="mb-5 line-clamp-2 max-w-xl text-sm leading-relaxed text-cream-100/85 sm:mb-7 sm:line-clamp-none sm:text-base md:mb-8 md:text-lg lg:text-xl">
                   {slide.description}
                 </p>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                   <SlideCtaButton
                     href={slide.button_link}
-                    className="inline-flex items-center gap-3 px-7 py-3.5 md:px-8 md:py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold text-base hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-warm-glow hover:shadow-warm-glow-lg hover:-translate-y-0.5"
+                    className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 px-5 py-3 text-sm font-bold text-white shadow-warm-glow transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-600 hover:to-red-600 hover:shadow-warm-glow-lg sm:px-7 sm:py-3.5 sm:text-base md:px-8 md:py-4"
                   >
-                    <Play size={18} fill="currentColor" />
+                    <Play size={16} fill="currentColor" className="sm:w-[18px] sm:h-[18px]" />
                     <span>{slide.button_text || 'Keşfet'}</span>
                   </SlideCtaButton>
 
                   <Link
                     to="/oyunlar"
-                    className="inline-flex items-center gap-2 px-6 py-3.5 md:py-4 bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/20 text-white rounded-2xl font-semibold transition-all duration-300"
+                    className="hidden items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/15 sm:inline-flex sm:px-6 sm:py-3.5 sm:text-base md:py-4"
                   >
-                    <TrendingUp size={18} />
+                    <TrendingUp size={16} className="sm:w-[18px] sm:h-[18px]" />
                     <span>Tüm Popülerler</span>
                   </Link>
                 </div>
@@ -207,7 +209,7 @@ function HeroCarousel() {
         ))}
 
         {/* Navigation Dots */}
-        <div className="absolute bottom-7 right-7 md:right-12 z-20 flex gap-2">
+        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2 sm:bottom-7 sm:left-auto sm:translate-x-0 sm:right-7 md:right-12">
           {slides.map((_, index) => (
             <button
               key={index}

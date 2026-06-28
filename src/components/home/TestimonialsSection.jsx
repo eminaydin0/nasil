@@ -66,9 +66,14 @@ export default function TestimonialsSection() {
       />
 
       {testimonials.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:items-stretch">
+        <div className="home-scroll-row -mx-3 flex gap-3.5 overflow-x-auto px-3 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 md:items-stretch">
           {testimonials.map((t, index) => (
-            <TestimonialCard key={index} {...t} />
+            <div
+              key={index}
+              className="home-scroll-item w-[min(85vw,320px)] shrink-0 sm:w-auto sm:shrink"
+            >
+              <TestimonialCard {...t} />
+            </div>
           ))}
         </div>
       ) : (

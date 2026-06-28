@@ -221,7 +221,7 @@ function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-warm-200/80 bg-white/90 font-sans shadow-[0_1px_0_rgba(28,25,23,0.04),0_4px_24px_-4px_rgba(28,25,23,0.06)] backdrop-blur-lg">
+    <header className="safe-area-top safe-area-x sticky top-0 z-50 border-b border-warm-200/80 bg-white/90 font-sans shadow-[0_1px_0_rgba(28,25,23,0.04),0_4px_24px_-4px_rgba(28,25,23,0.06)] backdrop-blur-lg">
       <nav className="container mx-auto px-4" aria-label="Ana menü">
         <div className="flex h-[4.25rem] items-center justify-between gap-4">
           {/* Logo */}
@@ -383,11 +383,11 @@ function Header() {
         <>
           <button
             type="button"
-            className="fixed inset-0 z-40 bg-charcoal-900/20 backdrop-blur-[2px] md:hidden"
+            className="fixed inset-x-0 bottom-0 top-[var(--app-header-offset)] z-40 bg-charcoal-900/20 backdrop-blur-[2px] md:hidden"
             aria-label="Menüyü kapat"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="fixed inset-x-0 top-[4.25rem] z-50 max-h-[calc(100dvh-4.25rem)] overflow-y-auto border-b border-warm-200/80 bg-white px-4 py-4 shadow-soft-xl md:hidden">
+          <div className="safe-area-x fixed inset-x-0 top-[var(--app-header-offset)] z-50 max-h-[calc(100dvh-var(--app-header-offset))] overflow-y-auto border-b border-warm-200/80 bg-white px-4 py-4 shadow-soft-xl md:hidden">
             <div className="relative mb-4" ref={searchRef}>
               <Search
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-warm-400"

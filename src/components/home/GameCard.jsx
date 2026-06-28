@@ -69,33 +69,30 @@ function GameCard({ game, rating = 0, commentCount = 0, variant = 'default' }) {
         </div>
 
         {/* İçerik */}
-        <div className="p-5">
+        <div className="p-4 sm:p-5">
           {/* Meta */}
-          <div className="flex items-center gap-3 mb-2.5 text-warm-500">
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-              <Users size={14} className="text-warm-400" aria-hidden="true" />
+          <div className="mb-2 flex items-center gap-2.5 text-warm-500 sm:mb-2.5 sm:gap-3">
+            <span className="inline-flex items-center gap-1 text-[11px] font-medium sm:text-xs">
+              <Users size={13} className="text-warm-400 sm:w-3.5 sm:h-3.5" aria-hidden="true" />
               {game.players}
             </span>
             {commentCount > 0 && (
               <>
-                <span className="w-1 h-1 rounded-full bg-warm-300" aria-hidden="true" />
-                <span className="text-xs font-medium">{commentCount} yorum</span>
+                <span className="h-1 w-1 rounded-full bg-warm-300" aria-hidden="true" />
+                <span className="text-[11px] font-medium sm:text-xs">{commentCount} yorum</span>
               </>
             )}
           </div>
 
-          {/* Başlık */}
-          <h3 className="text-lg md:text-xl font-extrabold text-warm-900 mb-2 leading-snug tracking-tight line-clamp-1 group-hover:text-orange-600 transition-colors">
+          <h3 className="mb-1.5 line-clamp-1 text-base font-extrabold leading-snug tracking-tight text-warm-900 transition-colors group-hover:text-orange-600 sm:mb-2 sm:text-lg md:text-xl">
             {game.name}
           </h3>
 
-          {/* Açıklama */}
-          <p className="text-warm-500 text-sm leading-relaxed line-clamp-2 mb-4 min-h-[2.5rem]">
+          <p className="mb-3 line-clamp-2 min-h-[2.25rem] text-xs leading-relaxed text-warm-500 sm:mb-4 sm:min-h-[2.5rem] sm:text-sm">
             {game.shortDescription}
           </p>
 
-          {/* CTA */}
-          <div className="flex items-center justify-between pt-4 border-t border-warm-100">
+          <div className="flex items-center justify-between border-t border-warm-100 pt-3 sm:pt-4">
             <span className="text-sm font-bold text-orange-600 group-hover:text-orange-700 transition-colors">
               Kuralı Ne?
             </span>

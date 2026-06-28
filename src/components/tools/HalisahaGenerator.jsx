@@ -362,7 +362,7 @@ export default function HalisahaGenerator() {
         {/* Saha — mobilde önce */}
         <div className="halisaha-studio relative order-1 flex min-w-0 flex-1 flex-col lg:order-2 lg:min-h-[540px]">
           {/* Mobil üst bar */}
-          <div className="halisaha-toolbar relative z-20 sticky top-0">
+          <div className="halisaha-toolbar relative z-20 sticky top-[var(--safe-top)]">
             <div className="flex items-center gap-2 px-3 py-2.5 sm:px-4">
               <div className="halisaha-team-switch flex min-w-0 flex-1 rounded-2xl p-1">
                 {teams.map((team, idx) => (

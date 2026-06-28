@@ -53,24 +53,23 @@ export default function AboutSection() {
 
   return (
     <section id="hakkinda" className="relative">
-      <div className="bg-gradient-to-br from-cream-100 via-white to-orange-50 rounded-3xl p-8 md:p-12 lg:p-16 border border-orange-200/40 relative overflow-hidden shadow-soft">
+      <div className="relative overflow-hidden rounded-2xl border border-orange-200/40 bg-gradient-to-br from-cream-100 via-white to-orange-50 p-5 shadow-soft sm:rounded-3xl sm:p-8 md:p-12 lg:p-16">
         {/* Dekoratif şekiller */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-orange-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-200/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-        <div className="relative z-10 grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Sol - İçerik */}
+        <div className="relative z-10 grid items-center gap-8 sm:gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/85 backdrop-blur-sm border border-orange-200/70 text-orange-700 rounded-full text-sm font-semibold mb-6 shadow-soft">
-              <Award size={16} />
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-200/70 bg-white/85 px-3.5 py-1.5 text-xs font-semibold text-orange-700 shadow-soft backdrop-blur-sm sm:mb-6 sm:px-4 sm:py-2 sm:text-sm">
+              <Award size={15} className="sm:w-4 sm:h-4" />
               {culturalContent.title}
             </div>
 
-            <h2 className="text-3xl md:text-4xl lg:text-[2.5rem] font-extrabold text-warm-900 mb-6 leading-[1.1] tracking-tight">
+            <h2 className="mb-4 text-2xl font-extrabold leading-[1.1] tracking-tight text-warm-900 sm:mb-6 sm:text-3xl md:text-4xl lg:text-[2.5rem]">
               {culturalContent.subtitle}
             </h2>
 
-            <div className="space-y-4 text-warm-600 text-base md:text-lg leading-relaxed">
+            <div className="space-y-3 text-sm leading-relaxed text-warm-600 sm:space-y-4 sm:text-base md:text-lg">
               {culturalContent.content.split('\n').map(
                 (paragraph, index) => paragraph.trim() && <p key={index}>{paragraph}</p>
               )}
@@ -103,7 +102,7 @@ export default function AboutSection() {
             </div>
 
             {/* Yüzen badge - gerçek istatistikten besleniyor */}
-            <div className="absolute -bottom-4 -left-4 md:-left-8 bg-white rounded-2xl p-4 shadow-soft-lg border border-warm-100">
+            <div className="absolute -bottom-3 left-3 rounded-xl border border-warm-100 bg-white p-3 shadow-soft-lg sm:-bottom-4 sm:-left-4 sm:rounded-2xl sm:p-4 md:-left-8">
               <div className="flex items-center gap-3">
                 <div className="inline-flex items-center justify-center w-11 h-11 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-warm-glow">
                   <Users size={20} className="text-white" />

@@ -9,6 +9,15 @@ if (hasAnalyticsConsent()) {
   initAnalytics();
 }
 
+const isPwaStandalone =
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone === true ||
+  document.referrer.includes('android-app://');
+
+if (isPwaStandalone) {
+  document.documentElement.classList.add('pwa-standalone');
+}
+
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

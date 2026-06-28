@@ -46,9 +46,9 @@ function App() {
             position="top-right"
             gutter={10}
             containerStyle={{
-              top: 72,
-              right: 12,
-              left: 12,
+              top: 'calc(var(--app-header-offset) + 0.5rem)',
+              right: 'calc(0.75rem + var(--safe-right))',
+              left: 'calc(0.75rem + var(--safe-left))',
             }}
             toastOptions={{
               duration: 3000,

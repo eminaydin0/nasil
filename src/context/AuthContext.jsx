@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { getAuthRedirectUrl } from '../lib/siteUrl';
 
 const AuthContext = createContext({});
 
@@ -30,8 +31,9 @@ export const AuthProvider = ({ children }) => {
       email,
       password,
       options: {
-        data: metadata
-      }
+        data: metadata,
+        emailRedirectTo: getAuthRedirectUrl('/auth'),
+      },
     });
   };
 
@@ -46,6 +48,9 @@ export const AuthProvider = ({ children }) => {
     return await supabase.auth.resend({
       type: 'signup',
       email,
+      options: {
+        emailRedirectTo: getAuthRedirectUrl('/auth'),
+      },
     });
   };
 

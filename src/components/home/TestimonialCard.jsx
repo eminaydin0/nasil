@@ -13,7 +13,7 @@ function TestimonialCard({ name, comment, rating = 5, gameName, avatarUrl }) {
     .slice(0, 2) || '?';
 
   return (
-    <article className="group relative flex flex-col h-full bg-white rounded-2xl p-6 md:p-7 border border-warm-200/70 shadow-soft hover:shadow-soft-lg transition-all duration-500 ease-spring hover:-translate-y-0.5">
+    <article className="group relative flex h-full flex-col rounded-2xl border border-warm-200/70 bg-white p-5 shadow-soft transition-all duration-500 ease-spring hover:-translate-y-0.5 hover:shadow-soft-lg sm:p-6 md:p-7">
       {/* Quote dekorasyon */}
       <Quote
         size={44}
