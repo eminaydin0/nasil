@@ -117,6 +117,29 @@ export const trackNewsView = (title, newsId, category) => {
   );
 };
 
+export const trackNewsReaction = (title, newsId, emoji) => {
+  trackToSupabase(
+    'news_reaction',
+    {
+      news_title: title,
+      emoji,
+      timestamp: new Date().toISOString(),
+    },
+    newsId
+  );
+};
+
+export const trackNewsComment = (title, newsId) => {
+  trackToSupabase(
+    'news_comment',
+    {
+      news_title: title,
+      timestamp: new Date().toISOString(),
+    },
+    newsId
+  );
+};
+
 export const trackGameView = (gameName, gameId) => {
   trackToSupabase('game_view', {
     game_name: gameName,

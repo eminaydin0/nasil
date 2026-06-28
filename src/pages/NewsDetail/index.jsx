@@ -12,6 +12,7 @@ import NewsContent from '../../components/news/NewsContent';
 import NewsShareBar from '../../components/news/NewsShareBar';
 import NewsSidebar from '../../components/news/NewsSidebar';
 import NewsReadingProgress from '../../components/news/NewsReadingProgress';
+import NewsEngagement from '../../components/news/NewsEngagement';
 import { buildNewsSeoMeta, buildNewsStructuredData } from '../../lib/seoEngine';
 import { getRelatedNewsPosts } from '../../lib/newsAlgorithm';
 import { formatNewsDate, NEWS_FALLBACK_IMAGE } from '../../utils/newsContent';
@@ -214,6 +215,8 @@ function NewsDetailPage() {
 
           <NewsSidebar content={post.content} trendingPosts={allPosts} currentSlug={slug} />
         </div>
+
+        <NewsEngagement post={post} />
 
         {relatedPosts.length > 0 && (
           <section className="news-article-related" aria-labelledby="related-news">
