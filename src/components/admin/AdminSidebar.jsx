@@ -16,6 +16,7 @@ import {
   X,
   ChevronRight,
   Smile,
+  Gift,
 } from 'lucide-react';
 
 const LOGO_URL = '/logo.svg';
@@ -35,6 +36,7 @@ const NAV_GROUPS = [
       { id: 'categories', label: 'Kategoriler', icon: FolderTree },
       { id: 'news', label: 'Haberler', icon: Newspaper },
       { id: 'news-engagement', label: 'Haber Yorumları', icon: Smile },
+      { id: 'free-games', label: 'Ücretsiz Oyunlar', icon: Gift },
       { id: 'comments', label: 'Oyun Yorumları', icon: MessageCircle },
       { id: 'carousel', label: 'Hero Carousel', icon: Images },
       { id: 'gameoftheday', label: 'Günün Oyunu', icon: Sparkles },

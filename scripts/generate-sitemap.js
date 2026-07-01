@@ -30,6 +30,7 @@ const STATIC_PAGES = [
   { url: '', changefreq: 'daily', priority: '1.0' },
   { url: '/oyunlar', changefreq: 'daily', priority: '0.9' },
   { url: '/haberler', changefreq: 'daily', priority: '0.85' },
+  { url: '/ucretsiz-oyunlar', changefreq: 'daily', priority: '0.88' },
   { url: '/araclar', changefreq: 'weekly', priority: '0.8' },
   { url: '/hakkimizda', changefreq: 'monthly', priority: '0.6' },
   { url: '/iletisim', changefreq: 'monthly', priority: '0.6' },

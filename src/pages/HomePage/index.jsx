@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Grid2X2, Sparkles, Compass, Wrench, Gamepad2 } from 'lucide-react';
+import { Flame, Grid2X2, Sparkles, Compass, Wrench, Gamepad2, Gift } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import { SectionHeader } from '../../components/ui';
 import GameCard from '../../components/home/GameCard';
@@ -11,6 +11,7 @@ import StatsSection from '../../components/home/StatsSection';
 import TestimonialsSection from '../../components/home/TestimonialsSection';
 import ToolsSection from '../../components/home/ToolsSection';
 import NewsSection from '../../components/home/NewsSection';
+import FreeGamesSection from '../../components/home/FreeGamesSection';
 import NewsletterSection from '../../components/home/NewsletterSection';
 import AboutSection from '../../components/home/AboutSection';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
@@ -28,6 +29,7 @@ import { buildHomeSeoMeta, buildHomeFaqs } from '../../lib/seoEngine';
 
 const MOBILE_QUICK_LINKS = [
   { to: '/oyunlar', label: 'Oyunlar', icon: Gamepad2 },
+  { to: '/ucretsiz-oyunlar', label: 'Bedava', icon: Gift },
   { to: '/araclar', label: 'Araçlar', icon: Wrench },
   { to: '/araclar/halisaha-takim-olusturucu', label: 'Halı Saha', icon: Compass },
 ];
@@ -175,6 +177,8 @@ function HomePage() {
         <section className="pb-8 md:pb-16" aria-labelledby="gotd-title">
           <GameOfTheDay games={games} />
         </section>
+
+        <FreeGamesSection limit={8} />
 
         <section
           className="border-t border-warm-200/60 py-8 md:py-16"

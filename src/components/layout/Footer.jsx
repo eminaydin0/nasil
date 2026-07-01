@@ -7,6 +7,7 @@ const exploreLinks = [
   { to: '/', label: 'Ana Sayfa' },
   { to: '/oyunlar', label: 'Oyunlar' },
   { to: '/haberler', label: 'Haberler' },
+  { to: '/ucretsiz-oyunlar', label: 'Bedava Oyunlar' },
   { to: '/araclar', label: 'Araçlar' },
   { to: '/hakkimizda', label: 'Hakkımızda' },
   { to: '/reklam-verin', label: 'Reklam Verin' },

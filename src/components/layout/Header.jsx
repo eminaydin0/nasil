@@ -27,6 +27,7 @@ const navItems = [
   { to: '/', label: 'Ana Sayfa', exact: true },
   { to: '/oyunlar', label: 'Oyunlar', exact: false },
   { to: '/haberler', label: 'Haberler', exact: false },
+  { to: '/ucretsiz-oyunlar', label: 'Bedava', exact: true, highlight: true },
   { to: '/araclar', label: 'Araçlar', exact: false },
   { to: '/hakkimizda', label: 'Hakkımızda', exact: true },
   { to: '/iletisim', label: 'İletişim', exact: true },
@@ -44,6 +45,9 @@ function useNavActive(pathname) {
     }
     if (to === '/haberler') {
       return pathname === '/haberler' || pathname.startsWith('/haberler/');
+    }
+    if (to === '/ucretsiz-oyunlar') {
+      return pathname === '/ucretsiz-oyunlar';
     }
     if (to === '/araclar') {
       return pathname === '/araclar' || pathname.startsWith('/araclar/');
@@ -206,21 +210,23 @@ function Header() {
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Kullanıcı';
   const avatarUrl = user?.user_metadata?.avatar_url;
 
-  const desktopNavClass = (to, exact) => {
+  const desktopNavClass = (to, exact, highlight) => {
     const active = isActive(to, exact);
     return [
       'relative px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap',
       active
         ? 'text-orange-700 bg-orange-50'
-        : 'text-warm-600 hover:text-warm-900 hover:bg-warm-50',
+        : highlight
+          ? 'text-orange-700 hover:text-orange-800 hover:bg-orange-50/80'
+          : 'text-warm-600 hover:text-warm-900 hover:bg-warm-50',
     ].join(' ');
   };
 
-  const mobileNavClass = (to, exact) => {
+  const mobileNavClass = (to, exact, highlight) => {
     const active = isActive(to, exact);
     return [
-      'block rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors',
-      active ? 'bg-orange-50 text-orange-700' : 'text-warm-700 hover:bg-cream-100',
+      'flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors',
+      active ? 'bg-orange-50 text-orange-700' : highlight ? 'text-orange-700 hover:bg-orange-50/60' : 'text-warm-700 hover:bg-cream-100',
     ].join(' ');
   };
 
@@ -252,9 +258,12 @@ function Header() {
           {/* Desktop nav — pill */}
           <div className="hidden flex-1 justify-center lg:flex">
             <div className="inline-flex items-center gap-0.5 rounded-xl border border-warm-200/70 bg-cream-50/80 p-1">
-              {navItems.map(({ to, label, exact }) => (
-                <Link key={to} to={to} className={desktopNavClass(to, exact)}>
+              {navItems.map(({ to, label, exact, highlight }) => (
+                <Link key={to} to={to} className={desktopNavClass(to, exact, highlight)}>
                   {label}
+                  {highlight && !isActive(to, exact) && (
+                    <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-orange-500 ring-2 ring-white" aria-hidden />
+                  )}
                 </Link>
               ))}
             </div>
@@ -422,14 +431,19 @@ function Header() {
             </div>
 
             <div className="space-y-0.5">
-              {navItems.map(({ to, label, exact }) => (
+              {navItems.map(({ to, label, exact, highlight }) => (
                 <Link
                   key={to}
                   to={to}
-                  className={mobileNavClass(to, exact)}
+                  className={mobileNavClass(to, exact, highlight)}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {label}
+                  <span>{label}</span>
+                  {highlight && (
+                    <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-orange-700">
+                      Yeni
+                    </span>
+                  )}
                 </Link>
               ))}
             </div>
