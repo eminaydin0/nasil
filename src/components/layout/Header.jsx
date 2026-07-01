@@ -9,7 +9,7 @@ import {
   Heart,
   ChevronDown,
 } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import NotificationBell from '../common/NotificationBell';
@@ -22,45 +22,14 @@ import {
   useConfirm,
 } from '../ui';
 import toast from 'react-hot-toast';
-
-const navItems = [
-  { to: '/', label: 'Ana Sayfa', exact: true },
-  { to: '/oyunlar', label: 'Oyunlar', exact: false },
-  { to: '/haberler', label: 'Haberler', exact: false },
-  { to: '/ucretsiz-oyunlar', label: 'Bedava', exact: true, highlight: true },
-  { to: '/araclar', label: 'Araçlar', exact: false },
-  { to: '/hakkimizda', label: 'Hakkımızda', exact: true },
-  { to: '/iletisim', label: 'İletişim', exact: true },
-];
-
-function useNavActive(pathname) {
-  return (to, exact) => {
-    if (exact) return pathname === to;
-    if (to === '/oyunlar') {
-      return (
-        pathname === '/oyunlar' ||
-        pathname.startsWith('/oyun/') ||
-        pathname.startsWith('/kategori/')
-      );
-    }
-    if (to === '/haberler') {
-      return pathname === '/haberler' || pathname.startsWith('/haberler/');
-    }
-    if (to === '/ucretsiz-oyunlar') {
-      return pathname === '/ucretsiz-oyunlar';
-    }
-    if (to === '/araclar') {
-      return pathname === '/araclar' || pathname.startsWith('/araclar/');
-    }
-    return pathname.startsWith(to);
-  };
-}
+import HeaderNavMenu from './HeaderNavMenu';
+import MobileNavMenu from './MobileNavMenu';
 
 function GameSearchDropdown({ games, searchTerm, searchResultsUrl, onNavigate }) {
   if (!searchTerm) return null;
 
   return (
-    <div className="absolute top-[calc(100%+6px)] z-50 w-full overflow-hidden rounded-xl border border-warm-200/80 bg-white p-1 shadow-soft-xl">
+    <div className="absolute top-[calc(100%+6px)] z-[120] w-full overflow-hidden rounded-xl border border-warm-200/80 bg-white p-1 shadow-soft-xl">
       {games.length > 0 ? (
         games.map((game) => (
           <Link
@@ -87,7 +56,7 @@ function GameSearchDropdown({ games, searchTerm, searchResultsUrl, onNavigate })
       {searchResultsUrl && (
         <Link
           to={searchResultsUrl}
-          className="mt-0.5 block border-t border-warm-100 px-3 py-2.5 text-center text-xs font-semibold text-orange-600 hover:bg-orange-50 rounded-b-lg"
+          className="mt-0.5 block rounded-b-lg border-t border-warm-100 px-3 py-2.5 text-center text-xs font-semibold text-orange-600 hover:bg-orange-50"
           onClick={onNavigate}
         >
           Tüm sonuçları gör
@@ -101,27 +70,65 @@ function Header() {
   const [searchTerm, setSearchTerm] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [menuTop, setMenuTop] = useState(68);
   const [games, setGames] = useState([]);
+  const headerRef = useRef(null);
   const searchRef = useRef(null);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
   const confirm = useConfirm();
-  const isActive = useNavActive(pathname);
+
+  const syncHeaderMetrics = useCallback(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    document.documentElement.style.setProperty('--app-header-offset', `${el.offsetHeight}px`);
+    if (mobileMenuOpen) {
+      setMenuTop(el.getBoundingClientRect().bottom);
+    }
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     loadGames();
   }, []);
+
+  useEffect(() => {
+    syncHeaderMetrics();
+    const el = headerRef.current;
+    if (!el) return undefined;
+
+    const ro = new ResizeObserver(syncHeaderMetrics);
+    ro.observe(el);
+    window.addEventListener('resize', syncHeaderMetrics);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', syncHeaderMetrics);
+    };
+  }, [syncHeaderMetrics]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return undefined;
+    const onScrollOrResize = () => {
+      if (headerRef.current) {
+        setMenuTop(headerRef.current.getBoundingClientRect().bottom);
+      }
+    };
+    onScrollOrResize();
+    window.addEventListener('scroll', onScrollOrResize, true);
+    window.addEventListener('resize', onScrollOrResize);
+    return () => {
+      window.removeEventListener('scroll', onScrollOrResize, true);
+      window.removeEventListener('resize', onScrollOrResize);
+    };
+  }, [mobileMenuOpen]);
 
   const loadGames = async () => {
     try {
       const { data, error } = await supabase
         .from('games')
         .select('id, slug, name, category, short_description, image');
-
       if (error) throw error;
-
       setGames(
         (data || []).map((game) => ({
           id: game.id,
@@ -153,13 +160,6 @@ function Header() {
     setSearchFocused(false);
     setSearchTerm('');
   }, [pathname]);
-
-  useEffect(() => {
-    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mobileMenuOpen]);
 
   const filteredGames = games
     .filter(
@@ -200,6 +200,7 @@ function Header() {
     try {
       await signOut();
       toast.success('Başarıyla çıkış yaptınız');
+      setMobileMenuOpen(false);
       navigate('/');
     } catch (err) {
       console.error('Sign out error:', err);
@@ -207,34 +208,23 @@ function Header() {
     }
   };
 
+  const openMobileMenu = () => {
+    if (headerRef.current) {
+      setMenuTop(headerRef.current.getBoundingClientRect().bottom);
+    }
+    setMobileMenuOpen(true);
+  };
+
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Kullanıcı';
   const avatarUrl = user?.user_metadata?.avatar_url;
 
-  const desktopNavClass = (to, exact, highlight) => {
-    const active = isActive(to, exact);
-    return [
-      'relative px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap',
-      active
-        ? 'text-orange-700 bg-orange-50'
-        : highlight
-          ? 'text-orange-700 hover:text-orange-800 hover:bg-orange-50/80'
-          : 'text-warm-600 hover:text-warm-900 hover:bg-warm-50',
-    ].join(' ');
-  };
-
-  const mobileNavClass = (to, exact, highlight) => {
-    const active = isActive(to, exact);
-    return [
-      'flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors',
-      active ? 'bg-orange-50 text-orange-700' : highlight ? 'text-orange-700 hover:bg-orange-50/60' : 'text-warm-700 hover:bg-cream-100',
-    ].join(' ');
-  };
-
   return (
-    <header className="safe-area-top safe-area-x sticky top-0 z-50 border-b border-warm-200/80 bg-white/90 font-sans shadow-[0_1px_0_rgba(28,25,23,0.04),0_4px_24px_-4px_rgba(28,25,23,0.06)] backdrop-blur-lg">
-      <nav className="container mx-auto px-4" aria-label="Ana menü">
-        <div className="flex h-[4.25rem] items-center justify-between gap-4">
-          {/* Logo */}
+    <>
+      <header
+        ref={headerRef}
+        className="safe-area-top safe-area-x sticky top-0 z-50 border-b border-warm-200/80 bg-white/92 font-sans shadow-[0_1px_0_rgba(28,25,23,0.04),0_4px_24px_-4px_rgba(28,25,23,0.06)] backdrop-blur-lg"
+      >
+        <div className="container mx-auto flex h-[4.25rem] items-center gap-3 px-3 sm:px-4">
           <Link
             to="/"
             className="group flex shrink-0 items-center gap-2.5"
@@ -255,23 +245,9 @@ function Header() {
             </span>
           </Link>
 
-          {/* Desktop nav — pill */}
-          <div className="hidden flex-1 justify-center lg:flex">
-            <div className="inline-flex items-center gap-0.5 rounded-xl border border-warm-200/70 bg-cream-50/80 p-1">
-              {navItems.map(({ to, label, exact, highlight }) => (
-                <Link key={to} to={to} className={desktopNavClass(to, exact, highlight)}>
-                  {label}
-                  {highlight && !isActive(to, exact) && (
-                    <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-orange-500 ring-2 ring-white" aria-hidden />
-                  )}
-                </Link>
-              ))}
-            </div>
-          </div>
+          <HeaderNavMenu pathname={pathname} />
 
-          {/* Actions */}
-          <div className="flex items-center gap-2">
-            {/* Search — desktop */}
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <div className="relative hidden md:block" ref={searchRef}>
               <Search
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-warm-400"
@@ -285,7 +261,7 @@ function Header() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onKeyDown={handleSearchKeyDown}
-                className="w-44 rounded-full border border-warm-200/80 bg-cream-50 py-2 pl-9 pr-3 text-sm text-warm-900 placeholder:text-warm-400 transition-all focus:w-52 focus:border-orange-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 xl:w-48 xl:focus:w-56"
+                className="w-40 rounded-full border border-warm-200/80 bg-cream-50 py-2 pl-9 pr-3 text-sm text-warm-900 placeholder:text-warm-400 transition-all focus:w-48 focus:border-orange-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 xl:w-44 xl:focus:w-52"
                 aria-label="Oyun ara"
               />
               {searchFocused && (
@@ -374,12 +350,11 @@ function Header() {
               )}
             </div>
 
-            {/* Mobile toggle */}
-            <div className="flex items-center gap-1 md:hidden">
+            <div className="flex items-center gap-1 lg:hidden">
               {user && <NotificationBell />}
               <button
                 type="button"
-                onClick={() => setMobileMenuOpen((o) => !o)}
+                onClick={() => (mobileMenuOpen ? setMobileMenuOpen(false) : openMobileMenu())}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-warm-200/80 bg-cream-50 text-warm-700 transition-colors hover:bg-white"
                 aria-label={mobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
                 aria-expanded={mobileMenuOpen}
@@ -389,121 +364,68 @@ function Header() {
             </div>
           </div>
         </div>
-      </nav>
+      </header>
 
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <>
-          <button
-            type="button"
-            className="fixed inset-x-0 bottom-0 top-[var(--app-header-offset)] z-40 bg-charcoal-900/20 backdrop-blur-[2px] md:hidden"
-            aria-label="Menüyü kapat"
-            onClick={() => setMobileMenuOpen(false)}
+      <MobileNavMenu
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        top={menuTop}
+        pathname={pathname}
+      >
+        <div className="relative border-b border-warm-100 px-4 py-3" ref={searchRef}>
+          <Search
+            className="pointer-events-none absolute left-7 top-1/2 -translate-y-1/2 text-warm-400"
+            size={16}
+            aria-hidden
           />
-          <div className="safe-area-x fixed inset-x-0 top-[var(--app-header-offset)] z-50 max-h-[calc(100dvh-var(--app-header-offset))] overflow-y-auto border-b border-warm-200/80 bg-white px-4 py-4 shadow-soft-xl md:hidden">
-            <div className="relative mb-4" ref={searchRef}>
-              <Search
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-warm-400"
-                size={16}
-                aria-hidden
-              />
-              <input
-                type="search"
-                placeholder="Oyun ara…"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onKeyDown={handleSearchKeyDown}
-                className="w-full rounded-xl border border-warm-200/80 bg-cream-50 py-2.5 pl-10 pr-3 text-sm text-warm-900 placeholder:text-warm-400 focus:border-orange-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100"
-                aria-label="Oyun ara"
-              />
-              {searchFocused && (
-                <GameSearchDropdown
-                  games={filteredGames}
-                  searchTerm={searchTerm}
-                  searchResultsUrl={searchResultsUrl}
-                  onNavigate={() => {
-                    clearSearch();
-                    setMobileMenuOpen(false);
-                  }}
-                />
-              )}
-            </div>
+          <input
+            type="search"
+            placeholder="Oyun ara…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            onKeyDown={handleSearchKeyDown}
+            className="w-full rounded-xl border border-warm-200/80 bg-cream-50 py-2.5 pl-10 pr-3 text-sm text-warm-900 placeholder:text-warm-400 focus:border-orange-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100"
+            aria-label="Oyun ara"
+          />
+          {searchFocused && (
+            <GameSearchDropdown
+              games={filteredGames}
+              searchTerm={searchTerm}
+              searchResultsUrl={searchResultsUrl}
+              onNavigate={() => {
+                clearSearch();
+                setMobileMenuOpen(false);
+              }}
+            />
+          )}
+        </div>
 
-            <div className="space-y-0.5">
-              {navItems.map(({ to, label, exact, highlight }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className={mobileNavClass(to, exact, highlight)}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <span>{label}</span>
-                  {highlight && (
-                    <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-orange-700">
-                      Yeni
-                    </span>
-                  )}
-                </Link>
-              ))}
-            </div>
-
-            <div className="mt-4 border-t border-warm-100 pt-4">
-              {user ? (
-                <div className="space-y-1">
-                  <Link
-                    to="/profil"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 rounded-xl bg-cream-50 px-3 py-3"
-                  >
-                    <Avatar src={avatarUrl} name={displayName} size="sm" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-bold text-warm-900">{displayName}</p>
-                      <p className="truncate text-xs text-warm-500">Profilim</p>
-                    </div>
-                  </Link>
-                  <Link
-                    to="/profil#favoriler"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-warm-700 hover:bg-cream-50"
-                  >
-                    <Heart size={16} className="text-orange-500" aria-hidden />
-                    Favorilerim
-                  </Link>
-                  <Link
-                    to="/profil#hesap"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-warm-700 hover:bg-cream-50"
-                  >
-                    <Settings size={16} className="text-warm-500" aria-hidden />
-                    Ayarlar
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50"
-                  >
-                    <LogOut size={16} aria-hidden />
-                    Çıkış Yap
-                  </button>
-                </div>
-              ) : (
-                <Link
-                  to="/auth"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block rounded-xl bg-orange-600 py-3 text-center text-sm font-semibold text-white hover:bg-orange-700"
-                >
-                  Giriş Yap / Kayıt Ol
-                </Link>
-              )}
-            </div>
-          </div>
-        </>
-      )}
-    </header>
+        <div className="border-b border-warm-100 px-4 py-3">
+          {user ? (
+            <Link
+              to="/profil"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 rounded-xl bg-cream-50 px-3 py-2.5"
+            >
+              <Avatar src={avatarUrl} name={displayName} size="sm" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-bold text-warm-900">{displayName}</p>
+                <p className="truncate text-xs text-warm-500">Profilim</p>
+              </div>
+            </Link>
+          ) : (
+            <Link
+              to="/auth"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block rounded-xl bg-orange-600 py-2.5 text-center text-sm font-semibold text-white"
+            >
+              Giriş Yap / Kayıt Ol
+            </Link>
+          )}
+        </div>
+      </MobileNavMenu>
+    </>
   );
 }
 
