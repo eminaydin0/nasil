@@ -1,11 +1,14 @@
 // Service Worker for PWA
 
-const CACHE_NAME = 'kuraline-v3';
+const CACHE_NAME = 'kuraline-v4';
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/logo.svg',
+  '/logo.png',
+  '/favicon.png',
+  '/icon-192.png',
+  '/icon-512.png',
 ];
 
 // Install event - cache static assets

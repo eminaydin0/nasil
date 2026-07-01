@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { adminLogin } from '../../utils/adminAuth';
 import toast from 'react-hot-toast';
 
-const LOGO_URL = '/logo.svg';
+const LOGO_URL = '/favicon.png';
 
 function AdminLogin({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -77,8 +77,8 @@ function AdminLogin({ onLogin }) {
 
           <div className="relative">
             <div className="flex items-center gap-3">
-              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 shadow-warm-glow">
-                <img src={LOGO_URL} alt="" className="h-7 w-7 brightness-0 invert" />
+              <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 shadow-warm-glow">
+                <img src={LOGO_URL} alt="" className="h-9 w-9 object-contain" />
               </span>
               <div className="leading-tight">
                 <div className="text-lg font-bold">Kuralı Ne?</div>
@@ -129,8 +129,8 @@ function AdminLogin({ onLogin }) {
           <div className="w-full max-w-md">
             {/* Mobil brand */}
             <div className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-warm-glow">
-                <img src={LOGO_URL} alt="" className="h-6 w-6 brightness-0 invert" />
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-warm-glow">
+                <img src={LOGO_URL} alt="" className="h-8 w-8 object-contain" />
               </span>
               <div className="text-left leading-tight">
                 <div className="text-base font-bold text-charcoal-900">Kuralı Ne?</div>

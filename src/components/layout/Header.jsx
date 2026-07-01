@@ -227,22 +227,19 @@ function Header() {
         <div className="container mx-auto flex h-[4.25rem] items-center gap-3 px-3 sm:px-4">
           <Link
             to="/"
-            className="group flex shrink-0 items-center gap-2.5"
+            className="group flex shrink-0 items-center"
             aria-label="Kuralı Ne? - Ana Sayfa"
           >
             <img
-              src="/logo.svg"
+              src="/logo.png"
               alt="Kuralı Ne?"
-              className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02] md:h-12"
+              className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02] sm:h-11 md:h-12"
               loading="eager"
               decoding="async"
               fetchPriority="high"
-              width="48"
-              height="48"
+              width="1200"
+              height="400"
             />
-            <span className="hidden text-sm font-extrabold tracking-tight text-warm-900 sm:block">
-              Kuralı Ne?
-            </span>
           </Link>
 
           <HeaderNavMenu pathname={pathname} />

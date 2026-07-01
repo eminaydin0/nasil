@@ -148,7 +148,7 @@ export const SCHEMA_TEMPLATES = {
     '@type': 'Organization',
     name: SITE_CONFIG.name,
     url: SITE_CONFIG.url,
-    logo: `${SITE_CONFIG.url}/logo.svg`,
+    logo: `${SITE_CONFIG.url}/logo.png`,
     description: DEFAULT_META.description,
     foundingDate: SITE_CONFIG.foundingDate,
     contactPoint: {
@@ -303,7 +303,7 @@ export function generateVideoSchema(game) {
       name: SITE_CONFIG.name,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_CONFIG.url}/logo.svg`,
+        url: `${SITE_CONFIG.url}/logo.png`,
       },
     },
   };
@@ -380,7 +380,7 @@ export function generateArticleSchema(game) {
       name: SITE_CONFIG.name,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_CONFIG.url}/logo.svg`,
+        url: `${SITE_CONFIG.url}/logo.png`,
       },
     },
     datePublished: game.createdAt,
@@ -423,7 +423,7 @@ export function generateNewsArticleSchema(post) {
       name: SITE_CONFIG.name,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_CONFIG.url}/logo.svg`,
+        url: `${SITE_CONFIG.url}/logo.png`,
       },
     },
     datePublished: published,

@@ -77,19 +77,16 @@ function Footer() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link to="/" className="inline-flex items-center gap-2.5" aria-label="Kuralı Ne? - Ana Sayfa">
+            <Link to="/" className="inline-flex items-center" aria-label="Kuralı Ne? - Ana Sayfa">
               <img
-                src="/logo.svg"
+                src="/logo.png"
                 alt="Kuralı Ne?"
-                className="h-12 w-auto object-contain"
+                className="h-11 w-auto object-contain sm:h-12"
                 loading="lazy"
                 decoding="async"
-                width="48"
-                height="48"
+                width="1200"
+                height="400"
               />
-              <span className="text-base font-extrabold tracking-tight text-warm-900">
-                Kuralı Ne?
-              </span>
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-warm-600">
               Geleneksel Türk oyunlarının kurallarını anlatan dijital rehberiniz. Kültürümüzün

@@ -19,7 +19,7 @@ import {
   Gift,
 } from 'lucide-react';
 
-const LOGO_URL = '/logo.svg';
+const LOGO_URL = '/favicon.png';
 
 const NAV_GROUPS = [
   {
@@ -83,8 +83,8 @@ function AdminSidebar({
         {/* Brand */}
         <div className="flex items-center justify-between gap-3 border-b border-warm-200/60 px-5 py-5">
           <Link to="/" className="group flex items-center gap-2.5" onClick={onClose}>
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-warm-glow transition-transform duration-300 group-hover:rotate-3">
-              <img src={LOGO_URL} alt="" className="h-6 w-6 brightness-0 invert" />
+            <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-warm-glow transition-transform duration-300 group-hover:rotate-3">
+              <img src={LOGO_URL} alt="" className="h-8 w-8 object-contain" />
             </span>
             <div className="leading-tight">
               <div className="text-[15px] font-bold text-charcoal-900">Kuralı Ne?</div>

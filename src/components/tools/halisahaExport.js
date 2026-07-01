@@ -26,7 +26,7 @@ function loadLogo() {
       resolve(img);
     };
     img.onerror = () => resolve(null);
-    img.src = '/logo.svg';
+    img.src = '/logo.png';
   });
 }
 
