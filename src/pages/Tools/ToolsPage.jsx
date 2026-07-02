@@ -8,6 +8,7 @@ import {
   SITE_TOOLS,
   TOOL_HIGHLIGHTS,
   groupToolsByCategory,
+  getFeaturedTool,
 } from '../../constants/tools';
 
 const colorMap = {
@@ -18,6 +19,8 @@ const colorMap = {
   emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', accent: 'from-emerald-500 to-teal-600' },
   sky: { bg: 'bg-sky-50', text: 'text-sky-600', accent: 'from-sky-500 to-blue-600' },
   indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600', accent: 'from-indigo-500 to-violet-600' },
+  violet: { bg: 'bg-violet-50', text: 'text-violet-600', accent: 'from-violet-500 to-purple-600' },
+  fuchsia: { bg: 'bg-fuchsia-50', text: 'text-fuchsia-600', accent: 'from-fuchsia-500 to-pink-600' },
 };
 
 const HIGHLIGHT_ICONS = [Zap, Gift, Smartphone, Clock];
@@ -65,6 +68,7 @@ export default function ToolsPage() {
   }, []);
 
   const grouped = groupToolsByCategory(SITE_TOOLS);
+  const featured = getFeaturedTool();
   const breadcrumbs = [{ name: 'Oyun Araçları', url: null }];
 
   return (
@@ -98,6 +102,30 @@ export default function ToolsPage() {
             </p>
           </div>
         </div>
+
+        {featured && (
+          <Link
+            to={featured.link}
+            className="tools-featured-card group mb-10 block overflow-hidden rounded-3xl border border-emerald-200/80 bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-6 text-white shadow-soft-xl transition-transform hover:-translate-y-0.5 sm:p-8"
+          >
+            <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wider">
+                  Öne çıkan araç
+                </span>
+                <h2 className="text-2xl font-black sm:text-3xl">{featured.title}</h2>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-emerald-50/90 sm:text-base">
+                  {featured.description}
+                </p>
+              </div>
+              <span className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-white px-5 py-3 text-sm font-bold text-emerald-700 transition-colors group-hover:bg-emerald-50 sm:self-center">
+                Hemen dene
+                <ArrowRight size={16} aria-hidden />
+              </span>
+            </div>
+            <div className="tools-featured-pitch" aria-hidden />
+          </Link>
+        )}
 
         {/* Öne çıkanlar */}
         <div className="mb-10 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:grid-cols-4">

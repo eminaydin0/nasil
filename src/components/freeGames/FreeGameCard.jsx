@@ -1,49 +1,92 @@
-import { ExternalLink, Gift } from 'lucide-react';
-import { formatGiveawayEndDate, formatWorth } from '../../lib/gamerPower';
+import { ExternalLink, Clock, Gift } from 'lucide-react';
+import {
+  formatGiveawayEndDate,
+  formatGiveawayCountdown,
+  formatWorth,
+  parseGiveawayPlatforms,
+} from '../../lib/gamerPower';
+
+function storeChipClass(name) {
+  const key = name.toLowerCase();
+  if (key.includes('steam')) return 'free-game-chip--steam';
+  if (key.includes('epic')) return 'free-game-chip--epic';
+  if (key.includes('gog')) return 'free-game-chip--gog';
+  if (key.includes('itch')) return 'free-game-chip--itch';
+  return 'free-game-chip--default';
+}
 
 function FreeGameCard({ game, compact = false }) {
   const worthLabel = formatWorth(game.worth);
   const endLabel = formatGiveawayEndDate(game.endDate);
+  const countdown = formatGiveawayCountdown(game.endDate);
+  const platforms = parseGiveawayPlatforms(game.platform);
+  const showWorth = worthLabel !== 'Ücretsiz';
 
   return (
     <article
-      className={`group flex h-full flex-col overflow-hidden rounded-2xl border border-warm-200/70 bg-white shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-200 hover:shadow-soft-md ${compact ? 'free-game-card-compact' : ''}`}
+      className={`free-game-card group ${compact ? 'free-game-card--compact' : ''}`}
     >
-      <div className="relative aspect-[16/10] overflow-hidden bg-warm-100">
+      <div className="free-game-card-media">
         {game.image ? (
           <img
             src={game.image}
             alt=""
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            decoding="async"
+            className="free-game-card-img"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-warm-400">
-            <Gift size={32} aria-hidden />
+          <div className="free-game-card-placeholder">
+            <Gift size={compact ? 28 : 36} aria-hidden />
           </div>
         )}
-        <span className="free-game-worth-badge">{worthLabel}</span>
+
+        <div className="free-game-card-media-overlay" aria-hidden />
+
+        <div className="free-game-card-badges">
+          <span className="free-game-badge free-game-badge--free">Ücretsiz</span>
+          {showWorth && (
+            <span className="free-game-badge free-game-badge--worth">{worthLabel}</span>
+          )}
+        </div>
       </div>
 
-      <div className={`flex flex-1 flex-col ${compact ? 'p-3' : 'p-4'}`}>
-        {game.platform && (
-          <span className="free-game-platform">{game.platform}</span>
-        )}
-        <h3
-          className={`mt-1.5 line-clamp-2 font-extrabold tracking-tight text-warm-900 ${compact ? 'text-sm' : 'text-base'}`}
-        >
-          {game.title}
-        </h3>
-        <p className="mt-1 text-xs text-warm-500">Bitiş: {endLabel}</p>
+      <div className="free-game-card-body">
+        <div className="free-game-card-chips">
+          {platforms.map((platform) => (
+            <span
+              key={platform}
+              className={`free-game-chip ${storeChipClass(platform)}`}
+            >
+              {platform}
+            </span>
+          ))}
+        </div>
+
+        <h3 className="free-game-card-title">{game.title}</h3>
+
+        <div className="free-game-card-meta">
+          <div className="free-game-card-date">
+            <Clock size={13} aria-hidden className="shrink-0 text-warm-400" />
+            <span className="min-w-0 truncate" title={endLabel}>
+              {endLabel}
+            </span>
+          </div>
+          <span
+            className={`free-game-countdown ${countdown.urgent ? 'free-game-countdown--urgent' : ''}`}
+          >
+            {countdown.label}
+          </span>
+        </div>
 
         <a
           href={game.url}
           target="_blank"
           rel="noopener noreferrer"
-          className={`mt-auto inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-orange-600 font-bold text-white transition hover:bg-orange-700 ${compact ? 'mt-3 px-3 py-2 text-xs' : 'mt-4 px-4 py-2.5 text-sm'}`}
+          className="free-game-card-cta"
         >
-          Oyunu Kap
-          <ExternalLink size={14} aria-hidden />
+          <span>Oyunu Kap</span>
+          <ExternalLink size={15} aria-hidden className="opacity-80" />
         </a>
       </div>
     </article>

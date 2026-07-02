@@ -165,7 +165,12 @@ function NewsDetailPage() {
       <div className="container mx-auto max-w-6xl px-4 pb-16">
         <div className="news-article-layout">
           <div className="news-article-share-col hidden lg:block">
-            <NewsShareBar title={post.title} url={`/haberler/${post.slug}`} layout="sticky" />
+            <NewsShareBar
+              title={post.title}
+              url={`/haberler/${post.slug}`}
+              description={lead}
+              layout="sticky"
+            />
           </div>
 
           <article className="news-article-sheet">
@@ -189,7 +194,12 @@ function NewsDetailPage() {
             )}
 
             <div className="news-article-share-mobile lg:hidden">
-              <NewsShareBar title={post.title} url={`/haberler/${post.slug}`} layout="inline" />
+              <NewsShareBar
+                title={post.title}
+                url={`/haberler/${post.slug}`}
+                description={lead}
+                layout="inline"
+              />
             </div>
 
             {post.relatedGame && (

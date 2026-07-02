@@ -138,6 +138,13 @@ async function runWithModelFallback(apiKey, runner) {
   throw lastErr;
 }
 
+function missingGeminiKeyMessage() {
+  if (process.env.VERCEL) {
+    return 'GEMINI_API_KEY Vercel\'de tanımlı değil. Project → Settings → Environment Variables → GEMINI_API_KEY ekleyip Production için Redeploy yapın.';
+  }
+  return 'GEMINI_API_KEY yapılandırılmamış. .env dosyasını kontrol edin ve dev server\'ı yeniden başlatın.';
+}
+
 function checkAdminSecret(headerValue) {
   const expected = process.env.ADMIN_AI_SECRET?.trim();
   if (!expected) return true;
@@ -183,8 +190,7 @@ export async function runAiGenerate({ task, payload = {}, adminSecretHeader }) {
     return {
       status: 503,
       body: {
-        error:
-          'GEMINI_API_KEY yapılandırılmamış. .env dosyasını kontrol edin ve dev server\'ı yeniden başlatın.',
+        error: missingGeminiKeyMessage(),
       },
     };
   }
@@ -239,7 +245,7 @@ export async function runAiChat({ messages = [], pageContext = {} }) {
   if (!apiKey) {
     return {
       status: 503,
-      body: { error: 'AI asistan şu an kullanılamıyor.' },
+      body: { error: missingGeminiKeyMessage() },
     };
   }
 

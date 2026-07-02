@@ -17,6 +17,8 @@ import TeamGeneratorPage from './pages/Tools/TeamGeneratorPage';
 import DicePage from './pages/Tools/DicePage';
 import ScoreBoardPage from './pages/Tools/ScoreBoardPage';
 import HalisahaPage from './pages/Tools/HalisahaPage';
+import DecisionWheelPage from './pages/Tools/DecisionWheelPage';
+import KuraCekPage from './pages/Tools/KuraCekPage';
 import Okey101ScorePage from './pages/GameDetail/Okey101ScorePage';
 import NewsPage from './pages/News';
 import NewsDetailPage from './pages/NewsDetail';
@@ -116,6 +118,8 @@ function App() {
                   <Route path="/araclar/batak-yazboz" element={<BatakPage />} />
                   <Route path="/araclar/takim-olusturucu" element={<TeamGeneratorPage />} />
                   <Route path="/araclar/halisaha-takim-olusturucu" element={<HalisahaPage />} />
+                  <Route path="/araclar/karar-carki" element={<DecisionWheelPage />} />
+                  <Route path="/araclar/kura-cek" element={<KuraCekPage />} />
                   <Route path="/araclar/zar-at" element={<DicePage />} />
                   <Route path="/araclar/skor-tablosu" element={<ScoreBoardPage />} />
                   <Route path="/kategori/:categoryName" element={<CategoryPage />} />

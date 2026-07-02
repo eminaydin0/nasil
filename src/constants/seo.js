@@ -29,6 +29,13 @@ export const SITE_CONFIG = {
   publisher: 'Kuralı Ne?',
   foundingDate: '2026',
   email: 'eminaydinyazilim@gmail.com',
+  company: 'Zenvolab',
+  creator: {
+    name: 'Emin Aydın',
+    role: 'Yazılım geliştirici',
+    tagline:
+      'Kuralı Ne? platformunun arayüzünden AI asistanına kadar tüm yazılımını geliştirdi — oyun severler için sade, hızlı ve güvenilir bir deneyim hedefliyor.',
+  },
 };
 
 /** SEO içerik sütunları — anahtar kelime & sayfa stratejisi */
