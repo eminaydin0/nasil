@@ -209,22 +209,29 @@ function HeroCarousel() {
         ))}
 
         {/* Navigation Dots */}
-        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2 sm:bottom-7 sm:left-auto sm:translate-x-0 sm:right-7 md:right-12">
+        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-0.5 sm:bottom-7 sm:left-auto sm:translate-x-0 sm:right-7 sm:gap-2 md:right-12">
           {slides.map((_, index) => (
             <button
               key={index}
+              type="button"
               onClick={() => {
                 setCurrentIndex(index);
                 setIsRolling(true);
                 setTimeout(() => setIsRolling(false), 2000);
               }}
-              className={`transition-all duration-300 rounded-full ${
-                index === currentIndex
-                  ? 'w-12 h-2.5 bg-gradient-to-r from-orange-500 to-red-500 shadow-warm-glow'
-                  : 'w-2.5 h-2.5 bg-white/30 hover:bg-white/50'
-              }`}
+              className="flex h-11 w-11 items-center justify-center rounded-full sm:h-auto sm:w-auto sm:p-0"
               aria-label={`Slide ${index + 1}`}
-            />
+              aria-current={index === currentIndex ? 'true' : undefined}
+            >
+              <span
+                className={`block rounded-full transition-all duration-300 ${
+                  index === currentIndex
+                    ? 'h-2.5 w-12 bg-gradient-to-r from-orange-500 to-red-500 shadow-warm-glow'
+                    : 'h-3 w-3 bg-white/30 sm:h-2.5 sm:w-2.5 hover:bg-white/50'
+                }`}
+                aria-hidden
+              />
+            </button>
           ))}
         </div>
 

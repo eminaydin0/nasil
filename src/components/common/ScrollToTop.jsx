@@ -29,8 +29,8 @@ function ScrollToTop() {
       onClick={scrollUp}
       aria-label="Yukarı çık"
       className={[
-        'fixed z-40 flex h-11 w-11 items-center justify-center rounded-full border border-warm-200/80 bg-white/95 text-warm-700 shadow-soft backdrop-blur-sm transition-all duration-300 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:ring-offset-2',
-        'bottom-[calc(6rem+var(--safe-bottom))] right-[calc(1rem+var(--safe-right))]',
+        'scroll-to-top-btn fixed z-40 flex h-11 w-11 items-center justify-center rounded-full border border-warm-200/80 bg-white/95 text-warm-700 shadow-soft backdrop-blur-sm transition-all duration-300 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:ring-offset-2',
+        'bottom-[calc(5.5rem+var(--mobile-bottom-ui,0px)+var(--safe-bottom))] right-[calc(1rem+var(--safe-right))]',
         'md:bottom-[calc(1.5rem+var(--safe-bottom))]',
         visible
           ? 'pointer-events-auto translate-y-0 opacity-100'

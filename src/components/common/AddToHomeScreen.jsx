@@ -61,12 +61,12 @@ export default function AddToHomeScreen() {
   if (!visible) return null;
 
   return (
-    <div className="safe-area-x fixed bottom-[calc(5rem+var(--safe-bottom))] left-4 right-4 z-[9999] animate-slideUp sm:bottom-20 sm:left-auto sm:right-4 sm:max-w-sm">
+    <div className="safe-area-x add-to-home-prompt fixed bottom-[calc(5.5rem+var(--mobile-bottom-ui,0px)+var(--safe-bottom))] left-4 right-4 z-[45] animate-slideUp sm:bottom-20 sm:left-auto sm:right-4 sm:max-w-sm">
       <div className="bg-white rounded-2xl shadow-xl border border-warm-200 overflow-hidden">
         <div className="p-4 pr-12 relative">
           <button
             onClick={handleDismiss}
-            className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-warm-100 text-warm-400 hover:text-warm-600 transition-colors"
+            className="absolute top-2 right-2 flex h-11 w-11 items-center justify-center rounded-full text-warm-400 transition-colors hover:bg-warm-100 hover:text-warm-600"
             aria-label="Kapat"
           >
             <X size={18} />

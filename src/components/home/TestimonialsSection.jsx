@@ -66,7 +66,7 @@ export default function TestimonialsSection() {
       />
 
       {testimonials.length > 0 ? (
-        <div className="home-scroll-row -mx-3 flex gap-3.5 overflow-x-auto px-3 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 md:items-stretch">
+        <div className="home-scroll-row flex gap-3.5 overflow-x-auto pb-1 sm:grid sm:grid-cols-3 sm:gap-6 sm:overflow-visible sm:pb-0 md:items-stretch">
           {testimonials.map((t, index) => (
             <div
               key={index}

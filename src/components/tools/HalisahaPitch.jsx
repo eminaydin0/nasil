@@ -113,7 +113,7 @@ function DraggablePlayer({
             if (e.key === 'Enter' || e.key === 'Escape') onEndEdit();
           }}
           onPointerDown={(e) => e.stopPropagation()}
-          className="halisaha-name-tag mt-1.5 w-full max-w-[5.5rem] rounded-full px-2 py-1 text-center text-[10px] font-bold text-white outline-none ring-2 ring-orange-400 sm:text-[11px]"
+          className="halisaha-name-tag mt-1.5 w-full max-w-[5.5rem] rounded-full px-2 py-1.5 text-center text-base font-bold text-white outline-none ring-2 ring-orange-400 sm:text-sm"
           placeholder="İsim"
         />
       ) : (

@@ -25,7 +25,7 @@ function FreeGamesSection({ limit = 8 }) {
       />
 
       {loading ? (
-        <div className="home-scroll-row -mx-3 flex gap-3.5 overflow-x-auto px-3 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 md:gap-6">
+        <div className="home-scroll-row flex gap-3.5 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:pb-0 lg:grid-cols-4 md:gap-6">
           {Array.from({ length: limit }).map((_, i) => (
             <div
               key={i}
@@ -36,7 +36,7 @@ function FreeGamesSection({ limit = 8 }) {
           ))}
         </div>
       ) : (
-        <div className="home-scroll-row -mx-3 flex gap-3.5 overflow-x-auto px-3 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 md:gap-6">
+        <div className="home-scroll-row flex gap-3.5 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:pb-0 lg:grid-cols-4 md:gap-6">
           {games.map((game) => (
             <div
               key={game.id}

@@ -73,26 +73,45 @@ function summarizeRatings(comments, gameId) {
   return { count: list.length, average: sum / list.length };
 }
 
-function ComparisonCell({ valueA, valueB, betterIndex }) {
-  const a = `min-w-0 flex-1 p-3 sm:p-4 ${betterIndex === 0 ? 'bg-green-50' : ''}`;
-  const b = `min-w-0 flex-1 p-3 sm:p-4 ${betterIndex === 1 ? 'bg-green-50' : ''}`;
+function ComparisonCell({ valueA, valueB, betterIndex, label }) {
+  const aClass = betterIndex === 0 ? 'bg-green-50' : '';
+  const bClass = betterIndex === 1 ? 'bg-green-50' : '';
+
   return (
-    <div className="flex min-w-0 items-stretch border-b border-warm-100 last:border-b-0">
-      <div className={a}>{valueA}</div>
-      <div className="w-px bg-warm-100" />
-      <div className={b}>{valueB}</div>
-    </div>
+    <>
+      {/* Mobil: alt alta */}
+      <div className="sm:hidden">
+        <div className={`border-b border-warm-100 px-4 py-3 ${aClass}`}>
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-warm-400">{label} — A</p>
+          {valueA}
+        </div>
+        <div className={`border-b border-warm-100 px-4 py-3 last:border-b-0 ${bClass}`}>
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-warm-400">{label} — B</p>
+          {valueB}
+        </div>
+      </div>
+      {/* Masaüstü: yan yana */}
+      <div className="hidden min-w-0 items-stretch border-b border-warm-100 last:border-b-0 sm:flex">
+        <div className={`min-w-0 flex-1 p-3 sm:p-4 ${aClass}`}>{valueA}</div>
+        <div className="w-px bg-warm-100" />
+        <div className={`min-w-0 flex-1 p-3 sm:p-4 ${bClass}`}>{valueB}</div>
+      </div>
+    </>
   );
 }
 
 function ComparisonRow({ label, icon, valueA, valueB, betterIndex }) {
   return (
     <div className="bg-white">
-      <div className="px-4 pt-4 pb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-warm-500 border-b border-warm-100">
+      <div className="hidden items-center gap-2 border-b border-warm-100 px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wider text-warm-500 sm:flex">
         {icon}
         <span>{label}</span>
       </div>
-      <ComparisonCell valueA={valueA} valueB={valueB} betterIndex={betterIndex} />
+      <div className="flex items-center gap-2 border-b border-warm-100 bg-cream-50/80 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-warm-500 sm:hidden">
+        {icon}
+        <span>{label}</span>
+      </div>
+      <ComparisonCell valueA={valueA} valueB={valueB} betterIndex={betterIndex} label={label} />
     </div>
   );
 }
