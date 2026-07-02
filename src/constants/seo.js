@@ -10,7 +10,8 @@
  * 5. Oyun haberleri & AI asistan
  */
 
-import { isDigitalGameCategory } from './digitalGames';
+import { isDigitalGameCategory } from './digitalGames.js';
+import { SITE_COMPANY, SITE_CONTACT_EMAIL, SITE_CREATOR } from './siteMeta.js';
 
 // Site temel bilgileri
 export const SITE_CONFIG = {
@@ -28,14 +29,9 @@ export const SITE_CONFIG = {
   author: 'Kuralı Ne?',
   publisher: 'Kuralı Ne?',
   foundingDate: '2026',
-  email: 'eminaydinyazilim@gmail.com',
-  company: 'Zenvolab',
-  creator: {
-    name: 'Emin Aydın',
-    role: 'Yazılım geliştirici',
-    tagline:
-      'Kuralı Ne? platformunun arayüzünden AI asistanına kadar tüm yazılımını geliştirdi — oyun severler için sade, hızlı ve güvenilir bir deneyim hedefliyor.',
-  },
+  email: SITE_CONTACT_EMAIL,
+  company: SITE_COMPANY,
+  creator: SITE_CREATOR,
 };
 
 /** SEO içerik sütunları — anahtar kelime & sayfa stratejisi */

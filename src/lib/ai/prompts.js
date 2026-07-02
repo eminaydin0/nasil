@@ -2,14 +2,12 @@
  * Gemini prompt şablonları — admin içerik asistanı + kullanıcı chat asistanı
  */
 
-import { SITE_CONFIG } from '../../constants/seo.js';
+import { SITE_COMPANY, SITE_CONTACT_EMAIL, SITE_CREATOR } from '../../constants/siteMeta.js';
 
-export const SITE_NAME = SITE_CONFIG.name || 'Kuralı Ne?';
+export const SITE_NAME = 'Kuralı Ne?';
 export const SITE_URL = 'kuraline.xyz';
 
-const SITE_CREATOR = SITE_CONFIG.creator;
-const SITE_COMPANY = SITE_CONFIG.company || 'Zenvolab';
-const SITE_EMAIL = SITE_CONFIG.email;
+const SITE_EMAIL = SITE_CONTACT_EMAIL;
 
 export const SITE_CONTEXT = `Site: ${SITE_NAME} (${SITE_URL}) — Türkiye'nin oyun platformu.
 Geliştirici: ${SITE_CREATOR.name} (${SITE_CREATOR.role}). Yayıncı: ${SITE_COMPANY}.
