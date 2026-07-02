@@ -15,9 +15,9 @@ import {
   generateCollectionPageSchema,
   generateItemListSchema,
   generateComparisonPageSchema,
-} from '../constants/seo';
-import { TOOL_PAGE_SEO, generateWebApplicationSchema } from '../constants/seoKeywords';
-import { isDigitalGameCategory } from '../constants/digitalGames';
+} from '../constants/seo.js';
+import { TOOL_PAGE_SEO, generateWebApplicationSchema } from '../constants/seoKeywords.js';
+import { isDigitalGameCategory } from '../constants/digitalGames.js';
 
 // ─── Yardımcılar ───────────────────────────────────────────────────────────
 

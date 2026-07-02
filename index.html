@@ -114,8 +114,8 @@
         "width": 1200,
         "height": 400
       },
-      "description": "Geleneksel Türk oyunlarının nasıl oynanacağını öğrenin",
-      "foundingDate": "2024",
+      "description": "Okey, Batak, Pişti kuralları; PC/konsol rehberleri; oyun araçları ve haberler.",
+      "foundingDate": "2026",
       "contactPoint": {
         "@type": "ContactPoint",
         "email": "eminaydinyazilim@gmail.com",
@@ -125,19 +125,18 @@
     }
     </script>
     
-    <!-- Structured Data - WebSite with SearchAction -->
+    <!-- Structured Data - WebSite + Sitelink adayları -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "@id": "https://kuraline.xyz/#website",
       "name": "Kuralı Ne?",
+      "alternateName": ["Kuralı Ne", "kuraline.xyz", "Kuraline"],
       "url": "https://kuraline.xyz",
-      "description": "Geleneksel Türk oyunlarının kuralı ne? Okey, Batak, Pişti ve daha fazlası!",
+      "description": "Geleneksel oyunlardan dijitale — kurallar, rehberler, araçlar, haberler ve bedava oyunlar tek adreste.",
       "inLanguage": "tr-TR",
-      "publisher": {
-        "@id": "https://kuraline.xyz/#organization"
-      },
+      "publisher": { "@id": "https://kuraline.xyz/#organization" },
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
@@ -145,7 +144,30 @@
           "urlTemplate": "https://kuraline.xyz/oyunlar?search={search_term_string}"
         },
         "query-input": "required name=search_term_string"
-      }
+      },
+      "hasPart": [
+        { "@type": "WebPage", "name": "Oyunlar", "url": "https://kuraline.xyz/oyunlar", "description": "Okey, Batak, Pişti ve 50+ oyun rehberi." },
+        { "@type": "WebPage", "name": "Haberler", "url": "https://kuraline.xyz/haberler", "description": "Oyun dünyasından güncel haberler ve indirimler." },
+        { "@type": "WebPage", "name": "Bedava Oyunlar", "url": "https://kuraline.xyz/ucretsiz-oyunlar", "description": "Steam, Epic ve GOG ücretsiz oyun kampanyaları." },
+        { "@type": "WebPage", "name": "Araçlar", "url": "https://kuraline.xyz/araclar", "description": "101 yazboz, okey sayacı ve oyun araçları." },
+        { "@type": "WebPage", "name": "İletişim", "url": "https://kuraline.xyz/iletisim", "description": "Kuralı Ne? iletişim ve iş birliği." },
+        { "@type": "WebPage", "name": "Hakkımızda", "url": "https://kuraline.xyz/hakkimizda", "description": "Kuralı Ne? oyun platformu hakkında." }
+      ]
+    }
+    </script>
+
+    <!-- Structured Data - SiteNavigationElement (sitelink sinyali) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "SiteNavigationElement", "position": 1, "name": "Oyunlar", "url": "https://kuraline.xyz/oyunlar" },
+        { "@type": "SiteNavigationElement", "position": 2, "name": "Haberler", "url": "https://kuraline.xyz/haberler" },
+        { "@type": "SiteNavigationElement", "position": 3, "name": "Bedava Oyunlar", "url": "https://kuraline.xyz/ucretsiz-oyunlar" },
+        { "@type": "SiteNavigationElement", "position": 4, "name": "Araçlar", "url": "https://kuraline.xyz/araclar" },
+        { "@type": "SiteNavigationElement", "position": 5, "name": "İletişim", "url": "https://kuraline.xyz/iletisim" },
+        { "@type": "SiteNavigationElement", "position": 6, "name": "Hakkımızda", "url": "https://kuraline.xyz/hakkimizda" }
+      ]
     }
     </script>
     
@@ -202,12 +224,12 @@
   <body>
     <div id="root"></div>
     
-    <!-- Noscript fallback -->
+    <!-- Noscript fallback (JS kapalı — kullanıcı nadiren görür) -->
     <noscript>
-      <div style="padding: 20px; text-align: center; font-family: system-ui, sans-serif;">
+      <div style="padding:20px;text-align:center;font-family:system-ui,sans-serif">
         <h1>Kuralı Ne?</h1>
-        <p>Bu web sitesini görüntülemek için JavaScript'i etkinleştirmeniz gerekmektedir.</p>
-        <p>Please enable JavaScript to view this website.</p>
+        <p>Okey, Batak, Pişti kuralları; oyun rehberleri, araçlar ve haberler.</p>
+        <p><a href="/oyunlar">Oyunlar</a> · <a href="/haberler">Haberler</a> · <a href="/araclar">Araçlar</a> · <a href="/iletisim">İletişim</a></p>
       </div>
     </noscript>
     

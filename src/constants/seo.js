@@ -93,35 +93,36 @@ export const PAGE_SEO = {
   allGames: {
     title: 'Tüm Oyun Rehberleri — Geleneksel & Dijital Arşiv',
     description:
-      'Kağıt ve masa oyunlarından PC, konsol ve mobil rehberlere kadar tüm oyun arşivi. Kurallar, ipuçları, videolar ve karşılaştırmalar.',
+      'Okey, Batak, Pişti ve 50+ oyun rehberi. Kağıt, masa, PC, konsol ve mobil oyunların kuralları, ipuçları, videoları ve karşılaştırmaları — Kuralı Ne? arşivi.',
     keywords:
-      'tüm oyunlar, oyun arşivi, oyun rehberleri, geleneksel oyunlar, pc oyunları, konsol oyunları, mobil oyunlar, kutu oyunları',
+      'tüm oyunlar, oyun arşivi, oyun rehberleri, geleneksel oyunlar, pc oyunları, konsol oyunları, mobil oyunlar, kutu oyunları, okey kuralı ne',
   },
   tools: {
     title: 'Oyun Araçları — Yazboz, Sayaç, Takım Oluşturucu',
     description:
-      '101 okey yazboz, okey puan sayacı, batak yazboz, takım oluşturucu, zar at ve skor tablosu. Oyun geceleri için ücretsiz dijital araçlar.',
+      '101 okey yazboz, okey puan sayacı, batak yazboz, halı saha takımı, karar çarkı, kura çek, zar at ve skor tablosu. Oyun geceleri için ücretsiz dijital araçlar.',
     keywords:
-      '101 okey yazboz, okey sayacı, batak yazboz, takım oluşturucu, halısaha takım, skor tablosu, online zar, oyun araçları',
+      '101 okey yazboz, okey sayacı, batak yazboz, takım oluşturucu, halısaha takım, karar çarkı, kura çek, skor tablosu, online zar, oyun araçları',
   },
   freeGames: {
     title: 'Bedava Oyunlar — Steam, Epic, GOG Kampanyaları',
     description:
-      'Steam, Epic Games ve GOG\'daki güncel ücretsiz oyun kampanyaları. Bedava PC oyunlarını anlık takip et, kaçırma.',
+      'Steam, Epic Games ve GOG\'daki güncel ücretsiz oyun kampanyaları. Bedava PC oyunlarını anlık takip et, giveaway fırsatlarını kaçırma.',
     keywords:
-      'ücretsiz oyun, bedava oyun, steam ücretsiz, epic games bedava, gog giveaway, pc oyun kampanyası, free game',
+      'ücretsiz oyun, bedava oyun, steam ücretsiz, epic games bedava, gog giveaway, pc oyun kampanyası, free game, steam bedava oyun',
   },
   about: {
     title: 'Hakkımızda — Kuralı Ne? Oyun Platformu',
     description:
-      'Kuralı Ne?, geleneksel oyun mirasını dijital çağa taşıyan kapsamlı bir oyun platformudur: kurallar, rehberler, araçlar, haberler ve bedava oyunlar.',
+      'Kuralı Ne?, geleneksel oyun mirasını dijital çağa taşıyan kapsamlı bir oyun platformudur: kurallar, rehberler, araçlar, haberler ve bedava oyun kampanyaları.',
     keywords:
-      'hakkımızda, kuralı ne, oyun platformu, geleneksel oyunlar, oyun rehberi, dijital oyun rehberi',
+      'hakkımızda, kuralı ne, oyun platformu, geleneksel oyunlar, oyun rehberi, dijital oyun rehberi, türk oyunları',
   },
   contact: {
     title: 'İletişim - Bize Ulaşın',
-    description: 'Sorularınız, önerileriniz veya işbirliği talepleriniz için bizimle iletişime geçin.',
-    keywords: 'iletişim, bize ulaşın, destek, geri bildirim',
+    description:
+      'Kuralı Ne? iletişim: oyun rehberi, araçlar ve iş birliği için e-posta veya form ile bize ulaşın. Sorularınıza birkaç iş günü içinde dönüş yapıyoruz.',
+    keywords: 'iletişim, bize ulaşın, destek, geri bildirim, kuralı ne iletişim',
   },
   auth: {
     title: 'Giriş Yap / Kayıt Ol',
@@ -134,31 +135,46 @@ export const PAGE_SEO = {
     keywords: 'profil, hesap, kullanıcı bilgileri',
   },
   terms: {
-    title: 'Kullanım Koşulları - Kuralı Ne?',
-    description: 'Kuralı Ne? web sitesinin kullanım koşulları. Platform kuralları, kullanıcı sorumlulukları ve fikri mülkiyet hakları.',
-    keywords: 'kullanım koşulları, şartlar, koşullar, nasıl oynanır',
+    title: 'Kullanım Koşulları',
+    description:
+      'Kuralı Ne? kullanım koşulları: platform kuralları, kullanıcı sorumlulukları, içerik politikası ve fikri mülkiyet hakları hakkında bilgi.',
+    keywords: 'kullanım koşulları, şartlar, koşullar, kuralı ne, site kuralları',
   },
   privacy: {
-    title: 'Gizlilik Politikası - Kuralı Ne?',
-    description: 'Kuralı Ne? gizlilik politikası. Kişisel verilerin nasıl toplandığı, kullanıldığı ve korunduğu hakkında bilgi.',
-    keywords: 'gizlilik politikası, kvkk, kişisel veriler, veri koruma',
+    title: 'Gizlilik Politikası',
+    description:
+      'Kuralı Ne? gizlilik politikası ve KVKK uyumlu veri işleme. Kişisel verilerin nasıl toplandığı, kullanıldığı ve korunduğu.',
+    keywords: 'gizlilik politikası, kvkk, kişisel veriler, veri koruma, gizlilik',
   },
   cookie: {
-    title: 'Çerez Politikası - Kuralı Ne?',
-    description: 'Kuralı Ne? çerez politikası. Sitede kullanılan çerezler, türleri ve tercihleriniz hakkında bilgi.',
-    keywords: 'çerez politikası, cookie, kvkk, gizlilik',
+    title: 'Çerez Politikası',
+    description:
+      'Kuralı Ne? çerez politikası: sitede kullanılan çerez türleri, analitik araçlar ve çerez tercihlerinizi nasıl yönetebileceğiniz.',
+    keywords: 'çerez politikası, cookie, kvkk, gizlilik, çerez tercihleri',
   },
   reklamVerin: {
-    title: 'Reklam Verin - Kuralı Ne?',
-    description: 'Kuralı Ne? sitesinde reklam verin. Oyunsever hedef kitlenize ulaşın. Banner, sponsorlu içerik ve özel paketler.',
-    keywords: 'reklam verin, reklam, sponsorluk, banner reklam, oyun reklam',
+    title: 'Reklam Verin — Sponsorluk & İş Birliği',
+    description:
+      'Kuralı Ne? sitesinde reklam verin. Oyunsever hedef kitlenize ulaşın — banner, sponsorlu içerik ve özel reklam paketleri.',
+    keywords: 'reklam verin, reklam, sponsorluk, banner reklam, oyun reklam, iş birliği',
   },
   news: {
     title: 'Oyun Haberleri — Çıkış Tarihleri, Fiyatlar & İndirimler',
     description:
-      'GTA, AAA oyunlar, konsol ve PC dünyasından güncel haberler. Çıkış tarihleri, fiyatlar, indirimler ve patch notları.',
+      'GTA, AAA oyunlar, konsol ve PC dünyasından güncel haberler. Çıkış tarihleri, fiyatlar, Steam indirimleri ve patch notları.',
     keywords:
       'oyun haberleri, oyun çıkış tarihi, oyun fiyatları, steam indirim, ps5 haber, gta 6, oyun güncellemesi, epic games haber',
+  },
+  compare: {
+    title: 'Oyun Karşılaştırma',
+    description:
+      'İki oyunu yan yana karşılaştırın: oyuncu sayısı, zorluk, süre ve kurallar. Hangi oyun size uygun — detaylı rehber.',
+    keywords: 'oyun karşılaştırma, hangisi daha iyi, oyun farkları, okey vs batak',
+  },
+  notFound: {
+    title: 'Sayfa Bulunamadı',
+    description: 'Aradığınız sayfa bulunamadı. Oyun rehberleri, araçlar ve haberler için ana sayfaya dönün.',
+    keywords: '404, sayfa bulunamadı',
   },
 };
 

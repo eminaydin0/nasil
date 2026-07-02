@@ -26,6 +26,7 @@ import {
   generateFAQSchema,
 } from '../../constants/seo';
 import { buildHomeSeoMeta, buildHomeFaqs } from '../../lib/seoEngine';
+import { generateHomeSitelinkSchemas } from '../../constants/siteNavigation';
 
 const MOBILE_QUICK_LINKS = [
   { to: '/oyunlar', label: 'Oyunlar', icon: Gamepad2 },
@@ -68,7 +69,10 @@ function HomePage() {
   const homeSeo = useMemo(() => buildHomeSeoMeta(games), [games]);
 
   const structuredData = useMemo(() => {
-    const schemas = [SCHEMA_TEMPLATES.website, SCHEMA_TEMPLATES.organization];
+    const schemas = [
+      SCHEMA_TEMPLATES.organization,
+      ...generateHomeSitelinkSchemas(),
+    ];
 
     if (games.length > 0) {
       const byViews = [...games].sort((a, b) => (b.views || 0) - (a.views || 0));
