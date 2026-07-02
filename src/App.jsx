@@ -32,6 +32,7 @@ import ReklamVerin from './pages/ReklamVerin';
 import ErrorPage from './pages/ErrorPage';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import GameAssistant from './components/assistant/GameAssistant';
 import { AuthProvider } from './context/AuthContext';
 import AuthPage from './pages/Auth/AuthPage';
 import ProfilePage from './pages/Profile/ProfilePage';
@@ -133,6 +134,7 @@ function App() {
                 </Routes>
               </main>
               <Footer />
+              <GameAssistant />
             </div>
           } />
         </Routes>

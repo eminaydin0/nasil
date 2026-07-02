@@ -7,31 +7,42 @@ import { SITE_CONFIG } from './seo';
 
 export const KEYWORD_TIERS = {
   head: [
+    'kuralı ne',
+    'oyun kuralları',
     'okey kuralı ne',
     'batak kuralı ne',
-    'pişti kuralı ne',
     '101 okey kuralları',
-    'tavla nasıl oynanır',
-    'saklambaç nasıl oynanır',
-    'kuralı ne',
+    'oyun haberleri',
+    'ücretsiz oyun',
+    'pc oyun rehberi',
   ],
   body: [
+    'pişti kuralı ne',
+    'tavla nasıl oynanır',
+    'saklambaç nasıl oynanır',
     'ihaleli batak kuralları',
-    'eşli batak',
-    'mangala nasıl oynanır',
-    'körebe oyunu',
+    '101 okey yazboz online',
+    'okey puan sayacı',
+    'steam ücretsiz oyun',
+    'epic games bedava',
+    'sistem gereksinimleri',
+    'konsol oyun rehberi',
+    'mobil oyun nasıl oynanır',
     'kağıt oyunları kuralları',
     'masa oyunları kuralları',
     'sokak oyunları',
   ],
   longTail: [
-    '101 okey yazboz online',
-    'okey puan sayacı düşmeli',
+    '101 okey ceza puanları hesaplama',
     'batak yazboz dijital',
     'halısaha takım oluşturucu',
     'online zar at',
     'skor tablosu online',
     'okey mi 101 okey mi',
+    'gta 6 çıkış tarihi',
+    'steam haftalık ücretsiz oyun',
+    'epic games haftalık bedava',
+    'ps5 oyun rehberi türkçe',
   ],
 };
 
@@ -86,8 +97,10 @@ export const TOOL_PAGE_SEO = {
 };
 
 /** Oyun detay meta şablonları */
-export function buildGameTitle(gameName) {
-  return `${gameName} Kuralı Ne?`;
+export function buildGameTitle(gameName, category) {
+  if (!gameName) return 'Oyun Rehberi';
+  const digital = ['PC Oyunları', 'Konsol Oyunları', 'Mobil Oyunlar'].includes(category);
+  return digital ? `${gameName} Nasıl Oynanır?` : `${gameName} Kuralı Ne?`;
 }
 
 export function buildGameDescription(game) {
@@ -104,14 +117,27 @@ export function buildGameDescription(game) {
 export function buildGameKeywords(game) {
   const name = game?.name || '';
   const cat = game?.category || '';
+  const isDigital = ['PC Oyunları', 'Konsol Oyunları', 'Mobil Oyunlar'].includes(cat);
+  const base = isDigital
+    ? [
+        `${name} nasıl oynanır`,
+        `${name} rehberi`,
+        `${name} sistem gereksinimleri`,
+        `${name} steam`,
+        `${name} türkçe rehber`,
+      ]
+    : [
+        `${name} kuralı ne`,
+        `${name} nasıl oynanır`,
+        `${name} kuralları`,
+        `${name} ipuçları`,
+      ];
   return [
-    `${name} kuralı ne`,
-    `${name} nasıl oynanır`,
-    `${name} kuralları`,
-    `${name} ipuçları`,
+    ...base,
     cat,
     'kuralı ne',
     'oyun kuralları',
+    isDigital ? 'oyun rehberi' : 'geleneksel türk oyunları',
   ]
     .filter(Boolean)
     .join(', ');

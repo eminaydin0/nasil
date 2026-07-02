@@ -1,12 +1,23 @@
 /**
  * SEO Yapılandırma Dosyası
  * Tüm SEO ayarlarını merkezi olarak yönetir
+ *
+ * Platform vizyonu:
+ * 1. Geleneksel & masa/kutu oyunları (köken misyon)
+ * 2. PC / konsol / mobil oyun rehberleri
+ * 3. Ücretsiz oyun kampanyaları
+ * 4. Oyun araçları (yazboz, sayaç, takım oluşturucu)
+ * 5. Oyun haberleri & AI asistan
  */
+
+import { isDigitalGameCategory } from './digitalGames';
 
 // Site temel bilgileri
 export const SITE_CONFIG = {
   name: 'Kuralı Ne?',
-  tagline: 'Geleneksel Türk Oyunları Rehberi',
+  tagline: 'Oyun Rehberi & Keşif Platformu',
+  mission:
+    'Geleneksel oyunlardan dijitale — kurallar, rehberler, araçlar, haberler ve bedava oyunlar tek adreste.',
   url: 'https://kuraline.xyz',
   defaultImage: 'https://kuraline.xyz/og-image.jpg',
   locale: 'tr_TR',
@@ -16,38 +27,93 @@ export const SITE_CONFIG = {
   twitterHandle: '@kuraline',
   author: 'Kuralı Ne?',
   publisher: 'Kuralı Ne?',
-  foundingDate: '2024',
+  foundingDate: '2026',
   email: 'eminaydinyazilim@gmail.com',
+};
+
+/** SEO içerik sütunları — anahtar kelime & sayfa stratejisi */
+export const SEO_PILLARS = {
+  traditional: {
+    label: 'Geleneksel & masa oyunları',
+    keywords: ['okey kuralı ne', 'batak kuralları', 'pişti nasıl oynanır', 'sokak oyunları', 'geleneksel türk oyunları'],
+  },
+  digital: {
+    label: 'PC / konsol / mobil',
+    keywords: ['pc oyun rehberi', 'sistem gereksinimleri', 'steam oyun', 'ps5 oyun', 'mobil oyun rehberi'],
+  },
+  tools: {
+    label: 'Oyun araçları',
+    keywords: ['101 okey yazboz', 'okey sayacı', 'batak yazboz', 'takım oluşturucu', 'skor tablosu'],
+  },
+  news: {
+    label: 'Oyun haberleri',
+    keywords: ['oyun haberleri', 'oyun çıkış tarihi', 'oyun fiyatları', 'indirim', 'gta 6'],
+  },
+  freeGames: {
+    label: 'Bedava oyunlar',
+    keywords: ['ücretsiz oyun', 'steam ücretsiz', 'epic games bedava', 'giveaway', 'bedava pc oyunu'],
+  },
 };
 
 // Varsayılan meta açıklamaları
 export const DEFAULT_META = {
-  title: 'Geleneksel Türk Oyunları - Kuralı Ne? Kuralları, İpuçları ve Stratejileri',
-  description: 'Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının kuralı ne? Detaylı kurallar, ipuçları ve stratejiler. 50+ oyun rehberi!',
-  keywords: 'okey kuralı ne, batak kuralı ne, pişti kuralı ne, 101 okey kuralları, batak kuralları, geleneksel oyunlar, türk oyunları, kağıt oyunları, masa oyunları, çocuk oyunları, sokak oyunları',
+  title: 'Kuralı Ne? — Oyun Kuralları, Rehberler, Araçlar & Haberler',
+  description:
+    'Okey, Batak, Pişti ve geleneksel oyun kuralları; PC/konsol rehberleri; 101 yazboz, okey sayacı; bedava oyun kampanyaları ve oyun haberleri. Hepsi Kuralı Ne?\'de.',
+  keywords: [
+    'kuralı ne',
+    'oyun kuralları',
+    'geleneksel türk oyunları',
+    'okey kuralı ne',
+    'batak kuralları',
+    'pc oyun rehberi',
+    'oyun haberleri',
+    'ücretsiz oyun',
+    '101 okey yazboz',
+    'okey sayacı',
+    'kağıt oyunları',
+    'masa oyunları',
+    'konsol oyunları',
+    'mobil oyun rehberi',
+  ].join(', '),
 };
 
 // Sayfa bazlı SEO şablonları
 export const PAGE_SEO = {
   home: {
-    title: 'Kuralı Ne? - Geleneksel Türk Oyunları Rehberi',
-    description: 'Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının kuralı ne? Detaylı kurallar, ipuçları ve stratejiler tek bir yerde.',
-    keywords: 'kuralı ne, oyun kuralları, geleneksel türk oyunları, kart oyunları, masa oyunları, çocuk oyunları',
+    title: 'Kuralı Ne? — Okey\'den Dijitale Oyun Rehberi Platformu',
+    description:
+      'Geleneksel oyun kuralları, PC/konsol rehberleri, oyun araçları, bedava kampanyalar ve güncel haberler. Okey, Batak, Pişti ve 50+ rehber — tek platform.',
+    keywords:
+      'kuralı ne, oyun kuralları, geleneksel oyunlar, pc oyun rehberi, oyun haberleri, ücretsiz oyun, okey sayacı, 101 yazboz, oyun araçları',
   },
   allGames: {
-    title: 'Tüm Oyunlar - Oyun Arşivi',
-    description: 'Tüm geleneksel Türk oyunları ve popüler kutu oyunları tek bir yerde. Kart oyunları, masa oyunları, sokak oyunları ve daha fazlası.',
-    keywords: 'tüm oyunlar, oyun listesi, oyun arşivi, kart oyunları, masa oyunları, kutu oyunları',
+    title: 'Tüm Oyun Rehberleri — Geleneksel & Dijital Arşiv',
+    description:
+      'Kağıt ve masa oyunlarından PC, konsol ve mobil rehberlere kadar tüm oyun arşivi. Kurallar, ipuçları, videolar ve karşılaştırmalar.',
+    keywords:
+      'tüm oyunlar, oyun arşivi, oyun rehberleri, geleneksel oyunlar, pc oyunları, konsol oyunları, mobil oyunlar, kutu oyunları',
   },
   tools: {
-    title: 'Oyun Araçları - Skor Tablosu ve Yardımcı Araçlar',
-    description: 'Okey sayacı, Batak yazboz, takım oluşturucu ve daha fazla oyun aracı. Oyunlarınızı daha kolay takip edin.',
-    keywords: 'okey sayacı, batak yazboz, 101 okey hesaplama, takım oluşturucu, skor tablosu, oyun araçları',
+    title: 'Oyun Araçları — Yazboz, Sayaç, Takım Oluşturucu',
+    description:
+      '101 okey yazboz, okey puan sayacı, batak yazboz, takım oluşturucu, zar at ve skor tablosu. Oyun geceleri için ücretsiz dijital araçlar.',
+    keywords:
+      '101 okey yazboz, okey sayacı, batak yazboz, takım oluşturucu, halısaha takım, skor tablosu, online zar, oyun araçları',
+  },
+  freeGames: {
+    title: 'Bedava Oyunlar — Steam, Epic, GOG Kampanyaları',
+    description:
+      'Steam, Epic Games ve GOG\'daki güncel ücretsiz oyun kampanyaları. Bedava PC oyunlarını anlık takip et, kaçırma.',
+    keywords:
+      'ücretsiz oyun, bedava oyun, steam ücretsiz, epic games bedava, gog giveaway, pc oyun kampanyası, free game',
   },
   about: {
-    title: 'Hakkımızda - Kuralı Ne?',
-    description: 'Kuralı Ne?, geleneksel Türk oyunlarını ve popüler kutu oyunlarını dijital dünyada yaşatmak amacıyla kurulmuş kapsamlı bir oyun rehberidir.',
-    keywords: 'hakkımızda, nasıl oynanır, geleneksel oyunlar, türk oyunları',
+    title: 'Hakkımızda — Kuralı Ne? Oyun Platformu',
+    description:
+      'Kuralı Ne?, geleneksel oyun mirasını dijital çağa taşıyan kapsamlı bir oyun platformudur: kurallar, rehberler, araçlar, haberler ve bedava oyunlar.',
+    keywords:
+      'hakkımızda, kuralı ne, oyun platformu, geleneksel oyunlar, oyun rehberi, dijital oyun rehberi',
   },
   contact: {
     title: 'İletişim - Bize Ulaşın',
@@ -85,9 +151,11 @@ export const PAGE_SEO = {
     keywords: 'reklam verin, reklam, sponsorluk, banner reklam, oyun reklam',
   },
   news: {
-    title: 'Oyun Haberleri - Çıkış Tarihleri ve Güncellemeler',
-    description: 'GTA, konsol ve PC oyunları hakkında güncel haberler. Çıkış tarihleri, fiyatlar, indirimler ve oyun dünyasından son gelişmeler.',
-    keywords: 'oyun haberleri, oyun çıkış tarihi, oyun fiyatları, gta 6, konsol oyunları, pc oyun haberleri',
+    title: 'Oyun Haberleri — Çıkış Tarihleri, Fiyatlar & İndirimler',
+    description:
+      'GTA, AAA oyunlar, konsol ve PC dünyasından güncel haberler. Çıkış tarihleri, fiyatlar, indirimler ve patch notları.',
+    keywords:
+      'oyun haberleri, oyun çıkış tarihi, oyun fiyatları, steam indirim, ps5 haber, gta 6, oyun güncellemesi, epic games haber',
   },
 };
 
@@ -207,45 +275,65 @@ function minutesToIso8601(minutes) {
   return `PT${hours}H${remaining}M`;
 }
 
+// Oyun SEO başlık kalıbı — geleneksel vs dijital
+export function getGameSeoHeadline(gameName, category) {
+  if (!gameName) return 'Oyun Rehberi';
+  if (isDigitalGameCategory(category)) {
+    return `${gameName} Nasıl Oynanır?`;
+  }
+  return `${gameName} Kuralı Ne?`;
+}
+
 // Oyun için HowTo schema oluşturucu
 export function generateGameSchema(game, options = {}) {
   if (!game) return null;
 
+  const isDigital = isDigitalGameCategory(game.category);
   const schema = {
     '@context': 'https://schema.org',
-    '@type': 'HowTo',
-    name: `${game.name} Kuralı Ne?`,
+    '@type': isDigital ? 'VideoGame' : 'HowTo',
+    name: getGameSeoHeadline(game.name, game.category),
     description: game.description || game.shortDescription,
     image: game.image,
     totalTime: minutesToIso8601(game.playTimeMinutes),
-    estimatedCost: {
-      '@type': 'MonetaryAmount',
-      currency: 'TRY',
-      value: '0',
-    },
-    supply: [
-      {
-        '@type': 'HowToSupply',
-        name: game.category || 'Oyun malzemeleri',
-      },
-    ],
-    tool: [
-      {
-        '@type': 'HowToTool',
-        name: game.players || 'Oyuncular',
-      },
-    ],
-    step: (game.rules || []).map((rule, index) => ({
-      '@type': 'HowToStep',
-      position: index + 1,
-      name: `Adım ${index + 1}`,
-      text: rule,
-      url: `${SITE_CONFIG.url}/oyun/${game.slug}#adim-${index + 1}`,
-    })),
+    ...(isDigital
+      ? {
+          genre: game.category,
+          gamePlatform: game.category?.includes('Mobil')
+            ? 'Mobile'
+            : game.category?.includes('Konsol')
+              ? 'Console'
+              : 'PC',
+        }
+      : {
+          estimatedCost: {
+            '@type': 'MonetaryAmount',
+            currency: 'TRY',
+            value: '0',
+          },
+          supply: [
+            {
+              '@type': 'HowToSupply',
+              name: game.category || 'Oyun malzemeleri',
+            },
+          ],
+          tool: [
+            {
+              '@type': 'HowToTool',
+              name: game.players || 'Oyuncular',
+            },
+          ],
+          step: (game.rules || []).map((rule, index) => ({
+            '@type': 'HowToStep',
+            position: index + 1,
+            name: `Adım ${index + 1}`,
+            text: rule,
+            url: `${SITE_CONFIG.url}/oyun/${game.slug}#adim-${index + 1}`,
+          })),
+        }),
   };
 
-  // İpuçları varsa tip section ekle
-  if (game.tips && game.tips.length > 0) {
+  if (!isDigital && game.tips && game.tips.length > 0) {
     schema.tip = game.tips.map((tip) => ({
       '@type': 'HowToTip',
       text: tip,

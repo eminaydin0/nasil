@@ -6,6 +6,7 @@
 import {
   SITE_CONFIG,
   CATEGORY_SEO,
+  getGameSeoHeadline,
   generateGameSchema,
   generateArticleSchema,
   generateNewsArticleSchema,
@@ -16,6 +17,7 @@ import {
   generateComparisonPageSchema,
 } from '../constants/seo';
 import { TOOL_PAGE_SEO, generateWebApplicationSchema } from '../constants/seoKeywords';
+import { isDigitalGameCategory } from '../constants/digitalGames';
 
 // ─── Yardımcılar ───────────────────────────────────────────────────────────
 
@@ -97,6 +99,9 @@ const CATEGORY_KEYWORD_MAP = {
   'Dış Mekan': ['sokak oyunu', 'dış mekan', 'açık alan', 'çocuk oyunu'],
   'İç Mekan': ['iç mekan', 'ev oyunu', 'salon oyunu'],
   'Zeka Oyunları': ['zeka oyunu', 'strateji', 'bulmaca'],
+  'PC Oyunları': ['pc oyunu', 'steam', 'epic games', 'sistem gereksinimleri', 'oyun indir', 'windows oyun'],
+  'Konsol Oyunları': ['konsol oyunu', 'ps5', 'xbox', 'switch', 'playstation', 'nintendo'],
+  'Mobil Oyunlar': ['mobil oyun', 'android oyun', 'ios oyun', 'google play', 'app store'],
 };
 
 const NAME_PATTERN_BOOSTS = [
@@ -137,34 +142,45 @@ function extractRuleKeywords(rules, limit = 6) {
 
 export function buildGameTitle(game) {
   const g = normalizeGameInput(game);
-  if (!g?.name) return 'Oyun Kuralları';
-  return `${g.name} Kuralı Ne?`;
+  if (!g?.name) return 'Oyun Rehberi';
+  return getGameSeoHeadline(g.name, g.category);
 }
 
 export function buildGameDescription(game) {
   const g = normalizeGameInput(game);
   if (!g) return '';
 
+  const isDigital = isDigitalGameCategory(g.category);
   const parts = [];
   const intro = g.shortDescription || truncateText(g.description, 100);
-  parts.push(`${g.name} kuralı ne?`);
-  if (intro) parts.push(intro);
 
-  const metaBits = [];
-  if (g.players) metaBits.push(g.players);
-  if (g.difficulty) metaBits.push(`${g.difficulty} seviye`);
-  const time = formatPlayTime(g.playTimeMinutes);
-  if (time) metaBits.push(`~${time}`);
-  if (metaBits.length) parts.push(metaBits.join(' · '));
+  if (isDigital) {
+    parts.push(`${g.name} nasıl oynanır?`);
+    if (intro) parts.push(intro);
+    const metaBits = [];
+    if (g.category) metaBits.push(g.category.replace(' Oyunları', '').replace(' Oyunlar', ''));
+    if (g.players) metaBits.push(g.players);
+    if (metaBits.length) parts.push(metaBits.join(' · '));
+    parts.push('Sistem gereksinimleri, indirme linkleri, ipuçları.');
+  } else {
+    parts.push(`${g.name} kuralı ne?`);
+    if (intro) parts.push(intro);
 
-  const contentBits = [];
-  if (g.rules?.length) contentBits.push(`${g.rules.length} adımlık kurallar`);
-  if (g.tips?.length) contentBits.push(`${g.tips.length} ipucu`);
-  if (g.videoUrl) contentBits.push('video anlatım');
-  if (g.faq?.length) contentBits.push(`${g.faq.length} SSS`);
-  if (contentBits.length) parts.push(contentBits.join(', ') + '.');
+    const metaBits = [];
+    if (g.players) metaBits.push(g.players);
+    if (g.difficulty) metaBits.push(`${g.difficulty} seviye`);
+    const time = formatPlayTime(g.playTimeMinutes);
+    if (time) metaBits.push(`~${time}`);
+    if (metaBits.length) parts.push(metaBits.join(' · '));
 
-  if (!contentBits.length) parts.push('Adım adım kurallar, stratejiler ve püf noktaları.');
+    const contentBits = [];
+    if (g.rules?.length) contentBits.push(`${g.rules.length} adımlık kurallar`);
+    if (g.tips?.length) contentBits.push(`${g.tips.length} ipucu`);
+    if (g.videoUrl) contentBits.push('video anlatım');
+    if (g.faq?.length) contentBits.push(`${g.faq.length} SSS`);
+    if (contentBits.length) parts.push(`${contentBits.join(', ')}.`);
+    if (!contentBits.length) parts.push('Adım adım kurallar, stratejiler ve püf noktaları.');
+  }
 
   return truncateText(parts.join(' '), 160);
 }
@@ -174,26 +190,41 @@ export function buildGameKeywords(game) {
   if (!g) return '';
 
   const name = g.name;
-  const keywords = [
-    `${name} kuralı ne`,
-    `${name} nasıl oynanır`,
-    `${name} kuralları`,
-    `${name} ipuçları`,
-    `${name} stratejileri`,
-    `${name} oyunu`,
-    `${name.toLocaleLowerCase('tr-TR')} kuralları`,
-    g.category,
-    g.category ? `${g.category.toLocaleLowerCase('tr-TR')} kuralları` : null,
-    g.difficulty ? `${g.difficulty} ${g.category || 'oyun'}`.toLocaleLowerCase('tr-TR') : null,
-    g.players,
-    ...getCategoryKeywords(g.category),
-    ...getNamePatternKeywords(name),
-    ...extractRuleKeywords(g.rules).map((w) => `${name} ${w}`),
-    'kuralı ne',
-    'nasıl oynanır',
-    'oyun kuralları',
-    'geleneksel türk oyunları',
-  ];
+  const isDigital = isDigitalGameCategory(g.category);
+  const keywords = isDigital
+    ? [
+        `${name} nasıl oynanır`,
+        `${name} rehberi`,
+        `${name} sistem gereksinimleri`,
+        `${name} steam`,
+        `${name} türkçe rehber`,
+        `${name} indir`,
+        g.category,
+        g.category ? `${g.category.toLocaleLowerCase('tr-TR')} rehberi` : null,
+        ...getCategoryKeywords(g.category),
+        'oyun rehberi',
+        'nasıl oynanır',
+      ]
+    : [
+        `${name} kuralı ne`,
+        `${name} nasıl oynanır`,
+        `${name} kuralları`,
+        `${name} ipuçları`,
+        `${name} stratejileri`,
+        `${name} oyunu`,
+        `${name.toLocaleLowerCase('tr-TR')} kuralları`,
+        g.category,
+        g.category ? `${g.category.toLocaleLowerCase('tr-TR')} kuralları` : null,
+        g.difficulty ? `${g.difficulty} ${g.category || 'oyun'}`.toLocaleLowerCase('tr-TR') : null,
+        g.players,
+        ...getCategoryKeywords(g.category),
+        ...getNamePatternKeywords(name),
+        ...extractRuleKeywords(g.rules).map((w) => `${name} ${w}`),
+        'kuralı ne',
+        'nasıl oynanır',
+        'oyun kuralları',
+        'geleneksel türk oyunları',
+      ];
 
   return dedupeList(keywords.filter(Boolean)).slice(0, 25).join(', ');
 }
@@ -347,7 +378,13 @@ function generateGameEntitySchema(game, options = {}) {
     url: `${SITE_CONFIG.url}/oyun/${g.slug}`,
     genre: g.category,
     inLanguage: 'tr',
-    gamePlatform: 'Tabletop',
+    gamePlatform: isDigitalGameCategory(g.category)
+      ? g.category?.includes('Mobil')
+        ? 'Mobile'
+        : g.category?.includes('Konsol')
+          ? 'Console'
+          : 'PC'
+      : 'Tabletop',
     applicationCategory: 'Game',
     author: {
       '@type': 'Organization',
@@ -615,12 +652,12 @@ export function buildAllGamesSeoMeta(games = [], filters = {}) {
 
   const topNames = games.slice(0, 4).map((g) => g.name).join(', ');
   return {
-    title: `Tüm Oyunlar (${count}) - Oyun Arşivi`,
+    title: `Tüm Oyun Rehberleri (${count})`,
     description: truncateText(
-      `${count} geleneksel Türk oyunu ve kutu oyunu rehberi.${topNames ? ` ${topNames} ve daha fazlası.` : ''} Kurallar, ipuçları, videolar.`,
+      `${count} oyun rehberi: geleneksel, kutu, PC, konsol ve mobil.${topNames ? ` ${topNames} ve daha fazlası.` : ''} Kurallar, ipuçları, araçlar.`,
       160
     ),
-    keywords: `tüm oyunlar, oyun arşivi, ${count} oyun, geleneksel oyunlar, okey, batak, pişti, kuralı ne`,
+    keywords: `tüm oyunlar, oyun arşivi, oyun rehberleri, geleneksel oyunlar, pc oyun rehberi, ${count} oyun, kuralı ne`,
     url: '/oyunlar',
   };
 }
@@ -882,18 +919,23 @@ export function buildHomeSeoMeta(games = []) {
 
   const description = count > 0
     ? truncateText(
-        `${count} geleneksel Türk oyunu rehberi: ${topNames.join(', ')}. Kurallar, ipuçları, videolar ve oyun araçları — Kuralı Ne?'de.`,
+        `${count} oyun rehberi: ${topNames.join(', ')}. Geleneksel kurallar, dijital rehberler, araçlar ve haberler — Kuralı Ne? platformunda.`,
         160
       )
-    : 'Okey, Batak, Pişti, Saklambaç gibi geleneksel Türk oyunlarının kuralı ne? Detaylı kurallar, ipuçları ve stratejiler tek bir yerde.';
+    : 'Okey, Batak, Pişti kuralları; PC/konsol rehberleri; oyun araçları, bedava kampanyalar ve haberler. Türkiye\'nin oyun platformu.';
 
   const keywords = dedupeList([
     'kuralı ne',
     'oyun kuralları',
+    'oyun rehberi',
     'geleneksel türk oyunları',
-    ...topNames.flatMap((n) => [`${n} kuralı ne`, `${n} kuralları`]),
+    'pc oyun rehberi',
+    'ücretsiz oyun',
+    'oyun haberleri',
+    '101 okey yazboz',
+    ...topNames.flatMap((n) => [`${n} kuralı ne`, `${n} nasıl oynanır`]),
     `${count} oyun rehberi`,
-  ]).slice(0, 15).join(', ');
+  ]).slice(0, 18).join(', ');
 
   return { description, keywords, gameCount: count, topGameNames: topNames };
 }
@@ -938,10 +980,10 @@ export function buildHomeFaqs(games = []) {
   }
 
   faqs.push({
-    question: 'Sitede kaç oyun var?',
+    question: 'Kuralı Ne? nedir?',
     answer: games.length > 0
-      ? `Kuralı Ne?'de şu an ${games.length} oyun rehberi bulunuyor. Yeni oyunlar düzenli ekleniyor.`
-      : 'Kuralı Ne? geleneksel Türk oyunları ve popüler kutu oyunları için kapsamlı bir rehberdir.',
+      ? `Kuralı Ne?, geleneksel oyun kurallarından PC/konsol rehberlerine, oyun araçlarından bedava kampanyalara kadar ${games.length}+ içerik sunan bir oyun platformudur.`
+      : 'Kuralı Ne?, geleneksel oyun mirasını dijital çağa taşıyan; kurallar, rehberler, araçlar ve haberler sunan bir oyun platformudur.',
   });
 
   return faqs.slice(0, 5);
