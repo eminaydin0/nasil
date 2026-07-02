@@ -4,6 +4,8 @@ import {
   PencilLine,
   Users,
   Grid3X3,
+  CircleDot,
+  Shuffle,
 } from 'lucide-react';
 
 export const TOOL_CATEGORY_LABELS = {
@@ -56,8 +58,30 @@ export const SITE_TOOLS = [
     description: '5v5–11v11 hazır taktiklerle diziliş kurun, PNG indirin.',
     icon: Users,
     link: '/araclar/halisaha-takim-olusturucu',
+    badge: 'Popüler',
     color: 'emerald',
     category: 'team',
+    featured: true,
+  },
+  {
+    id: 'karar-carki',
+    title: 'Karar Çarkı',
+    description: 'Seçenekleri yaz, çevir — kura ve karar için renkli şans çarkı.',
+    icon: CircleDot,
+    link: '/araclar/karar-carki',
+    badge: 'Yeni',
+    color: 'violet',
+    category: 'utility',
+  },
+  {
+    id: 'kura-cek',
+    title: 'Kura Çekme',
+    description: 'İsimleri ekle, kutudan rastgele kazananı seç.',
+    icon: Shuffle,
+    link: '/araclar/kura-cek',
+    badge: 'Yeni',
+    color: 'fuchsia',
+    category: 'utility',
   },
   {
     id: 'zar-at',
@@ -87,7 +111,7 @@ export const TOOL_FEATURES = [
 ];
 
 export const TOOL_HIGHLIGHTS = [
-  { label: '7 araç', sub: 'Masa başı ihtiyaçları' },
+  { label: '9 araç', sub: 'Masa başı ihtiyaçları' },
   { label: 'Ücretsiz', sub: 'Reklamsız kullanım' },
   { label: 'Mobil', sub: 'Telefonda da rahat' },
   { label: 'Hızlı', sub: 'Kurulum yok' },
@@ -102,6 +126,22 @@ export function groupToolsByCategory(tools = SITE_TOOLS) {
       items: tools.filter((t) => t.category === key),
     }))
     .filter((g) => g.items.length > 0);
+}
+
+export function getFeaturedTool(tools = SITE_TOOLS) {
+  return tools.find((t) => t.featured) || null;
+}
+
+export function getHomeTools(tools = SITE_TOOLS) {
+  const ids = [
+    'halisaha-takim-olusturucu',
+    'karar-carki',
+    'kura-cek',
+    '101-yazboz',
+    'okey-sayaci',
+    'zar-at',
+  ];
+  return ids.map((id) => tools.find((t) => t.id === id)).filter(Boolean);
 }
 
 export function getRelatedTools(currentLink, limit = 4) {
