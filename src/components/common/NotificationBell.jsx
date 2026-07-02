@@ -121,7 +121,7 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={handleBellClick}
-        className="relative p-2 rounded-full text-warm-700 hover:text-orange-600 hover:bg-orange-50 transition-colors"
+        className="relative flex h-11 w-11 items-center justify-center rounded-full text-warm-700 transition-colors hover:bg-orange-50 hover:text-orange-600"
         title="Bildirimler"
         aria-label="Bildirimler"
       >

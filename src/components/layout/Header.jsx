@@ -8,6 +8,7 @@ import {
   Settings,
   Heart,
   ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
@@ -70,7 +71,6 @@ function Header() {
   const [searchTerm, setSearchTerm] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [menuTop, setMenuTop] = useState(68);
   const [games, setGames] = useState([]);
   const headerRef = useRef(null);
   const searchRef = useRef(null);
@@ -84,10 +84,7 @@ function Header() {
     const el = headerRef.current;
     if (!el) return;
     document.documentElement.style.setProperty('--app-header-offset', `${el.offsetHeight}px`);
-    if (mobileMenuOpen) {
-      setMenuTop(el.getBoundingClientRect().bottom);
-    }
-  }, [mobileMenuOpen]);
+  }, []);
 
   useEffect(() => {
     loadGames();
@@ -106,22 +103,6 @@ function Header() {
       window.removeEventListener('resize', syncHeaderMetrics);
     };
   }, [syncHeaderMetrics]);
-
-  useEffect(() => {
-    if (!mobileMenuOpen) return undefined;
-    const onScrollOrResize = () => {
-      if (headerRef.current) {
-        setMenuTop(headerRef.current.getBoundingClientRect().bottom);
-      }
-    };
-    onScrollOrResize();
-    window.addEventListener('scroll', onScrollOrResize, true);
-    window.addEventListener('resize', onScrollOrResize);
-    return () => {
-      window.removeEventListener('scroll', onScrollOrResize, true);
-      window.removeEventListener('resize', onScrollOrResize);
-    };
-  }, [mobileMenuOpen]);
 
   const loadGames = async () => {
     try {
@@ -209,11 +190,19 @@ function Header() {
   };
 
   const openMobileMenu = () => {
-    if (headerRef.current) {
-      setMenuTop(headerRef.current.getBoundingClientRect().bottom);
-    }
     setMobileMenuOpen(true);
   };
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.dataset.mobileNavOpen = 'true';
+    } else {
+      delete document.body.dataset.mobileNavOpen;
+    }
+    return () => {
+      delete document.body.dataset.mobileNavOpen;
+    };
+  }, [mobileMenuOpen]);
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Kullanıcı';
   const avatarUrl = user?.user_metadata?.avatar_url;
@@ -222,7 +211,7 @@ function Header() {
     <>
       <header
         ref={headerRef}
-        className="safe-area-top safe-area-x sticky top-0 z-50 border-b border-warm-200/80 bg-white/92 font-sans shadow-[0_1px_0_rgba(28,25,23,0.04),0_4px_24px_-4px_rgba(28,25,23,0.06)] backdrop-blur-lg"
+        className={`safe-area-top safe-area-x sticky top-0 z-50 border-b border-warm-200/80 bg-white/92 font-sans shadow-[0_1px_0_rgba(28,25,23,0.04),0_4px_24px_-4px_rgba(28,25,23,0.06)] backdrop-blur-lg${mobileMenuOpen ? ' header--mobile-menu-open' : ''}`}
       >
         <div className="container mx-auto flex h-[4.25rem] items-center gap-3 px-3 sm:px-4">
           <Link
@@ -245,7 +234,7 @@ function Header() {
           <HeaderNavMenu pathname={pathname} />
 
           <div className="ml-auto flex shrink-0 items-center gap-2">
-            <div className="relative hidden md:block" ref={searchRef}>
+            <div className="relative hidden lg:block" ref={searchRef}>
               <Search
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-warm-400"
                 size={15}
@@ -271,7 +260,7 @@ function Header() {
               )}
             </div>
 
-            <div className="hidden items-center gap-1.5 md:flex">
+            <div className="hidden items-center gap-1.5 lg:flex">
               {user ? (
                 <>
                   <NotificationBell />
@@ -352,7 +341,11 @@ function Header() {
               <button
                 type="button"
                 onClick={() => (mobileMenuOpen ? setMobileMenuOpen(false) : openMobileMenu())}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-warm-200/80 bg-cream-50 text-warm-700 transition-colors hover:bg-white"
+                className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${
+                  mobileMenuOpen
+                    ? 'border-orange-200 bg-orange-50 text-orange-700'
+                    : 'border-warm-200/80 bg-cream-50 text-warm-700 hover:bg-white'
+                }`}
                 aria-label={mobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
                 aria-expanded={mobileMenuOpen}
               >
@@ -363,65 +356,69 @@ function Header() {
         </div>
       </header>
 
+      {mobileMenuOpen && (
+        <div aria-hidden className="header-spacer" style={{ height: 'var(--app-header-offset)' }} />
+      )}
+
       <MobileNavMenu
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
-        top={menuTop}
         pathname={pathname}
-      >
-        <div className="relative border-b border-warm-100 px-4 py-3" ref={searchRef}>
-          <Search
-            className="pointer-events-none absolute left-7 top-1/2 -translate-y-1/2 text-warm-400"
-            size={16}
-            aria-hidden
-          />
-          <input
-            type="search"
-            placeholder="Oyun ara…"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setSearchFocused(true)}
-            onKeyDown={handleSearchKeyDown}
-            className="w-full rounded-xl border border-warm-200/80 bg-cream-50 py-2.5 pl-10 pr-3 text-sm text-warm-900 placeholder:text-warm-400 focus:border-orange-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100"
-            aria-label="Oyun ara"
-          />
-          {searchFocused && (
-            <GameSearchDropdown
-              games={filteredGames}
-              searchTerm={searchTerm}
-              searchResultsUrl={searchResultsUrl}
-              onNavigate={() => {
-                clearSearch();
-                setMobileMenuOpen(false);
-              }}
+        search={
+          <div className="relative" ref={searchRef}>
+            <Search
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-warm-400"
+              size={18}
+              aria-hidden
             />
-          )}
-        </div>
-
-        <div className="border-b border-warm-100 px-4 py-3">
-          {user ? (
+            <input
+              type="search"
+              placeholder="Oyun ara…"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onKeyDown={handleSearchKeyDown}
+              className="mobile-nav-search-input"
+              aria-label="Oyun ara"
+            />
+            {searchFocused && (
+              <GameSearchDropdown
+                games={filteredGames}
+                searchTerm={searchTerm}
+                searchResultsUrl={searchResultsUrl}
+                onNavigate={() => {
+                  clearSearch();
+                  setMobileMenuOpen(false);
+                }}
+              />
+            )}
+          </div>
+        }
+        footer={
+          user ? (
             <Link
               to="/profil"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 rounded-xl bg-cream-50 px-3 py-2.5"
+              className="mobile-nav-user-card"
             >
               <Avatar src={avatarUrl} name={displayName} size="sm" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-bold text-warm-900">{displayName}</p>
-                <p className="truncate text-xs text-warm-500">Profilim</p>
+                <p className="truncate text-xs text-warm-500">Profilim ve ayarlar</p>
               </div>
+              <ChevronRight size={18} className="shrink-0 text-warm-400" aria-hidden />
             </Link>
           ) : (
             <Link
               to="/auth"
               onClick={() => setMobileMenuOpen(false)}
-              className="block rounded-xl bg-orange-600 py-2.5 text-center text-sm font-semibold text-white"
+              className="mobile-nav-auth-btn"
             >
               Giriş Yap / Kayıt Ol
             </Link>
-          )}
-        </div>
-      </MobileNavMenu>
+          )
+        }
+      />
     </>
   );
 }

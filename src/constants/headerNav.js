@@ -11,6 +11,8 @@ import {
   Home,
   Monitor,
   Smartphone,
+  Info,
+  Mail,
 } from 'lucide-react';
 import { CATEGORIES } from './categories';
 import { SITE_TOOLS, groupToolsByCategory } from './tools';
@@ -106,11 +108,13 @@ export const HEADER_NAV = [
     id: 'hakkimizda',
     label: 'Hakkımızda',
     href: '/hakkimizda',
+    icon: Info,
   },
   {
     id: 'iletisim',
     label: 'İletişim',
     href: '/iletisim',
+    icon: Mail,
   },
 ];
 

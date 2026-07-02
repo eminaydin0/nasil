@@ -57,7 +57,7 @@ export default function OkeyScore() {
                 type="text"
                 value={player}
                 onChange={(e) => updateName(idx, e.target.value)}
-                className="relative mb-3 w-full rounded-xl border border-warm-200/80 bg-white/95 px-2 py-2 text-center text-[11px] font-bold uppercase tracking-wide text-warm-600 outline-none ring-2 ring-transparent transition-all focus:border-orange-400 focus:text-charcoal-900 focus:ring-orange-500/15"
+                className="relative mb-3 w-full rounded-xl border border-warm-200/80 bg-white/95 px-2 py-2 text-center text-base font-bold uppercase tracking-wide text-warm-600 outline-none ring-2 ring-transparent transition-all focus:border-orange-400 focus:text-charcoal-900 focus:ring-orange-500/15"
               />
               <div
                 className={`font-display relative text-[2rem] font-black leading-none tracking-tighter sm:text-4xl ${scores[idx] <= 0 ? 'text-orange-700' : 'text-charcoal-900'}`}

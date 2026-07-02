@@ -313,7 +313,7 @@ export default function Okey101Score() {
                     value={player}
                     onChange={(e) => updatePlayerName(idx, e.target.value)}
                     placeholder={`Oyuncu ${idx + 1}`}
-                    className="rounded-xl border-2 border-warm-200 bg-cream-50 p-2.5 text-sm text-charcoal-900 outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 sm:p-3 sm:text-base"
+                    className="rounded-xl border-2 border-warm-200 bg-cream-50 p-2.5 text-base text-charcoal-900 outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 sm:p-3"
                   />
                 ))}
               </div>
@@ -336,7 +336,7 @@ export default function Okey101Score() {
                       setTeamNames(newTeams);
                     }}
                     placeholder={`${idx + 1}. Takım`}
-                    className="rounded-xl border-2 border-warm-200 bg-cream-50 p-2.5 text-sm text-charcoal-900 outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 sm:p-3 sm:text-base"
+                    className="rounded-xl border-2 border-warm-200 bg-cream-50 p-2.5 text-base text-charcoal-900 outline-none transition-all focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 sm:p-3"
                   />
                 ))}
               </div>
@@ -376,6 +376,27 @@ export default function Okey101Score() {
   const columnLabels = isPartners
     ? teamNames
     : players.map((p, i) => p || `Oyuncu ${i + 1}`);
+
+  const presetBtnCompact =
+    'min-h-[2rem] flex-1 rounded-lg px-1.5 py-1.5 text-[10px] font-bold transition-colors sm:text-xs';
+
+  const renderPresetRowCompact = (playerIdx) =>
+    isPartners ? (
+      <div className="mt-1.5 grid grid-cols-2 gap-1">
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.BITTI)} className={`${presetBtnCompact} bg-orange-100 text-orange-800`}>Bitti</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.OKEY_BITTI)} className={`${presetBtnCompact} bg-orange-600 text-white`}>Okey</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.ISLER)} className={`${presetBtnCompact} border border-orange-200 bg-orange-50 text-orange-700`}>İşler</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.ACMADI)} className={`${presetBtnCompact} bg-rose-100 text-rose-700`}>Açmadı</button>
+      </div>
+    ) : (
+      <div className="mt-1.5 grid grid-cols-3 gap-1">
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.BITTI)} className={`${presetBtnCompact} bg-orange-100 text-orange-800`}>Bitti</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.ACMADI)} className={`${presetBtnCompact} bg-rose-100 text-rose-700`}>Açmadı</button>
+        <button type="button" onClick={() => setPreset(playerIdx, PRESETS.ISLER)} className={`${presetBtnCompact} border border-orange-200 bg-orange-50 text-orange-700`}>İşler</button>
+      </div>
+    );
+
+  const mobileEntryIndices = isPartners ? [0, 1] : [0, 1, 2, 3];
 
   const presetBtn =
     'rounded-lg px-2 py-2 text-[11px] font-bold transition-colors sm:text-xs';
@@ -438,8 +459,8 @@ export default function Okey101Score() {
           </div>
         )}
 
-        {/* Mobil — kart düzeni */}
-        <div className="md:hidden">
+        {/* Mobil — kompakt kart + sabit alt giriş */}
+        <div className="okey101-mobile md:hidden">
           <div className="grid grid-cols-2 gap-2 border-b border-warm-100 bg-gradient-to-b from-orange-50/80 to-white p-3">
             {columnLabels.map((label, idx) => (
               <div key={idx} className="min-w-0 rounded-xl border border-warm-200/70 bg-white p-2.5 text-center">
@@ -448,7 +469,7 @@ export default function Okey101Score() {
                     type="text"
                     value={teamNames[idx]}
                     onChange={(e) => updateTeamName(idx, e.target.value)}
-                    className="w-full min-w-0 truncate bg-transparent text-center text-sm font-bold text-charcoal-900 outline-none"
+                    className="w-full min-w-0 truncate bg-transparent text-center text-base font-bold text-charcoal-900 outline-none"
                     placeholder={`${idx + 1}. Takım`}
                   />
                 ) : (
@@ -456,7 +477,7 @@ export default function Okey101Score() {
                     type="text"
                     value={players[idx]}
                     onChange={(e) => updateName(idx, e.target.value)}
-                    className="w-full min-w-0 truncate bg-transparent text-center text-sm font-bold text-charcoal-900 outline-none"
+                    className="w-full min-w-0 truncate bg-transparent text-center text-base font-bold text-charcoal-900 outline-none"
                     placeholder={`Oyuncu ${idx + 1}`}
                   />
                 )}
@@ -467,7 +488,7 @@ export default function Okey101Score() {
             ))}
           </div>
 
-          <div ref={historyRef} className="max-h-[min(280px,40vh)] space-y-2 overflow-y-auto bg-cream-50/50 p-3">
+          <div ref={historyRef} className="okey101-mobile-history space-y-2 overflow-y-auto bg-cream-50/50 p-3">
             {rounds.length === 0 ? (
               <p className="py-8 text-center text-sm text-warm-500">Henüz el girilmedi</p>
             ) : (
@@ -524,48 +545,53 @@ export default function Okey101Score() {
             )}
           </div>
 
-          <div className="space-y-3 border-t border-warm-100 bg-white p-3">
-            {(isPartners ? [0, 1] : [0, 1, 2, 3]).map((idx) => (
-              <div key={idx} className="rounded-xl border border-warm-200/70 bg-cream-50/50 p-3">
-                <label className="mb-2 block truncate text-xs font-bold text-warm-700">
-                  {columnLabels[idx]}
-                </label>
+          <div className="okey101-mobile-dock border-t border-warm-200/80 bg-white/95 backdrop-blur-md">
+            <div className={`grid gap-2 p-3 ${isPartners ? 'grid-cols-2' : 'grid-cols-2'}`}>
+              {mobileEntryIndices.map((idx) => (
+                <div key={idx} className="min-w-0 rounded-xl border border-warm-200/70 bg-cream-50/80 p-2">
+                  <label className="mb-1 block truncate text-[10px] font-bold uppercase tracking-wide text-warm-500">
+                    {columnLabels[idx]}
+                  </label>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    value={isPartners ? teamInputs[idx] : currentScores[idx]}
+                    placeholder="0"
+                    onChange={(e) => {
+                      if (isPartners) {
+                        const next = [...teamInputs];
+                        next[idx] = e.target.value;
+                        setTeamInputs(next);
+                      } else {
+                        updateCurrentScore(idx, e.target.value);
+                      }
+                    }}
+                    onKeyDown={(e) => e.key === 'Enter' && addRound()}
+                    className="w-full rounded-lg border-2 border-warm-200 bg-white p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                  />
+                  {renderPresetRowCompact(idx)}
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center gap-3 border-t border-warm-100 px-3 py-2.5">
+              <label className="flex shrink-0 cursor-pointer items-center gap-2">
                 <input
-                  type="number"
-                  value={isPartners ? teamInputs[idx] : currentScores[idx]}
-                  placeholder="0"
-                  onChange={(e) => {
-                    if (isPartners) {
-                      const next = [...teamInputs];
-                      next[idx] = e.target.value;
-                      setTeamInputs(next);
-                    } else {
-                      updateCurrentScore(idx, e.target.value);
-                    }
-                  }}
-                  onKeyDown={(e) => e.key === 'Enter' && addRound()}
-                  className="mb-2 w-full rounded-xl border-2 border-warm-200 bg-white p-2.5 text-center text-lg font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                  type="checkbox"
+                  checked={isPenaltyRound}
+                  onChange={(e) => setIsPenaltyRound(e.target.checked)}
+                  className="h-4 w-4 rounded text-orange-600 focus:ring-orange-500"
                 />
-                {renderPresetRow(idx)}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addRound}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 py-3 font-bold text-white hover:bg-orange-700"
-            >
-              <Save size={18} />
-              Eli kaydet
-            </button>
-            <label className="flex cursor-pointer items-center justify-center gap-2 py-1">
-              <input
-                type="checkbox"
-                checked={isPenaltyRound}
-                onChange={(e) => setIsPenaltyRound(e.target.checked)}
-                className="h-4 w-4 rounded text-orange-600 focus:ring-orange-500"
-              />
-              <span className="text-sm font-medium text-warm-700">Ceza eli</span>
-            </label>
+                <span className="text-xs font-semibold text-warm-700">Ceza eli</span>
+              </label>
+              <button
+                type="button"
+                onClick={addRound}
+                className="ml-auto inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-orange-600 px-4 text-sm font-bold text-white hover:bg-orange-700 active:scale-[0.98]"
+              >
+                <Save size={17} />
+                Eli kaydet
+              </button>
+            </div>
           </div>
         </div>
 

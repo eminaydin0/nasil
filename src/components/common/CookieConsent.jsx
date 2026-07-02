@@ -23,6 +23,17 @@ function CookieConsent() {
     }
   }, []);
 
+  useEffect(() => {
+    if (isVisible) {
+      document.body.dataset.cookieBanner = 'true';
+    } else {
+      delete document.body.dataset.cookieBanner;
+    }
+    return () => {
+      delete document.body.dataset.cookieBanner;
+    };
+  }, [isVisible]);
+
   const acceptAll = () => {
     localStorage.setItem('cookie_consent', JSON.stringify({
       necessary: true,
@@ -99,7 +110,7 @@ function CookieConsent() {
       )}
 
       {/* Alt Bar - Minimal, arka plan görünür */}
-      <div className="safe-area-x fixed bottom-0 left-0 right-0 z-50 safe-area-bottom px-3 pb-3 sm:px-4 sm:pb-4 pointer-events-none">
+      <div className="cookie-consent-bar safe-area-x fixed bottom-0 left-0 right-0 z-50 safe-area-bottom px-3 pb-3 sm:px-4 sm:pb-4 pointer-events-none">
         <div className="max-w-4xl mx-auto pointer-events-auto animate-slide-up">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4 sm:py-3 sm:px-4 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-warm-200/80">
             <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -116,19 +127,19 @@ function CookieConsent() {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setShowDetails(true)}
-                className="text-xs sm:text-sm text-warm-500 hover:text-warm-700 px-3 py-1.5 hover:bg-warm-100 rounded-lg transition-colors"
+                className="min-h-11 rounded-lg px-3 text-sm text-warm-500 transition-colors hover:bg-warm-100 hover:text-warm-700 sm:min-h-0 sm:py-1.5"
               >
                 Ayarlar
               </button>
               <button
                 onClick={acceptNecessary}
-                className="text-xs sm:text-sm text-warm-600 hover:text-warm-800 px-3 py-1.5 hover:bg-warm-100 rounded-lg transition-colors"
+                className="min-h-11 rounded-lg px-3 text-sm text-warm-600 transition-colors hover:bg-warm-100 hover:text-warm-800 sm:min-h-0 sm:py-1.5"
               >
                 Reddet
               </button>
               <button
                 onClick={acceptAll}
-                className="text-xs sm:text-sm px-4 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors whitespace-nowrap"
+                className="min-h-11 whitespace-nowrap rounded-lg bg-orange-600 px-4 text-sm font-medium text-white transition-colors hover:bg-orange-700 sm:min-h-0 sm:py-2"
               >
                 Kabul Et
               </button>

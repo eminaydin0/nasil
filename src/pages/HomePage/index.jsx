@@ -98,7 +98,7 @@ function HomePage() {
   }
 
   const renderGameGrid = (list) => (
-    <div className="home-scroll-row -mx-3 flex gap-3.5 overflow-x-auto px-3 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 md:gap-6">
+    <div className="home-scroll-row flex gap-3.5 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:pb-0 lg:grid-cols-4 md:gap-6">
       {list.map((game) => {
         const stats = statsMap[game.id];
         return (
@@ -162,7 +162,7 @@ function HomePage() {
             link="/oyunlar"
             linkText="Tüm Oyunlar"
           />
-          <div className="home-scroll-row -mx-3 flex gap-3 overflow-x-auto px-3 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-6 md:gap-5">
+          <div className="home-scroll-row flex gap-3 overflow-x-auto pb-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:pb-0 lg:grid-cols-6 md:gap-5">
             {categoriesWithCounts.map(({ name, count, icon, color }) => (
               <div
                 key={name}

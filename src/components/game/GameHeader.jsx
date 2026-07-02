@@ -218,7 +218,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
           <button
             type="button"
             onClick={closeLightbox}
-            className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+            className="absolute top-[calc(1rem+var(--safe-top))] right-[calc(1rem+var(--safe-right))] z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
             aria-label="Kapat"
           >
             <X size={22} />
@@ -229,7 +229,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); goToPrev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+                className="absolute left-[calc(1rem+var(--safe-left))] top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
                 aria-label="Önceki"
               >
                 <ChevronLeft size={26} />
@@ -237,7 +237,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); goToNext(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10"
+                className="absolute right-[calc(1rem+var(--safe-right))] top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
                 aria-label="Sonraki"
               >
                 <ChevronRight size={26} />
@@ -259,7 +259,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
           </div>
 
           {allImages.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/80 text-sm font-medium">
+            <div className="absolute bottom-[calc(1rem+var(--safe-bottom))] left-1/2 -translate-x-1/2 text-sm font-medium text-white/80">
               {lightboxIndex + 1} / {allImages.length}
             </div>
           )}

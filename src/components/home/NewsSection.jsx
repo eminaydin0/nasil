@@ -57,7 +57,7 @@ function NewsSection() {
           </div>
 
           {/* Mobile scroll */}
-          <div className="home-scroll-row -mx-3 flex gap-3 overflow-x-auto px-3 pb-1 md:hidden">
+          <div className="home-scroll-row flex gap-3 overflow-x-auto pb-1 md:hidden">
             {posts.map((post, index) => (
               <div
                 key={post.id}

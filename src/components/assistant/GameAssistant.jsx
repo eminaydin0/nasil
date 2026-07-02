@@ -96,6 +96,40 @@ function buildPageContext(pathname) {
   return ctx;
 }
 
+function lockBodyScroll() {
+  const scrollY = window.scrollY;
+  const { style } = document.body;
+  const prev = {
+    overflow: style.overflow,
+    position: style.position,
+    top: style.top,
+    width: style.width,
+    paddingRight: style.paddingRight,
+  };
+
+  const scrollbarGap = window.innerWidth - document.documentElement.clientWidth;
+  style.overflow = 'hidden';
+  style.position = 'fixed';
+  style.top = `-${scrollY}px`;
+  style.width = '100%';
+  if (scrollbarGap > 0) {
+    style.paddingRight = `${scrollbarGap}px`;
+  }
+
+  return () => {
+    style.overflow = prev.overflow;
+    style.position = prev.position;
+    style.top = prev.top;
+    style.width = prev.width;
+    style.paddingRight = prev.paddingRight;
+    window.scrollTo(0, scrollY);
+  };
+}
+
+function isMobileViewport() {
+  return typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches;
+}
+
 function GameAssistant() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -129,6 +163,28 @@ function GameAssistant() {
 
   useEffect(() => {
     if (open) inputRef.current?.focus();
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      delete document.body.dataset.assistantOpen;
+      return undefined;
+    }
+
+    document.body.dataset.assistantOpen = 'true';
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+
+    const unlockScroll = isMobileViewport() ? lockBodyScroll() : undefined;
+
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      delete document.body.dataset.assistantOpen;
+      unlockScroll?.();
+    };
   }, [open]);
 
   const sendMessage = useCallback(
@@ -184,11 +240,12 @@ function GameAssistant() {
   if (!available) return null;
 
   return (
-    <div className="game-assistant" aria-live="polite">
+    <div className={`game-assistant${open ? ' game-assistant--open' : ''}`} aria-live="polite">
       {open && (
         <div
           className="game-assistant-panel"
           role="dialog"
+          aria-modal="true"
           aria-label="Kural Asistanı sohbet"
         >
           <header className="game-assistant-header">
@@ -263,6 +320,11 @@ function GameAssistant() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onFocus={() => {
+                window.setTimeout(() => {
+                  inputRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }, 320);
+              }}
               placeholder="Oyun kuralı sor…"
               className="game-assistant-input"
               maxLength={900}

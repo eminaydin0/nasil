@@ -35,6 +35,7 @@ import ErrorPage from './pages/ErrorPage';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import GameAssistant from './components/assistant/GameAssistant';
+import KeyboardInsetProvider from './components/common/KeyboardInsetProvider';
 import { AuthProvider } from './context/AuthContext';
 import AuthPage from './pages/Auth/AuthPage';
 import ProfilePage from './pages/Profile/ProfilePage';
@@ -46,6 +47,7 @@ function App() {
       <AuthProvider>
         <ConfirmProvider>
         <Router>
+          <KeyboardInsetProvider />
           <CookieConsent />
           <AddToHomeScreen />
           <Toaster
@@ -105,7 +107,7 @@ function App() {
               <Header />
               <AnalyticsRouteTracker />
               <ScrollToTop />
-              <main className="min-w-0 grow overflow-x-clip page-transition">
+              <main className="page-main min-w-0 grow overflow-x-clip page-transition">
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/oyunlar" element={<AllGames />} />

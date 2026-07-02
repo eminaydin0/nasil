@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Shuffle, RefreshCw, Download, Crown, Settings2, ChevronDown, ChevronUp } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Shuffle, RefreshCw, Download, Crown, Settings2, ChevronDown, X } from 'lucide-react';
 import { showSuccess, showError } from '../../utils/toast';
 import { tool } from './toolStyles';
 import HalisahaPitch, { colorToTextContrast } from './HalisahaPitch';
@@ -338,6 +339,17 @@ export default function HalisahaGenerator() {
     showSuccess('İsimler takımlara dağıtıldı — konumları sürükleyerek ayarlayın');
   };
 
+  useEffect(() => {
+    if (mobileSettingsOpen) {
+      document.body.dataset.halisahaSettings = 'true';
+    } else {
+      delete document.body.dataset.halisahaSettings;
+    }
+    return () => {
+      delete document.body.dataset.halisahaSettings;
+    };
+  }, [mobileSettingsOpen]);
+
   const settingsPanelProps = {
     format,
     setFormat,
@@ -362,7 +374,7 @@ export default function HalisahaGenerator() {
         {/* Saha — mobilde önce */}
         <div className="halisaha-studio relative order-1 flex min-w-0 flex-1 flex-col lg:order-2 lg:min-h-[540px]">
           {/* Mobil üst bar */}
-          <div className="halisaha-toolbar relative z-20 sticky top-[var(--safe-top)]">
+          <div className="halisaha-toolbar relative z-20 sticky top-[var(--app-header-offset)]">
             <div className="flex items-center gap-2 px-3 py-2.5 sm:px-4">
               <div className="halisaha-team-switch flex min-w-0 flex-1 rounded-2xl p-1">
                 {teams.map((team, idx) => (
@@ -560,37 +572,37 @@ export default function HalisahaGenerator() {
           <HalisahaSettingsPanel {...settingsPanelProps} />
         </aside>
 
-        {/* Mobil ayarlar — açılır panel */}
-        {mobileSettingsOpen ? (
-          <div className="halisaha-settings-sheet order-3 rounded-t-2xl p-4 pt-5 lg:hidden">
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-warm-200" aria-hidden />
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-warm-900">Takım ayarları</h3>
-                <p className="mt-0.5 text-xs text-warm-500">İsim, renk ve toplu dağıtım</p>
-              </div>
+        {/* Mobil ayarlar — alt sheet (overlay) */}
+        {mobileSettingsOpen &&
+          createPortal(
+            <>
               <button
                 type="button"
+                className="halisaha-settings-backdrop"
+                aria-label="Ayarları kapat"
                 onClick={() => setMobileSettingsOpen(false)}
-                className="inline-flex items-center gap-1 rounded-full bg-warm-100 px-3 py-1.5 text-xs font-semibold text-warm-700"
-              >
-                Kapat
-                <ChevronUp size={14} />
-              </button>
-            </div>
-            <HalisahaSettingsPanel {...settingsPanelProps} showHint={false} />
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setMobileSettingsOpen(true)}
-            className="order-3 flex w-full items-center justify-center gap-2 border-t border-warm-200/80 bg-gradient-to-b from-white to-cream-50 px-4 py-3.5 text-sm font-semibold text-warm-700 active:bg-warm-50 lg:hidden"
-          >
-            <Settings2 size={16} className="text-orange-500" />
-            Takım adı, renk ve toplu isim
-            <ChevronDown size={16} className="text-warm-400" />
-          </button>
-        )}
+              />
+              <div className="halisaha-settings-sheet" role="dialog" aria-modal="true" aria-label="Takım ayarları">
+                <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-warm-200" aria-hidden />
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-bold text-warm-900">Takım ayarları</h3>
+                    <p className="mt-0.5 text-xs text-warm-500">İsim, renk ve toplu dağıtım</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setMobileSettingsOpen(false)}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-warm-100 text-warm-700"
+                    aria-label="Kapat"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+                <HalisahaSettingsPanel {...settingsPanelProps} showHint={false} />
+              </div>
+            </>,
+            document.body
+          )}
       </div>
     </div>
   );
