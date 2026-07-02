@@ -167,8 +167,20 @@ function Contact() {
 
           <div className="rounded-2xl border border-warm-200/70 bg-white p-5 shadow-sm sm:p-6">
             <p className="text-sm leading-relaxed text-warm-600 sm:text-base">
-              Formu doldurarak bize ulaşabilir veya aşağıdaki e-posta ve telefon kanallarını kullanabilirsiniz.
-              Mesajlarınıza genellikle birkaç iş günü içinde yanıt veriyoruz.
+              {PAGE_SEO.contact.description} E-posta:{' '}
+              <a
+                href={`mailto:${contactInfo.email}`}
+                className="font-semibold text-orange-700 hover:text-orange-800"
+              >
+                {contactInfo.email}
+              </a>
+              {' · '}Telefon:{' '}
+              <a
+                href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
+                className="font-semibold text-orange-700 hover:text-orange-800"
+              >
+                {contactInfo.phone}
+              </a>
             </p>
           </div>
         </div>

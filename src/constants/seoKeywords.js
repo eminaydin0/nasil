@@ -3,7 +3,7 @@
  * docs/SEO-KILAVUZU.md ile senkron tutulmalıdır.
  */
 
-import { SITE_CONFIG } from './seo';
+import { SITE_CONFIG } from './seo.js';
 
 export const KEYWORD_TIERS = {
   head: [
@@ -93,6 +93,20 @@ export const TOOL_PAGE_SEO = {
     description:
       'Her oyun için basit skor tablosu. Oyuncu ekleyin, puanları güncelleyin, sıralama otomatik. Ücretsiz dijital puan tutucu.',
     keywords: 'skor tablosu, puan tablosu online, skor tutucu, dijital skor tablosu, oyun skor tablosu',
+  },
+  'karar-carki': {
+    title: 'Karar Çarkı — Online Şans Çarkı',
+    description:
+      'Seçenekleri yazın, renkli çarkı çevirin. Kura, karar verme ve eğlence için ücretsiz online karar çarkı — mobil uyumlu.',
+    keywords:
+      'karar çarkı, şans çarkı, online çark, kura çarkı, karar verme aracı, rastgele seçim çarkı',
+  },
+  'kura-cek': {
+    title: 'Kura Çekme Aracı — Online İsim Çekilişi',
+    description:
+      'İsimleri ekleyin, kutudan rastgele kazananı seçin. Sınıf, etkinlik ve oyun geceleri için ücretsiz online kura çekme aracı.',
+    keywords:
+      'kura çekme, isim çekilişi, online kura, rastgele isim seçici, çekiliş aracı, kura çek',
   },
 };
 

@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Mail, Phone, ArrowUpRight } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+
+const HOME_TAGLINE =
+  'Geleneksel Türk oyunlarının kurallarını anlatan dijital rehberiniz. Kültürümüzün değerli mirasını gelecek nesillere aktarıyoruz.';
+
+const SHORT_TAGLINE = 'Oyun kuralları, rehberler, araçlar ve haberler — Kuralı Ne?';
 
 const exploreLinks = [
   { to: '/', label: 'Ana Sayfa' },
@@ -40,6 +45,9 @@ function FooterColumn({ title, children }) {
 }
 
 function Footer() {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+
   const [contactInfo, setContactInfo] = useState({
     email: 'eminaydinyazilim@gmail.com',
     phone: '0553 882 76 46',
@@ -89,8 +97,7 @@ function Footer() {
               />
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-warm-600">
-              Geleneksel Türk oyunlarının kurallarını anlatan dijital rehberiniz. Kültürümüzün
-              değerli mirasını gelecek nesillere aktarıyoruz.
+              {isHome ? HOME_TAGLINE : SHORT_TAGLINE}
             </p>
             <Link
               to="/iletisim"
@@ -101,30 +108,35 @@ function Footer() {
             </Link>
           </div>
 
-          {/* Keşfet */}
-          <FooterColumn title="Keşfet">
-            <ul className="space-y-2.5">
-              {exploreLinks.map(({ to, label }) => (
-                <li key={to}>
-                  <FooterLink to={to}>{label}</FooterLink>
-                </li>
-              ))}
-            </ul>
-          </FooterColumn>
+          {/* Keşfet — snippet kirliliğini önle */}
+          <div data-nosnippet>
+            <FooterColumn title="Keşfet">
+              <ul className="space-y-2.5">
+                {exploreLinks.map(({ to, label }) => (
+                  <li key={to}>
+                    <FooterLink to={to}>{label}</FooterLink>
+                  </li>
+                ))}
+              </ul>
+            </FooterColumn>
+          </div>
 
           {/* Yasal */}
-          <FooterColumn title="Yasal">
-            <ul className="space-y-2.5">
-              {legalLinks.map(({ to, label }) => (
-                <li key={to}>
-                  <FooterLink to={to}>{label}</FooterLink>
-                </li>
-              ))}
-            </ul>
-          </FooterColumn>
+          <div data-nosnippet>
+            <FooterColumn title="Yasal">
+              <ul className="space-y-2.5">
+                {legalLinks.map(({ to, label }) => (
+                  <li key={to}>
+                    <FooterLink to={to}>{label}</FooterLink>
+                  </li>
+                ))}
+              </ul>
+            </FooterColumn>
+          </div>
 
           {/* İletişim */}
-          <FooterColumn title="İletişim">
+          <div data-nosnippet>
+            <FooterColumn title="İletişim">
             <ul className="space-y-3">
               <li>
                 <a
@@ -149,7 +161,8 @@ function Footer() {
                 </a>
               </li>
             </ul>
-          </FooterColumn>
+            </FooterColumn>
+          </div>
         </div>
       </div>
 
@@ -161,7 +174,7 @@ function Footer() {
             <span className="mx-1.5 text-warm-300">·</span>
             Zenvolab tarafından kurulmuştur.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2" data-nosnippet>
             <FooterLink to="/iletisim">İletişim</FooterLink>
             <FooterLink to="/gizlilik">Gizlilik</FooterLink>
             <FooterLink to="/cerez-politikasi">Çerezler</FooterLink>

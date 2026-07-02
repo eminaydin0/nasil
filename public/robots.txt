@@ -83,7 +83,11 @@ Disallow: /
 # Sitemap locations
 Sitemap: https://kuraline.xyz/sitemap.xml
 Sitemap: https://kuraline.xyz/sitemap-index.xml
+Sitemap: https://kuraline.xyz/sitemap-static.xml
 Sitemap: https://kuraline.xyz/sitemap-games.xml
+Sitemap: https://kuraline.xyz/sitemap-news.xml
+Sitemap: https://kuraline.xyz/sitemap-categories.xml
+Sitemap: https://kuraline.xyz/sitemap-comparisons.xml
 
 # Host directive (some crawlers use this)
 Host: https://kuraline.xyz
