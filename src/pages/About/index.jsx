@@ -7,6 +7,8 @@ import {
   ArrowRight,
   MessageCircle,
   Info,
+  Code2,
+  Sparkles,
 } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
@@ -126,11 +128,44 @@ function About() {
 
           <div className="rounded-2xl border border-warm-200/70 bg-white p-5 shadow-sm sm:p-6">
             <p className="text-sm leading-relaxed text-warm-600 sm:text-base">
-              Kuralı Ne?, Türk oyuncunun masası için kuralları toparlıyor: net anlatım, ücretsiz araçlar ve
-              topluluk desteği. Geleneksel oyunları dijital ortamda yaşatmak amacıyla kurulduk.
+              {SITE_CONFIG.name}, Türk oyuncunun masası için kuralları toparlıyor: net anlatım, ücretsiz araçlar ve
+              topluluk desteği. Geleneksel oyunları dijital ortamda yaşatmak amacıyla{' '}
+              <span className="font-semibold text-warm-800">{SITE_CONFIG.creator.name}</span> tarafından
+              geliştirildi.
             </p>
           </div>
         </div>
+
+        {/* Geliştirici */}
+        <section className="mb-6 overflow-hidden rounded-2xl border border-orange-200/60 bg-gradient-to-br from-orange-50 via-white to-cream-100 p-6 shadow-soft sm:p-8">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+            <div className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-warm-glow">
+              <Code2 size={28} aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-orange-600">Geliştirici</p>
+              <h2 className="mt-1 text-2xl font-black text-warm-900">{SITE_CONFIG.creator.name}</h2>
+              <p className="mt-1 text-sm font-semibold text-orange-700">{SITE_CONFIG.creator.role}</p>
+              <p className="mt-4 text-sm leading-relaxed text-warm-600 sm:text-base">
+                {SITE_CONFIG.creator.tagline}
+              </p>
+              <ul className="mt-4 space-y-2 text-sm text-warm-600">
+                <li className="flex items-start gap-2">
+                  <Sparkles size={16} className="mt-0.5 shrink-0 text-orange-500" aria-hidden />
+                  <span>Oyun kurallarını herkesin anlayacağı sade Türkçe ile anlatmayı hedefleyen bir platform</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Sparkles size={16} className="mt-0.5 shrink-0 text-orange-500" aria-hidden />
+                  <span>Yazboz, sayaç, halı saha dizilişi ve AI asistan gibi pratik araçlar — hepsi ücretsiz</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Sparkles size={16} className="mt-0.5 shrink-0 text-orange-500" aria-hidden />
+                  <span>Hızlı, mobil uyumlu arayüz; topluluk geri bildirimleriyle sürekli gelişen bir proje</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
 
         {/* Kültürel miras — CMS */}
         <section className="mb-6 rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft">
@@ -186,9 +221,11 @@ function About() {
         {/* Kurumsal */}
         <AboutCard icon={Building2} title="Kurumsal">
           <p>
-            Bu site <span className="font-semibold text-orange-700">Zenvolab</span> tarafından
-            yayınlanmaktadır. İçerikler Supabase altyapısı üzerinde güvenle barındırılır; odak noktamız
-            hızlı yüklenen arayüz ve sürekli güncellenen oyun rehberleri.
+            Bu site <span className="font-semibold text-orange-700">{SITE_CONFIG.company}</span> tarafından
+            yayınlanmaktadır. Yazılım geliştirme ve platform mimarisi{' '}
+            <span className="font-semibold text-warm-800">{SITE_CONFIG.creator.name}</span> tarafından yürütülür.
+            İçerikler Supabase altyapısı üzerinde güvenle barındırılır; odak noktamız hızlı yüklenen arayüz ve
+            sürekli güncellenen oyun rehberleri.
           </p>
         </AboutCard>
 

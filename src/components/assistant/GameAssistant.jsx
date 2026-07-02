@@ -15,7 +15,7 @@ const QUICK_PROMPTS = [
 const WELCOME = {
   role: 'assistant',
   content:
-    'Selam! Ben **Kural Asistanı** 🎲\n\nKural, strateji veya "ne oynayalım?" sorularını sorabilirsin. İstersen aşağıdaki hızlı sorulardan birine de tıkla.',
+    'Selam! Ben **Kural Asistanı**.\n\nKural, strateji, "ne oynayalım?" veya site araçları — ne sorarsan adım adım anlatırım. Aşağıdaki hızlı sorulardan birine de basabilirsin.',
 };
 
 const TOOL_PAGES = {
@@ -24,6 +24,8 @@ const TOOL_PAGES = {
   '/araclar/batak-yazboz': 'Batak yazboz',
   '/araclar/takim-olusturucu': 'Takım oluşturucu',
   '/araclar/halisaha-takim-olusturucu': 'Halı saha takım oluşturucu',
+  '/araclar/karar-carki': 'Karar çarkı',
+  '/araclar/kura-cek': 'Kura çekme',
   '/araclar/zar-at': 'Zar at',
   '/araclar/skor-tablosu': 'Skor tablosu',
 };
