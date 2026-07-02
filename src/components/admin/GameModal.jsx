@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import { useConfirm } from '../ui';
 import GameSeoPreview from './GameSeoPreview';
 import GameModalDigitalFields from './GameModalDigitalFields';
+import AiAssistButton from './AiAssistButton';
+import { AI_TASKS } from '../../lib/ai';
 import {
   emptyDigitalInfo,
   normalizeDigitalInfo,
@@ -447,6 +449,30 @@ function GameModal({ game, categories = [], onSave, onClose }) {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-violet-100 bg-violet-50/60 px-4 py-3">
+            <p className="text-xs text-violet-800">
+              Oyun adını yazdıktan sonra AI ile açıklama, kurallar ve ipuçları önerebilirsin.
+            </p>
+            <AiAssistButton
+              task={AI_TASKS.GAME_CONTENT}
+              payload={{
+                name: formData.name,
+                category: formData.category,
+                players: formData.players,
+              }}
+              disabled={!formData.name?.trim()}
+              onResult={(data) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  shortDescription: data.shortDescription || prev.shortDescription,
+                  description: data.description || prev.description,
+                  rules: Array.isArray(data.rules) && data.rules.length ? data.rules : prev.rules,
+                  tips: Array.isArray(data.tips) && data.tips.length ? data.tips : prev.tips,
+                }));
+              }}
+            />
           </div>
 
           <div>

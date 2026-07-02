@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Cookie, X, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { initAnalytics } from '../../utils/analytics';
+import { initAnalytics, hasAnalyticsConsent } from '../../utils/analytics';
+import { setGoogleAnalyticsConsentDenied } from '../../lib/googleAnalytics';
 
 /**
  * KVKK/GDPR uyumlu çerez onay banner'ı
@@ -12,11 +13,13 @@ function CookieConsent() {
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    // Kullanıcı daha önce tercih yaptı mı kontrol et
     const consent = localStorage.getItem('cookie_consent');
     if (!consent) {
-      // 1 saniye sonra göster (UX için)
       setTimeout(() => setIsVisible(true), 1000);
+      return;
+    }
+    if (hasAnalyticsConsent()) {
+      initAnalytics();
     }
   }, []);
 
@@ -38,6 +41,7 @@ function CookieConsent() {
       marketing: false,
       timestamp: new Date().toISOString()
     }));
+    setGoogleAnalyticsConsentDenied();
     setIsVisible(false);
   };
 
@@ -73,7 +77,7 @@ function CookieConsent() {
                 <div className="p-3 bg-cream-50 rounded-lg flex justify-between items-center">
                   <div>
                     <p className="font-medium text-sm">Analitik</p>
-                    <p className="text-xs text-warm-500">İstatistikler için</p>
+                    <p className="text-xs text-warm-500">Google Analytics ve site istatistikleri</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" className="sr-only peer" defaultChecked />

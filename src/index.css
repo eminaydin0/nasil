@@ -3327,3 +3327,239 @@ h1, h2, h3, h4, h5, h6 {
   color: #78716c;
 }
 
+/* — Kural Asistanı (kullanıcı chat) — */
+.game-assistant {
+  position: fixed;
+  right: max(1rem, var(--safe-right, 0px));
+  bottom: max(1rem, var(--safe-bottom, 0px));
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.game-assistant-panel,
+.game-assistant-fab {
+  pointer-events: auto;
+}
+
+.game-assistant-panel {
+  width: min(100vw - 2rem, 22rem);
+  max-height: min(70vh, 32rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(231, 229, 228, 0.9);
+  background: #fff;
+  box-shadow:
+    0 24px 60px -20px rgba(28, 25, 23, 0.28),
+    0 0 0 1px rgba(249, 115, 22, 0.08);
+  animation: fadeUp 0.35s var(--ease-spring);
+}
+
+.game-assistant-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+}
+
+.game-assistant-avatar {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.game-assistant-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  transition: background 0.15s ease;
+}
+
+.game-assistant-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.game-assistant-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  background: linear-gradient(180deg, #fefdfb 0%, #fafaf9 100%);
+}
+
+.game-assistant-bubble {
+  max-width: 92%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.game-assistant-bubble--user {
+  align-self: flex-end;
+  border-bottom-right-radius: 0.25rem;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+}
+
+.game-assistant-bubble--bot {
+  align-self: flex-start;
+  border-bottom-left-radius: 0.25rem;
+  border: 1px solid rgba(231, 229, 228, 0.9);
+  background: #fff;
+  color: #44403c;
+  box-shadow: 0 2px 8px rgba(28, 25, 23, 0.04);
+}
+
+.game-assistant-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #78716c;
+}
+
+.game-assistant-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0 1rem 0.65rem;
+  background: #fafaf9;
+}
+
+.game-assistant-chip {
+  border-radius: 9999px;
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  background: #fff7ed;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #c2410c;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.game-assistant-chip:hover:not(:disabled) {
+  background: #ffedd5;
+  border-color: rgba(249, 115, 22, 0.4);
+}
+
+.game-assistant-chip:disabled {
+  opacity: 0.5;
+}
+
+.game-assistant-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid rgba(231, 229, 228, 0.9);
+  background: #fff;
+}
+
+.game-assistant-input {
+  flex: 1;
+  min-width: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(231, 229, 228, 0.95);
+  background: #fafaf9;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.8125rem;
+  color: #1c1917;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.game-assistant-input:focus {
+  border-color: rgba(249, 115, 22, 0.45);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+  background: #fff;
+}
+
+.game-assistant-send {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  box-shadow: 0 8px 20px -8px rgba(249, 115, 22, 0.55);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.game-assistant-send:hover:not(:disabled) {
+  transform: scale(1.04);
+}
+
+.game-assistant-send:disabled {
+  opacity: 0.45;
+}
+
+.game-assistant-fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 9999px;
+  padding: 0.85rem 1.1rem;
+  background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 800;
+  box-shadow:
+    0 16px 40px -12px rgba(249, 115, 22, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
+}
+
+.game-assistant-fab:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 20px 48px -12px rgba(249, 115, 22, 0.6);
+}
+
+.game-assistant-fab--open {
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0;
+  justify-content: center;
+}
+
+.game-assistant-fab-label {
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 480px) {
+  .game-assistant-panel {
+    width: calc(100vw - 1.5rem);
+    max-height: min(72vh, 28rem);
+  }
+
+  .game-assistant-fab-label {
+    display: none;
+  }
+
+  .game-assistant-fab:not(.game-assistant-fab--open) {
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0;
+    justify-content: center;
+  }
+}
+

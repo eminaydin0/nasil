@@ -6,12 +6,7 @@ import FreeGameCard from '../../components/freeGames/FreeGameCard';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import { useFreeGames } from '../../hooks/useFreeGames';
 
-const SEO_META = {
-  title: 'Ücretsiz Oyunlar — Steam, Epic, GOG Giveaway',
-  description:
-    'Steam, Epic Games, GOG ve daha fazlasındaki güncel ücretsiz oyun kampanyaları. Kuralı Ne? ile anlık takip edin.',
-  keywords: 'ücretsiz oyun, steam ücretsiz, epic games ücretsiz, giveaway, bedava oyun',
-};
+import { PAGE_SEO } from '../../constants/seo';
 
 function FreeGamesPage() {
   const { games, loading, error, refetch } = useFreeGames();
@@ -21,9 +16,9 @@ function FreeGamesPage() {
   return (
     <div className="min-h-screen overflow-x-clip bg-cream-50 py-6 sm:py-12">
       <SEO
-        title={SEO_META.title}
-        description={SEO_META.description}
-        keywords={SEO_META.keywords}
+        title={PAGE_SEO.freeGames.title}
+        description={PAGE_SEO.freeGames.description}
+        keywords={PAGE_SEO.freeGames.keywords}
         url="/ucretsiz-oyunlar"
       />
 

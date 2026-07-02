@@ -1,11 +1,18 @@
-// Supabase Analytics Integration
+// Supabase + Google Analytics 4
 import { supabase } from '../lib/supabase';
+import {
+  initGoogleAnalytics,
+  isGoogleAnalyticsConfigured,
+  mirrorSupabaseEventToGoogle,
+} from '../lib/googleAnalytics';
 
 // Session Management
 let sessionId = null;
 let analyticsInitialized = false;
 let lastDurationSentAt = 0;
 const DURATION_SEND_INTERVAL_MS = 60_000;
+
+export { isGoogleAnalyticsConfigured, getGoogleAnalyticsMeasurementId } from '../lib/googleAnalytics';
 
 export const hasAnalyticsConsent = () => {
   if (typeof window === 'undefined') return false;
@@ -60,6 +67,8 @@ const trackToSupabase = async (eventType, eventData = {}, gameId = null) => {
     }
   } catch (error) {
     console.error('Failed to track event:', error);
+  } finally {
+    mirrorSupabaseEventToGoogle(eventType, eventData, gameId);
   }
 };
 
@@ -67,6 +76,10 @@ const trackToSupabase = async (eventType, eventData = {}, gameId = null) => {
 export const initAnalytics = () => {
   if (typeof window === 'undefined' || analyticsInitialized || !hasAnalyticsConsent()) return;
   analyticsInitialized = true;
+
+  if (isGoogleAnalyticsConfigured()) {
+    initGoogleAnalytics();
+  }
 
   getSessionId();
   const sessionStart = Date.now();
