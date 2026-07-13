@@ -18,7 +18,7 @@ export const SITE_CONFIG = {
   name: 'Kuralı Ne?',
   tagline: 'Oyun Rehberi & Keşif Platformu',
   mission:
-    'Geleneksel oyunlardan dijitale — kurallar, rehberler, araçlar, haberler ve bedava oyunlar tek adreste.',
+    'Geleneksel ve dijital oyunların kurallarını anlatan Türkçe oyun rehberi platformu; yazboz & skor araçları, oyun haberleri, bedava oyun kampanyaları ve AI asistan tek adreste.',
   url: 'https://kuraline.xyz',
   defaultImage: 'https://kuraline.xyz/og-image.jpg',
   locale: 'tr_TR',
@@ -60,9 +60,9 @@ export const SEO_PILLARS = {
 
 // Varsayılan meta açıklamaları
 export const DEFAULT_META = {
-  title: 'Kuralı Ne? — Oyun Kuralları, Rehberler, Araçlar & Haberler',
+  title: 'Kuralı Ne? — Oyun Kuralları, Araçlar, Haberler & AI Asistan',
   description:
-    'Okey, Batak, Pişti ve geleneksel oyun kuralları; PC/konsol rehberleri; 101 yazboz, okey sayacı; bedava oyun kampanyaları ve oyun haberleri. Hepsi Kuralı Ne?\'de.',
+    'Geleneksel ve dijital oyunların kuralları, yazboz & skor araçları, oyun haberleri, bedava oyun kampanyaları ve AI asistan — Türkçe oyun rehberi platformu Kuralı Ne?.',
   keywords: [
     'kuralı ne',
     'oyun kuralları',
@@ -86,9 +86,9 @@ export const PAGE_SEO = {
   home: {
     title: 'Kuralı Ne? — Okey\'den Dijitale Oyun Rehberi Platformu',
     description:
-      'Geleneksel oyun kuralları, PC/konsol rehberleri, oyun araçları, bedava kampanyalar ve güncel haberler. Okey, Batak, Pişti ve 50+ rehber — tek platform.',
+      'Geleneksel ve dijital oyunların kuralları, yazboz & skor araçları, oyun haberleri, bedava oyun kampanyaları ve AI asistan. Okey, Batak, Pişti ve 50+ rehber tek platformda.',
     keywords:
-      'kuralı ne, oyun kuralları, geleneksel oyunlar, pc oyun rehberi, oyun haberleri, ücretsiz oyun, okey sayacı, 101 yazboz, oyun araçları',
+      'kuralı ne, oyun kuralları, geleneksel oyunlar, pc oyun rehberi, oyun haberleri, ücretsiz oyun, okey sayacı, 101 yazboz, oyun araçları, oyun ai asistan',
   },
   allGames: {
     title: 'Tüm Oyun Rehberleri — Geleneksel & Dijital Arşiv',
