@@ -8,6 +8,8 @@ const SIZES = {
   lg: 'max-w-lg',
   xl: 'max-w-2xl',
   '2xl': 'max-w-4xl',
+  '3xl': 'max-w-5xl',
+  full: 'max-w-6xl',
 };
 
 /**
@@ -80,10 +82,10 @@ function Modal({
         aria-labelledby={title ? 'modal-title' : undefined}
         ref={dialogRef}
         tabIndex={-1}
-        className={`relative w-full ${sizeClass} animate-fade-up overflow-hidden rounded-2xl bg-white shadow-soft-xl ring-1 ring-warm-200/60 outline-none ${className}`}
+        className={`relative flex max-h-[min(92vh,900px)] w-full ${sizeClass} animate-fade-up flex-col overflow-hidden rounded-2xl bg-white shadow-soft-xl ring-1 ring-warm-200/60 outline-none ${className}`}
       >
         {(title || !hideCloseButton) && (
-          <div className="flex items-start justify-between gap-3 border-b border-warm-200/60 bg-cream-50/60 px-5 py-4 sm:px-6">
+          <div className="flex shrink-0 items-start justify-between gap-3 border-b border-warm-200/60 bg-cream-50/60 px-5 py-4 sm:px-6">
             <div className="flex min-w-0 items-start gap-3">
               {Icon && (
                 <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${iconBgClass}`}>
@@ -116,9 +118,11 @@ function Modal({
             )}
           </div>
         )}
-        <div className="px-5 py-4 sm:px-6 sm:py-5">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4 sm:px-6 sm:py-5">
+          {children}
+        </div>
         {footer && (
-          <div className="flex flex-col-reverse gap-2 border-t border-warm-200/60 bg-cream-50/60 px-5 py-3 sm:flex-row sm:justify-end sm:px-6">
+          <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-warm-200/60 bg-cream-50/60 px-5 py-3 sm:flex-row sm:justify-end sm:px-6">
             {footer}
           </div>
         )}

@@ -7,12 +7,12 @@ import {
   Eye,
   EyeOff,
   FolderTree,
-  X,
   Save,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import { useConfirm } from '../ui';
+import { useConfirm, Modal } from '../ui';
+import AdminPageHeader from './AdminPageHeader';
 
 const COLOR_OPTIONS = [
   { value: 'red', label: 'Kırmızı', hex: '#ef4444' },
@@ -20,10 +20,12 @@ const COLOR_OPTIONS = [
   { value: 'amber', label: 'Amber', hex: '#f59e0b' },
   { value: 'green', label: 'Yeşil', hex: '#22c55e' },
   { value: 'emerald', label: 'Emerald', hex: '#10b981' },
+  { value: 'teal', label: 'Teal', hex: '#14b8a6' },
   { value: 'blue', label: 'Mavi', hex: '#3b82f6' },
   { value: 'cyan', label: 'Cyan', hex: '#06b6d4' },
   { value: 'indigo', label: 'İndigo', hex: '#6366f1' },
   { value: 'purple', label: 'Mor', hex: '#a855f7' },
+  { value: 'fuchsia', label: 'Fuchsia', hex: '#d946ef' },
   { value: 'pink', label: 'Pembe', hex: '#ec4899' },
   { value: 'gray', label: 'Gri', hex: '#9ca3af' },
 ];
@@ -216,67 +218,40 @@ function CategoryManager() {
 
   return (
     <div className="space-y-5">
-      {/* Üst bar */}
-      <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight text-charcoal-900">
-              <FolderTree size={20} className="text-orange-600" />
-              Kategori Yönetimi
-            </h2>
-            <p className="mt-0.5 text-sm text-warm-500">
-              {categories.length} kategori · {activeCount} aktif · Sıralama listede görünüm sırasını
-              belirler
-            </p>
-          </div>
+      <AdminPageHeader
+        description={`${categories.length} kategori · ${activeCount} aktif · Sıralama listede görünüm sırasını belirler`}
+        actions={
           <button
             type="button"
             onClick={() => {
-              if (showForm) {
-                resetForm();
-              } else {
-                setFormData({
-                  name: '',
-                  description: '',
-                  image_url: '',
-                  color: 'orange',
-                  order_index: categories.length + 1,
-                  is_active: true,
-                });
-                setEditingId(null);
-                setShowForm(true);
-              }
+              setFormData({
+                name: '',
+                description: '',
+                image_url: '',
+                color: 'orange',
+                order_index: categories.length + 1,
+                is_active: true,
+              });
+              setEditingId(null);
+              setShowForm(true);
             }}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold shadow-soft transition-all hover:-translate-y-0.5 ${
-              showForm
-                ? 'border border-warm-200 bg-cream-50 text-warm-700 hover:bg-warm-100'
-                : 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-warm-glow hover:shadow-warm-glow-lg'
-            }`}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-4 py-2.5 text-sm font-bold text-white shadow-warm-glow transition-all hover:-translate-y-0.5 hover:shadow-warm-glow-lg"
           >
-            {showForm ? (
-              <>
-                <X size={16} />
-                İptal
-              </>
-            ) : (
-              <>
-                <Plus size={16} />
-                Yeni Kategori
-              </>
-            )}
+            <Plus size={16} />
+            Yeni Kategori
           </button>
-        </div>
-      </div>
+        }
+      />
 
-      {/* Form */}
-      {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-2xl border border-orange-200/60 bg-gradient-to-br from-orange-50/30 to-amber-50/30 p-5 shadow-soft sm:p-6"
-        >
-          <h3 className="mb-4 text-base font-bold text-charcoal-900">
-            {editingId ? 'Kategoriyi Düzenle' : 'Yeni Kategori Ekle'}
-          </h3>
+      <Modal
+        open={showForm}
+        onClose={resetForm}
+        title={editingId ? 'Kategoriyi Düzenle' : 'Yeni Kategori Ekle'}
+        description="Kategori adı, renk ve sıralama sitede görünümü etkiler."
+        icon={FolderTree}
+        size="lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
@@ -367,7 +342,7 @@ function CategoryManager() {
               </label>
             </div>
           </div>
-          <div className="mt-5 flex gap-2">
+          <div className="flex gap-2 border-t border-warm-100 pt-4">
             <button
               type="submit"
               disabled={saving}
@@ -389,7 +364,7 @@ function CategoryManager() {
             </button>
           </div>
         </form>
-      )}
+      </Modal>
 
       {/* Liste */}
       <div className="overflow-hidden rounded-2xl border border-warm-200/60 bg-white shadow-soft">

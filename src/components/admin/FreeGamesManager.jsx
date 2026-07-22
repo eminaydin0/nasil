@@ -84,7 +84,6 @@ function FreeGamesManager() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-warm-900">Ücretsiz Oyunlar (Giveaway)</h2>
           <p className="text-sm text-warm-600">
             GamerPower API → Supabase cache. Frontend DB&apos;den okur, site hızlı kalır.
           </p>

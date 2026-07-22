@@ -109,44 +109,39 @@ export default function GameOfTheDayManager() {
   if (loading) return <div className="p-8 text-center">Yükleniyor...</div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Günün Oyunu Yönetimi</h2>
-          <p className="text-gray-600">Ana sayfada gösterilecek öne çıkan oyunu seçin</p>
-        </div>
-      </div>
+    <div className="space-y-5">
+      <p className="text-sm text-warm-600">Ana sayfada gösterilecek öne çıkan oyunu seçin</p>
 
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
         {/* Sol Kolon: Seçim Formu */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <div className="space-y-6">
+        <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
+          <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
                 Oyun Seçin
               </label>
               
               {/* Arama Kutusu */}
               <div className="relative mb-3">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
                 <input
                   type="text"
                   placeholder="Listede oyun ara..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all text-sm"
+                  className="w-full rounded-xl border-2 border-warm-200 bg-cream-50 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-orange-400"
                 />
               </div>
 
               {/* Oyun Listesi */}
-              <div className="border border-gray-200 rounded-xl overflow-hidden max-h-60 overflow-y-auto bg-white shadow-inner">
+              <div className="max-h-60 overflow-y-auto overflow-hidden rounded-xl border border-warm-200 bg-white">
                 {filteredGames.length > 0 ? (
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-warm-100">
                     {filteredGames.map(game => (
                       <button
                         key={game.id}
                         onClick={() => setSelectedGameId(game.id)}
-                        className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors hover:bg-orange-50 ${
+                        className={`flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-orange-50 ${
                           selectedGameId == game.id ? 'bg-orange-50 border-l-4 border-orange-500' : ''
                         }`}
                       >

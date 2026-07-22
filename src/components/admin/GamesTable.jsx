@@ -77,18 +77,12 @@ function GamesTable({
 
   return (
     <div className="space-y-5">
-      {/* Üst bar */}
+      {/* Üst bar + filtre */}
       <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight text-charcoal-900">
-              <Gamepad2 size={20} className="text-orange-600" />
-              Oyunlar
-            </h2>
-            <p className="mt-0.5 text-sm text-warm-500">
-              Toplam {games.length} oyun · {filtered.length} sonuç gösteriliyor
-            </p>
-          </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-warm-600">
+            Toplam {games.length} oyun · {filtered.length} sonuç gösteriliyor
+          </p>
           <div className="flex flex-wrap items-center gap-2">
             {selectedGames.length > 0 && (
               <button
