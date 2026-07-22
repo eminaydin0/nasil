@@ -178,7 +178,7 @@ function HeroCarousel() {
                   </div>
                 )}
 
-                <h2 className="mb-2 text-xl font-extrabold leading-[1.08] tracking-tight text-white sm:mb-4 sm:text-3xl md:mb-5 md:text-5xl lg:text-6xl">
+                <h2 className="mb-2 text-lg font-extrabold leading-[1.1] tracking-tight text-white sm:mb-3.5 sm:text-2xl md:mb-4 md:text-4xl lg:text-5xl">
                   {slide.title}
                 </h2>
 

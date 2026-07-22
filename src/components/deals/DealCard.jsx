@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { ExternalLink, Star, Tag } from 'lucide-react';
+import { ExternalLink, Star } from 'lucide-react';
 import { formatUsd } from '../../lib/cheapShark';
+import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
 
 function metacriticColor(score) {
   if (score >= 75) return 'bg-emerald-100 text-emerald-700';
@@ -9,26 +9,19 @@ function metacriticColor(score) {
 }
 
 function DealCard({ deal }) {
-  const [imgError, setImgError] = useState(false);
-  const showImage = deal.image && !imgError;
+  const imageSrc = deal.image || deal.thumb || CARD_FALLBACK_IMAGE;
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-warm-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-lg">
       <div className="relative aspect-[460/215] overflow-hidden bg-warm-100">
-        {showImage ? (
-          <img
-            src={deal.image}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            onError={() => setImgError(true)}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-warm-300">
-            <Tag size={40} aria-hidden />
-          </div>
-        )}
+        <img
+          src={imageSrc}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          onError={handleImageFallback}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
 
         {deal.savings > 0 && (
           <span className="absolute left-2 top-2 rounded-lg bg-rose-600 px-2 py-1 text-xs font-black text-white shadow">

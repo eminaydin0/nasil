@@ -52,8 +52,7 @@ export function formatNewsDate(dateStr, style = 'long') {
   return new Date(dateStr).toLocaleDateString('tr-TR', opts);
 }
 
-export const NEWS_FALLBACK_IMAGE =
-  'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1600&auto=format&fit=crop';
+export const NEWS_FALLBACK_IMAGE = '/card-fallback.png';
 
 export const NEWS_CATEGORIES = [
   'Oyun Dünyası',

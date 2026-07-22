@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Clock, Eye, TrendingUp, ArrowRight } from 'lucide-react';
 import { formatNewsDate, NEWS_FALLBACK_IMAGE } from '../../utils/newsContent';
 import { computeTrendScore } from '../../lib/newsAlgorithm';
+import { handleImageFallback } from '../../constants/media';
 
 function NewsFeaturedHero({ post, className = '' }) {
   if (!post) return null;
@@ -19,10 +20,7 @@ function NewsFeaturedHero({ post, className = '' }) {
         src={image}
         alt={post.title}
         className="news-masthead-hero-img"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = NEWS_FALLBACK_IMAGE;
-        }}
+        onError={handleImageFallback}
       />
       <div className="news-masthead-hero-overlay" />
 

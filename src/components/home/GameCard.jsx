@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Users, Star, ArrowUpRight } from 'lucide-react';
 import { Badge } from '../ui';
+import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
 
 /**
  * GameCard - tek kaynaklı oyun kartı.
@@ -15,6 +16,7 @@ function GameCard({ game, rating = 0, commentCount = 0, variant = 'default' }) {
   const ratingNumber = Number(rating) || 0;
   const ratingDisplay = ratingNumber > 0 ? ratingNumber.toFixed(1) : null;
   const isFeatured = variant === 'featured';
+  const imageSrc = game.image || CARD_FALLBACK_IMAGE;
 
   return (
     <Link
@@ -32,17 +34,14 @@ function GameCard({ game, rating = 0, commentCount = 0, variant = 'default' }) {
         {/* Görsel */}
         <div className="relative aspect-[16/10] bg-warm-100 overflow-hidden">
           <img
-            src={game.image}
+            src={imageSrc}
             alt={game.name}
             loading="lazy"
             decoding="async"
             width="640"
             height="400"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.06]"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000&auto=format&fit=crop';
-            }}
+            onError={handleImageFallback}
           />
 
           {/* Yumuşak alt gradient (text contrast için) */}
