@@ -6,9 +6,14 @@ import Breadcrumb from '../common/Breadcrumb';
 import { TOOL_FEATURES } from '../../constants/tools';
 import { ToolFeaturesCard, RelatedToolsCard, RelatedToolsStrip } from '../tools/ToolExtras';
 import { buildToolSeoMeta, buildToolStructuredData } from '../../lib/seoEngine';
+import { generateFAQSchema } from '../../constants/seo';
 
 /**
  * Araç alt sayfası iskeleti — /araclar listesi ile aynı ölçek ve dil
+ *
+ * SEO içerik slotları:
+ * - seoContent: aramada hedeflenen kelimeleri içeren indexlenebilir prose (JSX)
+ * - faqItems: [{ question, answer }] — görünür SSS + FAQPage schema
  */
 export default function ToolLayout({
   title,
@@ -17,6 +22,8 @@ export default function ToolLayout({
   badge,
   children,
   helpContent,
+  seoContent,
+  faqItems = [],
   seoTitle,
   seoDescription,
   seoUrl,
@@ -31,10 +38,18 @@ export default function ToolLayout({
     [seoUrl, seoTitle, seoDescription, title, description]
   );
 
-  const toolSchema = useMemo(
-    () => buildToolStructuredData(seoUrl, { seoTitle, seoDescription, title, description, seoUrl }),
-    [seoUrl, seoTitle, seoDescription, title, description]
-  );
+  const structuredData = useMemo(() => {
+    const schema = buildToolStructuredData(seoUrl, {
+      seoTitle,
+      seoDescription,
+      title,
+      description,
+      seoUrl,
+    });
+    const list = schema ? [schema] : [];
+    if (faqItems.length > 0) list.push(generateFAQSchema(faqItems));
+    return list;
+  }, [seoUrl, seoTitle, seoDescription, title, description, faqItems]);
 
   return (
     <div className="min-h-screen overflow-x-clip bg-cream-50 py-6 sm:py-12">
@@ -43,7 +58,7 @@ export default function ToolLayout({
         description={toolSeo.description}
         keywords={toolSeo.keywords}
         url={toolSeo.url}
-        structuredData={toolSchema}
+        structuredData={structuredData}
         breadcrumbs={breadcrumbs}
       />
 
@@ -105,6 +120,30 @@ export default function ToolLayout({
               <section className="rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft sm:p-8">
                 <h2 className="mb-4 text-sm font-bold text-warm-900">Yardım & ipuçları</h2>
                 <div className="text-sm leading-relaxed text-warm-600">{helpContent}</div>
+              </section>
+            ) : null}
+
+            {seoContent ? (
+              <section className="rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft sm:p-8">
+                <div className="prose-tool max-w-none space-y-4 text-sm leading-relaxed text-warm-700 [&_h2]:mb-2 [&_h2]:mt-6 [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-warm-900 [&_h2:first-child]:mt-0 [&_h3]:mb-1 [&_h3]:mt-4 [&_h3]:font-bold [&_h3]:text-warm-900 [&_a]:font-semibold [&_a]:text-orange-600 hover:[&_a]:text-orange-700 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5">
+                  {seoContent}
+                </div>
+              </section>
+            ) : null}
+
+            {faqItems.length > 0 ? (
+              <section className="rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft sm:p-8">
+                <h2 className="mb-4 text-lg font-bold text-warm-900">Sıkça Sorulan Sorular</h2>
+                <div className="divide-y divide-warm-200/70">
+                  {faqItems.map((item) => (
+                    <details key={item.question} className="group py-3">
+                      <summary className="cursor-pointer list-none font-semibold text-warm-900 marker:content-none [&::-webkit-details-marker]:hidden">
+                        {item.question}
+                      </summary>
+                      <p className="mt-2 text-sm leading-relaxed text-warm-600">{item.answer}</p>
+                    </details>
+                  ))}
+                </div>
               </section>
             ) : null}
           </div>

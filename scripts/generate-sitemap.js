@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import {
@@ -11,6 +10,7 @@ import {
   buildSitemapLoc,
   SITEMAP_BASE_URL,
 } from '../src/constants/sitemapRoutes.js';
+import { supabase, USING_FALLBACK_CREDENTIALS } from './supabase-build.js';
 
 dotenv.config();
 
@@ -19,8 +19,29 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const publicDir = path.join(rootDir, 'public');
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+if (USING_FALLBACK_CREDENTIALS) {
+  console.warn(
+    '⚠️  VITE_SUPABASE_* env bulunamadı — gömülü public anon key ile devam ediliyor (sitemap yine de oyun/haber içerecek).'
+  );
+}
+
+const DYNAMIC_SITEMAP_FILES = [
+  'sitemap-games.xml',
+  'sitemap-news.xml',
+  'sitemap-categories.xml',
+  'sitemap-comparisons.xml',
+];
+
+const ALL_SITEMAP_FILES = ['sitemap-static.xml', ...DYNAMIC_SITEMAP_FILES];
+
+function sitemapHasUrls(filename) {
+  try {
+    const raw = fs.readFileSync(path.join(publicDir, filename), 'utf8');
+    return /<loc>/.test(raw);
+  } catch {
+    return false;
+  }
+}
 
 function writeStaticOnlySitemaps() {
   const now = new Date().toISOString();
@@ -44,21 +65,19 @@ function writeStaticOnlySitemaps() {
     ),
   ];
   writeSitemap('sitemap-static.xml', wrapUrlset(staticEntries));
-  writeSitemap('sitemap-games.xml', wrapUrlset([]));
-  writeSitemap('sitemap-news.xml', wrapUrlset([]));
-  writeSitemap('sitemap-categories.xml', wrapUrlset([]));
-  writeSitemap('sitemap-comparisons.xml', wrapUrlset([]));
-  writeSitemapIndex(['sitemap-static.xml'], now);
-  console.log(`✅ Statik sitemap (${staticEntries.length} URL) — Supabase olmadan üretildi`);
-}
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.warn('⚠️  Supabase env yok — yalnızca statik sitemap üretiliyor.');
-  writeStaticOnlySitemaps();
-  process.exit(0);
-}
+  // DB düşerse önceki iyi sitemap'leri SİLME — boş dosya yazmak Google keşfini bozar
+  for (const file of DYNAMIC_SITEMAP_FILES) {
+    if (!sitemapHasUrls(file)) {
+      writeSitemap(file, wrapUrlset([]));
+    } else {
+      console.log(`♻️  ${file} korundu (önceki build içeriği)`);
+    }
+  }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  writeSitemapIndex(ALL_SITEMAP_FILES, now);
+  console.log(`✅ Statik sitemap (${staticEntries.length} URL) — dinamik veri alınamadı`);
+}
 
 function escapeXml(text) {
   if (!text) return '';
@@ -247,14 +266,7 @@ async function generateSitemap() {
   writeSitemap('sitemap-comparisons.xml', wrapUrlset(comparisonEntries));
 
   // ── Index ──
-  const indexFiles = [
-    'sitemap-static.xml',
-    'sitemap-games.xml',
-    'sitemap-news.xml',
-    'sitemap-categories.xml',
-    'sitemap-comparisons.xml',
-  ];
-  writeSitemapIndex(indexFiles, now);
+  writeSitemapIndex(ALL_SITEMAP_FILES, now);
 
   const total =
     staticEntries.length +
@@ -273,6 +285,12 @@ async function generateSitemap() {
 }
 
 generateSitemap().catch((err) => {
-  console.error('❌ Sitemap hatası:', err);
-  process.exit(1);
+  console.error('❌ Sitemap hatası (dinamik veri alınamadı):', err?.message || err);
+  // Deploy'u kırma: en azından statik sitemap üret.
+  try {
+    writeStaticOnlySitemaps();
+  } catch (fallbackErr) {
+    console.error('❌ Statik sitemap fallback de başarısız:', fallbackErr?.message || fallbackErr);
+    process.exit(1);
+  }
 });

@@ -2,6 +2,22 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>https://kuraline.xyz/sitemap-static.xml</loc>
-    <lastmod>2026-07-13T10:01:00.045Z</lastmod>
+    <lastmod>2026-07-22T22:41:34.282Z</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://kuraline.xyz/sitemap-games.xml</loc>
+    <lastmod>2026-07-22T22:41:34.282Z</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://kuraline.xyz/sitemap-news.xml</loc>
+    <lastmod>2026-07-22T22:41:34.282Z</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://kuraline.xyz/sitemap-categories.xml</loc>
+    <lastmod>2026-07-22T22:41:34.282Z</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://kuraline.xyz/sitemap-comparisons.xml</loc>
+    <lastmod>2026-07-22T22:41:34.282Z</lastmod>
   </sitemap>
 </sitemapindex>

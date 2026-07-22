@@ -1,63 +1,26 @@
-# Kuralı Ne? - Robots.txt
-# https://kuraline.xyz
+# Kuralı Ne? — https://kuraline.xyz
 
-# Allow all search engines to index all public pages
 User-agent: *
 Allow: /
-Allow: /oyunlar
-Allow: /oyun/
-Allow: /kategori/
-Allow: /araclar
-Allow: /hakkimizda
-Allow: /iletisim
-
-# Disallow admin and private areas
 Disallow: /admin-panel
 Disallow: /admin-panel/
 Disallow: /profil
 Disallow: /auth
-
-# Disallow pagination/sort/filter params (duplicate content)
-# /oyunlar?search= is allowed — matches SearchAction schema
+# Duplicate content — filtre/sıralama
 Disallow: /*?*page=
 Disallow: /*?*sort=
 Disallow: /*?*filter=
 
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
-
-# Google specific rules
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 0
 
 User-agent: Googlebot-Image
 Allow: /
 
-User-agent: Googlebot-News
-Allow: /
-
-# Bing specific rules
 User-agent: Bingbot
 Allow: /
-Crawl-delay: 1
 
-# Yahoo specific rules
-User-agent: Slurp
-Allow: /
-Crawl-delay: 2
-
-# Yandex specific rules
-User-agent: Yandex
-Allow: /
-Crawl-delay: 2
-
-# DuckDuckGo specific rules
-User-agent: DuckDuckBot
-Allow: /
-Crawl-delay: 1
-
-# Rate limit aggressive SEO tool crawlers
+# Agresif SEO botlarını yavaşlat
 User-agent: AhrefsBot
 Crawl-delay: 10
 
@@ -70,24 +33,11 @@ Crawl-delay: 10
 User-agent: DotBot
 Crawl-delay: 10
 
-# Block bad bots
 User-agent: MauiBot
-Disallow: /
-
-User-agent: SeznamBot
 Disallow: /
 
 User-agent: BLEXBot
 Disallow: /
 
-# Sitemap locations
-Sitemap: https://kuraline.xyz/sitemap.xml
 Sitemap: https://kuraline.xyz/sitemap-index.xml
-Sitemap: https://kuraline.xyz/sitemap-static.xml
-Sitemap: https://kuraline.xyz/sitemap-games.xml
-Sitemap: https://kuraline.xyz/sitemap-news.xml
-Sitemap: https://kuraline.xyz/sitemap-categories.xml
-Sitemap: https://kuraline.xyz/sitemap-comparisons.xml
-
-# Host directive (some crawlers use this)
-Host: https://kuraline.xyz
+Sitemap: https://kuraline.xyz/sitemap.xml

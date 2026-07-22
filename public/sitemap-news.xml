@@ -1,3 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://kuraline.xyz/haberler/gta-6-yeni-ekran-goruntuleri-detaylar-grafik-kalitesi</loc>
+    <lastmod>2026-07-22T21:49:28.175Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/news/gta-6-yeni-ekran-goruntuleri-detaylar-grafik-kalitesi-1784756918700.avif</image:loc>
+      <image:title>GTA 6’dan Yeni Ekran Görüntüleri ve Detaylar Paylaşıldı: Grafik Sınırları Zorlanıyor!</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/haberler/apple-google-yapay-zeka-ortakligi-akilli-asistanlar-yeni-donem</loc>
+    <lastmod>2026-07-22T21:46:31.182Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/news/haber-1784756431805.jpg</image:loc>
+      <image:title>Apple ve Google&apos;dan Tarihi Yapay Zekâ Ortaklığı: Akıllı Asistanlarda Yeni Dönem Başlıyor</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/haberler/playstation-plus-abonelerini-sevindirecek-yeni-kampanya-baslad</loc>
+    <lastmod>2026-07-22T21:04:13.774Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/news/playstation-plus-abonelerini-sevindirecek-yeni-kampanya-baslad-1784544037546.webp</image:loc>
+      <image:title>PlayStation Plus abonelerini sevindirecek yeni kampanya başladı</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/haberler/steamde-hafta-sonu-indirimi-baslad-yuzlerce-oyunda-buyuk-frsatlar</loc>
+    <lastmod>2026-07-21T13:28:45.295Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/news/steamde-hafta-sonu-indirimi-baslad-yuzlerce-oyunda-buyuk-frsatlar-1784273464635.webp</image:loc>
+      <image:title>Steam&apos;de hafta sonu indirimi başladı! Yüzlerce oyunda büyük fırsatlar</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/haberler/gta-6cikistarihi-bellioldu</loc>
+    <lastmod>2026-07-22T20:39:04.478Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://prod-img.hbvl.be/public/nieuws/47314m-gta6.jpg/alternates/THREE_TWO_1620/gta6.jpg</image:loc>
+      <image:title>GTA 6&apos;nın çıkış tarihi belli oldu</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/haberler/god-of-war-laufey-duyuruldu-serinin-ilk-kez-kratos-yok</loc>
+    <lastmod>2026-07-16T11:23:17.154Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/news/god-of-war-laufey-duyuruldu-serinin-ilk-kez-kratos-yok-1782778927868.jfif</image:loc>
+      <image:title>God of War Laufey Duyuruldu: Serinin İlk Kez Kratos Yok</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/haberler/gears-of-war-e-dayin-pc-sistem-gereksinimleri-ackland</loc>
+    <lastmod>2026-07-22T21:18:08.138Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/news/gears-of-war-e-dayin-pc-sistem-gereksinimleri-ackland-1782778678715.jpg</image:loc>
+      <image:title>Gears of War: E-Day&apos;in PC Sistem Gereksinimleri Açıklandı</image:title>
+    </image:image>
+  </url>
 </urlset>

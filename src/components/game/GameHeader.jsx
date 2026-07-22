@@ -5,6 +5,7 @@ import SocialShare from './SocialShare';
 import { Badge } from '../ui';
 import { getToolForGame } from '../../constants/gameTools';
 import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
+import { isDigitalGameCategory } from '../../constants/digitalGames';
 
 export default function GameHeader({ game, viewCount, selectedImage, setSelectedImage }) {
   const navigate = useNavigate();
@@ -167,7 +168,9 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
             </div>
             <h1 className="mb-3 text-2xl font-extrabold leading-[1.08] tracking-tight text-warm-900 sm:text-3xl md:text-4xl lg:text-5xl">
               {game.name}{' '}
-              <span className="text-orange-600">Kuralı Ne?</span>
+              <span className="text-orange-600">
+                {isDigitalGameCategory(game.category) ? 'Nasıl Oynanır?' : 'Kuralı Ne?'}
+              </span>
             </h1>
             <p className="text-warm-600 text-base md:text-lg leading-relaxed">
               {game.shortDescription}

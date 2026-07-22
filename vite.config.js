@@ -14,10 +14,12 @@ export default defineConfig({
     include: ['react', 'react-dom', 'react-router-dom'],
   },
   build: {
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['lucide-react', 'react-hot-toast', 'react-helmet-async'],
         },
       },
     },
