@@ -152,7 +152,7 @@ export function getCategoryConfig(categoryName, dbCategories = null) {
         icon: v.icon,
         color: v.color,
         bgColor: COLOR_TO_BG[v.color] || 'bg-gray-50',
-        image: dbCat.image || dbCat.image_url,
+        image: dbCat.image || dbCat.image_url || categoryConfig[categoryName]?.image || defaultConfig.image,
       };
     }
   }
@@ -183,7 +183,8 @@ export function getDisplayCategories(games, dbCategories = null) {
   const source = dbCategories && dbCategories.length > 0 ? dbCategories : CATEGORIES;
   const withIcon = (c) => {
     const v = resolveCategoryVisual(c);
-    return { ...c, icon: v.icon, color: v.color, image: c.image || c.image_url };
+    const fallbackImage = CANONICAL_BY_NAME[normalizeCategory(c.name)]?.image;
+    return { ...c, icon: v.icon, color: v.color, image: c.image || c.image_url || fallbackImage };
   };
   return source
     .filter((c) => gameCategories.has(c.name) && (c.isActive !== false)) // Sadece aktif kategoriler
@@ -230,11 +231,12 @@ export function getCategoriesWithCounts(games, dbCategories = null) {
   const source = dbCategories && dbCategories.length > 0 ? dbCategories : CATEGORIES;
   const withIcon = (c) => {
     const v = resolveCategoryVisual(c);
+    const fallbackImage = CANONICAL_BY_NAME[normalizeCategory(c.name)]?.image;
     return {
       ...c,
       icon: v.icon,
       color: v.color,
-      image: c.image || c.image_url,
+      image: c.image || c.image_url || fallbackImage || null,
       count: getCount(c.name),
     };
   };

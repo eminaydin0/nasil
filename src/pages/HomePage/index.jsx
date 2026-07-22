@@ -166,13 +166,20 @@ function HomePage() {
             link="/oyunlar"
             linkText="Tüm Oyunlar"
           />
-          <div className="home-scroll-row flex gap-3 overflow-x-auto pb-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:pb-0 lg:grid-cols-6 md:gap-5">
-            {categoriesWithCounts.map(({ name, count, icon, color }) => (
+          <div className="home-scroll-row flex gap-3 overflow-x-auto pb-1 sm:grid sm:grid-cols-3 sm:gap-3.5 sm:overflow-visible sm:pb-0 md:grid-cols-3 lg:grid-cols-6 md:gap-4">
+            {categoriesWithCounts.map(({ name, count, icon, color, image }) => (
               <div
                 key={name}
-                className="home-scroll-item w-[min(44vw,168px)] shrink-0 sm:w-auto sm:shrink"
+                className="home-scroll-item w-[min(42vw,160px)] shrink-0 sm:w-auto sm:shrink"
               >
-                <CategoryCard category={name} count={count} icon={icon} color={color} compact />
+                <CategoryCard
+                  category={name}
+                  count={count}
+                  icon={icon}
+                  color={color}
+                  image={image}
+                  compact
+                />
               </div>
             ))}
           </div>
