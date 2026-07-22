@@ -35,4 +35,11 @@ export default defineConfig([
       ],
     },
   },
+  {
+    // Node ortamı: build scriptleri ve serverless API fonksiyonları
+    files: ['scripts/**/*.js', 'api/**/*.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])

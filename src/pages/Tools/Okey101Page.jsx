@@ -1,12 +1,55 @@
 import { useEffect } from 'react';
 import { Grid3X3 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Okey101Score from '../../components/tools/Okey101ScoreV2';
 import ToolLayout from '../../components/layout/ToolLayout';
+
+const FAQ_ITEMS = [
+  {
+    question: '101 okey yazboz nasıl tutulur?',
+    answer:
+      'Her el sonunda oyuncunun ceza puanını kutuya girin; bitiren için -101, okeyle bitiş için -202 kısayollarını kullanın. 101 okey yazboz aracı alt toplamları otomatik hesaplar ve el geçmişini tutar.',
+  },
+  {
+    question: '101 okeyde kim kazanır?',
+    answer:
+      '101 okeyde en düşük toplam puana ulaşan oyuncu kazanır. El geçmişini takip ederek kimin önde olduğunu anlık görebilirsiniz.',
+  },
+  {
+    question: '101 yazboz ücretsiz ve kayıtsız mı?',
+    answer:
+      'Evet. 101 okey yazboz tablosu tamamen ücretsizdir, kayıt gerektirmez ve mobil uyumludur. Kağıt kalem yerine telefondan hızlıca puan tutabilirsiniz.',
+  },
+];
 
 export default function Okey101Page() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const seoContent = (
+    <>
+      <h2>101 Okey Yazboz — Online Puan Hesaplama</h2>
+      <p>
+        101 okey yazboz aracı, kağıt kalem derdi olmadan ceza puanlarını dijital olarak tutmanızı
+        sağlar. Eşli ya da tekli 101 okey oynarken her el sonunda puanları girin; -101, -202, +101
+        gibi hızlı kısayol düğmeleriyle işlemi saniyeler içinde tamamlayın. Alt toplamlar otomatik
+        hesaplanır, el bazlı tarihçe tutulur ve en düşük toplama ulaşan kazananı anında görürsünüz.
+      </p>
+      <h3>101 okey puanları nasıl işler?</h3>
+      <ul>
+        <li>Bitti (-101): eli bitiren oyuncu.</li>
+        <li>Okey (-202): okeyle bitiren oyuncu.</li>
+        <li>Açmadı (+202 / +404): tekli veya eşli açamama cezası.</li>
+        <li>İşler (+101): ek ceza olarak işaretlemek için.</li>
+      </ul>
+      <p>
+        Düşmeli okey için <Link to="/araclar/okey-sayaci">okey sayacı</Link>, batak ve king için{' '}
+        <Link to="/araclar/batak-yazboz">batak yazboz</Link> aracını da deneyin. Tüm araçlar{' '}
+        <Link to="/araclar">Oyun Araçları</Link> sayfasında.
+      </p>
+    </>
+  );
 
   const helpContent = (
     <>
@@ -67,15 +110,15 @@ export default function Okey101Page() {
 
   return (
     <ToolLayout
-      title="101 Okey yazboz"
+      title="101 Okey Yazboz"
       description="Eşli ya da tekli 101 yazbozu. Ön ayar düğmeleri, otomatik alt toplam ve el bazlı tarihçe ile masayı dijitale taşıyın."
       icon={Grid3X3}
       iconColor="pink"
       badge="Yeni"
-      seoTitle="101 Okey Puan Hesaplama — Yazboz tablosu"
-      seoDescription="Yüzbir (101) okey için yazboz, ceza puanları ve hızlı kısayollar."
       seoUrl="/araclar/101-yazboz"
       helpContent={helpContent}
+      seoContent={seoContent}
+      faqItems={FAQ_ITEMS}
     >
       <Okey101Score />
     </ToolLayout>

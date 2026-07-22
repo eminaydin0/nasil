@@ -76,11 +76,11 @@ export const TOOL_PAGE_SEO = {
       'takım oluşturucu, rastgele takım, kura çekme, takım kurma aracı, online takım oluşturucu',
   },
   'halisaha-takim-olusturucu': {
-    title: 'Halısaha Takım Oluşturucu - 5v5 ile 11v11',
+    title: 'Halı Saha Takım Oluşturucu - 5v5 ile 11v11 Diziliş',
     description:
-      'Halısaha diziliş editörü: 5v5’ten 11v11’e kadar. Hazır taktikler, kaptan, forma renkleri ve PNG indirme.',
+      'Halı saha takım oluşturucu ve diziliş editörü: 5v5’ten 11v11’e kadar. Hazır taktikler, kaptan seçimi, forma renkleri ve PNG indirme. Halı saha maçları için ücretsiz takım kurma aracı.',
     keywords:
-      'halısaha takım oluşturucu, 5v5 takım, 11v11 diziliş, halı saha kura, futbol takım oluşturucu',
+      'halı saha takım oluşturucu, halı saha takım oluşturma, halısaha takım oluşturucu, 5v5 takım, 11v11 diziliş, halı saha kura, futbol takım oluşturucu, halı saha diziliş',
   },
   'zar-at': {
     title: 'Online Zar At - Tek ve Çift Zar',

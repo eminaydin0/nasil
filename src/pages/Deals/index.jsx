@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Tag, RefreshCw } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import DealCard from '../../components/deals/DealCard';
 import { useDeals } from '../../hooks/useDeals';
 import { DEAL_STORES } from '../../lib/cheapShark';
-import { PAGE_SEO } from '../../constants/seo';
+import { PAGE_SEO, generateFAQSchema } from '../../constants/seo';
 
 const SORT_OPTIONS = [
   { value: 'Deal Rating', label: 'Önerilen' },
@@ -14,6 +15,26 @@ const SORT_OPTIONS = [
   { value: 'Price', label: 'En ucuz' },
   { value: 'Metacritic', label: 'En yüksek puan' },
 ];
+
+const FAQ_ITEMS = [
+  {
+    question: 'İndirimli oyunlar nereden takip edilir?',
+    answer:
+      'Steam, Epic Games, GOG ve daha fazla mağazadaki indirimli oyunları tek sayfada takip edebilirsiniz. Listeyi mağazaya göre filtreleyebilir; en çok indirim, en ucuz veya en yüksek puana göre sıralayabilirsiniz.',
+  },
+  {
+    question: 'İndirimli oyun fiyatları güncel mi?',
+    answer:
+      'Evet, fiyatlar CheapShark üzerinden anlık çekilir ve ABD doları ($) cinsindendir. Fiyat ve stok durumu mağazaya göre değişebilir.',
+  },
+  {
+    question: 'Ücretsiz oyunları da görebilir miyim?',
+    answer:
+      'Evet. Tamamen bedava dağıtılan oyunlar için Bedava Oyunlar sayfamıza göz atın; indirimli oyunlar bu sayfada, ücretsiz kampanyalar ayrı sayfada listelenir.',
+  },
+];
+
+const FAQ_SCHEMA = generateFAQSchema(FAQ_ITEMS);
 
 function DealsPage() {
   const [storeID, setStoreID] = useState('');
@@ -29,6 +50,7 @@ function DealsPage() {
         description={PAGE_SEO.deals.description}
         keywords={PAGE_SEO.deals.keywords}
         url="/indirimler"
+        structuredData={FAQ_SCHEMA}
       />
 
       <div className="container mx-auto min-w-0 px-3 sm:px-4">
@@ -115,6 +137,27 @@ function DealsPage() {
             ))}
           </div>
         )}
+
+        <section className="mt-12 rounded-2xl border border-warm-200/70 bg-white p-5 sm:p-7" aria-labelledby="deals-faq-title">
+          <h2 id="deals-faq-title" className="mb-4 text-lg font-extrabold text-warm-900">
+            Sık sorulan sorular
+          </h2>
+          <div className="space-y-4">
+            {FAQ_ITEMS.map((item) => (
+              <div key={item.question}>
+                <h3 className="text-sm font-bold text-warm-900">{item.question}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-warm-600">{item.answer}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-sm text-warm-600">
+            Tamamen ücretsiz kampanyalar için{' '}
+            <Link to="/ucretsiz-oyunlar" className="font-bold text-orange-600 hover:underline">
+              Bedava Oyunlar
+            </Link>{' '}
+            sayfasına bakın.
+          </p>
+        </section>
 
         <p className="mt-10 text-center text-xs text-warm-500">
           Fiyatlar ABD doları ($) cinsindendir. Kaynak:{' '}

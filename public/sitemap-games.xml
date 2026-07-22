@@ -1,3 +1,653 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://kuraline.xyz/oyun/d%C3%BCz-okey</loc>
+    <lastmod>2026-07-22T19:58:44.460Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/d-z-okey-1784750299216.jpg</image:loc>
+      <image:title>Düz Okey - Kuralı Ne?</image:title>
+      <image:caption>Düz Okey oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/101-okey</loc>
+    <lastmod>2026-07-22T19:57:25.540Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/101-okey-1784750182512.webp</image:loc>
+      <image:title>101 Okey - Kuralı Ne?</image:title>
+      <image:caption>101 Okey oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/elden-ring</loc>
+    <lastmod>2026-07-16T13:57:02.930Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/elden-ring-1784210213262.jpg</image:loc>
+      <image:title>Elden Ring - Kuralı Ne?</image:title>
+      <image:caption>Elden Ring oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/cyberpunk-2077</loc>
+    <lastmod>2026-07-16T13:43:19.342Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/cyberpunk-2077-1784209284328.jpg</image:loc>
+      <image:title>Cyberpunk 2077 - Kuralı Ne?</image:title>
+      <image:caption>Cyberpunk 2077 oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/valorant</loc>
+    <lastmod>2026-07-16T13:40:37.484Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/valorant-1784209136333.jfif</image:loc>
+      <image:title>Valorant - Kuralı Ne?</image:title>
+      <image:caption>Valorant oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/counter-strike-2</loc>
+    <lastmod>2026-07-16T13:38:12.543Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/counter-strike-2-1784209069007.jpg</image:loc>
+      <image:title>Counter-Strike 2 - Kuralı Ne?</image:title>
+      <image:caption>Counter-Strike 2 oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/minecraft</loc>
+    <lastmod>2026-07-16T13:36:10.786Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/minecraft-1784208886533.avif</image:loc>
+      <image:title>Minecraft - Kuralı Ne?</image:title>
+      <image:caption>Minecraft oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/gta-v</loc>
+    <lastmod>2026-07-14T07:33:16.290Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/gta-v-1784014199342.jpg</image:loc>
+      <image:title>Grand Theft Auto V - Kuralı Ne?</image:title>
+      <image:caption>Grand Theft Auto V oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/yakan-top</loc>
+    <lastmod>2026-07-13T06:43:30.591Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/yakan-top-1783924998660.jpg</image:loc>
+      <image:title>Yakan Top - Kuralı Ne?</image:title>
+      <image:caption>Yakan Top oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/istop</loc>
+    <lastmod>2026-07-13T06:40:25.138Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/istop-1783924814320.avif</image:loc>
+      <image:title>İstop - Kuralı Ne?</image:title>
+      <image:caption>İstop oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/k%C3%B6rebe</loc>
+    <lastmod>2026-07-13T06:36:39.155Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/k-rebe-1783924537839.jpg</image:loc>
+      <image:title>Körebe - Kuralı Ne?</image:title>
+      <image:caption>Körebe oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/saklamba%C3%A7</loc>
+    <lastmod>2026-07-13T06:33:20.505Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/saklamba-1783924302127.png</image:loc>
+      <image:title>Saklambaç - Kuralı Ne?</image:title>
+      <image:caption>Saklambaç oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/clash-royale</loc>
+    <lastmod>2026-06-28T21:15:32.675Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1606167668584-78701c57f13d?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Clash Royale - Kuralı Ne?</image:title>
+      <image:caption>Clash Royale oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/zelda-tears-of-the-kingdom</loc>
+    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>The Legend of Zelda: Tears of the Kingdom - Kuralı Ne?</image:title>
+      <image:caption>The Legend of Zelda: Tears of the Kingdom oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/spider-man-2</loc>
+    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Marvel&apos;s Spider-Man 2 - Kuralı Ne?</image:title>
+      <image:caption>Marvel&apos;s Spider-Man 2 oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/pubg-mobile</loc>
+    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>PUBG Mobile - Kuralı Ne?</image:title>
+      <image:caption>PUBG Mobile oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/genshin-impact</loc>
+    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Genshin Impact - Kuralı Ne?</image:title>
+      <image:caption>Genshin Impact oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/brawl-stars</loc>
+    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1563906267088-b029e7101114?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>Brawl Stars - Kuralı Ne?</image:title>
+      <image:caption>Brawl Stars oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/the-last-of-us-part-ii</loc>
+    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1493711664972-8a8e9778441b?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>The Last of Us Part II - Kuralı Ne?</image:title>
+      <image:caption>The Last of Us Part II oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/god-of-war-ragnarok</loc>
+    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1486401899862-0fca89898f85?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>God of War Ragnarök - Kuralı Ne?</image:title>
+      <image:caption>God of War Ragnarök oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/ea-fc-25</loc>
+    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
+      <image:title>EA Sports FC 25 - Kuralı Ne?</image:title>
+      <image:caption>EA Sports FC 25 oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/ahbdas</loc>
+    <lastmod>2026-06-24T21:51:48.069Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/ahbdas-1782337811194.jpeg</image:loc>
+      <image:title>ahbdas - Kuralı Ne?</image:title>
+      <image:caption>ahbdas oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/golge-hafizasi</loc>
+    <lastmod>2026-02-01T15:01:02.007Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/8204995/pexels-photo-8204995.jpeg</image:loc>
+      <image:title>Gölge Hafızası - Kuralı Ne?</image:title>
+      <image:caption>Gölge Hafızası oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/codenames</loc>
+    <lastmod>2026-01-30T13:58:43.597Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/codenames-1769781488239.png</image:loc>
+      <image:title>Codenames - Kuralı Ne?</image:title>
+      <image:caption>Codenames oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/%C3%A7anak</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Çanak - Kuralı Ne?</image:title>
+      <image:caption>Çanak oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/papaz-ka%C3%A7t%C4%B1</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Papaz Kaçtı - Kuralı Ne?</image:title>
+      <image:caption>Papaz Kaçtı oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/51-okey</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/4226149/pexels-photo-4226149.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>51 Okey - Kuralı Ne?</image:title>
+      <image:caption>51 Okey oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/tavla</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1796794/pexels-photo-1796794.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Tavla - Kuralı Ne?</image:title>
+      <image:caption>Tavla oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/peri%C5%9Fan-okey</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/4226264/pexels-photo-4226264.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Perişan Okey - Kuralı Ne?</image:title>
+      <image:caption>Perişan Okey oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/satran%C3%A7</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/260024/pexels-photo-260024.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Satranç - Kuralı Ne?</image:title>
+      <image:caption>Satranç oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/dama</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/5794050/pexels-photo-5794050.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Dama - Kuralı Ne?</image:title>
+      <image:caption>Dama oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/mangala</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/6256604/pexels-photo-6256604.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Mangala - Kuralı Ne?</image:title>
+      <image:caption>Mangala oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/jenga</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>/images/games/jenga.jpg</image:loc>
+      <image:title>Jenga - Kuralı Ne?</image:title>
+      <image:caption>Jenga oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/uno</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>/images/games/uno.jpg</image:loc>
+      <image:title>UNO - Kuralı Ne?</image:title>
+      <image:caption>UNO oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/tabu</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/tabu-1767198746305.webp</image:loc>
+      <image:title>Tabu - Kuralı Ne?</image:title>
+      <image:caption>Tabu oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/risk</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>/images/games/risk.jpg</image:loc>
+      <image:title>Risk - Kuralı Ne?</image:title>
+      <image:caption>Risk oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/e%C5%9Fli-batak</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Eşli Batak - Kuralı Ne?</image:title>
+      <image:caption>Eşli Batak oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/catan</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>/images/games/catan.jpg</image:loc>
+      <image:title>Catan (Yerleşimciler) - Kuralı Ne?</image:title>
+      <image:caption>Catan (Yerleşimciler) oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/ticket-to-ride</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>/images/games/ticket-to-ride.jpg</image:loc>
+      <image:title>Ticket to Ride - Kuralı Ne?</image:title>
+      <image:caption>Ticket to Ride oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/dixit</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>/images/games/dixit.jpg</image:loc>
+      <image:title>Dixit - Kuralı Ne?</image:title>
+      <image:caption>Dixit oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/twister</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>/images/games/twister.jpg</image:loc>
+      <image:title>Twister - Kuralı Ne?</image:title>
+      <image:caption>Twister oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/monopoly</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/monopoly-1767198706585.jpg</image:loc>
+      <image:title>Monopoly - Kuralı Ne?</image:title>
+      <image:caption>Monopoly oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/scrabble</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/scrabble-1767374609043.jpg</image:loc>
+      <image:title>Scrabble - Kuralı Ne?</image:title>
+      <image:caption>Scrabble oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/birdirbir</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/163036/mario-luigi-yoschi-figures-163036.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Birdirbir - Kuralı Ne?</image:title>
+      <image:caption>Birdirbir oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/be%C5%9F-ta%C5%9F</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Beş Taş (Dikdik) - Kuralı Ne?</image:title>
+      <image:caption>Beş Taş (Dikdik) oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/pi%C5%9Fti</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Pişti - Kuralı Ne?</image:title>
+      <image:caption>Pişti oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/ihaleli-batak</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>İhaleli Batak - Kuralı Ne?</image:title>
+      <image:caption>İhaleli Batak oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/mustafa-cacan-test</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/mustafa-cacan-test-1768236584139.png</image:loc>
+      <image:title>mustafa çaçan test - Kuralı Ne?</image:title>
+      <image:caption>mustafa çaçan test oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/mendil-kapmaca</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1104014/pexels-photo-1104014.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Mendil Kapmaca - Kuralı Ne?</image:title>
+      <image:caption>Mendil Kapmaca oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/sek-sek</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1170979/pexels-photo-1170979.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Sek Sek - Kuralı Ne?</image:title>
+      <image:caption>Sek Sek oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/uzun-e%C5%9Fek</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1619779/pexels-photo-1619779.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Uzun Eşek - Kuralı Ne?</image:title>
+      <image:caption>Uzun Eşek oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/k%C3%B6%C5%9Fe-kapmaca</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1094072/pexels-photo-1094072.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Köşe Kapmaca - Kuralı Ne?</image:title>
+      <image:caption>Köşe Kapmaca oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/alman-kale</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://i.ytimg.com/vi/4tDRlpi6eWk/maxresdefault.jpg</image:loc>
+      <image:title>Alman Kale - Kuralı Ne?</image:title>
+      <image:caption>Alman Kale oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/batak</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Batak - Kuralı Ne?</image:title>
+      <image:caption>Batak oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/bilye</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/2923034/pexels-photo-2923034.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Bilye - Kuralı Ne?</image:title>
+      <image:caption>Bilye oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/ihalesiz-batak</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>İhalesiz Batak - Kuralı Ne?</image:title>
+      <image:caption>İhalesiz Batak oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/g%C3%B6mmeli-batak</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Gömmeli Batak - Kuralı Ne?</image:title>
+      <image:caption>Gömmeli Batak oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/king</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>King (Rifkı) - Kuralı Ne?</image:title>
+      <image:caption>King (Rifkı) oyun rehberi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/dost-kaz%C4%B1%C4%9F%C4%B1</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
+      <image:title>Dost Kazığı - Kuralı Ne?</image:title>
+      <image:caption>Dost Kazığı oyun rehberi</image:caption>
+    </image:image>
+  </url>
 </urlset>

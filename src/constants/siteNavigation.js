@@ -29,6 +29,12 @@ export const SITE_SITELINK_SECTIONS = [
       'Steam, Epic Games ve GOG ücretsiz oyun kampanyaları — anlık bedava PC oyunları.',
   },
   {
+    id: 'indirimler',
+    label: 'İndirimler',
+    href: '/indirimler',
+    description: PAGE_SEO.deals.description,
+  },
+  {
     id: 'araclar',
     label: 'Araçlar',
     href: '/araclar',
