@@ -87,6 +87,9 @@ function CategoryPage() {
     red: { bg: 'bg-red-100', text: 'text-red-700', icon: 'text-red-600' },
     orange: { bg: 'bg-orange-100', text: 'text-orange-700', icon: 'text-orange-600' },
     indigo: { bg: 'bg-indigo-100', text: 'text-indigo-700', icon: 'text-indigo-600' },
+    cyan: { bg: 'bg-cyan-100', text: 'text-cyan-700', icon: 'text-cyan-600' },
+    teal: { bg: 'bg-teal-100', text: 'text-teal-700', icon: 'text-teal-600' },
+    fuchsia: { bg: 'bg-fuchsia-100', text: 'text-fuchsia-700', icon: 'text-fuchsia-600' },
     gray: { bg: 'bg-warm-100', text: 'text-warm-700', icon: 'text-warm-600' }
   };
   

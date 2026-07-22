@@ -2,6 +2,7 @@ import {
   Gamepad2,
   Newspaper,
   Gift,
+  Tag,
   Wrench,
   Spade,
   Dice6,
@@ -96,6 +97,12 @@ export const HEADER_NAV = [
     highlight: true,
   },
   {
+    id: 'indirimler',
+    label: 'İndirimler',
+    href: '/indirimler',
+    icon: Tag,
+  },
+  {
     id: 'araclar',
     label: 'Araçlar',
     href: '/araclar',
@@ -130,6 +137,8 @@ export function isHeaderNavActive(pathname, item) {
       return pathname === '/haberler' || pathname.startsWith('/haberler/');
     case 'bedava':
       return pathname === '/ucretsiz-oyunlar';
+    case 'indirimler':
+      return pathname === '/indirimler';
     case 'araclar':
       return pathname === '/araclar' || pathname.startsWith('/araclar/');
     case 'hakkimizda':

@@ -2900,10 +2900,28 @@ header.header--mobile-menu-open {
   min-height: 280px;
 }
 
+.news-home-editorial-main .news-card-body {
+  flex: 0 0 auto;
+}
+
 .news-home-editorial-side {
   display: grid;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: repeat(4, 1fr);
   gap: 0.875rem;
+}
+
+.news-home-editorial-side .news-card-horizontal {
+  align-items: stretch;
+}
+
+.news-home-editorial-side .news-card-horizontal-media {
+  aspect-ratio: auto;
+  height: auto;
+}
+
+.news-home-editorial-side .news-card-horizontal-media img {
+  height: 100%;
+  aspect-ratio: auto;
 }
 
 /* ── Dijital oyunlar (PC / Konsol / Mobil) ── */

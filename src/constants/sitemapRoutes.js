@@ -28,6 +28,7 @@ export const STATIC_SITEMAP_PAGES = [
   { path: '/oyunlar', changefreq: 'daily', priority: '0.9', ...PAGE_SEO.allGames },
   { path: '/haberler', changefreq: 'daily', priority: '0.85', ...PAGE_SEO.news },
   { path: '/ucretsiz-oyunlar', changefreq: 'daily', priority: '0.88', ...PAGE_SEO.freeGames },
+  { path: '/indirimler', changefreq: 'daily', priority: '0.85', ...PAGE_SEO.deals },
   { path: '/araclar', changefreq: 'weekly', priority: '0.85', ...PAGE_SEO.tools },
   { path: '/hakkimizda', changefreq: 'monthly', priority: '0.6', ...PAGE_SEO.about },
   { path: '/iletisim', changefreq: 'monthly', priority: '0.6', ...PAGE_SEO.contact },

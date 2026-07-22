@@ -10,8 +10,7 @@ function NewsSection() {
   if (!loading && posts.length === 0) return null;
 
   const hero = posts[0];
-  const secondary = posts.slice(1, 3);
-  const rest = posts.slice(3, 5);
+  const secondary = posts.slice(1, 5);
 
   return (
     <section className="news-home-section" aria-labelledby="news-title">
@@ -49,9 +48,6 @@ function NewsSection() {
             <div className="news-home-editorial-side">
               {secondary.map((post) => (
                 <NewsCard key={post.id} post={post} variant="horizontal" showTrend />
-              ))}
-              {rest.map((post) => (
-                <NewsCard key={post.id} post={post} variant="overlay" showTrend />
               ))}
             </div>
           </div>

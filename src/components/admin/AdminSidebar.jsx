@@ -17,6 +17,7 @@ import {
   ChevronRight,
   Smile,
   Gift,
+  Tag,
 } from 'lucide-react';
 
 const LOGO_URL = '/favicon.png';
@@ -37,6 +38,7 @@ const NAV_GROUPS = [
       { id: 'news', label: 'Haberler', icon: Newspaper },
       { id: 'news-engagement', label: 'Haber Yorumları', icon: Smile },
       { id: 'free-games', label: 'Ücretsiz Oyunlar', icon: Gift },
+      { id: 'deals', label: 'Oyun İndirimleri', icon: Tag },
       { id: 'comments', label: 'Oyun Yorumları', icon: MessageCircle },
       { id: 'carousel', label: 'Hero Carousel', icon: Images },
       { id: 'gameoftheday', label: 'Günün Oyunu', icon: Sparkles },
