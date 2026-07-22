@@ -3,7 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { Bot, X, Send, Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { fetchChatAvailability, sendChatMessage } from '../../lib/ai/chatClient';
 
-const STORAGE_KEY = 'kural_asistan_messages_v2';
+const STORAGE_KEY = 'kuraline_kurali_messages_v3';
+
+const ASSISTANT_NAME = 'KurAli';
 
 const QUICK_PROMPTS = [
   'Okey nasıl oynanır?',
@@ -15,7 +17,7 @@ const QUICK_PROMPTS = [
 const WELCOME = {
   role: 'assistant',
   content:
-    'Selam! Ben **Kural Asistanı**.\n\nKural, strateji, "ne oynayalım?" veya site araçları — ne sorarsan adım adım anlatırım. Aşağıdaki hızlı sorulardan birine de basabilirsin.',
+    `Selam! Ben **${ASSISTANT_NAME}** — Kuralı Ne? sitesinin AI asistanıyım.\n\nKural, strateji, "ne oynayalım?" veya site araçları — ne sorarsan adım adım anlatırım. Aşağıdaki hızlı sorulardan birine de basabilirsin.`,
 };
 
 const TOOL_PAGES = {
@@ -246,7 +248,7 @@ function GameAssistant() {
           className="game-assistant-panel"
           role="dialog"
           aria-modal="true"
-          aria-label="Kural Asistanı sohbet"
+          aria-label={`${ASSISTANT_NAME} sohbet`}
         >
           <header className="game-assistant-header">
             <div className="flex items-center gap-2.5">
@@ -254,8 +256,8 @@ function GameAssistant() {
                 <Bot size={20} aria-hidden />
               </span>
               <div>
-                <p className="text-sm font-bold text-white">Kural Asistanı</p>
-                <p className="text-[11px] text-orange-100/90">Oyun kuralları rehberin</p>
+                <p className="text-sm font-bold text-white">{ASSISTANT_NAME}</p>
+                <p className="text-[11px] text-orange-100/90">Kuralı Ne? · AI asistan</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -348,10 +350,10 @@ function GameAssistant() {
         onClick={() => setOpen((v) => !v)}
         className={`game-assistant-fab ${open ? 'game-assistant-fab--open' : ''}`}
         aria-expanded={open}
-        aria-label={open ? 'Asistanı kapat' : 'Kural Asistanını aç'}
+        aria-label={open ? `${ASSISTANT_NAME}'yi kapat` : `${ASSISTANT_NAME}'yi aç`}
       >
         {open ? <X size={22} aria-hidden /> : <Sparkles size={22} aria-hidden />}
-        {!open && <span className="game-assistant-fab-label">Sor</span>}
+        {!open && <span className="game-assistant-fab-label">{ASSISTANT_NAME}</span>}
       </button>
     </div>
   );

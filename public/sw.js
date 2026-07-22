@@ -1,6 +1,6 @@
 // Service Worker for PWA
 
-const CACHE_NAME = 'kuraline-v4';
+const CACHE_NAME = 'kuraline-v5';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -10,6 +10,16 @@ const urlsToCache = [
   '/icon-192.png',
   '/icon-512.png',
 ];
+
+function shouldBypassCache(url) {
+  // Never cache Vite / React runtime (dev or hashed deps) — stale copies break hooks
+  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return true;
+  if (url.pathname.startsWith('/src/') || url.pathname.startsWith('/@') || url.pathname.includes('/node_modules/')) {
+    return true;
+  }
+  if (url.pathname.startsWith('/assets/') && url.pathname.endsWith('.js')) return true;
+  return false;
+}
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
@@ -46,6 +56,11 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+  // Never intercept Vite/React modules — stale SW cache breaks React hooks
+  if (shouldBypassCache(url)) {
+    return;
+  }
 
   const isNavigation = event.request.mode === 'navigate'
     || event.request.headers.get('accept')?.includes('text/html');

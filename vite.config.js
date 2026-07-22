@@ -7,6 +7,12 @@ dotenv.config();
 
 export default defineConfig({
   plugins: [react(), localApiPlugin()],
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
   build: {
     rollupOptions: {
       output: {

@@ -4,6 +4,7 @@ import { ChevronLeft as ChevronBack, Eye, Image as ImageIcon, ChevronLeft, Chevr
 import SocialShare from './SocialShare';
 import { Badge } from '../ui';
 import { getToolForGame } from '../../constants/gameTools';
+import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
 
 export default function GameHeader({ game, viewCount, selectedImage, setSelectedImage }) {
   const navigate = useNavigate();
@@ -11,8 +12,8 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const thumbnailScrollRef = useRef(null);
 
-  const allImages = [game.image, ...(game.gallery || [])];
-  const currentImage = selectedImage || game.image;
+  const allImages = [game.image, ...(game.gallery || [])].filter(Boolean);
+  const currentImage = selectedImage || game.image || CARD_FALLBACK_IMAGE;
   const currentIndex = allImages.indexOf(currentImage) >= 0 ? allImages.indexOf(currentImage) : 0;
 
   const openLightbox = (index = 0) => {
@@ -75,10 +76,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
                 decoding="async"
                 width="1000"
                 height="625"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000&auto=format&fit=crop';
-                }}
+                onError={handleImageFallback}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-4">
                 <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/95 backdrop-blur-sm text-warm-800 text-xs font-semibold shadow-soft">
@@ -141,10 +139,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
                           decoding="async"
                           width="88"
                           height="66"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=200&auto=format&fit=crop';
-                          }}
+                          onError={handleImageFallback}
                         />
                       </button>
                     );

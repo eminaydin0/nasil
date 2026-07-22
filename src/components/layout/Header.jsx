@@ -40,10 +40,15 @@ function GameSearchDropdown({ games, searchTerm, searchResultsUrl, onNavigate })
             onClick={onNavigate}
           >
             <img
-              src={game.image}
+              src={game.image || '/card-fallback.png'}
               alt={game.name}
               loading="lazy"
               className="h-9 w-9 shrink-0 rounded-lg object-cover ring-1 ring-warm-200/60"
+              onError={(e) => {
+                if (e.target.dataset.fallbackApplied === '1') return;
+                e.target.dataset.fallbackApplied = '1';
+                e.target.src = '/card-fallback.png';
+              }}
             />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-warm-900">{game.name}</p>

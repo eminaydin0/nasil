@@ -19,6 +19,7 @@ import {
   buildComparisonSeoMeta,
   buildComparisonStructuredData,
 } from '../../lib/seoEngine';
+import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
 import {
   parseComparisonParam,
   buildComparisonPath,
@@ -124,17 +125,14 @@ function GameHeaderCard({ game }) {
     >
       <div className="aspect-[16/9] bg-warm-100 overflow-hidden">
         <img
-          src={game.image}
+          src={game.image || CARD_FALLBACK_IMAGE}
           alt={game.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           decoding="async"
           width="640"
           height="360"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop';
-          }}
+          onError={handleImageFallback}
         />
       </div>
       <div className="p-5">

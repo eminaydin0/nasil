@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Sparkles, Users, ArrowRight, Trophy } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
 
 function GameOfTheDay({ games }) {
   const [gameOfTheDay, setGameOfTheDay] = useState(null);
@@ -102,17 +103,14 @@ function GameOfTheDay({ games }) {
             <div className="relative">
               <div className="relative aspect-[16/10] rounded-2xl overflow-hidden shadow-soft-xl ring-1 ring-white/5">
                 <img
-                  src={gameOfTheDay.image}
+                  src={gameOfTheDay.image || CARD_FALLBACK_IMAGE}
                   alt={gameOfTheDay.name}
                   className="w-full h-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.04]"
                   loading="lazy"
                   decoding="async"
                   width="800"
                   height="500"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000&auto=format&fit=crop';
-                  }}
+                  onError={handleImageFallback}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950/50 via-transparent to-transparent" />
               </div>

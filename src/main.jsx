@@ -18,10 +18,21 @@ if (isPwaStandalone) {
   document.documentElement.classList.add('pwa-standalone');
 }
 
-// Register Service Worker for PWA
+// PWA SW: production only — caching Vite/React modules in dev breaks hooks (useState null)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    if (import.meta.env.DEV) {
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((reg) => reg.unregister());
+      });
+      if (window.caches?.keys) {
+        caches.keys().then((keys) => keys.forEach((key) => caches.delete(key)));
+      }
+      return;
+    }
+
+    navigator.serviceWorker
+      .register('/sw.js')
       .then((registration) => {
         console.log('SW registered:', registration);
       })

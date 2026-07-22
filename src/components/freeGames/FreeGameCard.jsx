@@ -1,10 +1,11 @@
-import { ExternalLink, Clock, Gift } from 'lucide-react';
+import { ExternalLink, Clock } from 'lucide-react';
 import {
   formatGiveawayEndDate,
   formatGiveawayCountdown,
   formatWorth,
   parseGiveawayPlatforms,
 } from '../../lib/gamerPower';
+import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
 
 function storeChipClass(name) {
   const key = name.toLowerCase();
@@ -27,19 +28,14 @@ function FreeGameCard({ game, compact = false }) {
       className={`free-game-card group ${compact ? 'free-game-card--compact' : ''}`}
     >
       <div className="free-game-card-media">
-        {game.image ? (
-          <img
-            src={game.image}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="free-game-card-img"
-          />
-        ) : (
-          <div className="free-game-card-placeholder">
-            <Gift size={compact ? 28 : 36} aria-hidden />
-          </div>
-        )}
+        <img
+          src={game.image || CARD_FALLBACK_IMAGE}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="free-game-card-img"
+          onError={handleImageFallback}
+        />
 
         <div className="free-game-card-media-overlay" aria-hidden />
 
