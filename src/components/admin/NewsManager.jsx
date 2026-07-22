@@ -7,7 +7,6 @@ import {
   Eye,
   EyeOff,
   Newspaper,
-  X,
   Save,
   Star,
   Upload,
@@ -19,7 +18,8 @@ import {
 import { Link } from 'react-router-dom';
 import { supabase, uploadNewsImage, deleteGameImage } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import { useConfirm } from '../ui';
+import { useConfirm, Modal } from '../ui';
+import AdminPageHeader from './AdminPageHeader';
 import { slugify } from '../../utils/slugify';
 import { calculateReadTimeMinutes, NEWS_CATEGORIES } from '../../utils/newsContent';
 import { analyzeNewsSeo } from '../../lib/newsAlgorithm';
@@ -302,7 +302,7 @@ function NewsManager() {
       if (error) throw error;
       toast.success(next ? 'Haber yayınlandı' : 'Haber taslağa alındı');
       loadData();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Durum güncellenemedi');
     }
   };
@@ -386,48 +386,33 @@ function NewsManager() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-warm-900">Haber Yönetimi</h2>
-          <p className="text-sm text-warm-600">
-            Oyun dünyası haberlerini ekleyin, düzenleyin ve yayınlayın
-          </p>
-        </div>
-        {!showForm && (
+    <div className="space-y-5">
+      <AdminPageHeader
+        description="Oyun dünyası haberlerini ekleyin, düzenleyin ve yayınlayın"
+        actions={
           <button
             type="button"
             onClick={() => {
               resetForm();
               setShowForm(true);
             }}
-            className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2.5 text-sm font-bold text-white shadow-warm-glow transition hover:bg-orange-700"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-4 py-2.5 text-sm font-bold text-white shadow-warm-glow transition-all hover:-translate-y-0.5"
           >
-            <Plus size={18} />
+            <Plus size={16} />
             Yeni Haber
           </button>
-        )}
-      </div>
+        }
+      />
 
-      {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-2xl border border-warm-200 bg-white p-5 shadow-sm sm:p-6"
-        >
-          <div className="mb-5 flex items-center justify-between">
-            <h3 className="font-bold text-warm-900">
-              {editingId ? 'Haberi Düzenle' : 'Yeni Haber'}
-            </h3>
-            <button
-              type="button"
-              onClick={resetForm}
-              className="rounded-lg p-2 text-warm-500 hover:bg-warm-100"
-              aria-label="Formu kapat"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
+      <Modal
+        open={showForm}
+        onClose={resetForm}
+        title={editingId ? 'Haberi Düzenle' : 'Yeni Haber'}
+        description="Kapak, içerik ve SEO alanlarını doldurun; kaydettikten sonra listede görünür."
+        icon={Newspaper}
+        size="3xl"
+      >
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <label className="mb-1 block text-xs font-bold text-warm-700">Başlık *</label>
@@ -664,7 +649,7 @@ function NewsManager() {
             </div>
           </div>
 
-          <div className="mt-6 flex justify-end gap-3">
+          <div className="mt-2 flex justify-end gap-3 border-t border-warm-100 pt-4">
             <button
               type="button"
               onClick={resetForm}
@@ -675,14 +660,14 @@ function NewsManager() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-5 py-2 text-sm font-bold text-white hover:bg-orange-700 disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-5 py-2 text-sm font-bold text-white shadow-warm-glow disabled:opacity-60"
             >
               {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               Kaydet
             </button>
           </div>
         </form>
-      )}
+      </Modal>
 
       {posts.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-warm-200 bg-white py-16 text-center">
@@ -694,8 +679,7 @@ function NewsManager() {
         </div>
       ) : (
         <>
-          {!showForm && (
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <span className="inline-flex items-center gap-1.5 text-sm font-bold text-warm-600">
                 <Filter size={15} />
                 Filtre
@@ -733,7 +717,6 @@ function NewsManager() {
                 {filteredPosts.length} / {posts.length} haber
               </span>
             </div>
-          )}
 
         <div className="overflow-hidden rounded-2xl border border-warm-200 bg-white shadow-sm">
           <div className="overflow-x-auto">

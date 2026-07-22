@@ -277,33 +277,36 @@ function GameModal({ game, categories = [], onSave, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl">
-          <h2 className="text-2xl font-bold text-gray-900">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-charcoal-900/50 p-3 backdrop-blur-sm sm:p-4">
+      <div className="my-6 w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-soft-xl ring-1 ring-warm-200/60">
+        <div className="sticky top-0 z-10 border-b border-warm-200/60 bg-cream-50/90 px-5 py-4 backdrop-blur-md sm:px-6">
+          <h2 className="text-xl font-bold tracking-tight text-charcoal-900 sm:text-2xl">
             {game ? 'Oyunu Düzenle' : 'Yeni Oyun Ekle'}
           </h2>
+          <p className="mt-0.5 text-sm text-warm-500">
+            Zorunlu alanları doldurun; kaydettikten sonra sitede görünür.
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="max-h-[calc(100vh-180px)] space-y-6 overflow-y-auto p-5 sm:p-6">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Oyun Adı *</label>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">Oyun Adı *</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                className="w-full rounded-xl border-2 border-warm-200 px-4 py-2.5 text-sm outline-none focus:border-orange-400"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Kategori *</label>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">Kategori *</label>
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                className="w-full rounded-xl border-2 border-warm-200 px-4 py-2.5 text-sm outline-none focus:border-orange-400"
                 required
               >
                 {options.length > 0 ? (
@@ -327,23 +330,23 @@ function GameModal({ game, categories = [], onSave, onClose }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Oyuncu Sayısı *</label>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">Oyuncu Sayısı *</label>
               <input
                 type="text"
                 value={formData.players}
                 onChange={(e) => setFormData({ ...formData, players: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                className="w-full rounded-xl border-2 border-warm-200 px-4 py-2.5 text-sm outline-none focus:border-orange-400"
                 placeholder="Örn: 3+ kişi"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Zorluk *</label>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">Zorluk *</label>
               <select
                 value={formData.difficulty}
                 onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                className="w-full rounded-xl border-2 border-warm-200 px-4 py-2.5 text-sm outline-none focus:border-orange-400"
                 required
               >
                 <option value="Kolay">Kolay</option>
@@ -354,7 +357,7 @@ function GameModal({ game, categories = [], onSave, onClose }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
               Ana Görsel * 
               <span className="text-xs text-gray-500 ml-2">(Maks. 5MB)</span>
             </label>
@@ -368,7 +371,7 @@ function GameModal({ game, categories = [], onSave, onClose }) {
                   setFormData({ ...formData, image: e.target.value });
                   setImagePreview(e.target.value);
                 }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                className="w-full rounded-xl border-2 border-warm-200 px-4 py-2.5 text-sm outline-none focus:border-orange-400"
                 placeholder="https://example.com/image.jpg veya dosya yükleyin"
               />
 
@@ -406,7 +409,7 @@ function GameModal({ game, categories = [], onSave, onClose }) {
 
           {/* Galeri Resimleri */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
               Galeri Resimleri
               <span className="text-xs text-gray-500 ml-2">(İsteğe bağlı, maks. 5 resim)</span>
             </label>
@@ -476,22 +479,22 @@ function GameModal({ game, categories = [], onSave, onClose }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Kısa Açıklama *</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">Kısa Açıklama *</label>
             <input
               type="text"
               value={formData.shortDescription}
               onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+              className="w-full rounded-xl border-2 border-warm-200 px-4 py-2.5 text-sm outline-none focus:border-orange-400"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Detaylı Açıklama *</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">Detaylı Açıklama *</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+              className="w-full rounded-xl border-2 border-warm-200 px-4 py-2.5 text-sm outline-none focus:border-orange-400"
               rows="4"
               required
             />

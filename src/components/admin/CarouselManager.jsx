@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Save, X, Upload, Image as ImageIcon, ArrowUp, ArrowDown, Search, Gamepad2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, Upload, Image as ImageIcon, ArrowUp, ArrowDown, Search, Gamepad2, Images } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import { useConfirm } from '../ui';
+import { useConfirm, Modal } from '../ui';
+import AdminPageHeader from './AdminPageHeader';
 
 function CarouselManager({ games = [] }) {
   const confirm = useConfirm();
@@ -189,300 +190,359 @@ function CarouselManager({ games = [] }) {
     toast.success(`${game.name} bilgileri aktarıldı`);
   };
 
-  if (isEditing) {
-    return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">
-            {currentSlide.id ? 'Slaytı Düzenle' : 'Yeni Slayt Ekle'}
-          </h2>
-          <button
-            onClick={() => {
-              setIsEditing(false);
-              setCurrentSlide(null);
-              setShowGameSelector(false);
-            }}
-            className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Game Selector Helper */}
-          <div className="bg-orange-50 rounded-xl border border-orange-100 overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setShowGameSelector(!showGameSelector)}
-              className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-orange-100/50 transition-colors"
-            >
-              <div className="flex items-center gap-2 text-orange-800 font-medium">
-                <Gamepad2 size={20} />
-                <span>Mevcut bir oyundan bilgi çek</span>
-              </div>
-              <span className="text-xs font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded-full">
-                {showGameSelector ? 'Gizle' : 'Oyun Seç'}
-              </span>
-            </button>
-
-            {showGameSelector && (
-              <div className="p-4 border-t border-orange-100 bg-white">
-                <div className="relative mb-3">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                  <input
-                    type="text"
-                    placeholder="Oyun ara..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                    autoFocus
-                  />
-                </div>
-                <div className="max-h-48 overflow-y-auto border border-gray-100 rounded-lg">
-                  {games.filter(g => g.name.toLowerCase().includes(searchTerm.toLowerCase())).length > 0 ? (
-                    <div className="divide-y divide-gray-50">
-                      {games
-                        .filter(g => g.name.toLowerCase().includes(searchTerm.toLowerCase()))
-                        .map(game => (
-                          <button
-                            key={game.id}
-                            type="button"
-                            onClick={() => handleGameSelect(game)}
-                            className="w-full px-3 py-2 text-left hover:bg-orange-50 flex items-center gap-3 transition-colors group"
-                          >
-                            <img src={game.image} alt={game.name} className="w-8 h-8 rounded object-cover bg-gray-100" />
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium text-gray-900 group-hover:text-orange-700">{game.name}</div>
-                              <div className="text-xs text-gray-500 truncate">{game.category}</div>
-                            </div>
-                            <span className="text-xs text-orange-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                              Seç
-                            </span>
-                          </button>
-                        ))}
-                    </div>
-                  ) : (
-                    <div className="p-4 text-center text-sm text-gray-500">Oyun bulunamadı</div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Başlık</label>
-                <input
-                  type="text"
-                  value={currentSlide.title}
-                  onChange={e => setCurrentSlide(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
-                <textarea
-                  value={currentSlide.description}
-                  onChange={e => setCurrentSlide(prev => ({ ...prev, description: e.target.value }))}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none h-24"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Rozet (Badge)</label>
-                  <input
-                    type="text"
-                    value={currentSlide.badge}
-                    onChange={e => setCurrentSlide(prev => ({ ...prev, badge: e.target.value }))}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Durum</label>
-                  <select
-                    value={currentSlide.is_active}
-                    onChange={e => setCurrentSlide(prev => ({ ...prev, is_active: e.target.value === 'true' }))}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                  >
-                    <option value="true">Aktif</option>
-                    <option value="false">Pasif</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Buton Metni</label>
-                  <input
-                    type="text"
-                    value={currentSlide.button_text}
-                    onChange={e => setCurrentSlide(prev => ({ ...prev, button_text: e.target.value }))}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Buton Linki</label>
-                  <input
-                    type="text"
-                    value={currentSlide.button_link}
-                    onChange={e => setCurrentSlide(prev => ({ ...prev, button_link: e.target.value }))}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Görsel</label>
-              <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center">
-                {currentSlide.image_url ? (
-                  <div className="relative group">
-                    <img 
-                      src={currentSlide.image_url} 
-                      alt="Preview" 
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                      <label className="cursor-pointer px-4 py-2 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100">
-                        Değiştir
-                        <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
-                      </label>
-                    </div>
-                  </div>
-                ) : (
-                  <label className="cursor-pointer flex flex-col items-center justify-center h-48 hover:bg-gray-50 rounded-lg transition-colors">
-                    <ImageIcon className="w-12 h-12 text-gray-400 mb-2" />
-                    <span className="text-sm text-gray-500">Resim yüklemek için tıklayın</span>
-                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
-                  </label>
-                )}
-                {uploading && <p className="text-sm text-orange-600 mt-2">Yükleniyor...</p>}
-              </div>
-              <div className="text-xs text-gray-500">
-                Önerilen boyut: 1920x1080px veya benzer oranlar.
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditing(false);
-                setCurrentSlide(null);
-              }}
-              className="px-6 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
-            >
-              İptal
-            </button>
-            <button
-              type="submit"
-              disabled={loading || uploading}
-              className="px-6 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center gap-2 disabled:opacity-50"
-            >
-              <Save size={20} />
-              Kaydet
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  }
+  const closeEditor = () => {
+    setIsEditing(false);
+    setCurrentSlide(null);
+    setShowGameSelector(false);
+    setSearchTerm('');
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Carousel Yönetimi</h2>
-        <button
-          onClick={() => {
-            setCurrentSlide(initialSlideState);
-            setIsEditing(true);
-          }}
-          className="px-4 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center gap-2"
-        >
-          <Plus size={20} />
-          Yeni Slayt Ekle
-        </button>
-      </div>
+    <div className="space-y-5">
+      <AdminPageHeader
+        description="Ana sayfa hero carousel slaytlarını yönetin. Sıra oklarıyla önceliği değiştirin."
+        actions={
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentSlide(initialSlideState);
+              setIsEditing(true);
+            }}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-4 py-2.5 text-sm font-bold text-white shadow-warm-glow transition-all hover:-translate-y-0.5"
+          >
+            <Plus size={16} />
+            Yeni Slayt
+          </button>
+        }
+      />
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <Modal
+        open={isEditing && !!currentSlide}
+        onClose={closeEditor}
+        title={currentSlide?.id ? 'Slaytı Düzenle' : 'Yeni Slayt Ekle'}
+        description="Görsel, başlık ve buton linki ana sayfa hero alanında görünür."
+        icon={Images}
+        size="2xl"
+      >
+        {currentSlide && (
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="overflow-hidden rounded-xl border border-orange-100 bg-orange-50">
+              <button
+                type="button"
+                onClick={() => setShowGameSelector(!showGameSelector)}
+                className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-orange-100/50"
+              >
+                <div className="flex items-center gap-2 font-semibold text-orange-800">
+                  <Gamepad2 size={18} />
+                  <span>Mevcut bir oyundan bilgi çek</span>
+                </div>
+                <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-bold text-orange-600">
+                  {showGameSelector ? 'Gizle' : 'Oyun Seç'}
+                </span>
+              </button>
+
+              {showGameSelector && (
+                <div className="border-t border-orange-100 bg-white p-4">
+                  <div className="relative mb-3">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-400" size={16} />
+                    <input
+                      type="text"
+                      placeholder="Oyun ara..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full rounded-xl border-2 border-warm-200 py-2 pl-9 pr-4 text-sm outline-none focus:border-orange-400"
+                      autoFocus
+                    />
+                  </div>
+                  <div className="max-h-48 overflow-y-auto rounded-xl border border-warm-100">
+                    {games.filter((g) =>
+                      g.name.toLowerCase().includes(searchTerm.toLowerCase())
+                    ).length > 0 ? (
+                      <div className="divide-y divide-warm-50">
+                        {games
+                          .filter((g) =>
+                            g.name.toLowerCase().includes(searchTerm.toLowerCase())
+                          )
+                          .map((game) => (
+                            <button
+                              key={game.id}
+                              type="button"
+                              onClick={() => handleGameSelect(game)}
+                              className="group flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-orange-50"
+                            >
+                              <img
+                                src={game.image}
+                                alt=""
+                                className="h-8 w-8 rounded-lg bg-warm-100 object-cover"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <div className="text-sm font-semibold text-charcoal-900 group-hover:text-orange-700">
+                                  {game.name}
+                                </div>
+                                <div className="truncate text-xs text-warm-500">{game.category}</div>
+                              </div>
+                              <span className="text-xs font-bold text-orange-600 opacity-0 transition-opacity group-hover:opacity-100">
+                                Seç
+                              </span>
+                            </button>
+                          ))}
+                      </div>
+                    ) : (
+                      <div className="p-4 text-center text-sm text-warm-500">Oyun bulunamadı</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                    Başlık
+                  </label>
+                  <input
+                    type="text"
+                    value={currentSlide.title}
+                    onChange={(e) =>
+                      setCurrentSlide((prev) => ({ ...prev, title: e.target.value }))
+                    }
+                    className="w-full rounded-xl border-2 border-warm-200 px-3.5 py-2.5 text-sm outline-none focus:border-orange-400"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                    Açıklama
+                  </label>
+                  <textarea
+                    value={currentSlide.description}
+                    onChange={(e) =>
+                      setCurrentSlide((prev) => ({ ...prev, description: e.target.value }))
+                    }
+                    className="h-24 w-full resize-none rounded-xl border-2 border-warm-200 px-3.5 py-2.5 text-sm outline-none focus:border-orange-400"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                      Rozet
+                    </label>
+                    <input
+                      type="text"
+                      value={currentSlide.badge}
+                      onChange={(e) =>
+                        setCurrentSlide((prev) => ({ ...prev, badge: e.target.value }))
+                      }
+                      className="w-full rounded-xl border-2 border-warm-200 px-3.5 py-2.5 text-sm outline-none focus:border-orange-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                      Durum
+                    </label>
+                    <select
+                      value={String(currentSlide.is_active)}
+                      onChange={(e) =>
+                        setCurrentSlide((prev) => ({
+                          ...prev,
+                          is_active: e.target.value === 'true',
+                        }))
+                      }
+                      className="w-full rounded-xl border-2 border-warm-200 px-3.5 py-2.5 text-sm outline-none focus:border-orange-400"
+                    >
+                      <option value="true">Aktif</option>
+                      <option value="false">Pasif</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                      Buton Metni
+                    </label>
+                    <input
+                      type="text"
+                      value={currentSlide.button_text}
+                      onChange={(e) =>
+                        setCurrentSlide((prev) => ({ ...prev, button_text: e.target.value }))
+                      }
+                      className="w-full rounded-xl border-2 border-warm-200 px-3.5 py-2.5 text-sm outline-none focus:border-orange-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                      Buton Linki
+                    </label>
+                    <input
+                      type="text"
+                      value={currentSlide.button_link}
+                      onChange={(e) =>
+                        setCurrentSlide((prev) => ({ ...prev, button_link: e.target.value }))
+                      }
+                      className="w-full rounded-xl border-2 border-warm-200 px-3.5 py-2.5 text-sm outline-none focus:border-orange-400"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
+                  Görsel
+                </label>
+                <div className="rounded-xl border-2 border-dashed border-warm-200 p-3 text-center">
+                  {currentSlide.image_url ? (
+                    <div className="group relative">
+                      <img
+                        src={currentSlide.image_url}
+                        alt=""
+                        className="h-48 w-full rounded-lg object-cover"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-charcoal-900/50 opacity-0 transition-opacity group-hover:opacity-100">
+                        <label className="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-bold text-charcoal-900 hover:bg-cream-50">
+                          Değiştir
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  ) : (
+                    <label className="flex h-48 cursor-pointer flex-col items-center justify-center rounded-lg transition-colors hover:bg-cream-50">
+                      <ImageIcon className="mb-2 h-12 w-12 text-warm-300" />
+                      <span className="text-sm text-warm-500">Resim yüklemek için tıklayın</span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                      />
+                    </label>
+                  )}
+                  {uploading && (
+                    <p className="mt-2 text-sm font-semibold text-orange-600">Yükleniyor...</p>
+                  )}
+                </div>
+                <p className="mt-2 text-xs text-warm-500">
+                  Önerilen boyut: 1920×1080px veya benzer oranlar.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 border-t border-warm-100 pt-4">
+              <button
+                type="button"
+                onClick={closeEditor}
+                className="rounded-xl border border-warm-200 bg-white px-4 py-2.5 text-sm font-semibold text-warm-700 hover:bg-warm-50"
+              >
+                İptal
+              </button>
+              <button
+                type="submit"
+                disabled={loading || uploading}
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-5 py-2.5 text-sm font-bold text-white shadow-warm-glow disabled:opacity-50"
+              >
+                <Save size={16} />
+                Kaydet
+              </button>
+            </div>
+          </form>
+        )}
+      </Modal>
+
+      <div className="overflow-hidden rounded-2xl border border-warm-200/60 bg-white shadow-soft">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="border-b border-warm-200 bg-cream-50">
               <tr>
-                <th className="px-6 py-4 font-semibold text-gray-700 w-20">Sıra</th>
-                <th className="px-6 py-4 font-semibold text-gray-700 w-32">Görsel</th>
-                <th className="px-6 py-4 font-semibold text-gray-700">Başlık / Açıklama</th>
-                <th className="px-6 py-4 font-semibold text-gray-700">Durum</th>
-                <th className="px-6 py-4 font-semibold text-gray-700 text-right">İşlemler</th>
+                <th className="w-20 px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-warm-600">
+                  Sıra
+                </th>
+                <th className="w-32 px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-warm-600">
+                  Görsel
+                </th>
+                <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-warm-600">
+                  Başlık / Açıklama
+                </th>
+                <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-warm-600">
+                  Durum
+                </th>
+                <th className="px-4 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-warm-600">
+                  İşlem
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-warm-100">
               {slides.map((slide, index) => (
-                <tr key={slide.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col gap-1">
-                      <button 
+                <tr key={slide.id} className="transition-colors hover:bg-cream-50">
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col gap-0.5">
+                      <button
+                        type="button"
                         onClick={() => handleMove(index, 'up')}
                         disabled={index === 0}
-                        className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+                        className="rounded-lg p-1 text-warm-500 hover:bg-warm-100 disabled:opacity-30"
                       >
-                        <ArrowUp size={16} />
+                        <ArrowUp size={14} />
                       </button>
-                      <button 
+                      <button
+                        type="button"
                         onClick={() => handleMove(index, 'down')}
                         disabled={index === slides.length - 1}
-                        className="p-1 hover:bg-gray-200 rounded disabled:opacity-30"
+                        className="rounded-lg p-1 text-warm-500 hover:bg-warm-100 disabled:opacity-30"
                       >
-                        <ArrowDown size={16} />
+                        <ArrowDown size={14} />
                       </button>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <img 
-                      src={slide.image_url} 
-                      alt={slide.title} 
-                      className="w-20 h-12 object-cover rounded-lg bg-gray-100"
+                  <td className="px-4 py-3">
+                    <img
+                      src={slide.image_url}
+                      alt=""
+                      className="h-12 w-20 rounded-lg bg-warm-100 object-cover"
                     />
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">{slide.title}</div>
-                    <div className="text-sm text-gray-500 line-clamp-1">{slide.description}</div>
-                    <div className="mt-1 inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+                  <td className="px-4 py-3">
+                    <div className="font-semibold text-charcoal-900">{slide.title}</div>
+                    <div className="line-clamp-1 text-sm text-warm-500">{slide.description}</div>
+                    <div className="mt-1 inline-block rounded-full bg-warm-100 px-2 py-0.5 text-[11px] font-bold text-warm-600">
                       {slide.badge}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      slide.is_active 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`inline-flex rounded-md px-2 py-0.5 text-[11px] font-bold ${
+                        slide.is_active
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-warm-100 text-warm-600'
+                      }`}
+                    >
                       {slide.is_active ? 'Aktif' : 'Pasif'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-4 py-3 text-right">
+                    <div className="inline-flex items-center gap-0.5">
                       <button
+                        type="button"
                         onClick={() => {
                           setCurrentSlide(slide);
                           setIsEditing(true);
                         }}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="grid h-8 w-8 place-items-center rounded-lg text-blue-600 hover:bg-blue-50"
                         title="Düzenle"
                       >
-                        <Edit2 size={18} />
+                        <Edit2 size={15} />
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDelete(slide.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="grid h-8 w-8 place-items-center rounded-lg text-rose-600 hover:bg-rose-50"
                         title="Sil"
                       >
-                        <Trash2 size={18} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </td>
@@ -490,7 +550,7 @@ function CarouselManager({ games = [] }) {
               ))}
               {slides.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan="5" className="px-6 py-14 text-center text-sm text-warm-500">
                     Henüz hiç slayt eklenmemiş.
                   </td>
                 </tr>

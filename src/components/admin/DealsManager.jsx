@@ -19,7 +19,6 @@ function DealsManager() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-warm-900">Oyun İndirimleri</h2>
           <p className="text-sm text-warm-600">
             CheapShark API&apos;den canlı çekilir — DB veya senkron gerekmez, her zaman güncel.
           </p>
