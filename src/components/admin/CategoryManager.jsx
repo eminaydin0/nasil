@@ -8,8 +8,10 @@ import {
   EyeOff,
   FolderTree,
   Save,
+  Upload,
+  X,
 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { supabase, uploadCategoryImage, deleteGameImage } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 import { useConfirm, Modal } from '../ui';
 import AdminPageHeader from './AdminPageHeader';
@@ -42,6 +44,8 @@ function CategoryManager() {
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -91,8 +95,48 @@ function CategoryManager() {
       order_index: categories.length + 1,
       is_active: true,
     });
+    setImagePreview('');
     setEditingId(null);
     setShowForm(false);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Dosya boyutu 5MB'dan küçük olmalıdır");
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      toast.error('Sadece resim dosyaları yüklenebilir');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const url = await uploadCategoryImage(file, formData.name || 'kategori');
+      if (url) {
+        setFormData((prev) => ({ ...prev, image_url: url }));
+        setImagePreview(url);
+        toast.success('Kategori görseli yüklendi');
+      } else {
+        toast.error('Görsel yüklenemedi');
+      }
+    } catch {
+      toast.error('Yükleme hatası');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleClearImage = async () => {
+    const url = formData.image_url;
+    setFormData((prev) => ({ ...prev, image_url: '' }));
+    setImagePreview('');
+    if (url?.includes('supabase')) {
+      await deleteGameImage(url);
+    }
   };
 
   const handleEdit = (cat) => {
@@ -104,6 +148,7 @@ function CategoryManager() {
       order_index: cat.order_index || 0,
       is_active: cat.is_active ?? true,
     });
+    setImagePreview(cat.image_url || '');
     setEditingId(cat.id);
     setShowForm(true);
   };
@@ -232,6 +277,7 @@ function CategoryManager() {
                 order_index: categories.length + 1,
                 is_active: true,
               });
+              setImagePreview('');
               setEditingId(null);
               setShowForm(true);
             }}
@@ -294,15 +340,52 @@ function CategoryManager() {
             </div>
             <div className="md:col-span-2">
               <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
-                Görsel URL
+                Kategori görseli
               </label>
               <input
                 type="url"
                 value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="w-full rounded-xl border-2 border-warm-200 bg-white px-3.5 py-2.5 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:outline-none"
-                placeholder="https://..."
+                onChange={(e) => {
+                  setFormData({ ...formData, image_url: e.target.value });
+                  setImagePreview(e.target.value);
+                }}
+                className="mb-2 w-full rounded-xl border-2 border-warm-200 bg-white px-3.5 py-2.5 text-sm text-charcoal-900 placeholder-warm-400 transition-all focus:border-orange-400 focus:outline-none"
+                placeholder="URL yapıştır veya aşağıdan yükle"
               />
+              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-warm-200 px-4 py-5 transition hover:border-orange-400">
+                {uploading ? (
+                  <Loader2 size={18} className="animate-spin text-orange-500" />
+                ) : (
+                  <Upload size={18} className="text-warm-400" />
+                )}
+                <span className="text-sm text-warm-600">
+                  {uploading ? 'Yükleniyor...' : 'Bilgisayardan fotoğraf yükle'}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={uploading}
+                  onChange={handleImageUpload}
+                />
+              </label>
+              {(imagePreview || formData.image_url) && (
+                <div className="relative mt-3 inline-block">
+                  <img
+                    src={imagePreview || formData.image_url}
+                    alt="Kategori önizleme"
+                    className="h-28 w-auto max-w-full rounded-xl border border-warm-200 object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleClearImage}
+                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white shadow"
+                    aria-label="Görseli kaldır"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              )}
             </div>
             <div className="md:col-span-2">
               <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-warm-600">
@@ -418,10 +501,18 @@ function CategoryManager() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <span
-                          className="h-9 w-9 shrink-0 rounded-xl"
-                          style={{ backgroundColor: hex, boxShadow: `0 4px 14px -4px ${hex}99` }}
-                        />
+                        {cat.image_url ? (
+                          <img
+                            src={cat.image_url}
+                            alt=""
+                            className="h-9 w-9 shrink-0 rounded-xl object-cover"
+                          />
+                        ) : (
+                          <span
+                            className="h-9 w-9 shrink-0 rounded-xl"
+                            style={{ backgroundColor: hex, boxShadow: `0 4px 14px -4px ${hex}99` }}
+                          />
+                        )}
                         <div className="min-w-0">
                           <div className="font-bold text-charcoal-900">{cat.name}</div>
                           {cat.description && (

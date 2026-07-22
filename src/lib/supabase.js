@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { slugify } from '../utils/slugify';
 
 // Supabase proje bilgileri
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://yjnipjcevnxrzlgfmeci.supabase.co';
@@ -239,6 +240,33 @@ export const uploadNewsImage = async (file, newsSlug) => {
     return urlData.publicUrl;
   } catch (error) {
     console.error('Failed to upload news image:', error);
+    return null;
+  }
+};
+
+// Storage: Kategori görseli yükleme
+export const uploadCategoryImage = async (file, categoryName) => {
+  try {
+    const slug = slugify(categoryName) || 'kategori';
+    const timestamp = Date.now();
+    const fileExt = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const fileName = `${slug}-${timestamp}.${fileExt}`;
+    const filePath = `categories/${fileName}`;
+
+    const { error } = await supabase.storage.from('game-images').upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
+
+    if (error) {
+      console.error('Error uploading category image:', error);
+      return null;
+    }
+
+    const { data: urlData } = supabase.storage.from('game-images').getPublicUrl(filePath);
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Failed to upload category image:', error);
     return null;
   }
 };
