@@ -76,8 +76,8 @@ export const CATEGORIES = [
     name: 'Konsol Oyunları',
     description: 'PlayStation, Xbox ve Nintendo oyunları. Platform bilgisi ve mağaza linkleri.',
     icon: Gamepad2,
-    color: 'purple',
-    bgColor: 'bg-purple-50',
+    color: 'fuchsia',
+    bgColor: 'bg-fuchsia-50',
     image: 'https://images.unsplash.com/photo-1486401899862-0fca89898f85?q=80&w=2070&auto=format&fit=crop',
   },
   {
@@ -85,8 +85,8 @@ export const CATEGORIES = [
     name: 'Mobil Oyunlar',
     description: 'Android ve iOS oyunları. App Store / Google Play linkleri ve cihaz gereksinimleri.',
     icon: Smartphone,
-    color: 'green',
-    bgColor: 'bg-green-50',
+    color: 'teal',
+    bgColor: 'bg-teal-50',
     image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop',
   },
 ];
@@ -104,6 +104,8 @@ export const COLOR_TO_ICON = {
   indigo: Brain,
   gray: Gamepad2,
   cyan: Monitor,
+  teal: Smartphone,
+  fuchsia: Gamepad2,
 };
 
 /** Renk → bgColor sınıfı */
@@ -116,6 +118,8 @@ const COLOR_TO_BG = {
   indigo: 'bg-indigo-50',
   gray: 'bg-gray-50',
   cyan: 'bg-cyan-50',
+  teal: 'bg-teal-50',
+  fuchsia: 'bg-fuchsia-50',
 };
 
 /** İsim → config map (geriye uyumluluk için) */
@@ -143,10 +147,11 @@ export function getCategoryConfig(categoryName, dbCategories = null) {
   if (dbCategories?.length > 0) {
     const dbCat = dbCategories.find((c) => c.name === categoryName);
     if (dbCat) {
+      const v = resolveCategoryVisual({ name: categoryName, color: dbCat.color });
       return {
-        icon: COLOR_TO_ICON[dbCat.color] || Gamepad2,
-        color: dbCat.color,
-        bgColor: COLOR_TO_BG[dbCat.color] || 'bg-gray-50',
+        icon: v.icon,
+        color: v.color,
+        bgColor: COLOR_TO_BG[v.color] || 'bg-gray-50',
         image: dbCat.image || dbCat.image_url,
       };
     }
@@ -176,11 +181,10 @@ export function getCategoryDescription(categoryName, dbCategories = null) {
 export function getDisplayCategories(games, dbCategories = null) {
   const gameCategories = new Set(games.map((g) => g.category).filter(Boolean));
   const source = dbCategories && dbCategories.length > 0 ? dbCategories : CATEGORIES;
-  const withIcon = (c) => ({
-    ...c,
-    icon: c.icon || COLOR_TO_ICON[c.color] || Gamepad2,
-    image: c.image || c.image_url,
-  });
+  const withIcon = (c) => {
+    const v = resolveCategoryVisual(c);
+    return { ...c, icon: v.icon, color: v.color, image: c.image || c.image_url };
+  };
   return source
     .filter((c) => gameCategories.has(c.name) && (c.isActive !== false)) // Sadece aktif kategoriler
     .map(withIcon);
@@ -188,6 +192,24 @@ export function getDisplayCategories(games, dbCategories = null) {
 
 /** Türkçe locale ile normalize (büyük/küçük harf farkını kaldır) */
 const normalizeCategory = (s) => (s || '').toLowerCase('tr-TR').trim();
+
+/** İsim → kanonik kategori (ikon + renk) — DB kategorilerinde doğru görseli garanti eder */
+const CANONICAL_BY_NAME = Object.fromEntries(
+  CATEGORIES.map((c) => [normalizeCategory(c.name), c])
+);
+
+/**
+ * Kategorinin ikon ve rengini çöz.
+ * Öncelik: DB'de tanımlı ikon → isimden kanonik eşleşme → renkten ikon → varsayılan.
+ * Renk de bilinen kategorilerde kanonik (benzersiz) palete sabitlenir.
+ */
+export function resolveCategoryVisual(cat = {}) {
+  const canon = CANONICAL_BY_NAME[normalizeCategory(cat.name)];
+  return {
+    icon: cat.icon || canon?.icon || COLOR_TO_ICON[cat.color] || Gamepad2,
+    color: canon?.color || cat.color || 'gray',
+  };
+}
 
 /**
  * Oyun listesine göre kategori + oyun sayısı (sadece aktif kategoriler)
@@ -206,12 +228,16 @@ export function getCategoriesWithCounts(games, dbCategories = null) {
   const getCount = (catName) => countsByNorm[normalizeCategory(catName)] ?? 0;
 
   const source = dbCategories && dbCategories.length > 0 ? dbCategories : CATEGORIES;
-  const withIcon = (c) => ({
-    ...c,
-    icon: c.icon || COLOR_TO_ICON[c.color] || Gamepad2,
-    image: c.image || c.image_url,
-    count: getCount(c.name),
-  });
+  const withIcon = (c) => {
+    const v = resolveCategoryVisual(c);
+    return {
+      ...c,
+      icon: v.icon,
+      color: v.color,
+      image: c.image || c.image_url,
+      count: getCount(c.name),
+    };
+  };
   // Aktif kategorileri göster - 0 oyunlu olsa bile (yeni eklenen kategoriler görünsün)
   return source
     .filter((c) => c.isActive !== false)

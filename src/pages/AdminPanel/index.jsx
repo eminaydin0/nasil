@@ -17,6 +17,7 @@ import NewsEngagementManager, {
   fetchRecentNewsCommentCount,
 } from '../../components/admin/NewsEngagementManager';
 import FreeGamesManager from '../../components/admin/FreeGamesManager';
+import DealsManager from '../../components/admin/DealsManager';
 import AdminDashboardTab from '../../components/admin/tabs/AdminDashboardTab';
 import AdminAnalyticsTab from '../../components/admin/tabs/AdminAnalyticsTab';
 import { supabase } from '../../lib/supabase';
@@ -488,6 +489,7 @@ function AdminPanel() {
               {activeTab === 'news' && <NewsManager />}
               {activeTab === 'news-engagement' && <NewsEngagementManager />}
               {activeTab === 'free-games' && <FreeGamesManager />}
+              {activeTab === 'deals' && <DealsManager />}
               {activeTab === 'content' && <ContentManager />}
               {activeTab === 'contact' && <ContactManager />}
               {activeTab === 'users' && <UserManager />}

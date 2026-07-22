@@ -23,6 +23,7 @@ import Okey101ScorePage from './pages/GameDetail/Okey101ScorePage';
 import NewsPage from './pages/News';
 import NewsDetailPage from './pages/NewsDetail';
 import FreeGamesPage from './pages/FreeGames';
+import DealsPage from './pages/Deals';
 import ComparePage from './pages/Compare';
 import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
@@ -114,6 +115,7 @@ function App() {
                   <Route path="/haberler" element={<NewsPage />} />
                   <Route path="/haberler/:slug" element={<NewsDetailPage />} />
                   <Route path="/ucretsiz-oyunlar" element={<FreeGamesPage />} />
+                  <Route path="/indirimler" element={<DealsPage />} />
                   <Route path="/araclar" element={<ToolsPage />} />
                   <Route path="/araclar/okey-sayaci" element={<OkeyPage />} />
                   <Route path="/araclar/101-yazboz" element={<Okey101Page />} />

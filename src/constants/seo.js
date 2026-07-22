@@ -111,6 +111,13 @@ export const PAGE_SEO = {
     keywords:
       'ücretsiz oyun, bedava oyun, steam ücretsiz, epic games bedava, gog giveaway, pc oyun kampanyası, free game, steam bedava oyun',
   },
+  deals: {
+    title: 'Oyun İndirimleri — Steam, Epic, GOG Fiyat Takibi',
+    description:
+      'Steam, Epic Games, GOG ve daha fazlasındaki en iyi oyun indirimleri tek yerde. Güncel fiyatlar, indirim yüzdeleri ve puanlarla ucuz PC oyunlarını kaçırma.',
+    keywords:
+      'oyun indirimleri, ucuz oyun, steam indirim, epic games indirim, gog indirim, oyun fiyat takibi, pc oyun indirimi, en ucuz oyun',
+  },
   about: {
     title: 'Hakkımızda — Kuralı Ne? Oyun Platformu',
     description:
