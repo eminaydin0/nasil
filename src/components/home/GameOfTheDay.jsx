@@ -1,9 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Sparkles, Users, ArrowRight, Trophy } from 'lucide-react';
+import { ArrowRight, Calendar } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
 
+/** Label zaten "Günün oyunu" — başlıktan tekrarlayan öneki düşür */
+function resolveDailyTitle(customTitle, gameName) {
+  const fallback = String(gameName || '').trim();
+  const raw = String(customTitle || '').trim();
+  if (!raw) return fallback;
+
+  const stripped = raw.replace(/^günün\s*oyunu\s*[:\-–—|.]?\s*/i, '').trim();
+  return stripped || fallback;
+}
+
+/**
+ * GameOfTheDay — carousel editorial dili, sade iç hiyerarşi.
+ */
 function GameOfTheDay({ games }) {
   const [gameOfTheDay, setGameOfTheDay] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,15 +46,13 @@ function GameOfTheDay({ games }) {
         setGameOfTheDay({
           id: data.game.id,
           slug: data.game.slug,
-          name: data.custom_title || data.game.name,
+          name: resolveDailyTitle(data.custom_title, data.game.name),
           category: data.game.category,
           players: data.game.players,
           difficulty: data.game.difficulty,
           image: data.game.image,
           shortDescription: data.custom_description || data.game.short_description,
           description: data.game.description,
-          rules: data.game.rules,
-          tips: data.game.tips,
         });
       } else {
         fallbackToDeterministic();
@@ -69,97 +80,78 @@ function GameOfTheDay({ games }) {
   if (loading) return null;
   if (!gameOfTheDay) return null;
 
+  const dateLabel = new Date().toLocaleDateString('tr-TR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+
+  const metaBits = [gameOfTheDay.category, gameOfTheDay.players, gameOfTheDay.difficulty]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
     <section className="relative">
-      <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-charcoal-900 via-warm-900 to-charcoal-950 shadow-soft-xl sm:rounded-3xl">
-        {/* Sıcak parıltılar */}
-        <div className="absolute inset-0 opacity-60 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[28rem] h-[28rem] bg-orange-500/15 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/3" />
-          <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3" />
+      <div className="group relative min-h-[340px] overflow-hidden rounded-2xl bg-charcoal-950 shadow-soft-xl sm:min-h-[420px] sm:rounded-3xl md:min-h-[480px]">
+        <div className="absolute inset-0">
+          <img
+            src={gameOfTheDay.image || CARD_FALLBACK_IMAGE}
+            alt=""
+            className="h-full w-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.03]"
+            loading="lazy"
+            decoding="async"
+            width="1200"
+            height="480"
+            onError={handleImageFallback}
+          />
         </div>
-        {/* İnce noise / radial vinyetleme */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(249,115,22,0.08),transparent_55%)]" />
 
-        <div className="relative z-10 p-4 sm:p-6 md:p-10 lg:p-14">
-          <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between md:mb-10">
-            <div className="inline-flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-3.5 py-1.5 shadow-warm-glow sm:px-4 sm:py-2">
-              <Sparkles size={15} className="text-white" />
-              <span className="text-xs font-bold tracking-wide text-white sm:text-sm">Günün Oyunu</span>
-            </div>
-            <div className="flex items-center gap-2 text-cream-100/60">
-              <Calendar size={14} className="shrink-0" />
-              <span className="text-[11px] font-medium capitalize sm:text-sm">
-                {new Date().toLocaleDateString('tr-TR', {
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long',
-                })}
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal-950/90 via-charcoal-950/50 to-charcoal-950/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950/85 via-transparent to-charcoal-950/30" />
+
+        {/* Tarih — sağ üst, sakin */}
+        <div className="absolute right-4 top-4 z-20 flex items-center gap-2 text-white/55 sm:right-7 sm:top-6 md:right-10 md:top-8">
+          <Calendar size={13} className="shrink-0 opacity-80" />
+          <span className="text-[11px] font-medium capitalize tracking-wide sm:text-xs">
+            {dateLabel}
+          </span>
+        </div>
+
+        {/* İçerik — carousel ile aynı stack */}
+        <div className="relative z-10 flex min-h-[340px] items-end p-5 sm:min-h-[420px] sm:items-center sm:p-8 md:min-h-[480px] md:p-12 lg:p-14">
+          <div className="max-w-xl md:max-w-2xl">
+            <div className="mb-4 flex items-center gap-3 sm:mb-5">
+              <span className="h-px w-8 bg-orange-400/80 sm:w-10" aria-hidden />
+              <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-orange-300/95 sm:text-[11px]">
+                Günün oyunu
               </span>
             </div>
-          </div>
 
-          <div className="grid items-center gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-14">
-            {/* Görsel */}
-            <div className="relative">
-              <div className="relative aspect-[16/10] rounded-2xl overflow-hidden shadow-soft-xl ring-1 ring-white/5">
-                <img
-                  src={gameOfTheDay.image || CARD_FALLBACK_IMAGE}
-                  alt={gameOfTheDay.name}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.04]"
-                  loading="lazy"
-                  decoding="async"
-                  width="800"
-                  height="500"
-                  onError={handleImageFallback}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950/50 via-transparent to-transparent" />
-              </div>
+            <h2 className="mb-3 text-[1.65rem] font-extrabold leading-[1.08] tracking-tight text-white sm:mb-4 sm:text-3xl md:text-4xl lg:text-[2.75rem] lg:leading-[1.05]">
+              {gameOfTheDay.name}
+            </h2>
 
-              {/* Floating badge */}
-              <div className="absolute -bottom-3 right-3 rounded-xl border border-warm-100 bg-white px-3 py-2 shadow-soft-lg sm:-bottom-4 sm:right-4 sm:rounded-2xl sm:px-4 sm:py-3">
-                <div className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4 text-orange-500 sm:h-5 sm:w-5" />
-                  <span className="text-xs font-extrabold tracking-tight text-warm-900 sm:text-sm">Öne Çıkan</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4 sm:space-y-6">
-              <span className="inline-flex rounded-lg border border-white/10 bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-cream-100/80 backdrop-blur-sm sm:px-3 sm:py-1.5 sm:text-xs">
-                {gameOfTheDay.category}
-              </span>
-
-              <h2 className="text-2xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-3xl md:text-4xl lg:text-5xl">
-                {gameOfTheDay.name}
-              </h2>
-
-              <p className="line-clamp-3 text-sm leading-relaxed text-cream-100/75 sm:text-base md:text-lg">
-                {gameOfTheDay.shortDescription}
+            {(gameOfTheDay.shortDescription || gameOfTheDay.description) && (
+              <p className="mb-4 max-w-md text-sm leading-relaxed text-white/70 sm:mb-5 sm:text-base md:text-lg">
+                <span className="line-clamp-2 sm:line-clamp-3">
+                  {gameOfTheDay.shortDescription || gameOfTheDay.description}
+                </span>
               </p>
+            )}
 
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3 py-2 backdrop-blur-sm sm:px-4 sm:py-2.5">
-                  <Users size={16} className="text-orange-300 sm:w-[18px] sm:h-[18px]" />
-                  <span className="text-xs font-medium text-white sm:text-sm">{gameOfTheDay.players}</span>
-                </div>
-                {gameOfTheDay.difficulty && (
-                  <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3 py-2 backdrop-blur-sm sm:px-4 sm:py-2.5">
-                    <Sparkles size={14} className="text-amber-300 sm:w-4 sm:h-4" />
-                    <span className="text-xs font-medium capitalize text-white sm:text-sm">
-                      {gameOfTheDay.difficulty}
-                    </span>
-                  </div>
-                )}
-              </div>
+            {metaBits && (
+              <p className="mb-6 text-xs font-medium tracking-wide text-white/45 sm:mb-8 sm:text-sm">
+                {metaBits}
+              </p>
+            )}
 
-              <Link
-                to={`/oyun/${gameOfTheDay.slug}`}
-                className="group/btn inline-flex w-full items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 px-6 py-3.5 text-sm font-bold text-white shadow-warm-glow transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:from-orange-600 hover:to-red-600 hover:shadow-warm-glow-lg sm:w-auto sm:px-7 sm:text-base md:px-8 md:py-4"
-              >
-                <span>Kuralı Ne?</span>
-                <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
-              </Link>
-            </div>
+            <Link
+              to={`/oyun/${gameOfTheDay.slug}`}
+              className="hero-carousel-cta inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-charcoal-950 transition hover:bg-cream-100 sm:px-6 sm:py-3.5 sm:text-base"
+            >
+              <span>Kuralı Ne?</span>
+              <ArrowRight size={16} className="opacity-70" />
+            </Link>
           </div>
         </div>
       </div>
