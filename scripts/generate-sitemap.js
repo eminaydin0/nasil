@@ -89,6 +89,22 @@ function escapeXml(text) {
     .replace(/'/g, '&apos;');
 }
 
+/** Sitemap image:loc mutlak URL olmalı — göreli yollar GSC'de "Geçersiz URL" üretir */
+function toAbsoluteUrl(url) {
+  const raw = String(url || '').trim();
+  if (!raw) return '';
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (raw.startsWith('//')) return `https:${raw}`;
+  if (raw.startsWith('/')) return `${SITEMAP_BASE_URL}${raw}`;
+  return `${SITEMAP_BASE_URL}/${raw}`;
+}
+
+function sitemapImage(loc, title, caption) {
+  const absolute = toAbsoluteUrl(loc);
+  if (!absolute) return null;
+  return { loc: absolute, title, caption };
+}
+
 function urlEntry({ loc, lastmod, changefreq, priority, image }) {
   let block = `  <url>
     <loc>${loc}</loc>`;
@@ -215,13 +231,7 @@ async function generateSitemap() {
       lastmod: lastMod,
       changefreq: 'weekly',
       priority: '0.9',
-      image: game.image
-        ? {
-            loc: game.image,
-            title: `${game.name} - Kuralı Ne?`,
-            caption: `${game.name} oyun rehberi`,
-          }
-        : null,
+      image: sitemapImage(game.image, `${game.name} - Kuralı Ne?`, `${game.name} oyun rehberi`),
     });
   });
   writeSitemap('sitemap-games.xml', wrapUrlset(gameEntries, true));
@@ -236,9 +246,7 @@ async function generateSitemap() {
       lastmod: lastMod,
       changefreq: 'weekly',
       priority: '0.8',
-      image: post.cover_image
-        ? { loc: post.cover_image, title: post.title }
-        : null,
+      image: sitemapImage(post.cover_image, post.title),
     });
   });
   writeSitemap('sitemap-news.xml', wrapUrlset(newsEntries, true));
