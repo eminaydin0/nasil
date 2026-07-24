@@ -359,7 +359,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>/images/games/jenga.jpg</image:loc>
+      <image:loc>https://kuraline.xyz/images/games/jenga.jpg</image:loc>
       <image:title>Jenga - Kuralı Ne?</image:title>
       <image:caption>Jenga oyun rehberi</image:caption>
     </image:image>
@@ -370,7 +370,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>/images/games/uno.jpg</image:loc>
+      <image:loc>https://kuraline.xyz/images/games/uno.jpg</image:loc>
       <image:title>UNO - Kuralı Ne?</image:title>
       <image:caption>UNO oyun rehberi</image:caption>
     </image:image>
@@ -392,7 +392,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>/images/games/risk.jpg</image:loc>
+      <image:loc>https://kuraline.xyz/images/games/risk.jpg</image:loc>
       <image:title>Risk - Kuralı Ne?</image:title>
       <image:caption>Risk oyun rehberi</image:caption>
     </image:image>
@@ -414,7 +414,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>/images/games/catan.jpg</image:loc>
+      <image:loc>https://kuraline.xyz/images/games/catan.jpg</image:loc>
       <image:title>Catan (Yerleşimciler) - Kuralı Ne?</image:title>
       <image:caption>Catan (Yerleşimciler) oyun rehberi</image:caption>
     </image:image>
@@ -425,7 +425,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>/images/games/ticket-to-ride.jpg</image:loc>
+      <image:loc>https://kuraline.xyz/images/games/ticket-to-ride.jpg</image:loc>
       <image:title>Ticket to Ride - Kuralı Ne?</image:title>
       <image:caption>Ticket to Ride oyun rehberi</image:caption>
     </image:image>
@@ -436,7 +436,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>/images/games/dixit.jpg</image:loc>
+      <image:loc>https://kuraline.xyz/images/games/dixit.jpg</image:loc>
       <image:title>Dixit - Kuralı Ne?</image:title>
       <image:caption>Dixit oyun rehberi</image:caption>
     </image:image>
@@ -447,7 +447,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>/images/games/twister.jpg</image:loc>
+      <image:loc>https://kuraline.xyz/images/games/twister.jpg</image:loc>
       <image:title>Twister - Kuralı Ne?</image:title>
       <image:caption>Twister oyun rehberi</image:caption>
     </image:image>
