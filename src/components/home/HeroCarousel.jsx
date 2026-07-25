@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Play, Sparkles, TrendingUp, Compass } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { ArrowRight, ArrowLeft, ChevronRight, Compass, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+
+const AUTO_MS = 6500;
 
 /** Eski #oyunlar formatını ve göreli yolları SPA rotasına çevirir */
 function normalizeSlideHref(link) {
@@ -31,15 +33,19 @@ function SlideCtaButton({ href, className, children }) {
   );
 }
 
+function padIndex(n) {
+  return String(n).padStart(2, '0');
+}
+
 /**
- * HeroCarousel - hero alanı.
- * Slide yoksa düşmez: marka odaklı statik fallback hero gösterir.
+ * HeroCarousel — editorial film-strip hero.
+ * Slide yoksa marka odaklı fallback gösterir.
  */
 function HeroCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isRolling, setIsRolling] = useState(false);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     fetchSlides();
@@ -62,65 +68,72 @@ function HeroCarousel() {
     }
   };
 
+  const goTo = useCallback((index) => {
+    setCurrentIndex(index);
+    setPaused(true);
+    window.setTimeout(() => setPaused(false), 2800);
+  }, []);
+
+  const goPrev = useCallback(() => {
+    if (slides.length === 0) return;
+    goTo((currentIndex - 1 + slides.length) % slides.length);
+  }, [currentIndex, goTo, slides.length]);
+
+  const goNext = useCallback(() => {
+    if (slides.length === 0) return;
+    goTo((currentIndex + 1) % slides.length);
+  }, [currentIndex, goTo, slides.length]);
+
   useEffect(() => {
-    if (slides.length === 0 || isRolling) return;
+    if (slides.length === 0 || paused) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % slides.length);
-    }, 6000);
+    }, AUTO_MS);
     return () => clearInterval(timer);
-  }, [slides.length, isRolling]);
+  }, [slides.length, paused]);
 
   if (loading) {
     return (
-      <div className="mx-auto h-[min(68vh,400px)] w-full max-w-[1400px] animate-pulse rounded-2xl bg-gradient-to-br from-cream-100 to-cream-200 px-3 sm:h-[440px] sm:rounded-3xl sm:px-4 md:h-[560px] flex items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
+      <div className="mx-auto w-full max-w-[1400px] px-3 sm:px-4">
+        <div className="hero-carousel flex h-[min(72vh,440px)] animate-pulse items-center justify-center overflow-hidden rounded-2xl bg-charcoal-900 sm:h-[480px] sm:rounded-3xl md:h-[560px]">
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-orange-400" />
+        </div>
       </div>
     );
   }
 
-  // Statik fallback hero (slide yoksa)
   if (slides.length === 0) {
     return (
       <div className="mx-auto w-full max-w-[1400px] px-3 sm:px-4">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-charcoal-900 via-charcoal-800 to-warm-900 shadow-soft-xl sm:rounded-3xl">
-          {/* Aura */}
-          <div className="absolute -top-32 -right-32 w-[28rem] h-[28rem] bg-orange-500/25 rounded-full blur-[120px]" />
-          <div className="absolute -bottom-32 -left-32 w-[24rem] h-[24rem] bg-red-500/15 rounded-full blur-[120px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[44rem] h-[44rem] bg-amber-500/5 rounded-full blur-[140px]" />
+        <div className="hero-carousel relative overflow-hidden rounded-2xl bg-charcoal-900 sm:rounded-3xl">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,rgba(249,115,22,0.12),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(13,12,10,0.55)_100%)]" />
 
-          <div className="relative mx-auto max-w-3xl px-5 py-12 text-center sm:px-8 sm:py-20 md:px-16 md:py-28 lg:py-32">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 backdrop-blur-md sm:mb-6 sm:px-4 sm:py-2">
-              <Sparkles size={14} className="text-orange-300" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-cream-100 sm:text-xs sm:tracking-[0.2em]">
-                Geleneksel oyunlar arşivi
-              </span>
-            </div>
-
-            <h1 className="mb-5 text-[1.65rem] font-extrabold leading-[1.08] tracking-tight text-white sm:mb-6 sm:text-4xl md:text-6xl lg:text-7xl">
-              Her oyunun{' '}
-              <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                kuralı burada
-              </span>
-            </h1>
-
-            <p className="mx-auto mb-8 max-w-xl text-base leading-relaxed text-cream-100/80 sm:mb-10 md:text-xl">
-              Okey, batak, pişti, mangala ve fazlası — kuralları, ipuçları ve püf noktalarıyla tek çatı altında.
+          <div className="relative mx-auto flex max-w-3xl flex-col items-start px-5 py-14 sm:px-10 sm:py-20 md:px-16 md:py-28 lg:py-32">
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.28em] text-orange-300/90 sm:mb-6 sm:text-xs">
+              Kuralı Ne?
             </p>
-
-            <div className="flex flex-col items-stretch justify-center gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+            <h1 className="mb-4 max-w-2xl text-[1.75rem] font-extrabold leading-[1.05] tracking-tight text-white sm:mb-5 sm:text-4xl md:text-5xl lg:text-6xl">
+              Her oyunun{' '}
+              <span className="text-orange-300">kuralı burada</span>
+            </h1>
+            <p className="mb-8 max-w-lg text-sm leading-relaxed text-white/70 sm:mb-10 sm:text-base md:text-lg">
+              Okey, batak, pişti, mangala ve fazlası — kurallar, ipuçları ve araçlar tek çatı altında.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
               <Link
                 to="/oyunlar"
-                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 px-6 py-3.5 text-base font-bold text-white shadow-warm-glow transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-600 hover:to-red-600 hover:shadow-warm-glow-lg sm:px-8 sm:py-4"
+                className="hero-carousel-cta inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-charcoal-950 transition hover:bg-cream-100 sm:px-6 sm:py-3.5 sm:text-base"
               >
-                <Compass size={20} />
-                <span>Oyunları Keşfet</span>
+                <Compass size={18} />
+                Oyunları Keşfet
               </Link>
               <Link
                 to="/araclar"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-3.5 font-semibold text-white backdrop-blur-md transition-all hover:bg-white/15 sm:px-6 sm:py-4"
+                className="inline-flex items-center gap-1.5 px-2 py-3 text-sm font-semibold text-white/80 transition hover:text-white sm:text-base"
               >
-                <TrendingUp size={18} />
-                <span>Araçlar</span>
+                Araçlar
+                <ChevronRight size={16} />
               </Link>
             </div>
           </div>
@@ -129,142 +142,148 @@ function HeroCarousel() {
     );
   }
 
+  const active = slides[currentIndex];
+
   return (
     <div className="mx-auto w-full max-w-[1400px] px-3 sm:px-4">
-      <div className="group relative h-[min(68vh,420px)] overflow-hidden rounded-2xl bg-gradient-to-br from-charcoal-900 via-warm-900 to-charcoal-950 shadow-soft-xl sm:h-[440px] sm:rounded-3xl md:h-[560px]">
-        {/* Slides */}
-        {slides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-spring ${
-              index === currentIndex ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.04]'
-            }`}
-          >
-            {/* Background Image */}
-            <div className="absolute inset-0">
-              <img
-                src={slide.image_url}
-                alt={slide.title}
-                className="w-full h-full object-cover"
-                loading={index === 0 ? 'eager' : 'lazy'}
-                width="1400"
-                height="560"
-                fetchpriority={index === 0 ? 'high' : 'auto'}
-              />
-              {/* Çoklu gradient overlay (text contrast) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-900/60 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-charcoal-950/80 via-charcoal-900/30 to-transparent" />
-              {/* Radial accent */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(249,115,22,0.18),transparent_55%)]" />
-            </div>
-
-            {/* Sıcak parıltılar */}
-            <div className="absolute -top-16 -right-16 w-[28rem] h-[28rem] bg-orange-500/10 rounded-full blur-[120px]" />
-            <div className="absolute -bottom-16 -left-16 w-72 h-72 bg-amber-500/10 rounded-full blur-[100px]" />
-
-            {/* Content */}
-            <div className="absolute inset-0 flex items-end p-4 pb-12 sm:p-7 sm:pb-7 md:p-12 lg:p-16">
-              <div
-                className={`max-w-2xl transition-all duration-700 delay-200 ease-spring ${
-                  index === currentIndex ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-                }`}
-              >
-                {slide.badge && (
-                  <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-3 py-1.5 shadow-warm-glow sm:mb-5 sm:px-4 sm:py-2">
-                    <Sparkles size={13} className="text-white sm:w-3.5 sm:h-3.5" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-white sm:text-[11px] sm:tracking-[0.2em]">
-                      {slide.badge}
-                    </span>
-                  </div>
-                )}
-
-                <h2 className="mb-2 text-lg font-extrabold leading-[1.1] tracking-tight text-white sm:mb-3.5 sm:text-2xl md:mb-4 md:text-4xl lg:text-5xl">
-                  {slide.title}
-                </h2>
-
-                <p className="mb-5 line-clamp-2 max-w-xl text-sm leading-relaxed text-cream-100/85 sm:mb-7 sm:line-clamp-none sm:text-base md:mb-8 md:text-lg lg:text-xl">
-                  {slide.description}
-                </p>
-
-                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-                  <SlideCtaButton
-                    href={slide.button_link}
-                    className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 px-5 py-3 text-sm font-bold text-white shadow-warm-glow transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-600 hover:to-red-600 hover:shadow-warm-glow-lg sm:px-7 sm:py-3.5 sm:text-base md:px-8 md:py-4"
-                  >
-                    <Play size={16} fill="currentColor" className="sm:w-[18px] sm:h-[18px]" />
-                    <span>{slide.button_text || 'Keşfet'}</span>
-                  </SlideCtaButton>
-
-                  <Link
-                    to="/oyunlar"
-                    className="hidden items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/15 sm:inline-flex sm:px-6 sm:py-3.5 sm:text-base md:py-4"
-                  >
-                    <TrendingUp size={16} className="sm:w-[18px] sm:h-[18px]" />
-                    <span>Tüm Popülerler</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* Navigation Dots */}
-        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-0.5 sm:bottom-7 sm:left-auto sm:translate-x-0 sm:right-7 sm:gap-2 md:right-12">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => {
-                setCurrentIndex(index);
-                setIsRolling(true);
-                setTimeout(() => setIsRolling(false), 2000);
-              }}
-              className="flex h-11 w-11 items-center justify-center rounded-full sm:h-auto sm:w-auto sm:p-0"
-              aria-label={`Slide ${index + 1}`}
-              aria-current={index === currentIndex ? 'true' : undefined}
+      <div
+        className="hero-carousel group/hero relative h-[min(72vh,440px)] overflow-hidden rounded-2xl bg-charcoal-950 shadow-soft-xl sm:h-[480px] sm:rounded-3xl md:h-[560px]"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        {slides.map((slide, index) => {
+          const isActive = index === currentIndex;
+          return (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 transition-opacity duration-700 ease-out ${
+                isActive ? 'z-10 opacity-100' : 'z-0 opacity-0'
+              }`}
+              aria-hidden={!isActive}
             >
-              <span
-                className={`block rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? 'h-2.5 w-12 bg-gradient-to-r from-orange-500 to-red-500 shadow-warm-glow'
-                    : 'h-3 w-3 bg-white/30 sm:h-2.5 sm:w-2.5 hover:bg-white/50'
-                }`}
-                aria-hidden
-              />
-            </button>
-          ))}
-        </div>
-
-        {/* Side thumbnails - Desktop only */}
-        <div className="hidden xl:flex absolute right-8 top-1/2 -translate-y-1/2 z-20 flex-col gap-3">
-          {slides.map((slide, index) => {
-            const isActive = index === currentIndex;
-            return (
-              <button
-                key={slide.id}
-                onClick={() => {
-                  setCurrentIndex(index);
-                  setIsRolling(true);
-                  setTimeout(() => setIsRolling(false), 2000);
-                }}
-                className={`group relative w-20 h-24 rounded-xl overflow-hidden transition-all duration-300 ${
-                  isActive
-                    ? 'ring-4 ring-orange-500 scale-110 shadow-warm-glow'
-                    : 'ring-2 ring-white/20 hover:ring-white/40 hover:scale-105'
-                }`}
-                aria-label={`Slide ${index + 1}'e git`}
-              >
+              <div className={`absolute inset-0 hero-carousel-ken ${isActive ? 'is-active' : ''}`}>
                 <img
                   src={slide.image_url}
-                  alt={slide.title}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
+                  alt=""
+                  className="h-full w-full object-cover"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  width="1400"
+                  height="560"
+                  fetchpriority={index === 0 ? 'high' : 'auto'}
                 />
-                {!isActive && <div className="absolute inset-0 bg-charcoal-950/60 group-hover:bg-charcoal-900/40 transition-colors" />}
-                {isActive && <div className="absolute inset-0 bg-gradient-to-t from-orange-500/30 to-transparent" />}
-              </button>
-            );
-          })}
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-charcoal-950/88 via-charcoal-950/45 to-charcoal-950/15" />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950/90 via-transparent to-charcoal-950/25" />
+            </div>
+          );
+        })}
+
+        <div className="pointer-events-none absolute left-4 top-4 z-20 flex items-center gap-3 sm:left-7 sm:top-6 md:left-10 md:top-8">
+          <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/90 sm:text-[11px]">
+            Kuralı Ne?
+          </span>
+          <span className="hidden h-3 w-px bg-white/25 sm:block" aria-hidden />
+          <span className="hidden font-mono text-[11px] tabular-nums tracking-wider text-white/55 sm:inline">
+            {padIndex(currentIndex + 1)}
+            <span className="text-white/30"> / </span>
+            {padIndex(slides.length)}
+          </span>
+        </div>
+
+        <div className="absolute right-3 top-3 z-20 flex gap-1.5 sm:right-6 sm:top-5 md:right-8 md:top-7">
+          <button
+            type="button"
+            onClick={goPrev}
+            className="hero-carousel-nav flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/25 text-white backdrop-blur-md transition hover:border-white/35 hover:bg-black/40 sm:h-11 sm:w-11"
+            aria-label="Önceki slayt"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <button
+            type="button"
+            onClick={goNext}
+            className="hero-carousel-nav flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/25 text-white backdrop-blur-md transition hover:border-white/35 hover:bg-black/40 sm:h-11 sm:w-11"
+            aria-label="Sonraki slayt"
+          >
+            <ArrowRight size={16} />
+          </button>
+        </div>
+
+        <div className="absolute inset-0 z-20 flex items-end p-4 pb-[4.75rem] sm:items-center sm:p-7 sm:pb-7 md:p-10 lg:p-14">
+          <div key={active.id} className="hero-carousel-copy max-w-xl md:max-w-2xl">
+            <div className="mb-3 flex items-center gap-3 sm:mb-4">
+              <span className="h-px w-8 bg-orange-400/80 sm:w-10" aria-hidden />
+              <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-orange-300/95 sm:text-[11px]">
+                {active.badge || 'Öne çıkan'}
+              </span>
+            </div>
+
+            <h2 className="mb-3 text-[1.45rem] font-extrabold leading-[1.08] tracking-tight text-white sm:mb-4 sm:text-3xl md:text-4xl lg:text-[2.75rem] lg:leading-[1.05]">
+              {active.title}
+            </h2>
+
+            {active.description && (
+              <p className="mb-6 line-clamp-2 max-w-md text-sm leading-relaxed text-white/72 sm:mb-8 sm:line-clamp-3 sm:text-base md:text-lg">
+                {active.description}
+              </p>
+            )}
+
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+              <SlideCtaButton
+                href={active.button_link}
+                className="hero-carousel-cta inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-charcoal-950 transition hover:bg-cream-100 sm:px-6 sm:py-3.5 sm:text-base"
+              >
+                <span>{active.button_text || 'Keşfet'}</span>
+                <ArrowRight size={16} className="opacity-70" />
+              </SlideCtaButton>
+
+              <Link
+                to="/oyunlar"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/75 transition hover:text-white sm:text-base"
+              >
+                <TrendingUp size={15} className="opacity-70" />
+                Tüm oyunlar
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute inset-x-0 bottom-0 z-20">
+          <div className="flex items-end justify-between gap-3 bg-gradient-to-t from-charcoal-950/95 via-charcoal-950/55 to-transparent px-3 pb-3 pt-10 sm:px-6 sm:pb-4 md:px-8">
+            <span className="font-mono text-[11px] tabular-nums text-white/50 sm:hidden">
+              {padIndex(currentIndex + 1)}/{padIndex(slides.length)}
+            </span>
+
+            <div className="ml-auto flex max-w-full gap-2 overflow-x-auto pb-0.5 sm:gap-2.5">
+              {slides.map((slide, index) => {
+                const isActive = index === currentIndex;
+                return (
+                  <button
+                    key={slide.id}
+                    type="button"
+                    onClick={() => goTo(index)}
+                    className={`hero-carousel-thumb relative h-11 w-[3.25rem] shrink-0 overflow-hidden rounded-md transition-all duration-300 sm:h-14 sm:w-[4.5rem] md:h-16 md:w-24 ${
+                      isActive
+                        ? 'opacity-100 ring-1 ring-white/70'
+                        : 'opacity-45 ring-1 ring-white/10 hover:opacity-80'
+                    }`}
+                    aria-label={`Slayt ${index + 1}: ${slide.title}`}
+                    aria-current={isActive ? 'true' : undefined}
+                  >
+                    <img
+                      src={slide.image_url}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                    {isActive && (
+                      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-orange-400" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </div>

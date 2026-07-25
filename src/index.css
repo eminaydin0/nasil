@@ -1229,6 +1229,55 @@ header.header--mobile-menu-open {
   backdrop-filter: blur(8px);
 }
 
+/* Hero carousel — editorial film-strip */
+.hero-carousel-ken {
+  transform: scale(1.04);
+  transition: transform 6.5s linear;
+}
+
+.hero-carousel-ken.is-active {
+  transform: scale(1.1);
+}
+
+.hero-carousel-copy {
+  animation: heroCarouselCopyIn 0.65s var(--ease-spring) both;
+}
+
+@keyframes heroCarouselCopyIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-carousel-cta:hover {
+  transform: translateY(-1px);
+}
+
+.hero-carousel-thumb {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-carousel-nav:active {
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-carousel-ken,
+  .hero-carousel-ken.is-active {
+    transform: none;
+    transition: none;
+  }
+
+  .hero-carousel-copy {
+    animation: none;
+  }
+}
+
 /* Halı saha — hafif 3D perspektif (mobilde düz) */
 .pitch-perspective {
   perspective: 900px;
