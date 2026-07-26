@@ -13,14 +13,13 @@ import {
   ImageIcon,
   ExternalLink,
   Copy,
-  Filter,
   X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase, uploadNewsImage, deleteGameImage } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import { useConfirm, Modal } from '../ui';
-import AdminPageHeader from './AdminPageHeader';
+import { useConfirm, Modal, Button } from '../ui';
+import { AdminToolbar, AdminSearchInput, AdminFilterSelect, AdminTableWrap } from './adminUi';
 import { slugify } from '../../utils/slugify';
 import { calculateReadTimeMinutes, NEWS_CATEGORIES } from '../../utils/newsContent';
 import { analyzeNewsSeo } from '../../lib/newsAlgorithm';
@@ -61,6 +60,7 @@ function NewsManager() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [featuredFilter, setFeaturedFilter] = useState('all');
+  const [search, setSearch] = useState('');
 
   const loadData = async () => {
     try {
@@ -360,14 +360,20 @@ function NewsManager() {
   };
 
   const filteredPosts = useMemo(() => {
+    const q = search.trim().toLowerCase();
     return posts.filter((post) => {
       if (statusFilter === 'published' && !post.is_published) return false;
       if (statusFilter === 'draft' && post.is_published) return false;
       if (categoryFilter !== 'all' && post.category !== categoryFilter) return false;
       if (featuredFilter === 'featured' && !post.is_featured) return false;
-      return true;
+      if (!q) return true;
+      return (
+        post.title?.toLowerCase().includes(q) ||
+        post.slug?.toLowerCase().includes(q) ||
+        post.category?.toLowerCase().includes(q)
+      );
     });
-  }, [posts, statusFilter, categoryFilter, featuredFilter]);
+  }, [posts, statusFilter, categoryFilter, featuredFilter, search]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '—';
@@ -388,20 +394,60 @@ function NewsManager() {
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader
-        description="Oyun dünyası haberlerini ekleyin, düzenleyin ve yayınlayın"
+      <AdminToolbar
+        search={
+          <AdminSearchInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Haber başlığı, slug veya kategori ile ara..."
+          />
+        }
+        filters={
+          <>
+            <AdminFilterSelect
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              aria-label="Durum filtresi"
+            >
+              <option value="all">Tüm durumlar</option>
+              <option value="published">Yayında</option>
+              <option value="draft">Taslak</option>
+            </AdminFilterSelect>
+            <AdminFilterSelect
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              aria-label="Kategori filtresi"
+            >
+              <option value="all">Tüm kategoriler</option>
+              {NEWS_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </AdminFilterSelect>
+            <AdminFilterSelect
+              value={featuredFilter}
+              onChange={(e) => setFeaturedFilter(e.target.value)}
+              aria-label="Öne çıkan filtresi"
+            >
+              <option value="all">Tüm haberler</option>
+              <option value="featured">Sadece öne çıkan</option>
+            </AdminFilterSelect>
+          </>
+        }
         actions={
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="md"
+            iconLeft={Plus}
             onClick={() => {
               resetForm();
               setShowForm(true);
             }}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-4 py-2.5 text-sm font-bold text-white shadow-warm-glow transition-all hover:-translate-y-0.5"
           >
-            <Plus size={16} />
             Yeni Haber
-          </button>
+          </Button>
         }
       />
 
@@ -679,64 +725,23 @@ function NewsManager() {
           </p>
         </div>
       ) : (
-        <>
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <span className="inline-flex items-center gap-1.5 text-sm font-bold text-warm-600">
-                <Filter size={15} />
-                Filtre
-              </span>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
-              >
-                <option value="all">Tüm durumlar</option>
-                <option value="published">Yayında</option>
-                <option value="draft">Taslak</option>
-              </select>
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
-              >
-                <option value="all">Tüm kategoriler</option>
-                {NEWS_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={featuredFilter}
-                onChange={(e) => setFeaturedFilter(e.target.value)}
-                className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
-              >
-                <option value="all">Tüm haberler</option>
-                <option value="featured">Sadece öne çıkan</option>
-              </select>
-              <span className="text-sm text-warm-500">
-                {filteredPosts.length} / {posts.length} haber
-              </span>
-            </div>
-
-        <div className="overflow-hidden rounded-2xl border border-warm-200 bg-white shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] text-left text-sm">
-              <thead className="border-b border-warm-100 bg-cream-50 text-xs font-bold uppercase tracking-wide text-warm-500">
-                <tr>
-                  <th className="px-4 py-3">Başlık</th>
-                  <th className="px-4 py-3">Kategori</th>
-                  <th className="px-4 py-3">Durum</th>
-                  <th className="px-4 py-3">SEO</th>
-                  <th className="px-4 py-3">Görüntülenme</th>
-                  <th className="px-4 py-3">Tarih</th>
-                  <th className="px-4 py-3 text-right">İşlemler</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-warm-100">
+        <AdminTableWrap>
+          <table className="min-w-[900px] text-left text-sm">
+            <thead>
+              <tr>
+                <th>Başlık</th>
+                <th>Kategori</th>
+                <th>Durum</th>
+                <th>SEO</th>
+                <th>Görüntülenme</th>
+                <th>Tarih</th>
+                <th className="text-right">İşlemler</th>
+              </tr>
+            </thead>
+            <tbody>
                 {filteredPosts.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-warm-500">
+                    <td colSpan={7} className="!py-10 text-center text-warm-500">
                       Filtreye uygun haber bulunamadı
                     </td>
                   </tr>
@@ -845,9 +850,7 @@ function NewsManager() {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
-        </>
+        </AdminTableWrap>
       )}
     </div>
   );

@@ -38,21 +38,27 @@ function Modal({
   className = '',
 }) {
   const dialogRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!open) return;
+
     const onKey = (e) => {
-      if (e.key === 'Escape') onClose?.();
+      if (e.key === 'Escape') onCloseRef.current?.();
     };
     document.addEventListener('keydown', onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    setTimeout(() => dialogRef.current?.focus(), 50);
+
+    // Sadece açılışta focus — onClose her render'da değişince input'tan focus çalmasın
+    const t = setTimeout(() => dialogRef.current?.focus(), 50);
     return () => {
+      clearTimeout(t);
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prev;
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open || typeof document === 'undefined') return null;
 

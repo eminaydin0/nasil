@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, Upload, Image as ImageIcon, ArrowUp, ArrowDown, Search, Gamepad2, Images } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import { useConfirm, Modal } from '../ui';
-import AdminPageHeader from './AdminPageHeader';
+import { useConfirm, Modal, Button } from '../ui';
+import { AdminToolbar } from './adminUi';
 
+/** Hero carousel slayt yönetimi */
 function CarouselManager({ games = [] }) {
   const confirm = useConfirm();
   const [slides, setSlides] = useState([]);
@@ -199,20 +200,20 @@ function CarouselManager({ games = [] }) {
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader
-        description="Ana sayfa hero carousel slaytlarını yönetin. Sıra oklarıyla önceliği değiştirin."
+      <AdminToolbar
         actions={
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="md"
+            iconLeft={Plus}
             onClick={() => {
               setCurrentSlide(initialSlideState);
               setIsEditing(true);
             }}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-4 py-2.5 text-sm font-bold text-white shadow-warm-glow transition-all hover:-translate-y-0.5"
           >
-            <Plus size={16} />
             Yeni Slayt
-          </button>
+          </Button>
         }
       />
 

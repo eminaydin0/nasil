@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { RefreshCw, Loader2, Tag, ExternalLink } from 'lucide-react';
 import { useDeals } from '../../hooks/useDeals';
 import { DEAL_STORES, formatUsd } from '../../lib/cheapShark';
+import { Button } from '../ui';
+import { AdminToolbar, AdminFilterSelect } from './adminUi';
 
 const SORT_OPTIONS = [
   { value: 'Deal Rating', label: 'Önerilen' },
@@ -16,62 +18,59 @@ function DealsManager() {
   const { deals, loading, error, refetch } = useDeals({ storeID, sortBy });
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <p className="text-sm text-warm-600">
-            CheapShark API&apos;den canlı çekilir — DB veya senkron gerekmez, her zaman güncel.
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <select
-            value={storeID}
-            onChange={(e) => setStoreID(e.target.value)}
-            className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
-          >
-            {DEAL_STORES.map((store) => (
-              <option key={store.id || 'all'} value={store.id}>
-                {store.label}
-              </option>
-            ))}
-          </select>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
-          >
-            {SORT_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <button
-            type="button"
-            onClick={refetch}
-            disabled={loading}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-700 disabled:opacity-60"
-          >
-            {loading ? <Loader2 size={18} className="animate-spin" /> : <RefreshCw size={18} />}
-            {loading ? 'Yükleniyor…' : 'Yenile'}
-          </button>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3 text-sm">
-        <span className="rounded-full bg-rose-100 px-3 py-1 font-bold text-rose-800">
-          {deals.length} güncel fırsat
-        </span>
-        <a
-          href="/indirimler"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 font-bold text-orange-600 hover:underline"
-        >
-          Sitede gör
-          <ExternalLink size={14} />
-        </a>
-      </div>
+    <div className="space-y-5">
+      <AdminToolbar
+        filters={
+          <>
+            <AdminFilterSelect
+              value={storeID}
+              onChange={(e) => setStoreID(e.target.value)}
+              aria-label="Mağaza filtresi"
+            >
+              {DEAL_STORES.map((store) => (
+                <option key={store.id || 'all'} value={store.id}>
+                  {store.label}
+                </option>
+              ))}
+            </AdminFilterSelect>
+            <AdminFilterSelect
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sıralama"
+            >
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </AdminFilterSelect>
+          </>
+        }
+        actions={
+          <>
+            <a
+              href="/indirimler"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-warm-200 bg-cream-50 px-3.5 text-sm font-semibold text-warm-800 transition-colors hover:bg-warm-100"
+            >
+              Sitede gör
+              <ExternalLink size={14} />
+            </a>
+            <Button
+              type="button"
+              variant="primary"
+              size="md"
+              iconLeft={loading ? undefined : RefreshCw}
+              loading={loading}
+              onClick={refetch}
+              disabled={loading}
+            >
+              {loading ? 'Yükleniyor…' : 'Yenile'}
+            </Button>
+          </>
+        }
+      />
 
       {loading ? (
         <div className="flex justify-center py-20">
@@ -156,14 +155,6 @@ function DealsManager() {
           </div>
         </div>
       )}
-
-      <div className="rounded-xl border border-warm-200 bg-cream-50 p-4 text-xs text-warm-600">
-        <p className="font-bold text-warm-800">Bilgi</p>
-        <p className="mt-1">
-          İndirimler kullanıcıya doğrudan CheapShark API&apos;den gösterilir; ayrı bir güncelleme
-          gerekmez. Steam oyunları doğrudan Steam mağazasına yönlendirilir.
-        </p>
-      </div>
     </div>
   );
 }

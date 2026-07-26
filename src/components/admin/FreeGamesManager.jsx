@@ -13,6 +13,8 @@ import { supabase } from '../../lib/supabase';
 import { syncFreeGamesFromApi, getLastSyncLog } from '../../lib/freeGamesSync';
 import { GAMERPOWER_FILTERS } from '../../lib/gamerPower';
 import { formatGiveawayEndDate } from '../../lib/gamerPower';
+import { Button } from '../ui';
+import { AdminToolbar, AdminFilterSelect } from './adminUi';
 
 function FreeGamesManager() {
   const [games, setGames] = useState([]);
@@ -81,41 +83,35 @@ function FreeGamesManager() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <p className="text-sm text-warm-600">
-            GamerPower API → Supabase cache. Frontend DB&apos;den okur, site hızlı kalır.
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <select
+    <div className="space-y-5">
+      <AdminToolbar
+        filters={
+          <AdminFilterSelect
             value={platformFilter}
             onChange={(e) => setPlatformFilter(e.target.value)}
-            className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
-            disabled={syncing}
+            aria-label="Platform filtresi"
           >
             <option value="all">Tüm platformlar</option>
             <option value="pc">PC</option>
             <option value="steam">Steam</option>
             <option value="epic">Epic Games</option>
             <option value="gog">GOG</option>
-          </select>
-          <button
+          </AdminFilterSelect>
+        }
+        actions={
+          <Button
             type="button"
+            variant="primary"
+            size="md"
+            iconLeft={syncing ? undefined : RefreshCw}
+            loading={syncing}
             onClick={handleSync}
             disabled={syncing}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-700 disabled:opacity-60"
           >
-            {syncing ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : (
-              <RefreshCw size={18} />
-            )}
             {syncing ? 'Güncelleniyor…' : 'Ücretsiz Oyunları Güncelle'}
-          </button>
-        </div>
-      </div>
+          </Button>
+        }
+      />
 
       {lastSync && (
         <div

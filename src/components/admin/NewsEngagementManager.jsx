@@ -1,10 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   MessageCircle,
   Trash2,
   ThumbsUp,
   Loader2,
-  Filter,
   Inbox,
   Smile,
   ExternalLink,
@@ -15,7 +14,52 @@ import { supabase } from '../../lib/supabase';
 import { useConfirm } from '../ui';
 import toast from 'react-hot-toast';
 import { NEWS_REACTIONS, aggregateReactionCounts } from '../../constants/newsEngagement';
+import { AdminToolbar, AdminFilterSelect } from './adminUi';
 
+const NEWS_COMMENTS_SEEN_KEY = 'adminNewsCommentsLastSeen';
+
+export function getNewsCommentsLastSeen() {
+  try {
+    return localStorage.getItem(NEWS_COMMENTS_SEEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/** Haber yorumları sekmesi açılınca badge sıfırlanır */
+export function markNewsCommentsSeen() {
+  try {
+    localStorage.setItem(NEWS_COMMENTS_SEEN_KEY, new Date().toISOString());
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Son görülenden sonraki (veya ilk girişte son 7 gün) haber yorumu sayısı */
+export async function fetchRecentNewsCommentCount(days = 7) {
+  try {
+    const lastSeen = getNewsCommentsLastSeen();
+    let query = supabase
+      .from('news_comments')
+      .select('id', { count: 'exact', head: true });
+
+    if (lastSeen) {
+      query = query.gt('created_at', lastSeen);
+    } else {
+      const since = new Date();
+      since.setDate(since.getDate() - days);
+      query = query.gte('created_at', since.toISOString());
+    }
+
+    const { count, error } = await query;
+    if (error) throw error;
+    return count || 0;
+  } catch {
+    return 0;
+  }
+}
+
+/** Haber yorumları & emoji reaksiyon moderasyonu */
 const SORT_OPTIONS = [
   { value: 'newest', label: 'En yeni' },
   { value: 'oldest', label: 'En eski' },
@@ -33,7 +77,7 @@ function formatDate(dateStr) {
   });
 }
 
-function NewsEngagementManager() {
+function NewsEngagementManager({ onSeen }) {
   const confirm = useConfirm();
   const [activeView, setActiveView] = useState('comments');
   const [comments, setComments] = useState([]);
@@ -43,8 +87,8 @@ function NewsEngagementManager() {
   const [selectedPost, setSelectedPost] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
 
-  const loadData = async () => {
-    setLoading(true);
+  const loadData = useCallback(async ({ quiet = false } = {}) => {
+    if (!quiet) setLoading(true);
     try {
       const [commentsRes, postsRes, reactionsRes] = await Promise.all([
         supabase
@@ -113,11 +157,35 @@ function NewsEngagementManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    markNewsCommentsSeen();
+    onSeen?.();
     loadData();
-  }, []);
+
+    const channel = supabase
+      .channel('admin-news-engagement')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'news_comments' },
+        () => {
+          markNewsCommentsSeen();
+          onSeen?.();
+          loadData({ quiet: true });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'news_reactions' },
+        () => loadData({ quiet: true })
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [loadData, onSeen]);
 
   const filteredComments = useMemo(() => {
     let list = [...comments];
@@ -163,50 +231,49 @@ function NewsEngagementManager() {
   const totalReactions = reactions.reduce((s, r) => s + r.total, 0);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-warm-900">Haber Etkileşimleri</h2>
-          <p className="text-sm text-warm-600">
-            Haber yorumlarını moderasyon et, emoji reaksiyonlarını incele
-          </p>
-        </div>
-        <div className="flex gap-2 text-sm">
-          <span className="rounded-full bg-orange-50 px-3 py-1 font-bold text-orange-700">
-            {totalComments} yorum
-          </span>
-          <span className="rounded-full bg-emerald-50 px-3 py-1 font-bold text-emerald-700">
-            {totalReactions} reaksiyon
-          </span>
-        </div>
-      </div>
-
-      <div className="flex gap-2 border-b border-warm-200">
-        <button
-          type="button"
-          onClick={() => setActiveView('comments')}
-          className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-bold transition ${
-            activeView === 'comments'
-              ? 'border-orange-500 text-orange-600'
-              : 'border-transparent text-warm-500 hover:text-warm-800'
-          }`}
-        >
-          <MessageCircle size={16} />
-          Yorumlar
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveView('reactions')}
-          className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-bold transition ${
-            activeView === 'reactions'
-              ? 'border-orange-500 text-orange-600'
-              : 'border-transparent text-warm-500 hover:text-warm-800'
-          }`}
-        >
-          <Smile size={16} />
-          Emoji reaksiyonları
-        </button>
-      </div>
+    <div className="space-y-5">
+      <AdminToolbar
+        filters={
+          <>
+            <AdminFilterSelect
+              value={activeView}
+              onChange={(e) => setActiveView(e.target.value)}
+              aria-label="Görünüm"
+            >
+              <option value="comments">Yorumlar ({totalComments})</option>
+              <option value="reactions">Emoji reaksiyonları ({totalReactions})</option>
+            </AdminFilterSelect>
+            {activeView === 'comments' && (
+              <>
+                <AdminFilterSelect
+                  value={selectedPost}
+                  onChange={(e) => setSelectedPost(e.target.value)}
+                  aria-label="Haber filtresi"
+                  className="min-w-[14rem]"
+                >
+                  <option value="all">Tüm haberler</option>
+                  {posts.map((p) => (
+                    <option key={p.id} value={String(p.id)}>
+                      {p.title}
+                    </option>
+                  ))}
+                </AdminFilterSelect>
+                <AdminFilterSelect
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  aria-label="Sıralama"
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </AdminFilterSelect>
+              </>
+            )}
+          </>
+        }
+      />
 
       {loading ? (
         <div className="flex justify-center py-20">
@@ -214,36 +281,6 @@ function NewsEngagementManager() {
         </div>
       ) : activeView === 'comments' ? (
         <>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex items-center gap-2 text-sm font-semibold text-warm-700">
-              <Filter size={16} className="text-warm-400" />
-              Filtre
-            </div>
-            <select
-              value={selectedPost}
-              onChange={(e) => setSelectedPost(e.target.value)}
-              className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
-            >
-              <option value="all">Tüm haberler</option>
-              {posts.map((p) => (
-                <option key={p.id} value={String(p.id)}>
-                  {p.title}
-                </option>
-              ))}
-            </select>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="rounded-lg border border-warm-200 px-3 py-2 text-sm"
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
           {filteredComments.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-warm-200 bg-white py-16 text-center">
               <Inbox className="mx-auto mb-3 text-warm-300" size={40} />
@@ -357,22 +394,6 @@ function NewsEngagementManager() {
 }
 
 export default NewsEngagementManager;
-
-/** Son 7 gündeki haber yorumu sayısı (sidebar badge için) */
-export async function fetchRecentNewsCommentCount(days = 7) {
-  try {
-    const since = new Date();
-    since.setDate(since.getDate() - days);
-    const { count, error } = await supabase
-      .from('news_comments')
-      .select('id', { count: 'exact', head: true })
-      .gte('created_at', since.toISOString());
-    if (error) throw error;
-    return count || 0;
-  } catch {
-    return 0;
-  }
-}
 
 export async function fetchNewsDashboardStats() {
   try {

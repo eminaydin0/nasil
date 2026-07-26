@@ -4,11 +4,9 @@ import {
   Mail,
   Phone,
   MapPin,
-  Inbox,
   Trash2,
   Check,
   MessageCircle,
-  Settings,
   Eye,
   User,
   Calendar,
@@ -18,6 +16,7 @@ import {
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 import { useConfirm, TextField, Button, Modal, Avatar } from '../ui';
+import { AdminToolbar, AdminFilterSelect, AdminSearchInput } from './adminUi';
 
 const DEFAULT_CONTACT = {
   email: 'eminaydinyazilim@gmail.com',
@@ -25,7 +24,7 @@ const DEFAULT_CONTACT = {
   address: 'İstanbul, Türkiye',
 };
 
-function ContactManager() {
+function ContactManager({ onUnreadChange }) {
   const confirm = useConfirm();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -34,6 +33,7 @@ function ContactManager() {
   const [activeSubTab, setActiveSubTab] = useState('messages');
   const [contactInfo, setContactInfo] = useState({ email: '', phone: '', address: '' });
   const [viewerMessageId, setViewerMessageId] = useState(null);
+  const [search, setSearch] = useState('');
 
   /** Listede ve modalda her zaman güncel satır kullanılır */
   const viewerMessage = useMemo(
@@ -49,8 +49,8 @@ function ContactManager() {
     return t.length > max ? `${t.slice(0, max)}…` : t;
   };
 
-  const loadMessages = useCallback(async () => {
-    setMessagesLoading(true);
+  const loadMessages = useCallback(async ({ quiet = false } = {}) => {
+    if (!quiet) setMessagesLoading(true);
     try {
       const { data, error } = await supabase
         .from('contact_messages')
@@ -58,15 +58,22 @@ function ContactManager() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setMessages(data || []);
+      const list = data || [];
+      setMessages(list);
+      onUnreadChange?.(list.filter((m) => !m.is_read).length);
     } catch (error) {
       console.error('Error loading messages:', error);
-      toast.error('Mesajlar yüklenemedi');
+      if (!quiet) toast.error('Mesajlar yüklenemedi');
       setMessages([]);
+      onUnreadChange?.(0);
     } finally {
       setMessagesLoading(false);
     }
-  }, []);
+  }, [onUnreadChange]);
+
+  const syncUnreadFromList = (list) => {
+    onUnreadChange?.(list.filter((m) => !m.is_read).length);
+  };
 
   const loadContent = useCallback(async () => {
     try {
@@ -106,6 +113,19 @@ function ContactManager() {
   useEffect(() => {
     loadContent();
     loadMessages();
+
+    const channel = supabase
+      .channel('admin-contact-messages')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'contact_messages' },
+        () => loadMessages({ quiet: true })
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [loadContent, loadMessages]);
 
   const handleSave = async (e) => {
@@ -139,7 +159,11 @@ function ContactManager() {
         .update({ is_read: isRead })
         .eq('id', id);
       if (error) throw error;
-      setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, is_read: isRead } : m)));
+      setMessages((prev) => {
+        const next = prev.map((m) => (m.id === id ? { ...m, is_read: isRead } : m));
+        syncUnreadFromList(next);
+        return next;
+      });
       if (!silent) {
         toast.success(isRead ? 'Okundu işaretlendi' : 'Okunmadı işaretlendi');
       }
@@ -167,7 +191,11 @@ function ContactManager() {
     try {
       const { error } = await supabase.from('contact_messages').delete().eq('id', id);
       if (error) throw error;
-      setMessages((prev) => prev.filter((m) => m.id !== id));
+      setMessages((prev) => {
+        const next = prev.filter((m) => m.id !== id);
+        syncUnreadFromList(next);
+        return next;
+      });
       if (viewerMessageId === id) setViewerMessageId(null);
       toast.success('Mesaj silindi');
     } catch (_err) {
@@ -209,55 +237,42 @@ function ContactManager() {
   }
 
   const unreadCount = messages.filter((m) => !m.is_read).length;
+  const filteredMessages = messages.filter((m) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      m.name?.toLowerCase().includes(q) ||
+      m.email?.toLowerCase().includes(q) ||
+      m.subject?.toLowerCase().includes(q) ||
+      m.message?.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="space-y-5">
-      {/* Üst bar */}
-      <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight text-charcoal-900">
-              <Mail size={20} className="text-orange-600" />
-              İletişim
-            </h2>
-            <p className="mt-0.5 text-sm text-warm-500">
-              {messages.length} mesaj · {unreadCount} okunmamış
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-5 inline-flex rounded-xl border border-warm-200 bg-cream-50 p-1">
-          <button
-            type="button"
-            onClick={() => setActiveSubTab('messages')}
-            className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-semibold transition-all ${
-              activeSubTab === 'messages'
-                ? 'bg-white text-charcoal-900 shadow-soft'
-                : 'text-warm-500 hover:text-charcoal-900'
-            }`}
+      <AdminToolbar
+        search={
+          activeSubTab === 'messages' ? (
+            <AdminSearchInput
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="İsim, e-posta veya mesaj ile ara..."
+            />
+          ) : null
+        }
+        filters={
+          <AdminFilterSelect
+            value={activeSubTab}
+            onChange={(e) => setActiveSubTab(e.target.value)}
+            aria-label="İletişim sekmesi"
           >
-            <Inbox size={15} />
-            Gelen Mesajlar
-            {unreadCount > 0 && (
-              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-orange-500 px-1.5 text-[10px] font-bold text-white">
-                {unreadCount}
-              </span>
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveSubTab('info')}
-            className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-semibold transition-all ${
-              activeSubTab === 'info'
-                ? 'bg-white text-charcoal-900 shadow-soft'
-                : 'text-warm-500 hover:text-charcoal-900'
-            }`}
-          >
-            <Settings size={15} />
-            Bilgileri Düzenle
-          </button>
-        </div>
-      </div>
+            <option value="messages">
+              Gelen Mesajlar{unreadCount > 0 ? ` (${unreadCount})` : ''}
+            </option>
+            <option value="info">Bilgileri Düzenle</option>
+          </AdminFilterSelect>
+        }
+      />
 
       {/* Mesajlar */}
       {activeSubTab === 'messages' && (
@@ -271,12 +286,17 @@ function ContactManager() {
               <MessageCircle size={32} className="mx-auto mb-2 text-warm-400" />
               <p className="text-sm font-semibold text-warm-700">Henüz mesaj bulunmuyor</p>
             </div>
+          ) : filteredMessages.length === 0 ? (
+            <div className="py-12 text-center">
+              <MessageCircle size={32} className="mx-auto mb-2 text-warm-400" />
+              <p className="text-sm font-semibold text-warm-700">Sonuç bulunamadı</p>
+            </div>
           ) : (
             <div className="space-y-3">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-warm-400">
                 Satıra veya görüntüle düğmesine tıklayın — tam metin yeni sekmeden yanıtlamayı da içerir.
               </p>
-              {messages.map((msg) => (
+              {filteredMessages.map((msg) => (
                 <div
                   key={msg.id}
                   role="button"

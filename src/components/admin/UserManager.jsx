@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
 import {
   Users,
-  Search,
   RefreshCw,
   Calendar,
   Ban,
@@ -12,7 +11,8 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useConfirm } from '../ui';
+import { useConfirm, Button } from '../ui';
+import { AdminToolbar, AdminSearchInput, AdminFilterSelect } from './adminUi';
 
 function UserManager() {
   const confirm = useConfirm();
@@ -90,75 +90,39 @@ function UserManager() {
     });
   }, [users, searchTerm, filter]);
 
-  const FILTERS = [
-    { id: 'all', label: 'Tümü', count: counts.total },
-    { id: 'active', label: 'Aktif', count: counts.active },
-    { id: 'banned', label: 'Engelli', count: counts.banned },
-  ];
-
   return (
     <div className="space-y-5">
-      {/* Üst bar */}
-      <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight text-charcoal-900">
-              <Users size={20} className="text-orange-600" />
-              Kullanıcı Yönetimi
-            </h2>
-            <p className="mt-0.5 text-sm text-warm-500">
-              Toplam {counts.total} kullanıcı · {counts.active} aktif · {counts.banned} engelli
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={loadUsers}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-warm-200 bg-cream-50 px-3.5 py-2.5 text-sm font-semibold text-warm-800 transition-all hover:bg-warm-100"
-              title="Yenile"
-            >
-              <RefreshCw size={16} />
-              Yenile
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
-          <div className="relative flex-1">
-            <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-warm-400" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="İsim veya e-posta ile ara..."
-              className="w-full rounded-xl border border-warm-200 bg-cream-50 py-2.5 pl-10 pr-3 text-sm text-charcoal-900 placeholder-warm-400 transition-colors focus:border-orange-400 focus:bg-white focus:outline-none"
-            />
-          </div>
-          <div className="inline-flex shrink-0 rounded-xl border border-warm-200 bg-cream-50 p-1">
-            {FILTERS.map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                onClick={() => setFilter(f.id)}
-                className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                  filter === f.id
-                    ? 'bg-white text-charcoal-900 shadow-soft'
-                    : 'text-warm-500 hover:text-charcoal-900'
-                }`}
-              >
-                {f.label}
-                <span
-                  className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${
-                    filter === f.id ? 'bg-warm-100 text-warm-700' : 'bg-warm-200/50 text-warm-600'
-                  }`}
-                >
-                  {f.count}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      <AdminToolbar
+        search={
+          <AdminSearchInput
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="İsim veya e-posta ile ara..."
+          />
+        }
+        filters={
+          <AdminFilterSelect
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            aria-label="Kullanıcı durumu"
+          >
+            <option value="all">Tümü ({counts.total})</option>
+            <option value="active">Aktif ({counts.active})</option>
+            <option value="banned">Engelli ({counts.banned})</option>
+          </AdminFilterSelect>
+        }
+        actions={
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            iconLeft={RefreshCw}
+            onClick={loadUsers}
+          >
+            Yenile
+          </Button>
+        }
+      />
 
       {loading ? (
         <div className="flex items-center justify-center rounded-2xl border border-warm-200/60 bg-white p-20 shadow-soft">
