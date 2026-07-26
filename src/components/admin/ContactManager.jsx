@@ -24,7 +24,7 @@ const DEFAULT_CONTACT = {
   address: 'İstanbul, Türkiye',
 };
 
-function ContactManager() {
+function ContactManager({ onUnreadChange }) {
   const confirm = useConfirm();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -49,8 +49,8 @@ function ContactManager() {
     return t.length > max ? `${t.slice(0, max)}…` : t;
   };
 
-  const loadMessages = useCallback(async () => {
-    setMessagesLoading(true);
+  const loadMessages = useCallback(async ({ quiet = false } = {}) => {
+    if (!quiet) setMessagesLoading(true);
     try {
       const { data, error } = await supabase
         .from('contact_messages')
@@ -58,15 +58,22 @@ function ContactManager() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setMessages(data || []);
+      const list = data || [];
+      setMessages(list);
+      onUnreadChange?.(list.filter((m) => !m.is_read).length);
     } catch (error) {
       console.error('Error loading messages:', error);
-      toast.error('Mesajlar yüklenemedi');
+      if (!quiet) toast.error('Mesajlar yüklenemedi');
       setMessages([]);
+      onUnreadChange?.(0);
     } finally {
       setMessagesLoading(false);
     }
-  }, []);
+  }, [onUnreadChange]);
+
+  const syncUnreadFromList = (list) => {
+    onUnreadChange?.(list.filter((m) => !m.is_read).length);
+  };
 
   const loadContent = useCallback(async () => {
     try {
@@ -106,6 +113,19 @@ function ContactManager() {
   useEffect(() => {
     loadContent();
     loadMessages();
+
+    const channel = supabase
+      .channel('admin-contact-messages')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'contact_messages' },
+        () => loadMessages({ quiet: true })
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [loadContent, loadMessages]);
 
   const handleSave = async (e) => {
@@ -139,7 +159,11 @@ function ContactManager() {
         .update({ is_read: isRead })
         .eq('id', id);
       if (error) throw error;
-      setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, is_read: isRead } : m)));
+      setMessages((prev) => {
+        const next = prev.map((m) => (m.id === id ? { ...m, is_read: isRead } : m));
+        syncUnreadFromList(next);
+        return next;
+      });
       if (!silent) {
         toast.success(isRead ? 'Okundu işaretlendi' : 'Okunmadı işaretlendi');
       }
@@ -167,7 +191,11 @@ function ContactManager() {
     try {
       const { error } = await supabase.from('contact_messages').delete().eq('id', id);
       if (error) throw error;
-      setMessages((prev) => prev.filter((m) => m.id !== id));
+      setMessages((prev) => {
+        const next = prev.filter((m) => m.id !== id);
+        syncUnreadFromList(next);
+        return next;
+      });
       if (viewerMessageId === id) setViewerMessageId(null);
       toast.success('Mesaj silindi');
     } catch (_err) {

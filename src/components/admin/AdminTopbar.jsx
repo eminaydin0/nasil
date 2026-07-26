@@ -2,7 +2,7 @@ import { Menu, Bell, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ADMIN_NAV_ITEMS } from './AdminSidebar';
 
-function AdminTopbar({ activeTab, onMenuClick, unreadCount = 0 }) {
+function AdminTopbar({ activeTab, onMenuClick, unreadCount = 0, onBellClick }) {
   const current = ADMIN_NAV_ITEMS.find((i) => i.id === activeTab) || ADMIN_NAV_ITEMS[0];
   const Icon = current.icon;
 
@@ -43,16 +43,18 @@ function AdminTopbar({ activeTab, onMenuClick, unreadCount = 0 }) {
 
         <div className="flex shrink-0 items-center gap-2">
           {unreadCount > 0 && (
-            <span
-              className="relative grid h-10 w-10 place-items-center rounded-xl border border-warm-200/80 bg-white text-warm-700 shadow-soft"
-              aria-label={`${unreadCount} bildirim`}
+            <button
+              type="button"
+              onClick={onBellClick}
+              className="relative grid h-10 w-10 place-items-center rounded-xl border border-warm-200/80 bg-white text-warm-700 shadow-soft transition-colors hover:bg-cream-50 hover:text-charcoal-900"
+              aria-label={`${unreadCount} bildirim — görüntüle`}
               title={`${unreadCount} bekleyen öğe`}
             >
               <Bell size={17} />
               <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white ring-2 ring-[#fbfaf7]">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
-            </span>
+            </button>
           )}
 
           <Link

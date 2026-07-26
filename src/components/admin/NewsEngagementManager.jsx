@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   MessageCircle,
   Trash2,
@@ -15,6 +15,49 @@ import { useConfirm } from '../ui';
 import toast from 'react-hot-toast';
 import { NEWS_REACTIONS, aggregateReactionCounts } from '../../constants/newsEngagement';
 import { AdminToolbar, AdminFilterSelect } from './adminUi';
+
+const NEWS_COMMENTS_SEEN_KEY = 'adminNewsCommentsLastSeen';
+
+export function getNewsCommentsLastSeen() {
+  try {
+    return localStorage.getItem(NEWS_COMMENTS_SEEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/** Haber yorumları sekmesi açılınca badge sıfırlanır */
+export function markNewsCommentsSeen() {
+  try {
+    localStorage.setItem(NEWS_COMMENTS_SEEN_KEY, new Date().toISOString());
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Son görülenden sonraki (veya ilk girişte son 7 gün) haber yorumu sayısı */
+export async function fetchRecentNewsCommentCount(days = 7) {
+  try {
+    const lastSeen = getNewsCommentsLastSeen();
+    let query = supabase
+      .from('news_comments')
+      .select('id', { count: 'exact', head: true });
+
+    if (lastSeen) {
+      query = query.gt('created_at', lastSeen);
+    } else {
+      const since = new Date();
+      since.setDate(since.getDate() - days);
+      query = query.gte('created_at', since.toISOString());
+    }
+
+    const { count, error } = await query;
+    if (error) throw error;
+    return count || 0;
+  } catch {
+    return 0;
+  }
+}
 
 /** Haber yorumları & emoji reaksiyon moderasyonu */
 const SORT_OPTIONS = [
@@ -34,7 +77,7 @@ function formatDate(dateStr) {
   });
 }
 
-function NewsEngagementManager() {
+function NewsEngagementManager({ onSeen }) {
   const confirm = useConfirm();
   const [activeView, setActiveView] = useState('comments');
   const [comments, setComments] = useState([]);
@@ -44,8 +87,8 @@ function NewsEngagementManager() {
   const [selectedPost, setSelectedPost] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
 
-  const loadData = async () => {
-    setLoading(true);
+  const loadData = useCallback(async ({ quiet = false } = {}) => {
+    if (!quiet) setLoading(true);
     try {
       const [commentsRes, postsRes, reactionsRes] = await Promise.all([
         supabase
@@ -114,11 +157,35 @@ function NewsEngagementManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    markNewsCommentsSeen();
+    onSeen?.();
     loadData();
-  }, []);
+
+    const channel = supabase
+      .channel('admin-news-engagement')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'news_comments' },
+        () => {
+          markNewsCommentsSeen();
+          onSeen?.();
+          loadData({ quiet: true });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'news_reactions' },
+        () => loadData({ quiet: true })
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [loadData, onSeen]);
 
   const filteredComments = useMemo(() => {
     let list = [...comments];
@@ -327,22 +394,6 @@ function NewsEngagementManager() {
 }
 
 export default NewsEngagementManager;
-
-/** Son 7 gündeki haber yorumu sayısı (sidebar badge için) */
-export async function fetchRecentNewsCommentCount(days = 7) {
-  try {
-    const since = new Date();
-    since.setDate(since.getDate() - days);
-    const { count, error } = await supabase
-      .from('news_comments')
-      .select('id', { count: 'exact', head: true })
-      .gte('created_at', since.toISOString());
-    if (error) throw error;
-    return count || 0;
-  } catch {
-    return 0;
-  }
-}
 
 export async function fetchNewsDashboardStats() {
   try {

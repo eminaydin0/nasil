@@ -1,5 +1,5 @@
 import { Bell } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
@@ -37,7 +37,7 @@ export default function NotificationBell() {
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     if (!user?.id) return;
     setLoading(true);
     const { data, error } = await supabase
@@ -49,18 +49,22 @@ export default function NotificationBell() {
 
     if (!error) setNotifications(data || []);
     setLoading(false);
-  };
+  }, [user?.id]);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      setNotifications([]);
+      return;
+    }
+
     fetchNotifications();
 
     const channel = supabase
-      .channel('notifications')
+      .channel(`user-notifications-${user.id}`)
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'notifications',
           filter: `user_id=eq.${user.id}`,
@@ -69,15 +73,20 @@ export default function NotificationBell() {
       )
       .subscribe();
 
+    const interval = setInterval(fetchNotifications, 30000);
+
     return () => {
+      clearInterval(interval);
       supabase.removeChannel(channel);
     };
-  }, [user?.id]);
+  }, [user?.id, fetchNotifications]);
 
   const handleBellClick = () => {
-    const willOpen = !open;
-    setOpen(willOpen);
-    if (willOpen) fetchNotifications();
+    setOpen((prev) => {
+      const willOpen = !prev;
+      if (willOpen) fetchNotifications();
+      return willOpen;
+    });
   };
 
   useEffect(() => {
@@ -87,9 +96,9 @@ export default function NotificationBell() {
       }
     };
     if (open) {
-      document.addEventListener('click', handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     }
-    return () => document.removeEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open]);
 
   const markAsRead = async (id) => {
@@ -148,7 +157,7 @@ export default function NotificationBell() {
             )}
           </div>
           <div className="overflow-y-auto flex-1">
-            {loading ? (
+            {loading && notifications.length === 0 ? (
               <div className="p-4 text-center text-warm-500 text-sm">
                 Yükleniyor...
               </div>

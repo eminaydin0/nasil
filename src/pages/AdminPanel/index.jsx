@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import AdminLogin from '../../components/admin/AdminLogin';
 import AdminSidebar from '../../components/admin/AdminSidebar';
@@ -15,6 +15,7 @@ import CategoryManager from '../../components/admin/CategoryManager';
 import NewsManager from '../../components/admin/NewsManager';
 import NewsEngagementManager, {
   fetchRecentNewsCommentCount,
+  markNewsCommentsSeen,
 } from '../../components/admin/NewsEngagementManager';
 import FreeGamesManager from '../../components/admin/FreeGamesManager';
 import DealsManager from '../../components/admin/DealsManager';
@@ -68,28 +69,83 @@ function AdminPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Unread contact + recent news comments for badges
+  // Unread contact + unseen news comments for badges
+  const loadBadges = useCallback(async () => {
+    try {
+      const [contactRes, newsComments] = await Promise.all([
+        supabase
+          .from('contact_messages')
+          .select('id', { count: 'exact', head: true })
+          .eq('is_read', false),
+        fetchRecentNewsCommentCount(7),
+      ]);
+      setUnreadContactCount(contactRes.count || 0);
+      setRecentNewsCommentsCount(newsComments);
+    } catch (err) {
+      console.error('Badge count error:', err);
+    }
+  }, []);
+
   useEffect(() => {
     if (!isAuthenticated) return;
-    const loadBadges = async () => {
-      try {
-        const [contactRes, newsComments] = await Promise.all([
-          supabase
-            .from('contact_messages')
-            .select('id', { count: 'exact', head: true })
-            .eq('is_read', false),
-          fetchRecentNewsCommentCount(7),
-        ]);
-        setUnreadContactCount(contactRes.count || 0);
-        setRecentNewsCommentsCount(newsComments);
-      } catch (err) {
-        console.error('Badge count error:', err);
-      }
-    };
+
     loadBadges();
-    const interval = setInterval(loadBadges, 60000);
-    return () => clearInterval(interval);
-  }, [isAuthenticated, activeTab]);
+    const interval = setInterval(loadBadges, 20000);
+
+    const channel = supabase
+      .channel('admin-badges')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'contact_messages' },
+        () => loadBadges()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'news_comments' },
+        () => loadBadges()
+      )
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
+  }, [isAuthenticated, loadBadges]);
+
+  const handleNewsEngagementSeen = useCallback(() => {
+    markNewsCommentsSeen();
+    setRecentNewsCommentsCount(0);
+  }, []);
+
+  const handleContactUnreadChange = useCallback((count) => {
+    setUnreadContactCount(count);
+  }, []);
+
+  const handleTabChange = useCallback((tabId) => {
+    setActiveTab(tabId);
+    // Sekmeye girince badge'leri tazele (görüntülenen sayfa kendi clear'ını yapar)
+    if (tabId === 'news-engagement' || tabId === 'contact') {
+      // küçük gecikme: child mount + onSeen/onUnreadChange yarışmasın
+      setTimeout(() => loadBadges(), 400);
+    } else {
+      loadBadges();
+    }
+  }, [loadBadges]);
+
+  const handleBellClick = useCallback(() => {
+    if (unreadContactCount > 0) handleTabChange('contact');
+    else if (recentNewsCommentsCount > 0) handleTabChange('news-engagement');
+    else handleTabChange('contact');
+  }, [unreadContactCount, recentNewsCommentsCount, handleTabChange]);
+
+  // Açık sekmedeyken yeni öğe gelirse o sekmenin badge'ini şişirme
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    if (activeTab === 'news-engagement' && recentNewsCommentsCount > 0) {
+      markNewsCommentsSeen();
+      setRecentNewsCommentsCount(0);
+    }
+  }, [isAuthenticated, activeTab, recentNewsCommentsCount]);
 
   const loadGames = async () => {
     try {
@@ -444,7 +500,7 @@ function AdminPanel() {
       <div className="flex min-h-screen">
         <AdminSidebar
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           onLogout={handleLogout}
@@ -462,6 +518,7 @@ function AdminPanel() {
             activeTab={activeTab}
             onMenuClick={() => setSidebarOpen(true)}
             unreadCount={unreadContactCount + recentNewsCommentsCount}
+            onBellClick={handleBellClick}
           />
 
           <main key={activeTab} className="flex-1 px-4 py-5 md:px-7 md:py-7">
@@ -471,7 +528,7 @@ function AdminPanel() {
                   stats={stats}
                   sortedGames={sortedGames}
                   games={games}
-                  onTabChange={setActiveTab}
+                  onTabChange={handleTabChange}
                 />
               )}
 
@@ -508,11 +565,15 @@ function AdminPanel() {
               {activeTab === 'gameoftheday' && <GameOfTheDayManager />}
               {activeTab === 'categories' && <CategoryManager />}
               {activeTab === 'news' && <NewsManager />}
-              {activeTab === 'news-engagement' && <NewsEngagementManager />}
+              {activeTab === 'news-engagement' && (
+                <NewsEngagementManager onSeen={handleNewsEngagementSeen} />
+              )}
               {activeTab === 'free-games' && <FreeGamesManager />}
               {activeTab === 'deals' && <DealsManager />}
               {activeTab === 'content' && <ContentManager />}
-              {activeTab === 'contact' && <ContactManager />}
+              {activeTab === 'contact' && (
+                <ContactManager onUnreadChange={handleContactUnreadChange} />
+              )}
               {activeTab === 'users' && <UserManager />}
             </div>
           </main>
