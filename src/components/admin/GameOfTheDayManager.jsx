@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Save, Search, Sparkles, Calendar } from 'lucide-react';
+import { Save, Sparkles, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { AdminToolbar, AdminSearchInput } from './adminUi';
 
 export default function GameOfTheDayManager() {
   const [games, setGames] = useState([]);
@@ -110,7 +111,15 @@ export default function GameOfTheDayManager() {
 
   return (
     <div className="space-y-5">
-      <p className="text-sm text-warm-600">Ana sayfada gösterilecek öne çıkan oyunu seçin</p>
+      <AdminToolbar
+        search={
+          <AdminSearchInput
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Listede oyun ara..."
+          />
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
         {/* Sol Kolon: Seçim Formu */}
@@ -120,18 +129,6 @@ export default function GameOfTheDayManager() {
               <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-warm-600">
                 Oyun Seçin
               </label>
-              
-              {/* Arama Kutusu */}
-              <div className="relative mb-3">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
-                <input
-                  type="text"
-                  placeholder="Listede oyun ara..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-xl border-2 border-warm-200 bg-cream-50 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-orange-400"
-                />
-              </div>
 
               {/* Oyun Listesi */}
               <div className="max-h-60 overflow-y-auto overflow-hidden rounded-xl border border-warm-200 bg-white">

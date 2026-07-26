@@ -296,6 +296,94 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
+/* Admin shell */
+.admin-sidebar {
+  box-shadow: 4px 0 32px -12px rgba(13, 12, 10, 0.45);
+}
+
+.admin-sidebar nav {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.admin-sidebar nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+.admin-sidebar nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+}
+
+.admin-topbar {
+  box-shadow: 0 1px 0 rgba(28, 25, 23, 0.04);
+}
+
+/* Admin — ortak yüzey / tablo / buton uyumu */
+.admin-shell {
+  --admin-radius: 1rem;
+  --admin-border: rgba(231, 229, 228, 0.7);
+  --admin-muted: #78716c;
+  --admin-ink: #16140f;
+}
+
+.admin-shell .admin-card,
+.admin-shell .admin-table-wrap {
+  border-radius: var(--admin-radius);
+}
+
+.admin-shell .admin-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.admin-shell .admin-table-wrap thead {
+  background: #fdfaf4;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-shell .admin-table-wrap th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #57534e;
+  white-space: nowrap;
+}
+
+.admin-shell .admin-table-wrap td {
+  padding: 0.875rem 1rem;
+  border-top: 1px solid rgba(231, 229, 228, 0.55);
+  color: var(--admin-ink);
+  vertical-align: middle;
+}
+
+.admin-shell .admin-table-wrap tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.admin-shell .admin-table-wrap tbody tr:hover {
+  background: rgba(253, 250, 244, 0.85);
+}
+
+.admin-shell .admin-page-actions .inline-flex,
+.admin-shell .admin-page-actions button {
+  border-radius: 0.75rem;
+}
+
+.admin-sidebar--collapsed {
+  width: 4.5rem;
+}
+
+/* Eski kart sınıflarını admin shell içinde hizala */
+.admin-shell main > div > div > .rounded-2xl.border.bg-white,
+.admin-shell main .rounded-2xl.border.border-warm-200\/60.bg-white {
+  border-color: rgba(231, 229, 228, 0.72);
+}
+
 /* Custom scrollbar - sıcak turuncu */
 ::-webkit-scrollbar {
   width: 10px;

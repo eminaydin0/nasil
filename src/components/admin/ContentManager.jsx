@@ -7,11 +7,11 @@ import {
   Shield,
   Cookie,
   Megaphone,
-  Sparkles,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 import { TextField, Button } from '../ui';
+import { AdminToolbar, AdminFilterSelect } from './adminUi';
 
 const CONTENT_SECTIONS = [
   { key: 'cultural_heritage', label: 'Kültürel Miras', hint: 'Hakkımızda & ana sayfa hikaye bloğu', icon: BookOpen },
@@ -132,54 +132,23 @@ function ContentManager() {
   );
 
   return (
-    <div className="space-y-6">
-      {/* Başlık */}
-      <div className="overflow-hidden rounded-[1.5rem] border border-orange-400/35 bg-gradient-to-br from-charcoal-900 via-orange-950 to-red-950 p-[1px] shadow-soft-lg">
-        <div className="flex flex-wrap items-start justify-between gap-4 rounded-[calc(1.5rem-1px)] bg-gradient-to-br from-charcoal-900/93 to-orange-950/95 px-5 py-5 sm:p-7">
-          <div className="flex min-w-0 items-start gap-4">
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/20">
-              <Sparkles className="h-6 w-6 text-orange-300" aria-hidden />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[11px] font-black uppercase tracking-[0.26em] text-orange-100/85">Site içeriği</p>
-              <h2 className="font-display mt-1 text-xl font-bold text-white sm:text-2xl tracking-tight">
-                Metin blokları ve yasal sayfalar
-              </h2>
-              <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-orange-50/76">
-                Hakkımızda sayfasındaki sıcak hikaye alanı ile ana sayfadaki blok aynı <strong>kültürel miras</strong>{' '}
-                kaydından çekilir — buradan düzenler, canlı yayına yansıtırsınız.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bölüm seçici */}
-      <div className="-mx-1 rounded-2xl border border-warm-200/70 bg-white/90 p-2 shadow-soft backdrop-blur-sm">
-        <div className="-mx-0.5 flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:gap-3">
-          {CONTENT_SECTIONS.map(({ key, label, hint, icon: TabIcon }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setActiveSection(key)}
-              className={`group flex min-w-[10.5rem] shrink-0 items-center gap-2.5 rounded-xl border-2 px-3.5 py-2.5 text-left transition-all sm:min-w-0 ${activeSection === key
-                ? 'border-orange-500 bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-warm-glow'
-                : 'border-warm-200 bg-cream-50 text-charcoal-900 hover:border-warm-300 hover:bg-white'}`}
-            >
-              <TabIcon
-                size={18}
-                className={activeSection === key ? 'text-white opacity-95' : 'text-orange-600'}
-              />
-              <span className="min-w-0">
-                <span className={`block truncate text-xs font-black uppercase tracking-[0.1em] ${activeSection === key ? 'text-white/92' : 'text-warm-400'}`}>
-                  {hint}
-                </span>
-                <span className="block truncate text-sm font-bold tracking-tight">{label}</span>
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="space-y-5">
+      <AdminToolbar
+        filters={
+          <AdminFilterSelect
+            value={activeSection}
+            onChange={(e) => setActiveSection(e.target.value)}
+            aria-label="İçerik bölümü"
+            className="min-w-[16rem]"
+          >
+            {CONTENT_SECTIONS.map(({ key, label }) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </AdminFilterSelect>
+        }
+      />
 
       <div className="rounded-[1.5rem] border border-warm-200/80 bg-white shadow-soft-xl">
         <div className="relative border-b border-warm-200/70 px-6 py-5 sm:px-8">

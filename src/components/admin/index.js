@@ -14,4 +14,13 @@ export { default as CarouselManager } from './CarouselManager';
 export { default as ContactManager } from './ContactManager';
 export { default as ContentManager } from './ContentManager';
 export { default as GameOfTheDayManager } from './GameOfTheDayManager';
+export { default as AdminPageHeader } from './AdminPageHeader';
+export {
+  AdminCard,
+  AdminTableWrap,
+  AdminEmpty,
+  AdminSearchInput,
+  AdminFilterSelect,
+  AdminToolbar,
+} from './adminUi';
 export * from './charts';

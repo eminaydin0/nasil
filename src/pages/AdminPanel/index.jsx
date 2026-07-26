@@ -39,6 +39,13 @@ function AdminPanel() {
   const [editingGame, setEditingGame] = useState(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('adminSidebarCollapsed') === '1';
+    } catch {
+      return false;
+    }
+  });
   const [sortBy, setSortBy] = useState('id');
   const [sortDirection, setSortDirection] = useState('asc');
   const [selectedGames, setSelectedGames] = useState([]);
@@ -209,6 +216,18 @@ function AdminPanel() {
     sessionStorage.removeItem('adminData');
     trackAdminAction('logout', 'Admin panel logout');
     toast.success('Başarıyla çıkış yaptınız!');
+  };
+
+  const toggleSidebarCollapse = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('adminSidebarCollapsed', next ? '1' : '0');
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
   };
 
   const handleDeleteGame = async (id) => {
@@ -421,7 +440,7 @@ function AdminPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-cream-50 font-sans text-charcoal-900">
+    <div className="admin-shell min-h-screen bg-[#f4f1ea] font-sans text-charcoal-900">
       <div className="flex min-h-screen">
         <AdminSidebar
           activeTab={activeTab}
@@ -430,6 +449,8 @@ function AdminPanel() {
           onClose={() => setSidebarOpen(false)}
           onLogout={handleLogout}
           gameCount={games.length}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={toggleSidebarCollapse}
           badges={{
             contact: unreadContactCount,
             'news-engagement': recentNewsCommentsCount,
@@ -443,7 +464,7 @@ function AdminPanel() {
             unreadCount={unreadContactCount + recentNewsCommentsCount}
           />
 
-          <main className="flex-1 px-4 py-6 md:px-8 md:py-8">
+          <main key={activeTab} className="flex-1 px-4 py-5 md:px-7 md:py-7">
             <div className="mx-auto max-w-[1400px]">
               {activeTab === 'dashboard' && (
                 <AdminDashboardTab

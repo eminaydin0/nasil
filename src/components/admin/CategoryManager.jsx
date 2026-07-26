@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Plus,
   Pencil,
@@ -10,11 +10,13 @@ import {
   Save,
   Upload,
   X,
+  Search,
+  Filter,
 } from 'lucide-react';
 import { supabase, uploadCategoryImage, deleteGameImage } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import { useConfirm, Modal } from '../ui';
-import AdminPageHeader from './AdminPageHeader';
+import { useConfirm, Modal, Button } from '../ui';
+import { AdminCard, AdminTableWrap, AdminSearchInput } from './adminUi';
 
 const COLOR_OPTIONS = [
   { value: 'red', label: 'Kırmızı', hex: '#ef4444' },
@@ -46,6 +48,8 @@ function CategoryManager() {
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -251,43 +255,83 @@ function CategoryManager() {
     }
   };
 
+  const activeCount = categories.filter((c) => c.is_active).length;
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return categories.filter((c) => {
+      if (statusFilter === 'active' && !c.is_active) return false;
+      if (statusFilter === 'inactive' && c.is_active) return false;
+      if (!q) return true;
+      return (
+        c.name?.toLowerCase().includes(q) ||
+        c.description?.toLowerCase().includes(q)
+      );
+    });
+  }, [categories, search, statusFilter]);
+
+  const openNewForm = () => {
+    setFormData({
+      name: '',
+      description: '',
+      image_url: '',
+      color: 'orange',
+      order_index: categories.length + 1,
+      is_active: true,
+    });
+    setImagePreview('');
+    setEditingId(null);
+    setShowForm(true);
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center rounded-2xl border border-warm-200/60 bg-white p-20 shadow-soft">
+      <div className="flex items-center justify-center rounded-2xl border border-warm-200/70 bg-white p-20 shadow-soft">
         <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
       </div>
     );
   }
 
-  const activeCount = categories.filter((c) => c.is_active).length;
-
   return (
     <div className="space-y-5">
-      <AdminPageHeader
-        description={`${categories.length} kategori · ${activeCount} aktif · Sıralama listede görünüm sırasını belirler`}
-        actions={
-          <button
-            type="button"
-            onClick={() => {
-              setFormData({
-                name: '',
-                description: '',
-                image_url: '',
-                color: 'orange',
-                order_index: categories.length + 1,
-                is_active: true,
-              });
-              setImagePreview('');
-              setEditingId(null);
-              setShowForm(true);
-            }}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-4 py-2.5 text-sm font-bold text-white shadow-warm-glow transition-all hover:-translate-y-0.5 hover:shadow-warm-glow-lg"
-          >
-            <Plus size={16} />
-            Yeni Kategori
-          </button>
-        }
-      />
+      <AdminCard>
+        <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center">
+          <div className="relative min-w-0 flex-1">
+            <Search
+              size={16}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-warm-400"
+            />
+            <AdminSearchInput
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Kategori adı veya açıklama ile ara..."
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative min-w-[10.5rem] flex-1 sm:flex-none">
+              <Filter
+                size={14}
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-warm-400"
+              />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full appearance-none rounded-xl border border-warm-200 bg-cream-50 py-2.5 pl-9 pr-8 text-sm font-semibold text-charcoal-900 transition-colors focus:border-orange-400 focus:bg-white focus:outline-none"
+                aria-label="Durum filtresi"
+              >
+                <option value="all">Tüm durumlar</option>
+                <option value="active">Aktif ({activeCount})</option>
+                <option value="inactive">Pasif ({categories.length - activeCount})</option>
+              </select>
+            </div>
+
+            <Button type="button" variant="primary" size="md" iconLeft={Plus} onClick={openNewForm}>
+              Yeni Kategori
+            </Button>
+          </div>
+        </div>
+      </AdminCard>
 
       <Modal
         open={showForm}
@@ -450,49 +494,41 @@ function CategoryManager() {
       </Modal>
 
       {/* Liste */}
-      <div className="overflow-hidden rounded-2xl border border-warm-200/60 bg-white shadow-soft">
+      <AdminTableWrap>
         {categories.length === 0 ? (
           <div className="p-16 text-center">
             <FolderTree size={28} className="mx-auto mb-2 text-warm-400" />
             <p className="text-sm font-semibold text-warm-700">Henüz kategori yok</p>
             <p className="mt-1 text-xs text-warm-500">
-              "Yeni Kategori" butonu ile ilkini ekleyin.
+              &quot;Yeni Kategori&quot; butonu ile ilkini ekleyin.
             </p>
           </div>
+        ) : filtered.length === 0 ? (
+          <div className="p-16 text-center">
+            <Search size={24} className="mx-auto mb-2 text-warm-400" />
+            <p className="text-sm font-semibold text-warm-700">Sonuç bulunamadı</p>
+            <p className="mt-1 text-xs text-warm-500">Arama veya filtreleri temizleyin.</p>
+          </div>
         ) : (
-          <table className="w-full">
-            <thead className="border-b border-warm-200 bg-cream-50">
+          <table>
+            <thead>
               <tr>
-                <th className="w-16 px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600">
-                  Sıra
-                </th>
-                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600">
-                  Kategori
-                </th>
-                <th className="hidden px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600 sm:table-cell">
-                  Oyun
-                </th>
-                <th className="hidden px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600 md:table-cell">
-                  Renk
-                </th>
-                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-warm-600">
-                  Durum
-                </th>
-                <th className="px-4 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-warm-600">
-                  İşlem
-                </th>
+                <th className="w-16">Sıra</th>
+                <th>Kategori</th>
+                <th className="hidden sm:table-cell">Oyun</th>
+                <th className="hidden md:table-cell">Renk</th>
+                <th>Durum</th>
+                <th className="text-right">İşlem</th>
               </tr>
             </thead>
             <tbody>
-              {categories.map((cat) => {
+              {filtered.map((cat) => {
                 const gameCount = gameCounts[cat.name] || 0;
                 const hex = getColorHex(cat.color);
                 return (
                   <tr
                     key={cat.id}
-                    className={`border-b border-warm-100 transition-colors hover:bg-cream-50 ${
-                      !cat.is_active ? 'opacity-60' : ''
-                    }`}
+                    className={`group ${!cat.is_active ? 'opacity-60' : ''}`}
                   >
                     <td className="px-4 py-3 text-sm font-bold text-warm-600">
                       <span className="grid h-7 w-7 place-items-center rounded-md bg-warm-100 text-xs">
@@ -593,7 +629,7 @@ function CategoryManager() {
             </tbody>
           </table>
         )}
-      </div>
+      </AdminTableWrap>
     </div>
   );
 }

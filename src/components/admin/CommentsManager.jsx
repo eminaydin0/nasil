@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
-import { MessageCircle, Trash2, ThumbsUp, Star, Loader2, Filter, Inbox } from 'lucide-react';
+import { MessageCircle, Trash2, ThumbsUp, Star, Loader2, Inbox } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useConfirm } from '../ui';
 import toast from 'react-hot-toast';
+import { AdminToolbar, AdminFilterSelect } from './adminUi';
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'En Yeni' },
@@ -184,53 +185,27 @@ function CommentsManager({ games }) {
     return allComments.filter((c) => c.gameId === gameId).length;
   };
 
-  const testimonialCount = allComments.filter((c) => c.isTestimonial).length;
-  const avgRating =
-    allComments.length > 0
-      ? (allComments.reduce((sum, c) => sum + (c.rating || 0), 0) / allComments.length).toFixed(1)
-      : '0.0';
-
   return (
     <div className="space-y-5">
-      {/* Üst bar */}
-      <div className="rounded-2xl border border-warm-200/60 bg-white p-5 shadow-soft sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight text-charcoal-900">
-              <MessageCircle size={20} className="text-orange-600" />
-              Yorum Yönetimi
-            </h2>
-            <p className="mt-0.5 text-sm text-warm-500">
-              {allComments.length} yorum · {testimonialCount} ana sayfada · Ortalama puan {avgRating}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-5 flex flex-col gap-2.5 lg:flex-row lg:items-center">
-          <div className="overflow-x-auto">
-            <div className="inline-flex rounded-xl border border-warm-200 bg-cream-50 p-1">
+      <AdminToolbar
+        filters={
+          <>
+            <AdminFilterSelect
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sıralama"
+            >
               {SORT_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setSortBy(opt.value)}
-                  className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                    sortBy === opt.value
-                      ? 'bg-white text-charcoal-900 shadow-soft'
-                      : 'text-warm-500 hover:text-charcoal-900'
-                  }`}
-                >
+                <option key={opt.value} value={opt.value}>
                   {opt.label}
-                </button>
+                </option>
               ))}
-            </div>
-          </div>
-          <div className="flex flex-1 items-center gap-2 lg:justify-end">
-            <Filter size={14} className="hidden text-warm-400 lg:block" />
-            <select
+            </AdminFilterSelect>
+            <AdminFilterSelect
               value={selectedGame}
               onChange={(e) => setSelectedGame(e.target.value)}
-              className="w-full rounded-xl border border-warm-200 bg-cream-50 px-3 py-2 text-sm font-semibold text-warm-800 transition-colors focus:border-orange-400 focus:bg-white focus:outline-none lg:w-auto lg:min-w-[220px]"
+              aria-label="Oyun filtresi"
+              className="min-w-[14rem]"
             >
               <option value="all">Tüm Oyunlar ({allComments.length})</option>
               {games.map((game) => {
@@ -241,10 +216,10 @@ function CommentsManager({ games }) {
                   </option>
                 ) : null;
               })}
-            </select>
-          </div>
-        </div>
-      </div>
+            </AdminFilterSelect>
+          </>
+        }
+      />
 
       {loading ? (
         <div className="flex items-center justify-center rounded-2xl border border-warm-200/60 bg-white p-20 shadow-soft">
