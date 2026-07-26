@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import CookieConsent from './components/common/CookieConsent';
@@ -16,6 +16,28 @@ import { ConfirmProvider } from './components/ui';
 
 /** Ana sayfa eager — LCP / ilk boyama */
 import HomePage from './pages/HomePage';
+
+function SiteShell({ children }) {
+  const { pathname } = useLocation();
+  const isAuth = pathname === '/auth';
+
+  return (
+    <div className="flex min-h-screen min-w-0 flex-col overflow-x-clip bg-white">
+      {!isAuth && <Header />}
+      <AnalyticsRouteTracker />
+      <ScrollToTop />
+      <main
+        className={`page-main min-w-0 grow overflow-x-clip page-transition ${
+          isAuth ? 'page-main--auth' : ''
+        }`}
+      >
+        {children}
+      </main>
+      {!isAuth && <Footer />}
+      {!isAuth && <GameAssistant />}
+    </div>
+  );
+}
 
 const GameDetail = lazy(() => import('./pages/GameDetail'));
 const CategoryPage = lazy(() => import('./pages/Categories'));
@@ -119,54 +141,47 @@ function App() {
                 <Route
                   path="/*"
                   element={
-                    <div className="flex min-h-screen min-w-0 flex-col overflow-x-clip bg-white">
-                      <Header />
-                      <AnalyticsRouteTracker />
-                      <ScrollToTop />
-                      <main className="page-main min-w-0 grow overflow-x-clip page-transition">
-                        <Suspense fallback={<RouteFallback />}>
-                          <Routes>
-                            <Route path="/" element={<HomePage />} />
-                            <Route path="/oyunlar" element={<AllGames />} />
-                            <Route path="/haberler" element={<NewsPage />} />
-                            <Route path="/haberler/:slug" element={<NewsDetailPage />} />
-                            <Route path="/ucretsiz-oyunlar" element={<FreeGamesPage />} />
-                            <Route path="/indirimler" element={<DealsPage />} />
-                            <Route path="/araclar" element={<ToolsPage />} />
-                            <Route path="/araclar/okey-sayaci" element={<OkeyPage />} />
-                            <Route path="/araclar/101-yazboz" element={<Okey101Page />} />
-                            <Route path="/araclar/batak-yazboz" element={<BatakPage />} />
-                            <Route path="/araclar/takim-olusturucu" element={<TeamGeneratorPage />} />
-                            <Route
-                              path="/araclar/halisaha-takim-olusturucu"
-                              element={<HalisahaPage />}
-                            />
-                            <Route path="/araclar/karar-carki" element={<DecisionWheelPage />} />
-                            <Route path="/araclar/kura-cek" element={<KuraCekPage />} />
-                            <Route path="/araclar/zar-at" element={<DicePage />} />
-                            <Route path="/araclar/skor-tablosu" element={<ScoreBoardPage />} />
-                            <Route path="/kategori/:categoryName" element={<CategoryPage />} />
-                            <Route path="/oyun/:slug" element={<GameDetail />} />
-                            <Route
-                              path="/oyun/:slug/101-skor-tablosu"
-                              element={<Okey101ScorePage />}
-                            />
-                            <Route path="/karsilastir/:comparison" element={<ComparePage />} />
-                            <Route path="/hakkimizda" element={<About />} />
-                            <Route path="/iletisim" element={<Contact />} />
-                            <Route path="/kullanim-kosullari" element={<TermsOfUse />} />
-                            <Route path="/gizlilik" element={<PrivacyPolicy />} />
-                            <Route path="/cerez-politikasi" element={<CookiePolicy />} />
-                            <Route path="/reklam-verin" element={<ReklamVerin />} />
-                            <Route path="/auth" element={<AuthPage />} />
-                            <Route path="/profil" element={<ProfilePage />} />
-                            <Route path="*" element={<ErrorPage status={404} />} />
-                          </Routes>
-                        </Suspense>
-                      </main>
-                      <Footer />
-                      <GameAssistant />
-                    </div>
+                    <SiteShell>
+                      <Suspense fallback={<RouteFallback />}>
+                        <Routes>
+                          <Route path="/" element={<HomePage />} />
+                          <Route path="/oyunlar" element={<AllGames />} />
+                          <Route path="/haberler" element={<NewsPage />} />
+                          <Route path="/haberler/:slug" element={<NewsDetailPage />} />
+                          <Route path="/ucretsiz-oyunlar" element={<FreeGamesPage />} />
+                          <Route path="/indirimler" element={<DealsPage />} />
+                          <Route path="/araclar" element={<ToolsPage />} />
+                          <Route path="/araclar/okey-sayaci" element={<OkeyPage />} />
+                          <Route path="/araclar/101-yazboz" element={<Okey101Page />} />
+                          <Route path="/araclar/batak-yazboz" element={<BatakPage />} />
+                          <Route path="/araclar/takim-olusturucu" element={<TeamGeneratorPage />} />
+                          <Route
+                            path="/araclar/halisaha-takim-olusturucu"
+                            element={<HalisahaPage />}
+                          />
+                          <Route path="/araclar/karar-carki" element={<DecisionWheelPage />} />
+                          <Route path="/araclar/kura-cek" element={<KuraCekPage />} />
+                          <Route path="/araclar/zar-at" element={<DicePage />} />
+                          <Route path="/araclar/skor-tablosu" element={<ScoreBoardPage />} />
+                          <Route path="/kategori/:categoryName" element={<CategoryPage />} />
+                          <Route path="/oyun/:slug" element={<GameDetail />} />
+                          <Route
+                            path="/oyun/:slug/101-skor-tablosu"
+                            element={<Okey101ScorePage />}
+                          />
+                          <Route path="/karsilastir/:comparison" element={<ComparePage />} />
+                          <Route path="/hakkimizda" element={<About />} />
+                          <Route path="/iletisim" element={<Contact />} />
+                          <Route path="/kullanim-kosullari" element={<TermsOfUse />} />
+                          <Route path="/gizlilik" element={<PrivacyPolicy />} />
+                          <Route path="/cerez-politikasi" element={<CookiePolicy />} />
+                          <Route path="/reklam-verin" element={<ReklamVerin />} />
+                          <Route path="/auth" element={<AuthPage />} />
+                          <Route path="/profil" element={<ProfilePage />} />
+                          <Route path="*" element={<ErrorPage status={404} />} />
+                        </Routes>
+                      </Suspense>
+                    </SiteShell>
                   }
                 />
               </Routes>

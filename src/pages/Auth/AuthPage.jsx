@@ -10,7 +10,6 @@ import {
   Info,
   AlertTriangle,
   CheckCircle,
-  Sparkles,
 } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import toast from 'react-hot-toast';
@@ -31,6 +30,11 @@ function AuthPage() {
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
+
+  const switchMode = (login) => {
+    setIsLogin(login);
+    setShowVerificationInfo(false);
+  };
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -128,139 +132,212 @@ function AuthPage() {
         url="/auth"
         noindex
       />
-      <div className="relative min-h-[80vh] overflow-hidden bg-cream-100 px-4 py-12 sm:px-6 lg:px-8 font-sans">
-        {/* Sicak arkaplan */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-orange-300/20 blur-3xl" />
-          <div className="absolute -bottom-40 -right-32 h-[28rem] w-[28rem] rounded-full bg-amber-300/20 blur-3xl" />
-        </div>
 
-        <div className="relative mx-auto flex max-w-md flex-col items-center">
-          {/* Tab toggle */}
-          <div className="mb-6 inline-flex rounded-2xl border border-warm-200 bg-white p-1 shadow-soft">
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(true);
-                setShowVerificationInfo(false);
-              }}
-              className={`rounded-xl px-5 py-2 text-sm font-bold transition-all ${
-                isLogin
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-warm-glow'
-                  : 'text-warm-600 hover:text-charcoal-900'
-              }`}
-            >
-              Giriş Yap
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(false);
-                setShowVerificationInfo(false);
-              }}
-              className={`rounded-xl px-5 py-2 text-sm font-bold transition-all ${
-                !isLogin
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-warm-glow'
-                  : 'text-warm-600 hover:text-charcoal-900'
-              }`}
-            >
-              Kayıt Ol
-            </button>
-          </div>
+      <div className="auth-screen relative isolate flex h-dvh overflow-hidden font-sans">
+        <aside className="auth-brand relative hidden w-[58%] shrink-0 overflow-hidden lg:flex lg:flex-col lg:justify-between">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('/auth-hero.png')" }}
+            aria-hidden="true"
+          />
+          {/* Foto görünsün, metin okunaklı kalsın */}
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-charcoal-950/85 via-charcoal-950/25 to-charcoal-950/40"
+            aria-hidden="true"
+          />
 
-          <div className="w-full overflow-hidden rounded-3xl border border-warm-200/70 bg-white/95 p-7 shadow-soft-xl backdrop-blur-md sm:p-9">
-            <div className="mb-6 text-center">
-              <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 text-orange-600">
-                <Sparkles className="h-6 w-6" />
-              </div>
-              <h1 className="text-2xl font-bold tracking-tight text-charcoal-900">
-                {isLogin ? 'Tekrar hoş geldin' : 'Aramıza katıl'}
+          <div className="relative z-10 flex h-full flex-col justify-between px-10 py-12 xl:px-14 xl:py-14">
+            <Link to="/" className="inline-flex w-fit items-center gap-3 transition-opacity hover:opacity-90">
+              <img
+                src="/logo.png"
+                alt="Kuralı Ne?"
+                className="h-14 w-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)] animate-float"
+              />
+            </Link>
+
+            <div className="max-w-md">
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.22em] text-orange-300/90">
+                Oyun Rehberi &amp; Keşif
+              </p>
+              <h1 className="text-[2.35rem] font-extrabold leading-[1.12] tracking-tight text-cream-50 drop-shadow-md xl:text-5xl">
+                Kuralı Ne?
               </h1>
-              <p className="mt-1 text-sm text-warm-500">
-                {isLogin
-                  ? 'Yorum yapmak ve favorilere eklemek için giriş yap'
-                  : 'Hesap oluştur, oyun deneyimini kişiselleştir'}
+              <p className="mt-4 max-w-sm text-base leading-relaxed text-cream-100/80">
+                Geleneksel ve dijital oyunların kurallarını keşfet, favorile, yorumla.
               </p>
             </div>
 
+            <p className="relative z-10 text-xs text-cream-100/40">kuraline.xyz</p>
+          </div>
+        </aside>
+
+        <section className="relative flex h-full flex-1 flex-col items-center justify-center overflow-hidden bg-[#f7f3ec] px-5 py-6 sm:px-8 lg:px-12 xl:px-16">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-60"
+            style={{
+              backgroundImage:
+                'radial-gradient(ellipse 80% 50% at 100% 0%, rgba(249,115,22,0.12), transparent 55%), radial-gradient(ellipse 60% 40% at 0% 100%, rgba(245,158,11,0.1), transparent 50%)',
+            }}
+            aria-hidden="true"
+          />
+
+          <div className="relative w-full max-w-[400px]">
+            <div className="mb-5 flex items-center justify-center gap-3 lg:hidden">
+              <Link to="/" className="shrink-0">
+                <img
+                  src="/logo.png"
+                  alt="Kuralı Ne?"
+                  className="h-11 w-auto rounded-xl bg-charcoal-950 p-1.5 shadow-soft"
+                />
+              </Link>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-orange-600">
+                Kuralı Ne?
+              </p>
+            </div>
+
+            <div className="auth-copy mb-5" key={isLogin ? 'login-copy' : 'register-copy'}>
+              <h2 className="text-xl font-extrabold tracking-tight text-charcoal-900 sm:text-2xl">
+                {isLogin ? 'Tekrar hoş geldin' : 'Aramıza katıl'}
+              </h2>
+              <p className="mt-1 text-sm text-warm-600">
+                {isLogin
+                  ? 'Yorum yapmak ve favorilere eklemek için giriş yap.'
+                  : 'Hesap oluştur, oyun deneyimini kişiselleştir.'}
+              </p>
+            </div>
+
+            <div
+              className="mb-5 grid grid-cols-2 gap-1 rounded-2xl bg-charcoal-900/5 p-1"
+              role="tablist"
+              aria-label="Giriş veya kayıt"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={isLogin}
+                onClick={() => switchMode(true)}
+                className={`rounded-xl px-4 py-2.5 text-sm font-bold transition-colors duration-200 ${
+                  isLogin
+                    ? 'bg-charcoal-900 text-cream-50 shadow-soft-md'
+                    : 'text-warm-600 hover:text-charcoal-900'
+                }`}
+              >
+                Giriş Yap
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={!isLogin}
+                onClick={() => switchMode(false)}
+                className={`rounded-xl px-4 py-2.5 text-sm font-bold transition-colors duration-200 ${
+                  !isLogin
+                    ? 'bg-charcoal-900 text-cream-50 shadow-soft-md'
+                    : 'text-warm-600 hover:text-charcoal-900'
+                }`}
+              >
+                Kayıt Ol
+              </button>
+            </div>
+
             {showVerificationInfo && (
-              <div className="mb-5 rounded-2xl border border-orange-200/70 bg-gradient-to-br from-orange-50 to-amber-50 p-4">
+              <div className="absolute inset-x-0 top-0 z-20 rounded-2xl border border-orange-200/80 bg-orange-50 p-4 shadow-soft-xl">
                 <div className="flex items-start gap-3">
                   <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white shadow-soft">
-                    <Info className="h-5 w-5 text-orange-500" />
+                    <Info className="h-5 w-5 text-orange-500" aria-hidden />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-sm font-bold text-orange-900">
-                      E-posta Doğrulaması Gerekiyor
+                    <h4 className="text-sm font-bold text-orange-950">
+                      E-posta doğrulaması gerekiyor
                     </h4>
-                    <p className="mt-1 text-xs leading-relaxed text-orange-800/80">
-                      <span className="font-bold">{email}</span> adresine bir doğrulama
-                      bağlantısı gönderdik. Lütfen gelen kutunuzu (veya spam klasörünü)
-                      kontrol edip bağlantıya tıklayın.
+                    <p className="mt-1 text-xs leading-relaxed text-orange-900/75">
+                      <span className="font-bold">{email}</span> adresine bağlantı
+                      gönderdik. Gelen kutunu veya spam&apos;i kontrol et.
                     </p>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowVerificationInfo(false)}
+                    className="text-xs font-bold text-orange-700/70 hover:text-orange-900"
+                    aria-label="Kapat"
+                  >
+                    ✕
+                  </button>
                 </div>
                 <button
                   type="button"
                   onClick={handleResendVerification}
                   disabled={resendCooldown > 0}
-                  className="mt-3 w-full rounded-lg border border-orange-200 bg-white px-3 py-2 text-xs font-bold text-orange-700 transition-colors hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="mt-3 w-full rounded-xl border border-orange-200 bg-white px-3 py-2.5 text-xs font-bold text-orange-700 transition-colors hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {resendCooldown > 0
-                    ? `${resendCooldown} saniye sonra tekrar gönder`
-                    : 'Doğrulama E-postasını Tekrar Gönder'}
+                    ? `${resendCooldown} sn sonra tekrar gönder`
+                    : 'Doğrulama e-postasını tekrar gönder'}
                 </button>
               </div>
             )}
 
-            <form onSubmit={handleAuth} className="space-y-4">
-              {!isLogin && (
-                <>
-                  <TextField
-                    label="Ad Soyad"
-                    icon={User}
-                    type="text"
-                    autoComplete="name"
-                    required
-                    placeholder="Adınız ve soyadınız"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                  />
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <form onSubmit={handleAuth} className="space-y-3">
+              <div
+                className={`auth-extra-fields ${isLogin ? '' : 'auth-extra-fields--open'}`}
+                aria-hidden={isLogin}
+              >
+                <div className="auth-extra-fields-inner">
+                  <div className="space-y-3 pb-3">
                     <TextField
-                      as="select"
-                      label="Doğum Yılı"
-                      icon={Calendar}
-                      required
-                      value={birthYear}
-                      onChange={(e) => setBirthYear(e.target.value)}
-                    >
-                      <option value="">Seçiniz</option>
-                      {years.map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </TextField>
-                    <TextField
-                      as="select"
-                      label="Cinsiyet"
+                      label="Ad Soyad"
                       icon={User}
-                      required
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                    >
-                      <option value="">Seçiniz</option>
-                      <option value="male">Erkek</option>
-                      <option value="female">Kadın</option>
-                      <option value="other">Diğer</option>
-                    </TextField>
+                      type="text"
+                      autoComplete="name"
+                      required={!isLogin}
+                      disabled={isLogin}
+                      tabIndex={isLogin ? -1 : undefined}
+                      placeholder="Adınız ve soyadınız"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      tone="subtle"
+                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <TextField
+                        as="select"
+                        label="Doğum Yılı"
+                        icon={Calendar}
+                        required={!isLogin}
+                        disabled={isLogin}
+                        tabIndex={isLogin ? -1 : undefined}
+                        value={birthYear}
+                        onChange={(e) => setBirthYear(e.target.value)}
+                        tone="subtle"
+                      >
+                        <option value="">Seçiniz</option>
+                        {years.map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </TextField>
+                      <TextField
+                        as="select"
+                        label="Cinsiyet"
+                        icon={User}
+                        required={!isLogin}
+                        disabled={isLogin}
+                        tabIndex={isLogin ? -1 : undefined}
+                        value={gender}
+                        onChange={(e) => setGender(e.target.value)}
+                        tone="subtle"
+                      >
+                        <option value="">Seçiniz</option>
+                        <option value="male">Erkek</option>
+                        <option value="female">Kadın</option>
+                        <option value="other">Diğer</option>
+                      </TextField>
+                    </div>
                   </div>
-                </>
-              )}
+                </div>
+              </div>
 
               <TextField
-                label="E-posta Adresi"
+                label="E-posta"
                 icon={Mail}
                 type="email"
                 autoComplete="email"
@@ -268,6 +345,7 @@ function AuthPage() {
                 placeholder="ornek@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                tone="subtle"
               />
 
               <TextField
@@ -278,9 +356,9 @@ function AuthPage() {
                 required
                 minLength={isLogin ? undefined : 6}
                 placeholder={isLogin ? 'Şifreniz' : 'En az 6 karakter'}
-                hint={!isLogin ? 'En az 6 karakter kullanın' : undefined}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                tone="subtle"
               />
 
               <Button
@@ -289,40 +367,40 @@ function AuthPage() {
                 loading={loading}
                 size="lg"
                 iconRight={!loading ? ArrowRight : undefined}
-                className="mt-2"
+                className="!mt-4 !rounded-2xl"
               >
                 {isLogin ? 'Giriş Yap' : 'Hesap Oluştur'}
               </Button>
+            </form>
 
-              <p className="pt-2 text-center text-[11px] leading-relaxed text-warm-500">
-                {isLogin ? 'Hesabın yok mu? ' : 'Zaten hesabın var mı? '}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsLogin(!isLogin);
-                    setShowVerificationInfo(false);
-                  }}
-                  className="font-bold text-orange-600 underline-offset-2 hover:text-orange-700 hover:underline"
-                >
-                  {isLogin ? 'Hemen kaydol' : 'Giriş yap'}
-                </button>
-              </p>
+            <p className="mt-5 text-center text-sm text-warm-600">
+              {isLogin ? 'Hesabın yok mu? ' : 'Zaten hesabın var mı? '}
+              <button
+                type="button"
+                onClick={() => switchMode(!isLogin)}
+                className="font-bold text-orange-600 underline-offset-2 transition-colors hover:text-orange-700 hover:underline"
+              >
+                {isLogin ? 'Hemen kaydol' : 'Giriş yap'}
+              </button>
+            </p>
 
-              {!isLogin && (
-                <p className="text-center text-[11px] text-warm-500">
+            <div className={`auth-terms ${isLogin ? '' : 'auth-terms--open'}`} aria-hidden={isLogin}>
+              <div className="auth-terms-inner">
+                <p className="pt-2 text-center text-[11px] leading-relaxed text-warm-500">
                   Kayıt olarak{' '}
                   <Link
                     to="/kullanim-kosullari"
+                    tabIndex={isLogin ? -1 : undefined}
                     className="font-semibold text-warm-700 underline-offset-2 hover:underline"
                   >
                     Kullanım Koşulları
                   </Link>
-                  'nı kabul etmiş sayılırsınız.
+                  &apos;nı kabul etmiş sayılırsınız.
                 </p>
-              )}
-            </form>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
       </div>
     </>
   );

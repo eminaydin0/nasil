@@ -211,6 +211,91 @@ h1, h2, h3, h4, h5, h6 {
   animation: fadeIn 0.3s ease-in-out;
 }
 
+/* Auth screen */
+.auth-brand-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 40% 50%, #000 20%, transparent 75%);
+}
+
+.auth-glow {
+  animation: authGlowPulse 7s ease-in-out infinite;
+}
+
+.auth-glow-delay {
+  animation: authGlowPulse 9s ease-in-out infinite 1.5s;
+}
+
+@keyframes authGlowPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+/* Form alanı: kayıt alanları yumuşak aç/kapa, panel ortada kalır */
+.auth-extra-fields,
+.auth-terms {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.4s var(--ease-spring),
+    opacity 0.28s ease;
+}
+
+.auth-extra-fields--open,
+.auth-terms--open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.auth-extra-fields-inner,
+.auth-terms-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.auth-copy {
+  animation: authCopyIn 0.35s var(--ease-spring) both;
+}
+
+@keyframes authCopyIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-glow,
+  .auth-glow-delay,
+  .auth-copy {
+    animation: none;
+  }
+
+  .auth-extra-fields,
+  .auth-terms {
+    transition: none;
+  }
+}
+
+.page-main--auth {
+  padding-bottom: 0 !important;
+  overflow: hidden;
+}
+
 /* Custom scrollbar - sıcak turuncu */
 ::-webkit-scrollbar {
   width: 10px;
