@@ -1,6 +1,8 @@
 export { default as RankBadge } from './RankBadge';
 export { default as AnalyticsToolbar } from './AnalyticsToolbar';
 export { default as AnalyticsOverviewSection } from './AnalyticsOverviewSection';
+export { default as AnalyticsDailySection } from './AnalyticsDailySection';
+export { default as AnalyticsVisitorsSection } from './AnalyticsVisitorsSection';
 export { default as AnalyticsTrendSection } from './AnalyticsTrendSection';
 export { default as AnalyticsPageViewsSection } from './AnalyticsPageViewsSection';
 export { default as AnalyticsTopGamesSection } from './AnalyticsTopGamesSection';

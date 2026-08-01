@@ -3,6 +3,8 @@ import { Loader2 } from 'lucide-react';
 import {
   AnalyticsToolbar,
   AnalyticsOverviewSection,
+  AnalyticsDailySection,
+  AnalyticsVisitorsSection,
   AnalyticsTrendSection,
   AnalyticsPageViewsSection,
   AnalyticsTopGamesSection,
@@ -24,16 +26,32 @@ export default function AdminAnalyticsTab({ games, stats }) {
         onTimeRangeChange={setTimeRange}
         activeSection={activeSection}
         onSectionChange={setActiveSection}
+        analytics={analytics}
       />
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 size={32} className="animate-spin text-orange-500" />
         </div>
+      ) : analytics.loadError ? (
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-8 text-center text-sm text-rose-700">
+          {analytics.loadError}
+        </div>
       ) : (
         <>
           {activeSection === 'overview' && (
             <AnalyticsOverviewSection analytics={analytics} stats={stats} />
+          )}
+          {activeSection === 'daily' && (
+            <AnalyticsDailySection
+              dailyStats={analytics.dailyStats}
+              hourlyStats={analytics.hourlyStats}
+              todayStats={analytics.todayStats}
+              timeRange={timeRange}
+            />
+          )}
+          {activeSection === 'visitors' && (
+            <AnalyticsVisitorsSection sessions={analytics.sessions} games={games} />
           )}
           {activeSection === 'trends' && (
             <AnalyticsTrendSection
@@ -59,7 +77,11 @@ export default function AdminAnalyticsTab({ games, stats }) {
             />
           )}
           {activeSection === 'traffic' && (
-            <AnalyticsTrafficSection analytics={analytics} timeRange={timeRange} />
+            <AnalyticsTrafficSection
+              analytics={analytics}
+              timeRange={timeRange}
+              referrerStats={analytics.referrerStats}
+            />
           )}
         </>
       )}

@@ -134,9 +134,9 @@ function App() {
             />
             <Suspense fallback={<RouteFallback />}>
               <Routes>
-                <Route path="/admin" element={<Navigate to="/admin-panel" replace />} />
-                <Route path="/admin-panel" element={<AdminPanel />} />
-                <Route path="/admin-panel/*" element={<AdminPanel />} />
+                <Route path="/admin" element={<Navigate to="/admin-panel/dashboard" replace />} />
+                <Route path="/admin-panel" element={<Navigate to="/admin-panel/dashboard" replace />} />
+                <Route path="/admin-panel/:tab" element={<AdminPanel />} />
 
                 <Route
                   path="/*"

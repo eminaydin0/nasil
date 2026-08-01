@@ -3,7 +3,7 @@ import { trackShare } from '../../utils/analytics';
 
 function NewsShareBar({ title, url, description = '', layout = 'inline' }) {
   const handleShare = (platform) => {
-    trackShare(platform, title, url);
+    trackShare(platform, title, null, { content_type: 'news', url });
   };
 
   return (

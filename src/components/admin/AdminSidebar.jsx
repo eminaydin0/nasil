@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Gamepad2,
@@ -59,7 +59,6 @@ export const ADMIN_NAV_ITEMS = NAV_GROUPS.flatMap((g) => g.items);
 
 function AdminSidebar({
   activeTab,
-  onTabChange,
   isOpen = false,
   onClose,
   onLogout,
@@ -143,14 +142,11 @@ function AdminSidebar({
                   const isActive = activeTab === item.id;
                   const badge = badges[item.id];
                   return (
-                    <button
+                    <NavLink
                       key={item.id}
-                      type="button"
+                      to={`/admin-panel/${item.id}`}
                       title={item.label}
-                      onClick={() => {
-                        onTabChange(item.id);
-                        onClose?.();
-                      }}
+                      onClick={() => onClose?.()}
                       className={`group relative flex w-full items-center rounded-xl text-[13px] font-semibold transition-all duration-200 ${
                         collapsed ? 'justify-center px-0 py-2.5' : 'gap-2.5 px-3 py-2.5'
                       } ${
@@ -195,7 +191,7 @@ function AdminSidebar({
                       {collapsed && badge > 0 && (
                         <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500 ring-2 ring-charcoal-950" />
                       )}
-                    </button>
+                    </NavLink>
                   );
                 })}
               </div>

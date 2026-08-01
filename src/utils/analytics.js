@@ -10,7 +10,12 @@ import {
 let sessionId = null;
 let analyticsInitialized = false;
 let lastDurationSentAt = 0;
+let cachedAuthUser = null;
 const DURATION_SEND_INTERVAL_MS = 60_000;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://yjnipjcevnxrzlgfmeci.supabase.co';
+const SUPABASE_ANON_KEY =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqbmlwamNldm54cnpsZ2ZtZWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5NDMyMjUsImV4cCI6MjA4MjUxOTIyNX0.tuUrVzxDlZssFm3pwhB-fSsiL8DQUErHmGeqngvQohc';
 
 export { isGoogleAnalyticsConfigured, getGoogleAnalyticsMeasurementId } from '../lib/googleAnalytics';
 
@@ -24,47 +29,146 @@ export const hasAnalyticsConsent = () => {
   }
 };
 
-// Generate or get session ID
 const getSessionId = () => {
   if (sessionId) return sessionId;
-  
-  // Check if session exists in sessionStorage (lasts for browser tab)
+
   sessionId = sessionStorage.getItem('analytics_session_id');
-  
+
   if (!sessionId) {
-    // Create new session ID
     sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     sessionStorage.setItem('analytics_session_id', sessionId);
     sessionStorage.setItem('session_start', Date.now().toString());
+    sessionStorage.setItem('analytics_is_new_session', '1');
   }
-  
+
   return sessionId;
 };
 
-// Track analytics event to Supabase
+function getDeviceType() {
+  if (typeof window === 'undefined') return 'desktop';
+  const width = window.innerWidth;
+  if (width < 768) return 'mobile';
+  if (width < 1024) return 'tablet';
+  return 'desktop';
+}
+
+function classifyTrafficSource() {
+  if (typeof window === 'undefined') return { source: 'direct', referrer: 'direct', utm: {} };
+
+  const referrer = document.referrer || '';
+  const hostname = window.location.hostname;
+  let source = 'direct';
+  let referrerHost = null;
+
+  if (referrer) {
+    try {
+      const referrerHostname = new URL(referrer).hostname;
+      referrerHost = referrerHostname.replace(/^www\./, '');
+      if (referrerHostname !== hostname) {
+        const searchEngines = ['google', 'bing', 'yahoo', 'yandex', 'duckduckgo', 'baidu'];
+        const socials = [
+          'facebook',
+          'twitter',
+          'instagram',
+          'linkedin',
+          'pinterest',
+          'reddit',
+          'tiktok',
+          'youtube',
+          't.co',
+          'x.com',
+        ];
+        if (searchEngines.some((engine) => referrerHostname.includes(engine))) source = 'search';
+        else if (socials.some((social) => referrerHostname.includes(social))) source = 'social';
+        else source = 'referral';
+      }
+    } catch {
+      /* ignore bad referrer */
+    }
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const utm = {
+    utm_source: urlParams.get('utm_source'),
+    utm_medium: urlParams.get('utm_medium'),
+    utm_campaign: urlParams.get('utm_campaign'),
+    utm_content: urlParams.get('utm_content'),
+  };
+
+  if (utm.utm_source) {
+    const u = utm.utm_source.toLowerCase();
+    if (u.includes('google') || u.includes('bing') || u.includes('search') || u.includes('yandex')) {
+      source = 'search';
+    } else if (['facebook', 'twitter', 'instagram', 'linkedin', 'tiktok', 'youtube', 'x'].includes(u)) {
+      source = 'social';
+    } else if (source === 'direct') {
+      source = 'referral';
+    }
+  }
+
+  return { source, referrer: referrer || 'direct', referrerHost, utm };
+}
+
+function refreshAuthUserCache() {
+  supabase.auth.getSession().then(({ data }) => {
+    cachedAuthUser = data?.session?.user || null;
+  });
+  supabase.auth.onAuthStateChange((_event, session) => {
+    cachedAuthUser = session?.user || null;
+  });
+}
+
+function getAuthMeta() {
+  if (!cachedAuthUser) return {};
+  return {
+    user_id: cachedAuthUser.id,
+    user_email: cachedAuthUser.email || null,
+  };
+}
+
+function insertPayload(eventType, eventData = {}, gameId = null) {
+  const sid = getSessionId();
+  return {
+    event_type: eventType,
+    event_data: {
+      ...eventData,
+      ...getAuthMeta(),
+      timestamp: eventData.timestamp || new Date().toISOString(),
+    },
+    game_id: typeof gameId === 'number' ? gameId : null,
+    session_id: sid,
+    user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+    referrer: typeof document !== 'undefined' ? document.referrer || null : null,
+  };
+}
+
+/** beforeunload için keepalive POST (async insert kaçmasın) */
+function trackWithKeepalive(eventType, eventData = {}, gameId = null) {
+  if (!hasAnalyticsConsent() || typeof fetch === 'undefined') return;
+  try {
+    const row = insertPayload(eventType, eventData, gameId);
+    fetch(`${SUPABASE_URL}/rest/v1/analytics_events`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify([row]),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    /* ignore */
+  }
+}
+
 const trackToSupabase = async (eventType, eventData = {}, gameId = null) => {
   if (!hasAnalyticsConsent()) return;
 
   try {
-    const sessionId = getSessionId();
-    const userAgent = navigator.userAgent;
-    const referrer = document.referrer || null;
-    
-    // Insert event to Supabase
-    const { error } = await supabase
-      .from('analytics_events')
-      .insert([{
-        event_type: eventType,
-        event_data: eventData,
-        game_id: gameId,
-        session_id: sessionId,
-        user_agent: userAgent,
-        referrer: referrer
-      }]);
-    
-    if (error) {
-      console.error('Analytics tracking error:', error);
-    }
+    const { error } = await supabase.from('analytics_events').insert([insertPayload(eventType, eventData, gameId)]);
+    if (error) console.error('Analytics tracking error:', error);
   } catch (error) {
     console.error('Failed to track event:', error);
   } finally {
@@ -72,7 +176,6 @@ const trackToSupabase = async (eventType, eventData = {}, gameId = null) => {
   }
 };
 
-// Initialize Analytics (single entry point — safe to call once)
 export const initAnalytics = () => {
   if (typeof window === 'undefined' || analyticsInitialized || !hasAnalyticsConsent()) return;
   analyticsInitialized = true;
@@ -81,19 +184,66 @@ export const initAnalytics = () => {
     initGoogleAnalytics();
   }
 
+  refreshAuthUserCache();
   getSessionId();
-  const sessionStart = Date.now();
-  sessionStorage.setItem('session_start', sessionStart.toString());
 
-  trackDeviceType();
-  trackTrafficSource();
+  if (!sessionStorage.getItem('session_start')) {
+    sessionStorage.setItem('session_start', Date.now().toString());
+  }
 
-  trackToSupabase('session_activity', {
-    duration: 0,
-    timestamp: new Date().toISOString(),
+  const landing = `${window.location.pathname}${window.location.search || ''}`;
+  if (!sessionStorage.getItem('analytics_landing_page')) {
+    sessionStorage.setItem('analytics_landing_page', landing);
+  }
+
+  const traffic = classifyTrafficSource();
+  const deviceType = getDeviceType();
+
+  const deviceVisits = JSON.parse(
+    localStorage.getItem('device_visits') || '{"desktop": 0, "mobile": 0, "tablet": 0}'
+  );
+  deviceVisits[deviceType] = (deviceVisits[deviceType] || 0) + 1;
+  localStorage.setItem('device_visits', JSON.stringify(deviceVisits));
+
+  const trafficSources = JSON.parse(
+    localStorage.getItem('traffic_sources') || '{"direct": 0, "search": 0, "social": 0, "referral": 0}'
+  );
+  trafficSources[traffic.source] = (trafficSources[traffic.source] || 0) + 1;
+  localStorage.setItem('traffic_sources', JSON.stringify(trafficSources));
+
+  const isNew = sessionStorage.getItem('analytics_is_new_session') === '1';
+  if (isNew) {
+    sessionStorage.removeItem('analytics_is_new_session');
+    trackToSupabase('session_start', {
+      landing_page: sessionStorage.getItem('analytics_landing_page') || landing,
+      device_type: deviceType,
+      source: traffic.source,
+      referrer: traffic.referrer,
+      referrer_host: traffic.referrerHost,
+      screen_width: window.innerWidth,
+      screen_height: window.innerHeight,
+      language: navigator.language,
+      ...traffic.utm,
+    });
+  }
+
+  trackToSupabase('device_info', {
+    device_type: deviceType,
+    screen_width: window.innerWidth,
+    screen_height: window.innerHeight,
   });
 
+  if (traffic.source !== 'direct' || traffic.utm.utm_source || !document.referrer) {
+    trackToSupabase('traffic_source', {
+      source: traffic.source,
+      referrer: traffic.referrer,
+      referrer_host: traffic.referrerHost,
+      ...traffic.utm,
+    });
+  }
+
   window.addEventListener('beforeunload', () => updateSessionDuration(true));
+  window.addEventListener('pagehide', () => updateSessionDuration(true));
   setInterval(() => updateSessionDuration(false), DURATION_SEND_INTERVAL_MS);
 };
 
@@ -175,12 +325,20 @@ export const trackCommentSubmit = (gameName, gameId, rating = null) => {
   }, gameId);
 };
 
-export const trackShare = (platform, gameName, gameId = null) => {
-  trackToSupabase('share_click', {
-    platform: platform,
-    game_name: gameName,
-    timestamp: new Date().toISOString()
-  }, gameId);
+export const trackShare = (platform, name, gameId = null, extra = {}) => {
+  const resolvedGameId = typeof gameId === 'number' ? gameId : null;
+  trackToSupabase(
+    'share_click',
+    {
+      platform,
+      game_name: name,
+      content_type: extra.content_type || (resolvedGameId ? 'game' : 'other'),
+      url: extra.url || null,
+      timestamp: new Date().toISOString(),
+      ...extra,
+    },
+    resolvedGameId
+  );
 };
 
 // Session tracking
@@ -201,94 +359,56 @@ export const trackSession = () => {
   }
 };
 
-// Device tracking
 export const trackDeviceType = () => {
-  if (typeof window !== 'undefined') {
-    const width = window.innerWidth;
-    let deviceType = 'desktop';
-    
-    if (width < 768) {
-      deviceType = 'mobile';
-    } else if (width >= 768 && width < 1024) {
-      deviceType = 'tablet';
-    }
-    
-    // Get current device stats for local display
-    const deviceVisits = JSON.parse(localStorage.getItem('device_visits') || '{"desktop": 0, "mobile": 0, "tablet": 0}');
-    deviceVisits[deviceType] = (deviceVisits[deviceType] || 0) + 1;
-    localStorage.setItem('device_visits', JSON.stringify(deviceVisits));
-    
-    // Track to Supabase
-    trackToSupabase('device_info', {
-      device_type: deviceType,
-      screen_width: width,
-      screen_height: window.innerHeight
-    });
-    
-    return deviceType;
-  }
-  return 'desktop';
+  const deviceType = getDeviceType();
+  if (typeof window === 'undefined') return deviceType;
+
+  const deviceVisits = JSON.parse(
+    localStorage.getItem('device_visits') || '{"desktop": 0, "mobile": 0, "tablet": 0}'
+  );
+  deviceVisits[deviceType] = (deviceVisits[deviceType] || 0) + 1;
+  localStorage.setItem('device_visits', JSON.stringify(deviceVisits));
+
+  trackToSupabase('device_info', {
+    device_type: deviceType,
+    screen_width: window.innerWidth,
+    screen_height: window.innerHeight,
+  });
+
+  return deviceType;
 };
 
-// Traffic source tracking
 export const trackTrafficSource = () => {
-  if (typeof window !== 'undefined') {
-    const referrer = document.referrer;
-    const hostname = window.location.hostname;
-    let source = 'direct';
-    
-    if (referrer && referrer !== '') {
-      const referrerHostname = new URL(referrer).hostname;
-      
-      // Check if it's from the same site
-      if (referrerHostname === hostname) {
-        return; // Don't track internal navigation
-      }
-      
-      // Check for search engines
-      const searchEngines = ['google', 'bing', 'yahoo', 'yandex', 'duckduckgo', 'baidu'];
-      if (searchEngines.some(engine => referrerHostname.includes(engine))) {
-        source = 'search';
-      }
-      // Check for social media
-      else if (['facebook', 'twitter', 'instagram', 'linkedin', 'pinterest', 'reddit', 'tiktok', 'youtube'].some(social => referrerHostname.includes(social))) {
-        source = 'social';
-      }
-      // Other referrals
-      else {
-        source = 'referral';
+  const traffic = classifyTrafficSource();
+  if (typeof window === 'undefined') return traffic.source;
+
+  try {
+    if (document.referrer) {
+      const referrerHostname = new URL(document.referrer).hostname;
+      if (referrerHostname === window.location.hostname && !traffic.utm.utm_source) {
+        return traffic.source;
       }
     }
-    
-    // Check URL parameters for UTM source
-    const urlParams = new URLSearchParams(window.location.search);
-    const utmSource = urlParams.get('utm_source');
-    if (utmSource) {
-      if (utmSource.includes('google') || utmSource.includes('search')) {
-        source = 'search';
-      } else if (['facebook', 'twitter', 'instagram', 'linkedin'].includes(utmSource.toLowerCase())) {
-        source = 'social';
-      }
-    }
-    
-    // Update traffic sources for local display
-    const trafficSources = JSON.parse(localStorage.getItem('traffic_sources') || '{"direct": 0, "search": 0, "social": 0, "referral": 0}');
-    trafficSources[source] = (trafficSources[source] || 0) + 1;
-    localStorage.setItem('traffic_sources', JSON.stringify(trafficSources));
-    
-    // Track to Supabase
-    trackToSupabase('traffic_source', {
-      source: source,
-      referrer: referrer || 'direct',
-      utm_source: utmSource
-    });
-    
-    return source;
+  } catch {
+    /* ignore */
   }
-  return 'direct';
+
+  const trafficSources = JSON.parse(
+    localStorage.getItem('traffic_sources') || '{"direct": 0, "search": 0, "social": 0, "referral": 0}'
+  );
+  trafficSources[traffic.source] = (trafficSources[traffic.source] || 0) + 1;
+  localStorage.setItem('traffic_sources', JSON.stringify(trafficSources));
+
+  trackToSupabase('traffic_source', {
+    source: traffic.source,
+    referrer: traffic.referrer,
+    referrer_host: traffic.referrerHost,
+    ...traffic.utm,
+  });
+
+  return traffic.source;
 };
 
-// Session duration tracking
 export const updateSessionDuration = (force = false) => {
   if (typeof window === 'undefined' || !hasAnalyticsConsent()) return;
 
@@ -296,25 +416,25 @@ export const updateSessionDuration = (force = false) => {
   if (!force && now - lastDurationSentAt < DURATION_SEND_INTERVAL_MS) return;
   lastDurationSentAt = now;
 
-  const sessionStart = parseInt(sessionStorage.getItem('session_start') || now, 10);
+  const sessionStart = parseInt(sessionStorage.getItem('session_start') || String(now), 10);
   const duration = Math.round((now - sessionStart) / 1000);
 
   const sessions = JSON.parse(localStorage.getItem('user_sessions') || '[]');
   const currentSessionIndex = sessions.findIndex((s) => s.start === sessionStart);
-
-  if (currentSessionIndex >= 0) {
-    sessions[currentSessionIndex].duration = duration;
-  } else {
-    sessions.push({ start: sessionStart, duration });
-  }
-
+  if (currentSessionIndex >= 0) sessions[currentSessionIndex].duration = duration;
+  else sessions.push({ start: sessionStart, duration });
   if (sessions.length > 50) sessions.shift();
   localStorage.setItem('user_sessions', JSON.stringify(sessions));
 
-  trackToSupabase('session_duration', {
+  const payload = {
     duration,
+    final: force,
+    landing_page: sessionStorage.getItem('analytics_landing_page') || null,
     timestamp: new Date().toISOString(),
-  });
+  };
+
+  if (force) trackWithKeepalive('session_duration', payload);
+  else trackToSupabase('session_duration', payload);
 };
 
 /** @deprecated Use initAnalytics() */
@@ -333,9 +453,9 @@ export const getAnalyticsData = () => {
   };
 };
 
-// Admin Analytics - Export analytics data as JSON
-export const exportAnalyticsData = () => {
-  const data = getAnalyticsData();
+/** Dashboard verisini JSON olarak indir (payload verilmezse local fallback) */
+export const exportAnalyticsData = (payload = null) => {
+  const data = payload || getAnalyticsData();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -384,6 +504,7 @@ const STATIC_PAGE_LABELS = {
   '/': 'Ana Sayfa',
   '/oyunlar': 'Tüm Oyunlar',
   '/araclar': 'Oyun Araçları',
+  '/haberler': 'Haberler',
   '/hakkimizda': 'Hakkımızda',
   '/iletisim': 'İletişim',
   '/gizlilik': 'Gizlilik Politikası',
@@ -434,6 +555,16 @@ export function resolvePageLabel(path, games = [], toolLinks = {}) {
   if (pathname.startsWith('/karsilastir/')) {
     const pair = pathname.replace('/karsilastir/', '').replace(/-/g, ' ');
     return `Karşılaştırma: ${pair}`;
+  }
+
+  if (pathname.startsWith('/haber/')) {
+    const slug = pathname.replace('/haber/', '');
+    return `Haber: ${slug}`;
+  }
+
+  if (pathname.startsWith('/haberler/')) {
+    const slug = pathname.replace('/haberler/', '');
+    return `Haber: ${slug}`;
   }
 
   if (pathname.startsWith('/hata-')) {
