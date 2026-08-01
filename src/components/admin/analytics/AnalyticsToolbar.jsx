@@ -1,6 +1,7 @@
 import { Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { exportAnalyticsData } from '../../../utils/analytics';
+import { buildExportPayload } from '../../../utils/analyticsAdmin';
 import { TIME_RANGES, ANALYTICS_SECTIONS } from './constants';
 
 export default function AnalyticsToolbar({
@@ -8,6 +9,7 @@ export default function AnalyticsToolbar({
   onTimeRangeChange,
   activeSection,
   onSectionChange,
+  analytics,
 }) {
   return (
     <div className="space-y-4">
@@ -16,7 +18,7 @@ export default function AnalyticsToolbar({
           <div>
             <h2 className="text-xl font-bold tracking-tight text-charcoal-900">Site Analitiği</h2>
             <p className="mt-0.5 text-sm text-warm-500">
-              Ziyaretçi davranışları ve etkileşim metrikleri
+              Kim girdi, nereden geldi, günlük trafik ve oturum detayları
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
@@ -39,8 +41,8 @@ export default function AnalyticsToolbar({
             <button
               type="button"
               onClick={() => {
-                exportAnalyticsData();
-                toast.success('Veriler dışa aktarıldı!', { icon: '📊' });
+                exportAnalyticsData(buildExportPayload(analytics || {}));
+                toast.success('Dashboard verisi indirildi');
               }}
               className="inline-flex items-center gap-1.5 rounded-xl bg-charcoal-900 px-3.5 py-2 text-xs font-semibold text-cream-50 transition-all hover:-translate-y-0.5 hover:bg-charcoal-800"
             >

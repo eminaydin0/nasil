@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import AdminLogin from '../../components/admin/AdminLogin';
-import AdminSidebar from '../../components/admin/AdminSidebar';
+import AdminSidebar, { ADMIN_NAV_ITEMS } from '../../components/admin/AdminSidebar';
 import AdminTopbar from '../../components/admin/AdminTopbar';
 import GamesTable from '../../components/admin/GamesTable';
 import GameModal from '../../components/admin/GameModal';
@@ -25,6 +26,8 @@ import { supabase } from '../../lib/supabase';
 import { useCategories } from '../../hooks/useCategories';
 import { useConfirm } from '../../components/ui';
 
+const VALID_ADMIN_TABS = new Set(ADMIN_NAV_ITEMS.map((item) => item.id));
+
 const trackAdminAction = (action, details) => {
   if (import.meta.env.DEV) {
     console.log(`[Admin Action] ${action}:`, details);
@@ -32,14 +35,20 @@ const trackAdminAction = (action, details) => {
 };
 
 function AdminPanel() {
+  const navigate = useNavigate();
+  const { tab: tabParam } = useParams();
   const { categories: adminCategories } = useCategories();
   const confirm = useConfirm();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [games, setGames] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingGame, setEditingGame] = useState(null);
-  const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const activeTab = useMemo(() => {
+    if (tabParam && VALID_ADMIN_TABS.has(tabParam)) return tabParam;
+    return 'dashboard';
+  }, [tabParam]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
       return localStorage.getItem('adminSidebarCollapsed') === '1';
@@ -68,6 +77,12 @@ function AdminPanel() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!tabParam || !VALID_ADMIN_TABS.has(tabParam)) {
+      navigate('/admin-panel/dashboard', { replace: true });
+    }
+  }, [tabParam, navigate]);
 
   // Unread contact + unseen news comments for badges
   const loadBadges = useCallback(async () => {
@@ -121,16 +136,18 @@ function AdminPanel() {
     setUnreadContactCount(count);
   }, []);
 
-  const handleTabChange = useCallback((tabId) => {
-    setActiveTab(tabId);
-    // Sekmeye girince badge'leri tazele (görüntülenen sayfa kendi clear'ını yapar)
-    if (tabId === 'news-engagement' || tabId === 'contact') {
-      // küçük gecikme: child mount + onSeen/onUnreadChange yarışmasın
-      setTimeout(() => loadBadges(), 400);
-    } else {
-      loadBadges();
-    }
-  }, [loadBadges]);
+  const handleTabChange = useCallback(
+    (tabId) => {
+      const next = VALID_ADMIN_TABS.has(tabId) ? tabId : 'dashboard';
+      navigate(`/admin-panel/${next}`);
+      if (tabId === 'news-engagement' || tabId === 'contact') {
+        setTimeout(() => loadBadges(), 400);
+      } else {
+        loadBadges();
+      }
+    },
+    [loadBadges, navigate]
+  );
 
   const handleBellClick = useCallback(() => {
     if (unreadContactCount > 0) handleTabChange('contact');
@@ -500,7 +517,6 @@ function AdminPanel() {
       <div className="flex min-h-screen">
         <AdminSidebar
           activeTab={activeTab}
-          onTabChange={handleTabChange}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           onLogout={handleLogout}

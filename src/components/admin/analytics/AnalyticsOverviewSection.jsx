@@ -45,6 +45,41 @@ export default function AnalyticsOverviewSection({ analytics, stats }) {
         </div>
       )}
 
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="rounded-xl border border-warm-200/60 bg-white px-3 py-3 shadow-soft">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-warm-500">Bugün ziyaretçi</p>
+          <p className="mt-0.5 text-xl font-bold tabular-nums text-charcoal-900">
+            {(analytics.todayStats?.todaySessions || 0).toLocaleString('tr-TR')}
+          </p>
+          <p className="text-[10px] text-warm-500">
+            Dün {(analytics.todayStats?.yesterdaySessions || 0).toLocaleString('tr-TR')}
+          </p>
+        </div>
+        <div className="rounded-xl border border-warm-200/60 bg-white px-3 py-3 shadow-soft">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-warm-500">Bugün görüntülenme</p>
+          <p className="mt-0.5 text-xl font-bold tabular-nums text-charcoal-900">
+            {(analytics.todayStats?.todayViews || 0).toLocaleString('tr-TR')}
+          </p>
+          <p className="text-[10px] text-warm-500">
+            Dün {(analytics.todayStats?.yesterdayViews || 0).toLocaleString('tr-TR')}
+          </p>
+        </div>
+        <div className="rounded-xl border border-warm-200/60 bg-white px-3 py-3 shadow-soft">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-warm-500">Detaylı oturum</p>
+          <p className="mt-0.5 text-xl font-bold tabular-nums text-charcoal-900">
+            {(analytics.sessions?.length || 0).toLocaleString('tr-TR')}
+          </p>
+          <p className="text-[10px] text-warm-500">Ziyaretçiler sekmesinde</p>
+        </div>
+        <div className="rounded-xl border border-warm-200/60 bg-white px-3 py-3 shadow-soft">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-warm-500">Kaynak domain</p>
+          <p className="mt-0.5 text-xl font-bold tabular-nums text-charcoal-900">
+            {(analytics.referrerStats?.length || 0).toLocaleString('tr-TR')}
+          </p>
+          <p className="text-[10px] text-warm-500">Trafik sekmesinde</p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           icon={Eye}
@@ -129,7 +164,7 @@ export default function AnalyticsOverviewSection({ analytics, stats }) {
           icon={analytics.bounceRate > 50 ? TrendingDown : TrendingUp}
           label="Hemen Çıkma"
           value={`%${analytics.bounceRate}`}
-          desc="5sn altı"
+          desc="Tek sayfa oturum"
           warn={analytics.bounceRate > 50}
         />
         <EngagementCard

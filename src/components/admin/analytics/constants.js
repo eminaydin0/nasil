@@ -7,6 +7,8 @@ export const TIME_RANGES = [
 
 export const ANALYTICS_SECTIONS = [
   { id: 'overview', label: 'Genel Bakış' },
+  { id: 'daily', label: 'Günlük' },
+  { id: 'visitors', label: 'Ziyaretçiler' },
   { id: 'trends', label: 'Trend' },
   { id: 'pages', label: 'Sayfalar' },
   { id: 'games', label: 'Oyunlar' },
