@@ -50,6 +50,12 @@ function NewsDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream-50 py-8">
+        {/* Yüklenirken ana sayfa meta'sı kalmasın — Google yanlış canonical görmesin */}
+        <SEO
+          title="Haber yükleniyor"
+          description="Oyun haberi yükleniyor — Kuralı Ne?"
+          url={`/haberler/${slug}`}
+        />
         <div className="container mx-auto max-w-6xl px-4">
           <SkeletonLoader type="game-detail" />
         </div>
@@ -61,6 +67,7 @@ function NewsDetailPage() {
     return (
       <ErrorPage
         status={404}
+        url={`/haberler/${slug}`}
         message="Haber bulunamadı veya yayından kaldırılmış olabilir."
       />
     );

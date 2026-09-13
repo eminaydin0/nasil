@@ -166,11 +166,14 @@ export default async function handler(req, res) {
 
     const meta = type === 'news' ? await resolveNews(slug) : await resolveGame(slug);
     if (!meta) {
+      const basePath = type === 'news' ? 'haberler' : 'oyun';
+      const listPath = type === 'news' ? 'haberler' : 'oyunlar';
+      const listLabel = type === 'news' ? 'Haberlere dön' : 'Oyunlara dön';
       res.statusCode = 404;
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'public, max-age=60');
       return res.end(
-        `<!doctype html><html lang="tr"><head><meta charset="utf-8"/><title>Sayfa bulunamadı - Kuralı Ne?</title><link rel="canonical" href="${SITE_URL}/"/><meta name="robots" content="noindex"/></head><body><h1>Sayfa bulunamadı</h1><p><a href="${SITE_URL}/">Ana sayfa</a></p></body></html>`
+        `<!doctype html><html lang="tr"><head><meta charset="utf-8"/><title>Sayfa bulunamadı - Kuralı Ne?</title><link rel="canonical" href="${SITE_URL}/${basePath}/${escapeHtml(slug)}"/><meta name="robots" content="noindex, follow"/></head><body><h1>Sayfa bulunamadı</h1><p><a href="${SITE_URL}/${listPath}">${listLabel}</a></p></body></html>`
       );
     }
 

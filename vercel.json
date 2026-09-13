@@ -6,6 +6,10 @@
   "installCommand": "npm install",
   "rewrites": [
     {
+      "source": "/ads.txt",
+      "destination": "/api/ads-txt"
+    },
+    {
       "source": "/haberler/:slug",
       "destination": "/api/prerender?type=news&slug=:slug"
     },
@@ -14,7 +18,7 @@
       "destination": "/api/prerender?type=game&slug=:slug"
     },
     {
-      "source": "/((?!api/|sitemap|robots\\.txt|ads\\.txt|sw\\.js|manifest\\.json|google).*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ],
