@@ -81,7 +81,7 @@ export function generateWebSiteWithSitelinksSchema() {
     '@type': 'WebSite',
     '@id': `${SITE_CONFIG.url}/#website`,
     name: SITE_CONFIG.name,
-    alternateName: ['Kuralı Ne', 'kuraline.xyz', 'Kuraline'],
+    alternateName: SITE_CONFIG.alternateNames,
     url: SITE_CONFIG.url,
     description: SITE_CONFIG.mission,
     inLanguage: 'tr-TR',

@@ -1,4 +1,5 @@
 # Kuralı Ne? — https://kuraline.xyz
+# Marka: Kuralı Ne / Kurali Ne / Kuraline / Kuralıne / kuraline.xyz 
 
 User-agent: *
 Allow: /

@@ -8,6 +8,11 @@ import { SITE_CONFIG } from './seo.js';
 export const KEYWORD_TIERS = {
   head: [
     'kuralı ne',
+    'kurali ne',
+    'kuraline',
+    'kuralıne',
+    'kuraline.xyz',
+    'site kuralı ne',
     'oyun kuralları',
     'okey kuralı ne',
     'batak kuralı ne',
@@ -17,6 +22,11 @@ export const KEYWORD_TIERS = {
     'pc oyun rehberi',
   ],
   body: [
+    'kural ne',
+    'kuralinee',
+    'kurallnee',
+    'kura be',
+    'kurallı ne',
     'pişti kuralı ne',
     'tavla nasıl oynanır',
     'saklambaç nasıl oynanır',
@@ -33,6 +43,9 @@ export const KEYWORD_TIERS = {
     'sokak oyunları',
   ],
   longTail: [
+    'kuralı ne sitesi',
+    'kurali ne sitesi',
+    'site kurali ne',
     '101 okey ceza puanları hesaplama',
     'batak yazboz dijital',
     'halısaha takım oluşturucu',

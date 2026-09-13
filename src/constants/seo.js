@@ -12,10 +12,15 @@
 
 import { isDigitalGameCategory } from './digitalGames.js';
 import { SITE_COMPANY, SITE_CONTACT_EMAIL, SITE_CREATOR } from './siteMeta.js';
+import {
+  BRAND_PRIMARY,
+  BRAND_SCHEMA_ALTERNATE_NAMES,
+  getBrandKeywordsString,
+} from './brandAliases.js';
 
 // Site temel bilgileri
 export const SITE_CONFIG = {
-  name: 'Kuralı Ne?',
+  name: BRAND_PRIMARY,
   tagline: 'Oyun Rehberi & Keşif Platformu',
   mission:
     'Geleneksel ve dijital oyunların kurallarını anlatan Türkçe oyun rehberi platformu; yazboz & skor araçları, oyun haberleri, bedava oyun kampanyaları ve AI asistan tek adreste.',
@@ -26,12 +31,14 @@ export const SITE_CONFIG = {
   charset: 'UTF-8',
   themeColor: '#f97316',
   twitterHandle: '@kuraline',
-  author: 'Kuralı Ne?',
-  publisher: 'Kuralı Ne?',
+  author: BRAND_PRIMARY,
+  publisher: BRAND_PRIMARY,
   foundingDate: '2026',
   email: SITE_CONTACT_EMAIL,
   company: SITE_COMPANY,
   creator: SITE_CREATOR,
+  /** Schema / Knowledge Graph marka eşlemesi */
+  alternateNames: BRAND_SCHEMA_ALTERNATE_NAMES,
 };
 
 /** SEO içerik sütunları — anahtar kelime & sayfa stratejisi */
@@ -64,7 +71,7 @@ export const DEFAULT_META = {
   description:
     'Geleneksel ve dijital oyunların kuralları, yazboz & skor araçları, oyun haberleri, bedava oyun kampanyaları ve AI asistan — Türkçe oyun rehberi platformu Kuralı Ne?.',
   keywords: [
-    'kuralı ne',
+    getBrandKeywordsString(12),
     'oyun kuralları',
     'geleneksel türk oyunları',
     'okey kuralı ne',
@@ -87,8 +94,7 @@ export const PAGE_SEO = {
     title: 'Kuralı Ne? — Okey\'den Dijitale Oyun Rehberi Platformu',
     description:
       'Geleneksel ve dijital oyunların kuralları, yazboz & skor araçları, oyun haberleri, bedava oyun kampanyaları ve AI asistan. Okey, Batak, Pişti ve 50+ rehber tek platformda.',
-    keywords:
-      'kuralı ne, oyun kuralları, geleneksel oyunlar, pc oyun rehberi, oyun haberleri, ücretsiz oyun, okey sayacı, 101 yazboz, oyun araçları, oyun ai asistan',
+    keywords: `${getBrandKeywordsString(10)}, oyun kuralları, geleneksel oyunlar, pc oyun rehberi, oyun haberleri, ücretsiz oyun, okey sayacı, 101 yazboz, oyun araçları, oyun ai asistan`,
   },
   allGames: {
     title: 'Tüm Oyun Rehberleri — Geleneksel & Dijital Arşiv',
@@ -119,11 +125,10 @@ export const PAGE_SEO = {
       'indirimli oyunlar, indirimdeki oyunlar, oyun indirimleri, ucuz oyun, steam indirim, epic games indirim, gog indirim, oyun fiyat takibi, pc oyun indirimi, en ucuz oyun',
   },
   about: {
-    title: 'Hakkımızda — Kuralı Ne? Oyun Platformu',
+    title: 'Hakkımızda — Kuralı Ne? | Kuraline.xyz Oyun Platformu',
     description:
-      'Kuralı Ne?, geleneksel oyun mirasını dijital çağa taşıyan kapsamlı bir oyun platformudur: kurallar, rehberler, araçlar, haberler ve bedava oyun kampanyaları.',
-    keywords:
-      'hakkımızda, kuralı ne, oyun platformu, geleneksel oyunlar, oyun rehberi, dijital oyun rehberi, türk oyunları',
+      'Kuralı Ne? (kuraline.xyz / Kuraline / Kuralıne): geleneksel ve dijital oyun kuralları, araçlar, haberler ve bedava kampanyalar. “Site kuralı ne”, “kurali ne” aramalarının resmi adresi.',
+    keywords: `hakkımızda, ${getBrandKeywordsString(14)}, oyun platformu, geleneksel oyunlar, oyun rehberi, dijital oyun rehberi, türk oyunları`,
   },
   contact: {
     title: 'İletişim - Bize Ulaşın',
@@ -241,6 +246,7 @@ export const SCHEMA_TEMPLATES = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SITE_CONFIG.name,
+    alternateName: SITE_CONFIG.alternateNames,
     url: SITE_CONFIG.url,
     logo: `${SITE_CONFIG.url}/logo.png`,
     description: DEFAULT_META.description,
@@ -261,6 +267,7 @@ export const SCHEMA_TEMPLATES = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_CONFIG.name,
+    alternateName: SITE_CONFIG.alternateNames,
     url: SITE_CONFIG.url,
     description: DEFAULT_META.description,
     inLanguage: SITE_CONFIG.language,
