@@ -4,7 +4,24 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "rewrites": [{ "source": "/((?!sitemap|robots\\.txt|sw\\.js|manifest\\.json).*)", "destination": "/index.html" }],
+  "rewrites": [
+    {
+      "source": "/ads.txt",
+      "destination": "/api/ads-txt"
+    },
+    {
+      "source": "/haberler/:slug",
+      "destination": "/api/prerender?type=news&slug=:slug"
+    },
+    {
+      "source": "/oyun/:slug",
+      "destination": "/api/prerender?type=game&slug=:slug"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ],
   "redirects": [
     { "source": "/admin", "destination": "/admin-panel", "permanent": true },
     { "source": "/admin/", "destination": "/admin-panel", "permanent": true },
@@ -48,6 +65,13 @@
       "source": "/manifest.json",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/ads.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
       ]
     },
     {

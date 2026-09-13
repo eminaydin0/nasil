@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
-import { PAGE_SEO, SCHEMA_TEMPLATES, SITE_CONFIG } from '../../constants/seo';
+import { PAGE_SEO, SCHEMA_TEMPLATES, SITE_CONFIG, generateFAQSchema } from '../../constants/seo';
+import { BRAND_DOMAIN, BRAND_FAQS, BRAND_SCHEMA_ALTERNATE_NAMES } from '../../constants/brandAliases';
 import { supabase } from '../../lib/supabase';
 import { useSiteStats } from '../../hooks/useSiteStats';
 import { Button } from '../../components/ui';
@@ -85,8 +86,12 @@ function About() {
       name: PAGE_SEO.about.title,
       description: PAGE_SEO.about.description,
       url: `${SITE_CONFIG.url}/hakkimizda`,
-      mainEntity: SCHEMA_TEMPLATES.organization,
+      mainEntity: {
+        ...SCHEMA_TEMPLATES.organization,
+        alternateName: SITE_CONFIG.alternateNames,
+      },
     },
+    generateFAQSchema(BRAND_FAQS),
   ];
 
   const breadcrumbs = [{ name: 'Hakkımızda', url: null }];
@@ -122,7 +127,9 @@ function About() {
             </div>
             <div>
               <h1 className="text-3xl font-black text-warm-900">Hakkımızda</h1>
-              <p className="text-warm-600">Kuralı Ne? — Geleneksel oyun rehberiniz</p>
+              <p className="text-warm-600">
+                Kuralı Ne? · {BRAND_DOMAIN} · Kuraline / Kuralıne
+              </p>
             </div>
           </div>
 
@@ -131,10 +138,33 @@ function About() {
               {SITE_CONFIG.name}, Türk oyuncunun masası için kuralları toparlıyor: net anlatım, ücretsiz araçlar ve
               topluluk desteği. Geleneksel oyunları dijital ortamda yaşatmak amacıyla{' '}
               <span className="font-semibold text-warm-800">{SITE_CONFIG.creator.name}</span> tarafından
-              geliştirildi.
+              geliştirildi. Resmi adresimiz{' '}
+              <a href={SITE_CONFIG.url} className="font-semibold text-orange-600 hover:text-orange-700">
+                {BRAND_DOMAIN}
+              </a>
+              ; “kurali ne”, “site kuralı ne”, “kuraline” gibi aramalarda da aynı platformu bulursunuz.
             </p>
           </div>
         </div>
+
+        {/* Marka adı & yazımlar — SEO / Knowledge Graph sinyali */}
+        <section className="mb-6 rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft">
+          <h2 className="text-lg font-extrabold text-warm-900">Kuralı Ne? nasıl yazılır?</h2>
+          <p className="mt-3 text-sm leading-relaxed text-warm-600 sm:text-base">
+            Resmi marka adı <strong className="text-warm-800">Kuralı Ne?</strong> ve domain{' '}
+            <strong className="text-warm-800">{BRAND_DOMAIN}</strong> şeklindedir. Sık kullanılan alternatif
+            yazımlar: {BRAND_SCHEMA_ALTERNATE_NAMES.slice(0, 8).join(', ')}. Bunlar farklı siteler değil; hepsi
+            bu platformu ifade eder.
+          </p>
+          <ul className="mt-4 space-y-3 text-sm text-warm-600 sm:text-base">
+            {BRAND_FAQS.map((faq) => (
+              <li key={faq.question}>
+                <p className="font-semibold text-warm-800">{faq.question}</p>
+                <p className="mt-1 leading-relaxed">{faq.answer}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         {/* Geliştirici */}
         <section className="mb-6 overflow-hidden rounded-2xl border border-orange-200/60 bg-gradient-to-br from-orange-50 via-white to-cream-100 p-6 shadow-soft sm:p-8">

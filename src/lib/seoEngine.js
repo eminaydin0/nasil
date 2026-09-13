@@ -18,6 +18,7 @@ import {
 } from '../constants/seo.js';
 import { TOOL_PAGE_SEO, generateWebApplicationSchema } from '../constants/seoKeywords.js';
 import { isDigitalGameCategory } from '../constants/digitalGames.js';
+import { BRAND_FAQS, BRAND_SEARCH_VARIANTS } from '../constants/brandAliases.js';
 
 // ─── Yardımcılar ───────────────────────────────────────────────────────────
 
@@ -925,7 +926,7 @@ export function buildHomeSeoMeta(games = []) {
     : 'Okey, Batak, Pişti kuralları; PC/konsol rehberleri; oyun araçları, bedava kampanyalar ve haberler. Türkiye\'nin oyun platformu.';
 
   const keywords = dedupeList([
-    'kuralı ne',
+    ...BRAND_SEARCH_VARIANTS.slice(0, 10),
     'oyun kuralları',
     'oyun rehberi',
     'geleneksel türk oyunları',
@@ -935,19 +936,27 @@ export function buildHomeSeoMeta(games = []) {
     '101 okey yazboz',
     ...topNames.flatMap((n) => [`${n} kuralı ne`, `${n} nasıl oynanır`]),
     `${count} oyun rehberi`,
-  ]).slice(0, 18).join(', ');
+  ]).slice(0, 22).join(', ');
 
   return { description, keywords, gameCount: count, topGameNames: topNames };
 }
 
-/** Ana sayfa FAQ — yüklü oyunlardan akıllı seçim */
+/** Ana sayfa FAQ — yüklü oyunlardan akıllı seçim + marka sorguları */
 export function buildHomeFaqs(games = []) {
   const findGame = (pattern) => games.find((g) => pattern.test(g.name));
   const faqs = [];
 
+  // Marka sorguları önce — “kuralı ne / kuraline” aramaları için
+  faqs.push({
+    ...BRAND_FAQS[0],
+    answer: games.length > 0
+      ? `Kuralı Ne? (kuraline.xyz), geleneksel oyun kurallarından PC/konsol rehberlerine, oyun araçlarından bedava kampanyalara kadar ${games.length}+ içerik sunan Türkçe oyun platformudur.`
+      : BRAND_FAQS[0].answer,
+  });
+  faqs.push(BRAND_FAQS[1]);
+
   const okey = findGame(/okey/i);
   const batak = findGame(/batak/i);
-  const pisti = findGame(/pişti|pisti/i);
 
   if (okey) {
     faqs.push({
@@ -970,23 +979,9 @@ export function buildHomeFaqs(games = []) {
     });
   }
 
-  if (pisti) {
-    faqs.push({
-      question: `${pisti.name} kaç kişiyle oynanır?`,
-      answer: pisti.players
-        ? `${pisti.name} ${pisti.players} oynanır.`
-        : `${pisti.name} genellikle 2–4 kişiyle oynanır.`,
-    });
-  }
+  faqs.push(BRAND_FAQS[2]);
 
-  faqs.push({
-    question: 'Kuralı Ne? nedir?',
-    answer: games.length > 0
-      ? `Kuralı Ne?, geleneksel oyun kurallarından PC/konsol rehberlerine, oyun araçlarından bedava kampanyalara kadar ${games.length}+ içerik sunan bir oyun platformudur.`
-      : 'Kuralı Ne?, geleneksel oyun mirasını dijital çağa taşıyan; kurallar, rehberler, araçlar ve haberler sunan bir oyun platformudur.',
-  });
-
-  return faqs.slice(0, 5);
+  return faqs.slice(0, 6);
 }
 
 export { normalizeGameInput };

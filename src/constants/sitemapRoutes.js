@@ -30,7 +30,7 @@ export const STATIC_SITEMAP_PAGES = [
   { path: '/ucretsiz-oyunlar', changefreq: 'daily', priority: '0.88', ...PAGE_SEO.freeGames },
   { path: '/indirimler', changefreq: 'daily', priority: '0.85', ...PAGE_SEO.deals },
   { path: '/araclar', changefreq: 'weekly', priority: '0.85', ...PAGE_SEO.tools },
-  { path: '/hakkimizda', changefreq: 'monthly', priority: '0.6', ...PAGE_SEO.about },
+  { path: '/hakkimizda', changefreq: 'weekly', priority: '0.85', ...PAGE_SEO.about },
   { path: '/iletisim', changefreq: 'monthly', priority: '0.6', ...PAGE_SEO.contact },
   { path: '/kullanim-kosullari', changefreq: 'monthly', priority: '0.5', ...PAGE_SEO.terms },
   { path: '/gizlilik', changefreq: 'monthly', priority: '0.5', ...PAGE_SEO.privacy },

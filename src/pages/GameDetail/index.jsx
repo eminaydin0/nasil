@@ -107,13 +107,23 @@ function GameDetail() {
   }, [game, aggregateRating]);
 
   if (loading) {
-    return <SkeletonLoader type="game-detail" />;
+    return (
+      <>
+        <SEO
+          title="Oyun yükleniyor"
+          description="Oyun rehberi yükleniyor — Kuralı Ne?"
+          url={`/oyun/${slug}`}
+        />
+        <SkeletonLoader type="game-detail" />
+      </>
+    );
   }
 
   if (!game) {
     return (
       <ErrorPage
         status={404}
+        url={`/oyun/${slug}`}
         title="Oyun Bulunamadı"
         message="Aradığınız oyun rehberi mevcut değil veya kaldırılmış olabilir."
       />

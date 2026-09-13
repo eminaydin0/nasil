@@ -1,19 +1,22 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Home, ArrowLeft, Search } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 
-function ErrorPage({ status = 404, title, message }) {
+function ErrorPage({ status = 404, title, message, url }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const canonicalPath = url || location.pathname || '';
 
   const defaults = {
     404: {
       title: 'Sayfa Bulunamadı',
-      message: 'Aradığınız sayfa mevcut değil veya taşınmış olabilir. Belki yanlış bir bağlantıya tıkladınız?'
+      message:
+        'Aradığınız sayfa mevcut değil veya taşınmış olabilir. Belki yanlış bir bağlantıya tıkladınız?',
     },
     500: {
       title: 'Sunucu Hatası',
-      message: 'Bir şeyler yanlış gitti. Lütfen biraz sonra tekrar deneyin.'
-    }
+      message: 'Bir şeyler yanlış gitti. Lütfen biraz sonra tekrar deneyin.',
+    },
   };
 
   const { title: defaultTitle, message: defaultMessage } = defaults[status] || defaults[404];
@@ -25,6 +28,7 @@ function ErrorPage({ status = 404, title, message }) {
       <SEO
         title={`${displayTitle} - Kuralı Ne?`}
         description={displayMessage}
+        url={canonicalPath}
         noindex
       />
 
