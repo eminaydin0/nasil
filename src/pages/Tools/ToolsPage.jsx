@@ -1,15 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { ArrowRight, Wrench, Zap, Smartphone, Gift, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PAGE_SEO } from '../../constants/seo';
+import { PAGE_SEO, generateFAQSchema, SITE_CONFIG } from '../../constants/seo';
 import {
   SITE_TOOLS,
   TOOL_HIGHLIGHTS,
   groupToolsByCategory,
   getFeaturedTool,
 } from '../../constants/tools';
+import { TOOLS_HUB_FAQS } from '../../constants/toolLandingCopy';
 
 const colorMap = {
   orange: { bg: 'bg-orange-50', text: 'text-orange-600', accent: 'from-orange-500 to-red-500' },
@@ -71,6 +72,32 @@ export default function ToolsPage() {
   const featured = getFeaturedTool();
   const breadcrumbs = [{ name: 'Oyun Araçları', url: null }];
 
+  const structuredData = useMemo(
+    () => [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: PAGE_SEO.tools.title,
+        description: PAGE_SEO.tools.description,
+        url: `${SITE_CONFIG.url}/araclar`,
+        isPartOf: { '@type': 'WebSite', name: SITE_CONFIG.name, url: SITE_CONFIG.url },
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: SITE_TOOLS.length,
+          itemListElement: SITE_TOOLS.map((tool, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: tool.title,
+            url: `${SITE_CONFIG.url}${tool.link}`,
+            description: tool.description,
+          })),
+        },
+      },
+      generateFAQSchema(TOOLS_HUB_FAQS),
+    ],
+    []
+  );
+
   return (
     <div className="min-h-screen overflow-x-clip bg-cream-50 py-6 sm:py-12">
       <SEO
@@ -78,27 +105,34 @@ export default function ToolsPage() {
         description={PAGE_SEO.tools.description}
         keywords={PAGE_SEO.tools.keywords}
         url="/araclar"
+        structuredData={structuredData}
+        breadcrumbs={breadcrumbs}
       />
 
       <div className="container mx-auto min-w-0 px-3 sm:px-4">
         <Breadcrumb items={breadcrumbs} className="mb-6" />
 
-        {/* Giriş */}
         <div className="mb-8">
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
             <div className="self-start rounded-xl bg-orange-100 p-3">
               <Wrench className="text-orange-600" size={32} aria-hidden />
             </div>
             <div className="min-w-0">
-              <h1 className="text-2xl font-black text-warm-900 sm:text-3xl">Oyun Araçları</h1>
-              <p className="text-sm text-warm-600 sm:text-base">{SITE_TOOLS.length} ücretsiz araç · kayıt gerektirmez</p>
+              <h1 className="text-2xl font-black text-warm-900 sm:text-3xl">
+                Oyun Araçları — Yazboz, Sayaç & Takım
+              </h1>
+              <p className="text-sm text-warm-600 sm:text-base">
+                {SITE_TOOLS.length} ücretsiz araç · kayıt gerektirmez · mobil uyumlu
+              </p>
             </div>
           </div>
 
           <div className="rounded-2xl border border-warm-200/70 bg-white p-5 shadow-sm sm:p-6">
             <p className="text-sm leading-relaxed text-warm-600 sm:text-base">
-              Okey yazbozundan zar atmaya, skor tablosundan takım kurmaya kadar masa başında ihtiyaç
-              duyduğunuz sayaç ve yazboz araçları. Mobil uyumlu, hızlı ve tamamen ücretsiz.
+              <strong>101 yazboz</strong>, <strong>okey sayacı</strong>, <strong>batak yazboz</strong>,{' '}
+              <strong>halı saha takım oluşturucu</strong>, zar, kura ve skor tablosu — masa başı ve
+              saha öncesi ihtiyaçların hepsi tek yerde. Uygulama indirmeden tarayıcıda açın; tamamen
+              ücretsiz.
             </p>
           </div>
         </div>
@@ -127,7 +161,6 @@ export default function ToolsPage() {
           </Link>
         )}
 
-        {/* Öne çıkanlar */}
         <div className="mb-10 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:grid-cols-4">
           {TOOL_HIGHLIGHTS.map(({ label, sub }, i) => {
             const Icon = HIGHLIGHT_ICONS[i];
@@ -144,7 +177,6 @@ export default function ToolsPage() {
           })}
         </div>
 
-        {/* Kategorilere göre araçlar */}
         {grouped.map(({ key, label, items }) => (
           <section key={key} className="mb-10">
             <h2 className="mb-4 text-lg font-extrabold text-warm-900">{label}</h2>
@@ -156,7 +188,20 @@ export default function ToolsPage() {
           </section>
         ))}
 
-        {/* Alt CTA */}
+        <section className="mb-10 rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft sm:p-8">
+          <h2 className="mb-4 text-lg font-extrabold text-warm-900">Sıkça Sorulan Sorular</h2>
+          <div className="divide-y divide-warm-200/70">
+            {TOOLS_HUB_FAQS.map((item) => (
+              <details key={item.question} className="group py-3">
+                <summary className="cursor-pointer list-none font-semibold text-warm-900 marker:content-none [&::-webkit-details-marker]:hidden">
+                  {item.question}
+                </summary>
+                <p className="mt-2 text-sm leading-relaxed text-warm-600">{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
         <div className="rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-8">
           <div>
             <h2 className="text-lg font-extrabold text-warm-900">Oyun kurallarını da öğren</h2>

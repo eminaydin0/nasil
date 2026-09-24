@@ -94,7 +94,7 @@ export const PAGE_SEO = {
     title: 'Kuralı Ne? — Okey\'den Dijitale Oyun Rehberi Platformu',
     description:
       'Geleneksel ve dijital oyunların kuralları, yazboz & skor araçları, oyun haberleri, bedava oyun kampanyaları ve AI asistan. Okey, Batak, Pişti ve 50+ rehber tek platformda.',
-    keywords: `${getBrandKeywordsString(10)}, oyun kuralları, geleneksel oyunlar, pc oyun rehberi, oyun haberleri, ücretsiz oyun, okey sayacı, 101 yazboz, oyun araçları, oyun ai asistan`,
+    keywords: `${getBrandKeywordsString(18)}, oyun kuralları, geleneksel oyunlar, pc oyun rehberi, oyun haberleri, ücretsiz oyun, okey sayacı, 101 yazboz, oyun araçları, oyun ai asistan`,
   },
   allGames: {
     title: 'Tüm Oyun Rehberleri — Geleneksel & Dijital Arşiv',
@@ -104,11 +104,11 @@ export const PAGE_SEO = {
       'tüm oyunlar, oyun arşivi, oyun rehberleri, geleneksel oyunlar, pc oyunları, konsol oyunları, mobil oyunlar, kutu oyunları, okey kuralı ne',
   },
   tools: {
-    title: 'Oyun Araçları — Yazboz, Sayaç, Takım Oluşturucu',
+    title: 'Oyun Araçları — 101 Yazboz, Okey Sayacı, Halı Saha',
     description:
-      '101 okey yazboz, okey puan sayacı, batak yazboz, halı saha takımı, karar çarkı, kura çek, zar at ve skor tablosu. Oyun geceleri için ücretsiz dijital araçlar.',
+      'Ücretsiz oyun araçları: 101 yazboz online, okey sayacı, batak yazboz, halı saha takım oluşturucu, zar, kura ve skor tablosu. Kayıt yok, mobil uyumlu.',
     keywords:
-      '101 okey yazboz, okey sayacı, batak yazboz, takım oluşturucu, halısaha takım, karar çarkı, kura çek, skor tablosu, online zar, oyun araçları',
+      '101 yazboz, 101 okey yazboz online, okey sayacı, batak yazboz, halı saha takım oluşturucu, takım oluşturucu, karar çarkı, kura çek, online zar, skor tablosu, oyun araçları ücretsiz',
   },
   freeGames: {
     title: 'Bedava Oyunlar — Steam, Epic, GOG Kampanyaları',
@@ -128,7 +128,7 @@ export const PAGE_SEO = {
     title: 'Hakkımızda — Kuralı Ne? | Kuraline.xyz Oyun Platformu',
     description:
       'Kuralı Ne? (kuraline.xyz / Kuraline / Kuralıne): geleneksel ve dijital oyun kuralları, araçlar, haberler ve bedava kampanyalar. “Site kuralı ne”, “kurali ne” aramalarının resmi adresi.',
-    keywords: `hakkımızda, ${getBrandKeywordsString(14)}, oyun platformu, geleneksel oyunlar, oyun rehberi, dijital oyun rehberi, türk oyunları`,
+    keywords: `hakkımızda, ${getBrandKeywordsString(20)}, oyun platformu, geleneksel oyunlar, oyun rehberi, dijital oyun rehberi, türk oyunları`,
   },
   contact: {
     title: 'İletişim - Bize Ulaşın',

@@ -29,7 +29,7 @@ export const STATIC_SITEMAP_PAGES = [
   { path: '/haberler', changefreq: 'daily', priority: '0.85', ...PAGE_SEO.news },
   { path: '/ucretsiz-oyunlar', changefreq: 'daily', priority: '0.88', ...PAGE_SEO.freeGames },
   { path: '/indirimler', changefreq: 'daily', priority: '0.85', ...PAGE_SEO.deals },
-  { path: '/araclar', changefreq: 'weekly', priority: '0.85', ...PAGE_SEO.tools },
+  { path: '/araclar', changefreq: 'daily', priority: '0.95', ...PAGE_SEO.tools },
   { path: '/hakkimizda', changefreq: 'weekly', priority: '0.85', ...PAGE_SEO.about },
   { path: '/iletisim', changefreq: 'monthly', priority: '0.6', ...PAGE_SEO.contact },
   { path: '/kullanim-kosullari', changefreq: 'monthly', priority: '0.5', ...PAGE_SEO.terms },
@@ -54,10 +54,11 @@ export const TOOL_SITEMAP_SLUGS = [
 export function getToolSitemapPages() {
   return TOOL_SITEMAP_SLUGS.map((slug) => {
     const seo = TOOL_PAGE_SEO[slug] || {};
+    const hot = new Set(['101-yazboz', 'halisaha-takim-olusturucu', 'okey-sayaci', 'batak-yazboz']);
     return {
       path: `/araclar/${slug}`,
-      changefreq: 'monthly',
-      priority: '0.75',
+      changefreq: 'weekly',
+      priority: hot.has(slug) ? '0.92' : '0.88',
       title: seo.title || slug,
       description: seo.description || '',
       keywords: seo.keywords || '',

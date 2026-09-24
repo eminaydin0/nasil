@@ -1,5 +1,5 @@
 # Kuralı Ne? — https://kuraline.xyz
-# Marka: Kuralı Ne / Kurali Ne / Kuraline / Kuralıne / kuraline.xyz 
+# Marka: Kuralı Ne / Kurali Ne / Kuraline / Kuralıne / kuraline.xyz
 
 User-agent: *
 Allow: /
@@ -21,18 +21,18 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-# Agresif SEO botlarını yavaşlat
+# Agresif SEO botları — Crawl-delay Google tarafından yok sayılır; Disallow kullan
 User-agent: AhrefsBot
-Crawl-delay: 10
+Disallow: /
 
 User-agent: SemrushBot
-Crawl-delay: 10
+Disallow: /
 
 User-agent: MJ12bot
-Crawl-delay: 10
+Disallow: /
 
 User-agent: DotBot
-Crawl-delay: 10
+Disallow: /
 
 User-agent: MauiBot
 Disallow: /

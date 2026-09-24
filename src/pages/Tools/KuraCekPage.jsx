@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 import { Shuffle } from 'lucide-react';
 import KuraCek from '../../components/tools/KuraCek';
 import ToolLayout from '../../components/layout/ToolLayout';
+import { ToolSeoArticle, getToolLanding } from '../../components/tools/ToolSeoArticle';
+
+const landing = getToolLanding('kura-cek');
 
 export default function KuraCekPage() {
   useEffect(() => {
@@ -14,9 +17,11 @@ export default function KuraCekPage() {
       description="İsimleri ekle, kutudan rastgele kazananı seç — çekiliş, görev dağıtımı ve takım kaptanı için."
       icon={Shuffle}
       badge="Yeni"
-      seoTitle="Kura Çekme Aracı — Online İsim Çekilişi"
-      seoDescription="Ücretsiz online kura çekme aracı. İsimleri yaz, tek tıkla rastgele kazananı belirle. Çekiliş ve oyun geceleri için ideal."
+      seoTitle={landing?.seoTitle}
+      seoDescription={landing?.seoDescription}
       seoUrl="/araclar/kura-cek"
+      seoContent={<ToolSeoArticle slug="kura-cek" />}
+      faqItems={landing?.faqs || []}
     >
       <KuraCek />
     </ToolLayout>
