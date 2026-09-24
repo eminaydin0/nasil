@@ -926,7 +926,7 @@ export function buildHomeSeoMeta(games = []) {
     : 'Okey, Batak, Pişti kuralları; PC/konsol rehberleri; oyun araçları, bedava kampanyalar ve haberler. Türkiye\'nin oyun platformu.';
 
   const keywords = dedupeList([
-    ...BRAND_SEARCH_VARIANTS.slice(0, 10),
+    ...BRAND_SEARCH_VARIANTS.slice(0, 16),
     'oyun kuralları',
     'oyun rehberi',
     'geleneksel türk oyunları',

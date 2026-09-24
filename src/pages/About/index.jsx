@@ -153,7 +153,7 @@ function About() {
           <p className="mt-3 text-sm leading-relaxed text-warm-600 sm:text-base">
             Resmi marka adı <strong className="text-warm-800">Kuralı Ne?</strong> ve domain{' '}
             <strong className="text-warm-800">{BRAND_DOMAIN}</strong> şeklindedir. Sık kullanılan alternatif
-            yazımlar: {BRAND_SCHEMA_ALTERNATE_NAMES.slice(0, 8).join(', ')}. Bunlar farklı siteler değil; hepsi
+            yazımlar: {BRAND_SCHEMA_ALTERNATE_NAMES.slice(0, 14).join(', ')}. Bunlar farklı siteler değil; hepsi
             bu platformu ifade eder.
           </p>
           <ul className="mt-4 space-y-3 text-sm text-warm-600 sm:text-base">

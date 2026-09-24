@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 import { Trophy } from 'lucide-react';
 import ScoreBoard from '../../components/tools/ScoreBoard';
 import ToolLayout from '../../components/layout/ToolLayout';
+import { ToolSeoArticle, getToolLanding } from '../../components/tools/ToolSeoArticle';
+
+const landing = getToolLanding('skor-tablosu');
 
 export default function ScoreBoardPage() {
   useEffect(() => {
@@ -10,48 +13,10 @@ export default function ScoreBoardPage() {
 
   const helpContent = (
     <>
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-orange-100 rounded-lg">
-          <Trophy className="w-5 h-5 text-orange-600" />
-        </div>
-        <h3 className="text-xl font-bold text-warm-900">Nasıl Kullanılır?</h3>
-      </div>
-
-      <p className="text-warm-600 mb-4 leading-relaxed">
-        Herhangi bir oyun için hızlıca skor tutmanız gerektiğinde kullanabilirsiniz.
+      <h3 className="mb-4 text-xl font-bold text-warm-900">Nasıl Kullanılır?</h3>
+      <p className="mb-4 leading-relaxed text-warm-600">
+        İsimlere tıklayarak düzenleyin; + / − ile puan güncelleyin. Sıralama otomatik gelir.
       </p>
-
-      <div className="space-y-3">
-        <div className="bg-cream-50 p-4 rounded-xl border border-warm-100">
-          <h4 className="font-semibold text-warm-900 mb-2 flex items-center gap-2">
-            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-            Oyuncu İsimleri
-          </h4>
-          <p className="text-sm text-warm-600">İsimleri değiştirmek için üzerine tıklayın</p>
-        </div>
-
-        <div className="bg-cream-50 p-4 rounded-xl border border-warm-100">
-          <h4 className="font-semibold text-warm-900 mb-2 flex items-center gap-2">
-            <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-            Puan Güncelleme
-          </h4>
-          <p className="text-sm text-warm-600">+ ve - butonlarıyla puanı kolayca güncelleyin</p>
-        </div>
-
-        <div className="bg-cream-50 p-4 rounded-xl border border-warm-100">
-          <h4 className="font-semibold text-warm-900 mb-2 flex items-center gap-2">
-            <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-            Oyuncu Ekleme
-          </h4>
-          <p className="text-sm text-warm-600">"Oyuncu Ekle" ile dilediğiniz kadar kişi ekleyin</p>
-        </div>
-      </div>
-
-      <div className="mt-4 p-4 bg-orange-50 rounded-xl border border-orange-200">
-        <p className="text-sm text-orange-900">
-          <strong>🏆 İpucu:</strong> Sıralama otomatik olarak en yüksek puandan en düşüğe doğru yapılır.
-        </p>
-      </div>
     </>
   );
 
@@ -61,10 +26,12 @@ export default function ScoreBoardPage() {
       description="Kağıt kalemsiz puan tutma aracı. Oyunlar, yarışmalar ve spor müsabakaları için basit dijital skor tablosu."
       icon={Trophy}
       iconColor="orange"
-      seoTitle="Skor Tablosu - Basit Puan Tutucu"
-      seoDescription="Kağıt kalemsiz puan tutma aracı. Oyunlar, yarışmalar ve spor müsabakaları için basit dijital skor tablosu."
+      seoTitle={landing?.seoTitle}
+      seoDescription={landing?.seoDescription}
       seoUrl="/araclar/skor-tablosu"
       helpContent={helpContent}
+      seoContent={<ToolSeoArticle slug="skor-tablosu" />}
+      faqItems={landing?.faqs || []}
     >
       <ScoreBoard />
     </ToolLayout>

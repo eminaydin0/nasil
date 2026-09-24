@@ -1,7 +1,6 @@
 /**
- * Build sonrası yayınlanan haber/oyun sayfaları için dinamik HTML meta.
- * Statik prerender dosyası yoksa Vercel rewrite buraya düşer; Google ana sayfa
- * canonical'ı görmesin diye title/description/canonical enjekte edilir.
+ * Build sonrası eksik statik HTML için dinamik meta enjeksiyonu.
+ * Destek: news | game | category | compare
  */
 import { createClient } from '@supabase/supabase-js';
 
@@ -14,6 +13,9 @@ const SUPABASE_ANON_KEY =
   process.env.VITE_SUPABASE_ANON_KEY ||
   process.env.SUPABASE_ANON_KEY ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqbmlwamNldm54cnpsZ2ZtZWNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5NDMyMjUsImV4cCI6MjA4MjUxOTIyNX0.tuUrVzxDlZssFm3pwhB-fSsiL8DQUErHmGeqngvQohc';
+
+const COMPARISON_SEPARATOR = '-vs-';
+const VALID_TYPES = new Set(['news', 'game', 'category', 'compare']);
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -94,10 +96,12 @@ async function fetchBaseHtml(req) {
   const res = await fetch(baseUrl, {
     headers: { 'user-agent': 'kuraline-prerender/1.0' },
   });
-  if (!res.ok) {
-    throw new Error(`base html fetch failed: ${res.status}`);
-  }
+  if (!res.ok) throw new Error(`base html fetch failed: ${res.status}`);
   return res.text();
+}
+
+function notFoundHtml({ titlePath, listPath, listLabel }) {
+  return `<!doctype html><html lang="tr"><head><meta charset="utf-8"/><title>Sayfa bulunamadı - Kuralı Ne?</title><link rel="canonical" href="${SITE_URL}${titlePath}"/><meta name="robots" content="noindex, follow"/></head><body><h1>Sayfa bulunamadı</h1><p><a href="${SITE_URL}${listPath}">${listLabel}</a></p></body></html>`;
 }
 
 async function resolveNews(slug) {
@@ -110,16 +114,12 @@ async function resolveNews(slug) {
 
   if (error || !data) return null;
 
-  const title = data.seo_title || data.title;
-  const description = truncate(data.seo_description || data.excerpt || data.title);
-  const keywords = [data.title, data.category, ...(data.tags || []), 'kuralı ne', 'oyun haberleri']
-    .filter(Boolean)
-    .join(', ');
-
   return {
-    title,
-    description,
-    keywords,
+    title: data.seo_title || data.title,
+    description: truncate(data.seo_description || data.excerpt || data.title),
+    keywords: [data.title, data.category, ...(data.tags || []), 'kuralı ne', 'oyun haberleri']
+      .filter(Boolean)
+      .join(', '),
     image: data.cover_image,
     canonical: `${SITE_URL}/haberler/${data.slug}`,
     type: 'article',
@@ -137,16 +137,72 @@ async function resolveGame(slug) {
 
   const isDigital = /pc|konsol|mobil/i.test(data.category || '');
   const title = isDigital ? `${data.name} Nasıl Oynanır?` : `${data.name} Kuralı Ne?`;
+
+  return {
+    title,
+    description: truncate(
+      data.short_description || data.description || `${data.name} kuralları ve rehberi — Kuralı Ne?`
+    ),
+    keywords: `${data.name}, ${data.category || ''}, kuralı ne, nasıl oynanır`.replace(/,\s*,/g, ','),
+    image: data.image,
+    canonical: `${SITE_URL}/oyun/${data.slug}`,
+    type: 'article',
+  };
+}
+
+async function resolveCategory(name) {
+  const decoded = decodeURIComponent(name).trim();
+  if (!decoded) return null;
+
+  const { data: games } = await supabase
+    .from('games')
+    .select('name, image')
+    .eq('category', decoded)
+    .limit(8);
+
+  const names = (games || []).map((g) => g.name).filter(Boolean);
+  const title = `${decoded} Oyunları — Kurallar & Rehber`;
   const description = truncate(
-    data.short_description || data.description || `${data.name} kuralları ve rehberi — Kuralı Ne?`
+    names.length
+      ? `${decoded} kategorisinde ${names.slice(0, 5).join(', ')} ve daha fazlası. Kurallar, ipuçları — Kuralı Ne?.`
+      : `${decoded} oyunlarının kuralları ve rehberleri. Kuralı Ne? arşivi.`
   );
 
   return {
     title,
     description,
-    keywords: `${data.name}, ${data.category || ''}, kuralı ne, nasıl oynanır`.replace(/,\s*,/g, ','),
-    image: data.image,
-    canonical: `${SITE_URL}/oyun/${data.slug}`,
+    keywords: `${decoded}, ${decoded} oyunları, nasıl oynanır, kuralı ne, oyun rehberi`,
+    image: games?.[0]?.image || null,
+    canonical: `${SITE_URL}/kategori/${encodeURIComponent(decoded)}`,
+    type: 'website',
+  };
+}
+
+async function resolveCompare(param) {
+  const idx = param.indexOf(COMPARISON_SEPARATOR);
+  if (idx <= 0) return null;
+  const slugA = param.slice(0, idx);
+  const slugB = param.slice(idx + COMPARISON_SEPARATOR.length);
+  if (!slugA || !slugB) return null;
+
+  const [{ data: a }, { data: b }] = await Promise.all([
+    supabase.from('games').select('slug, name, short_description, image, category').eq('slug', slugA).maybeSingle(),
+    supabase.from('games').select('slug, name, short_description, image, category').eq('slug', slugB).maybeSingle(),
+  ]);
+
+  if (!a || !b) return null;
+
+  const title = `${a.name} vs ${b.name} — Hangisi Daha İyi?`;
+  const description = truncate(
+    `${a.name} ile ${b.name} karşılaştırması: kurallar, oyuncu, zorluk. Hangisini seçmelisin? Detaylı rehber.`
+  );
+
+  return {
+    title,
+    description,
+    keywords: `${a.name} vs ${b.name}, ${a.name}, ${b.name}, oyun karşılaştırma, kuralı ne`,
+    image: a.image || b.image,
+    canonical: `${SITE_URL}/karsilastir/${a.slug}${COMPARISON_SEPARATOR}${b.slug}`,
     type: 'article',
   };
 }
@@ -158,23 +214,29 @@ export default async function handler(req, res) {
       .trim()
       .replace(/^\/+|\/+$/g, '');
 
-    if (!slug || !['news', 'game'].includes(type)) {
+    if (!slug || !VALID_TYPES.has(type)) {
       res.statusCode = 400;
       res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-      return res.end('type=news|game ve slug gerekli');
+      return res.end('type=news|game|category|compare ve slug gerekli');
     }
 
-    const meta = type === 'news' ? await resolveNews(slug) : await resolveGame(slug);
+    let meta = null;
+    if (type === 'news') meta = await resolveNews(slug);
+    else if (type === 'game') meta = await resolveGame(slug);
+    else if (type === 'category') meta = await resolveCategory(slug);
+    else if (type === 'compare') meta = await resolveCompare(slug);
+
     if (!meta) {
-      const basePath = type === 'news' ? 'haberler' : 'oyun';
-      const listPath = type === 'news' ? 'haberler' : 'oyunlar';
-      const listLabel = type === 'news' ? 'Haberlere dön' : 'Oyunlara dön';
+      const map = {
+        news: { titlePath: `/haberler/${escapeHtml(slug)}`, listPath: '/haberler', listLabel: 'Haberlere dön' },
+        game: { titlePath: `/oyun/${escapeHtml(slug)}`, listPath: '/oyunlar', listLabel: 'Oyunlara dön' },
+        category: { titlePath: `/kategori/${escapeHtml(slug)}`, listPath: '/oyunlar', listLabel: 'Oyunlara dön' },
+        compare: { titlePath: `/karsilastir/${escapeHtml(slug)}`, listPath: '/oyunlar', listLabel: 'Oyunlara dön' },
+      };
       res.statusCode = 404;
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'public, max-age=60');
-      return res.end(
-        `<!doctype html><html lang="tr"><head><meta charset="utf-8"/><title>Sayfa bulunamadı - Kuralı Ne?</title><link rel="canonical" href="${SITE_URL}/${basePath}/${escapeHtml(slug)}"/><meta name="robots" content="noindex, follow"/></head><body><h1>Sayfa bulunamadı</h1><p><a href="${SITE_URL}/${listPath}">${listLabel}</a></p></body></html>`
-      );
+      return res.end(notFoundHtml(map[type]));
     }
 
     const baseHtml = await fetchBaseHtml(req);

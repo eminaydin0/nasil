@@ -18,6 +18,14 @@
       "destination": "/api/prerender?type=game&slug=:slug"
     },
     {
+      "source": "/kategori/:name",
+      "destination": "/api/prerender?type=category&slug=:name"
+    },
+    {
+      "source": "/karsilastir/:comparison",
+      "destination": "/api/prerender?type=compare&slug=:comparison"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
