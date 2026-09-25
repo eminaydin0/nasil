@@ -190,7 +190,7 @@ function HeroCarousel() {
           </span>
         </div>
 
-        <div className="absolute right-3 top-3 z-20 flex gap-1.5 sm:right-6 sm:top-5 md:right-8 md:top-7">
+        <div className="absolute right-3 top-3 z-30 flex gap-1.5 sm:right-6 sm:top-5 md:right-8 md:top-7">
           <button
             type="button"
             onClick={goPrev}
@@ -209,8 +209,8 @@ function HeroCarousel() {
           </button>
         </div>
 
-        <div className="absolute inset-0 z-20 flex items-end p-4 pb-[4.75rem] sm:items-center sm:p-7 sm:pb-7 md:p-10 lg:p-14">
-          <div key={active.id} className="hero-carousel-copy max-w-xl md:max-w-2xl">
+        <div className="pointer-events-none absolute inset-0 z-20 flex items-end p-4 pb-[4.75rem] sm:items-center sm:p-7 sm:pb-7 md:p-10 lg:p-14">
+          <div key={active.id} className="hero-carousel-copy pointer-events-auto max-w-xl md:max-w-2xl">
             <div className="mb-3 flex items-center gap-3 sm:mb-4">
               <span className="h-px w-8 bg-orange-400/80 sm:w-10" aria-hidden />
               <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-orange-300/95 sm:text-[11px]">
