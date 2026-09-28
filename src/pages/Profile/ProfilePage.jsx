@@ -73,7 +73,7 @@ function InfoRow({ icon: Icon, label, value, valueClass = '' }) {
 }
 
 function ProfilePage() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { favorites, loading: favoritesLoading } = useFavorites();
@@ -84,8 +84,9 @@ function ProfilePage() {
   const [avatarLoading, setAvatarLoading] = useState(false);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) navigate('/auth', { replace: true });
-  }, [user, navigate]);
+  }, [authLoading, user, navigate]);
 
   useEffect(() => {
     setActiveTab(hashToTab(location.hash));
@@ -171,7 +172,7 @@ function ProfilePage() {
     }
   };
 
-  if (!user) return null;
+  if (authLoading || !user) return null;
 
   const breadcrumbs = [{ name: 'Profilim', url: null }];
 
