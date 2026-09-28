@@ -84,23 +84,6 @@ function HomePage() {
     return schemas;
   }, [games]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-cream-50">
-        <section className="container mx-auto px-3 py-10 sm:px-4 sm:py-16">
-          <div className="mx-auto max-w-7xl space-y-8">
-            <div className="h-72 animate-pulse rounded-2xl bg-cream-100 sm:h-96 sm:rounded-3xl" />
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-              {[1, 2, 3, 4].map((i) => (
-                <SkeletonLoader key={i} type="game-card" />
-              ))}
-            </div>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
   const renderGameGrid = (list) => (
     <div className="home-scroll-row flex gap-3.5 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:pb-0 lg:grid-cols-4 md:gap-6">
       {list.map((game) => {
@@ -123,13 +106,15 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-cream-50 page-transition">
-      <SEO
-        title={PAGE_SEO.home.title}
-        description={homeSeo.description}
-        keywords={homeSeo.keywords || PAGE_SEO.home.keywords}
-        url="/"
-        structuredData={structuredData}
-      />
+      {!loading && (
+        <SEO
+          title={PAGE_SEO.home.title}
+          description={homeSeo.description}
+          keywords={homeSeo.keywords || PAGE_SEO.home.keywords}
+          url="/"
+          structuredData={structuredData}
+        />
+      )}
 
       {/* Hero — mobilde kenardan kenara */}
       <section className="bg-cream-50 pb-4 pt-2 sm:pb-8 sm:pt-4 md:pb-10">
@@ -152,6 +137,16 @@ function HomePage() {
         </div>
       </section>
 
+      {loading ? (
+        <div className="container mx-auto px-3 py-8 sm:px-4">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+            {[1, 2, 3, 4].map((i) => (
+              <SkeletonLoader key={i} type="game-card" />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <>
       <StatsSection />
 
       <div className="container mx-auto px-3 sm:px-4">
@@ -241,6 +236,8 @@ function HomePage() {
       <section className="mt-4 sm:mt-8">
         <NewsletterSection />
       </section>
+        </>
+      )}
     </div>
   );
 }

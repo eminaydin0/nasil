@@ -1,0 +1,27 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Kuralı Ne?",
+    "identifier": "kuraline.xyz",
+    "documentationUrl": "https://kuraline.xyz/llms.txt",
+    "logoUrl": "https://kuraline.xyz/logo.png"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:kuraline.xyz:docs:llms",
+      "displayName": "Kuralı Ne? site rehberi",
+      "type": "text/markdown",
+      "url": "https://kuraline.xyz/llms.txt",
+      "description": "Türkçe oyun rehberi platformunun kalıcı bölümleri: oyun kuralları, haberler, bedava kampanyalar ve yazboz araçları. Kategori adresleri değişebilir.",
+      "tags": ["oyun", "kurallar", "türkçe", "rehber"],
+      "representativeQueries": [
+        "okey nasıl oynanır",
+        "batak kuralları nedir",
+        "101 okey yazboz nerede",
+        "steam bedava oyunlar"
+      ],
+      "version": "1.0",
+      "updatedAt": "2026-09-28T00:00:00Z"
+    }
+  ]
+}

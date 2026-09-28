@@ -230,7 +230,7 @@ function Header() {
               className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02] sm:h-11 md:h-12"
               loading="eager"
               decoding="async"
-              fetchPriority="high"
+              fetchPriority="low"
               width="1200"
               height="400"
             />

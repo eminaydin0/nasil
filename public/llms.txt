@@ -1,0 +1,37 @@
+# Kuralı Ne?
+
+> Geleneksel ve dijital oyunların kurallarını anlatan Türkçe oyun rehberi. Yazboz ve skor araçları, oyun haberleri, bedava oyun kampanyaları ve site içi AI asistanı kuraline.xyz adresindedir.
+
+İçerik Türkçedir. Alıntı yaparken kaynak olarak https://kuraline.xyz adresini belirt. Oyun listesinin tamamı site haritasındadır; bu dosya kalıcı bölümleri gösterir.
+
+Kategori sayfaları hâlâ geliştirme aşamasında olduğundan değişebilir. Kalıcı adresler için aşağıdaki bağlantıları kullan.
+
+## Bölümler
+
+- [Ana sayfa](https://kuraline.xyz/): Oyun rehberi platformunun girişi.
+- [Oyunlar](https://kuraline.xyz/oyunlar): Okey, Batak, Pişti ve diğer oyun rehberlerinin arşivi.
+- [Haberler](https://kuraline.xyz/haberler): Oyun dünyasından haberler, çıkışlar ve indirimler.
+- [Bedava oyunlar](https://kuraline.xyz/ucretsiz-oyunlar): Steam, Epic Games ve GOG ücretsiz kampanyaları.
+- [İndirimler](https://kuraline.xyz/indirimler): Steam, Epic ve GOG oyun indirimleri.
+- [Araçlar](https://kuraline.xyz/araclar): Yazboz, sayaç, zar, kura ve takım araçları.
+- [Hakkımızda](https://kuraline.xyz/hakkimizda): Platformun ne olduğu ve marka adı.
+- [İletişim](https://kuraline.xyz/iletisim): E-posta ve iletişim formu.
+- [Site haritası](https://kuraline.xyz/sitemap.xml): Tüm dizinlenmiş sayfalar.
+
+## Araçlar
+
+- [101 Okey yazboz](https://kuraline.xyz/araclar/101-yazboz): Yüzbir oyunu ceza puanı ve el toplamı.
+- [Okey puan sayacı](https://kuraline.xyz/araclar/okey-sayaci): Düşmeli okey ceza puanı sayacı.
+- [Batak ve King yazboz](https://kuraline.xyz/araclar/batak-yazboz): İhaleli batak veya king için tur yazbozu.
+- [Takım oluşturucu](https://kuraline.xyz/araclar/takim-olusturucu): İsimleri rastgele takımlara dağıtır.
+- [Halısaha takım oluşturucu](https://kuraline.xyz/araclar/halisaha-takim-olusturucu): 5v5–11v11 diziliş kurar.
+- [Karar çarkı](https://kuraline.xyz/araclar/karar-carki): Seçenekler arasında çark çevirir.
+- [Kura çekme](https://kuraline.xyz/araclar/kura-cek): İsim listesinden rastgele kazanan seçer.
+- [Zar at](https://kuraline.xyz/araclar/zar-at): Tek veya çift zar.
+- [Skor tablosu](https://kuraline.xyz/araclar/skor-tablosu): Oyundan bağımsız puan tablosu.
+
+## Taranmayacak yollar
+
+- [Yönetim paneli](https://kuraline.xyz/admin-panel): Yönetim arayüzü. Tarama ve eğitim için kullanma.
+- [Giriş](https://kuraline.xyz/auth): Hesap girişi. Tarama ve eğitim için kullanma.
+- [Profil](https://kuraline.xyz/profil): Kullanıcı hesabı. Tarama ve eğitim için kullanma.

@@ -37,6 +37,35 @@ function padIndex(n) {
   return String(n).padStart(2, '0');
 }
 
+let slidesPromise = null;
+
+/** İlk slayt adresi gelince kapak görseli, React çizimini beklemeden istenir. */
+function getSlides() {
+  if (!slidesPromise) {
+    slidesPromise = supabase
+      .from('carousel_slides')
+      .select('id, title, description, image_url, badge, button_text, button_link, order_index')
+      .eq('is_active', true)
+      .order('order_index', { ascending: true })
+      .then(({ data, error }) => {
+        if (error) throw error;
+        const rows = data || [];
+        const firstUrl = rows[0]?.image_url;
+        if (firstUrl) {
+          const preload = new Image();
+          preload.fetchPriority = 'high';
+          preload.src = firstUrl;
+        }
+        return rows;
+      })
+      .catch((error) => {
+        slidesPromise = null;
+        throw error;
+      });
+  }
+  return slidesPromise;
+}
+
 /**
  * HeroCarousel — editorial film-strip hero.
  * Slide yoksa marka odaklı fallback gösterir.
@@ -46,27 +75,56 @@ function HeroCarousel() {
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paused, setPaused] = useState(false);
+  const [heroReady, setHeroReady] = useState(false);
+  const [bufferedIds, setBufferedIds] = useState(() => new Set());
 
   useEffect(() => {
-    fetchSlides();
+    let cancelled = false;
+    getSlides()
+      .then((rows) => {
+        if (!cancelled) setSlides(rows);
+      })
+      .catch((error) => {
+        console.error('Error fetching slides:', error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const fetchSlides = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('carousel_slides')
-        .select('*')
-        .eq('is_active', true)
-        .order('order_index', { ascending: true });
+  useEffect(() => {
+    if (!heroReady || slides.length < 2) return undefined;
+    let cancelled = false;
 
-      if (error) throw error;
-      setSlides(data || []);
-    } catch (error) {
-      console.error('Error fetching slides:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const preloadRest = async () => {
+      for (const slide of slides.slice(1)) {
+        if (cancelled) return;
+        await new Promise((resolve) => {
+          const img = new Image();
+          img.fetchPriority = 'low';
+          img.onload = () => {
+            setBufferedIds((prev) => {
+              if (prev.has(slide.id)) return prev;
+              const next = new Set(prev);
+              next.add(slide.id);
+              return next;
+            });
+            resolve();
+          };
+          img.onerror = () => resolve();
+          img.src = slide.image_url;
+        });
+      }
+    };
+
+    preloadRest();
+    return () => {
+      cancelled = true;
+    };
+  }, [heroReady, slides]);
 
   const goTo = useCallback((index) => {
     setCurrentIndex(index);
@@ -153,6 +211,7 @@ function HeroCarousel() {
       >
         {slides.map((slide, index) => {
           const isActive = index === currentIndex;
+          const showImage = index === 0 || isActive || bufferedIds.has(slide.id);
           return (
             <div
               key={slide.id}
@@ -162,15 +221,20 @@ function HeroCarousel() {
               aria-hidden={!isActive}
             >
               <div className={`absolute inset-0 hero-carousel-ken ${isActive ? 'is-active' : ''}`}>
-                <img
-                  src={slide.image_url}
-                  alt=""
-                  className="h-full w-full object-cover"
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  width="1400"
-                  height="560"
-                  fetchpriority={index === 0 ? 'high' : 'auto'}
-                />
+                {showImage && (
+                  <img
+                    src={slide.image_url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding={index === 0 ? 'auto' : 'async'}
+                    width="1400"
+                    height="560"
+                    fetchPriority={index === 0 ? 'high' : 'low'}
+                    onLoad={index === 0 ? () => setHeroReady(true) : undefined}
+                    onError={index === 0 ? () => setHeroReady(true) : undefined}
+                  />
+                )}
               </div>
               <div className="absolute inset-0 bg-gradient-to-r from-charcoal-950/88 via-charcoal-950/45 to-charcoal-950/15" />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950/90 via-transparent to-charcoal-950/25" />
@@ -190,7 +254,7 @@ function HeroCarousel() {
           </span>
         </div>
 
-        <div className="absolute right-3 top-3 z-20 flex gap-1.5 sm:right-6 sm:top-5 md:right-8 md:top-7">
+        <div className="absolute right-3 top-3 z-30 flex gap-1.5 sm:right-6 sm:top-5 md:right-8 md:top-7">
           <button
             type="button"
             onClick={goPrev}
@@ -209,8 +273,8 @@ function HeroCarousel() {
           </button>
         </div>
 
-        <div className="absolute inset-0 z-20 flex items-end p-4 pb-[4.75rem] sm:items-center sm:p-7 sm:pb-7 md:p-10 lg:p-14">
-          <div key={active.id} className="hero-carousel-copy max-w-xl md:max-w-2xl">
+        <div className="pointer-events-none absolute inset-0 z-20 flex items-end p-4 pb-[4.75rem] sm:items-center sm:p-7 sm:pb-7 md:p-10 lg:p-14">
+          <div key={active.id} className="hero-carousel-copy pointer-events-auto max-w-xl md:max-w-2xl">
             <div className="mb-3 flex items-center gap-3 sm:mb-4">
               <span className="h-px w-8 bg-orange-400/80 sm:w-10" aria-hidden />
               <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-orange-300/95 sm:text-[11px]">
@@ -270,12 +334,18 @@ function HeroCarousel() {
                     aria-label={`Slayt ${index + 1}: ${slide.title}`}
                     aria-current={isActive ? 'true' : undefined}
                   >
-                    <img
-                      src={slide.image_url}
-                      alt=""
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                    />
+                    {heroReady && (index === 0 || bufferedIds.has(slide.id)) ? (
+                      <img
+                        src={slide.image_url}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
+                      />
+                    ) : (
+                      <span className="block h-full w-full bg-white/10" />
+                    )}
                     {isActive && (
                       <span className="absolute inset-x-0 bottom-0 h-0.5 bg-orange-400" />
                     )}

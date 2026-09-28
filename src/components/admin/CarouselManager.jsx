@@ -5,6 +5,46 @@ import toast from 'react-hot-toast';
 import { useConfirm, Modal, Button } from '../ui';
 import { AdminToolbar } from './adminUi';
 
+const HERO_MAX_EDGE = 1600;
+const HERO_TARGET_BYTES = 160 * 1024;
+
+function canvasToBlob(canvas, type, quality) {
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => resolve(blob), type, quality);
+  });
+}
+
+/** Yeni slayt görselleri tam boy PNG olarak değil, hero ölçüsünde WebP gider. */
+async function compressHeroImage(file) {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, HERO_MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+  const width = Math.max(1, Math.round(bitmap.width * scale));
+  const height = Math.max(1, Math.round(bitmap.height * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d', { alpha: false });
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  bitmap.close?.();
+
+  let quality = 0.72;
+  let blob = await canvasToBlob(canvas, 'image/webp', quality);
+  const type = blob ? 'image/webp' : 'image/jpeg';
+  if (!blob) {
+    blob = await canvasToBlob(canvas, 'image/jpeg', quality);
+  }
+  if (!blob) throw new Error('Görsel sıkıştırılamadı');
+
+  while (blob.size > HERO_TARGET_BYTES && quality > 0.45) {
+    quality = Math.round((quality - 0.08) * 100) / 100;
+    const next = await canvasToBlob(canvas, type, quality);
+    if (!next || next.size >= blob.size) break;
+    blob = next;
+  }
+
+  return blob;
+}
+
 /** Hero carousel slayt yönetimi */
 function CarouselManager({ games = [] }) {
   const confirm = useConfirm();
@@ -56,13 +96,17 @@ function CarouselManager({ games = [] }) {
       const file = e.target.files[0];
       if (!file) return;
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const blob = await compressHeroImage(file);
+      const ext = blob.type === 'image/webp' ? 'webp' : 'jpg';
+      const fileName = `${Math.random().toString(36).slice(2)}.${ext}`;
       const filePath = `carousel/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('game-images')
-        .upload(filePath, file);
+        .upload(filePath, blob, {
+          contentType: blob.type,
+          cacheControl: '31536000',
+        });
 
       if (uploadError) throw uploadError;
 
