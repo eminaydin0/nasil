@@ -1,10 +1,10 @@
-import { Gamepad2, Users, MessageCircle, LayoutGrid } from 'lucide-react';
+import { Gamepad2, Eye, MessageCircle, LayoutGrid } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { useSiteStats } from '../../hooks/useSiteStats';
+import { useSiteStats, floorStat } from '../../hooks/useSiteStats';
 
 const stats = [
   { id: 'games', label: 'Oyun Rehberi', icon: Gamepad2, accent: 'from-orange-500 to-red-500', bg: 'bg-orange-50' },
-  { id: 'users', label: 'Aktif Kullanıcı', icon: Users, accent: 'from-amber-500 to-orange-500', bg: 'bg-amber-50' },
+  { id: 'reads', label: 'Okuma', icon: Eye, accent: 'from-amber-500 to-orange-500', bg: 'bg-amber-50' },
   { id: 'comments', label: 'Kullanıcı Yorumu', icon: MessageCircle, accent: 'from-rose-500 to-red-500', bg: 'bg-rose-50' },
   { id: 'categories', label: 'Kategori', icon: LayoutGrid, accent: 'from-orange-400 to-amber-500', bg: 'bg-cream-200' },
 ];
@@ -50,11 +50,11 @@ function Counter({ target, duration = 1400 }) {
     return () => cancelAnimationFrame(raf);
   }, [started, target, duration]);
 
-  return <span ref={ref}>{value}</span>;
+  return <span ref={ref}>{value.toLocaleString('tr-TR')}</span>;
 }
 
 function StatsSection() {
-  const { stats: counts } = useSiteStats();
+  const { stats: counts, loading } = useSiteStats();
 
   return (
     <section className="py-8 md:py-16">
@@ -65,7 +65,8 @@ function StatsSection() {
           <div className="relative grid grid-cols-2 divide-x divide-y divide-warm-100 md:grid-cols-4 md:divide-y-0">
             {stats.map((stat) => {
               const Icon = stat.icon;
-              const count = counts[stat.id];
+              const count = floorStat(counts[stat.id]);
+              const showPlus = !loading && count >= 5;
               return (
                 <div
                   key={stat.id}
@@ -83,13 +84,15 @@ function StatsSection() {
                   <div className="min-w-0">
                     <div className="flex items-baseline justify-center gap-0.5 leading-none sm:justify-start">
                       <span className="text-2xl font-extrabold tabular-nums tracking-tight text-warm-900 sm:text-4xl md:text-5xl">
-                        <Counter target={count} />
+                        {loading ? '—' : <Counter target={count} />}
                       </span>
-                      <span
-                        className={`bg-gradient-to-r text-lg font-extrabold sm:text-2xl md:text-3xl ${stat.accent} bg-clip-text text-transparent`}
-                      >
-                        +
-                      </span>
+                      {showPlus && (
+                        <span
+                          className={`bg-gradient-to-r text-lg font-extrabold sm:text-2xl md:text-3xl ${stat.accent} bg-clip-text text-transparent`}
+                        >
+                          +
+                        </span>
+                      )}
                     </div>
                     <p className="mt-1 truncate text-[11px] font-medium text-warm-500 sm:mt-2 sm:text-sm">
                       {stat.label}

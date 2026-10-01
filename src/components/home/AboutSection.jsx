@@ -1,12 +1,12 @@
-import { Award, ArrowRight, Users } from 'lucide-react';
+import { Award, ArrowRight, Eye } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { useSiteStats } from '../../hooks/useSiteStats';
+import { useSiteStats, floorStat } from '../../hooks/useSiteStats';
 
 /**
  * AboutSection - kültürel miras hikayesi.
- * Yüzen rozet StatsSection ile aynı veri kaynağından besleniyor (sahte 500+ kaldırıldı).
+ * Yüzen rozet StatsSection ile aynı okuma sayısından beslenir.
  */
 export default function AboutSection() {
   const { stats } = useSiteStats();
@@ -42,14 +42,8 @@ export default function AboutSection() {
     };
   }, []);
 
-  // Görüntülenecek "X+ aktif kullanıcı" - gerçek sayıyı warm bir floor'a yuvarla
-  const userBadgeCount = (() => {
-    const u = Number(stats.users) || 0;
-    if (u >= 1000) return `${Math.floor(u / 100) * 100}+`;
-    if (u >= 100) return `${Math.floor(u / 10) * 10}+`;
-    if (u >= 10) return `${u}+`;
-    return `${u}`;
-  })();
+  const reads = floorStat(stats.reads);
+  const readBadge = reads >= 5 ? `${reads.toLocaleString('tr-TR')}+` : '—';
 
   return (
     <section id="hakkinda" className="relative">
@@ -105,11 +99,11 @@ export default function AboutSection() {
             <div className="absolute -bottom-3 left-3 rounded-xl border border-warm-100 bg-white p-3 shadow-soft-lg sm:-bottom-4 sm:-left-4 sm:rounded-2xl sm:p-4 md:-left-8">
               <div className="flex items-center gap-3">
                 <div className="inline-flex items-center justify-center w-11 h-11 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-warm-glow">
-                  <Users size={20} className="text-white" />
+                  <Eye size={20} className="text-white" />
                 </div>
                 <div className="text-sm">
-                  <p className="font-extrabold text-warm-900 tracking-tight tabular-nums">{userBadgeCount}</p>
-                  <p className="text-warm-500 text-xs">Aktif Kullanıcı</p>
+                  <p className="font-extrabold text-warm-900 tracking-tight tabular-nums">{readBadge}</p>
+                  <p className="text-warm-500 text-xs">Okuma</p>
                 </div>
               </div>
             </div>
