@@ -15,7 +15,7 @@ import Breadcrumb from '../../components/common/Breadcrumb';
 import { PAGE_SEO, SCHEMA_TEMPLATES, SITE_CONFIG, generateFAQSchema } from '../../constants/seo';
 import { BRAND_DOMAIN, BRAND_FAQS, BRAND_SCHEMA_ALTERNATE_NAMES } from '../../constants/brandAliases';
 import { supabase } from '../../lib/supabase';
-import { useSiteStats } from '../../hooks/useSiteStats';
+import { useSiteStats, floorStat } from '../../hooks/useSiteStats';
 import { Button } from '../../components/ui';
 
 const CULTURAL_DEFAULT = {
@@ -26,11 +26,9 @@ const CULTURAL_DEFAULT = {
 };
 
 function formatPlus(n) {
-  const v = Number(n) || 0;
-  if (v >= 1000) return `${Math.floor(v / 100) * 100}+`;
-  if (v >= 100) return `${Math.floor(v / 10) * 10}+`;
-  if (v >= 10) return `${v}+`;
-  return `${v}`;
+  const v = floorStat(n);
+  if (v >= 5) return `${v.toLocaleString('tr-TR')}+`;
+  return v > 0 ? String(v) : '—';
 }
 
 function AboutCard({ icon: Icon, title, children, iconBg = 'bg-orange-50', iconColor = 'text-orange-600' }) {
@@ -100,9 +98,9 @@ function About() {
 
   const statItems = [
     { display: formatPlus(stats.games), label: 'Oyun rehberi' },
-    { display: `${stats.categories || 6}`, label: 'Kategori' },
+    { display: formatPlus(stats.reads), label: 'Okuma' },
+    { display: formatPlus(stats.categories), label: 'Kategori' },
     { display: formatPlus(stats.comments), label: 'Topluluk yorumu' },
-    { display: '%100', label: 'Ücretsiz' },
   ];
 
   return (
