@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
-import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
+import { CARD_FALLBACK_IMAGE, displayImage, handleImageFallback } from '../../constants/media';
 
 const ACCENT = {
   red: 'from-rose-600/90 via-rose-900/55 to-warm-950/80',
@@ -26,7 +26,7 @@ function CategoryCard({
 }) {
   const categoryUrl = encodeURIComponent(category);
   const overlay = ACCENT[color] || ACCENT.orange;
-  const src = image || CARD_FALLBACK_IMAGE;
+  const src = displayImage(image) || CARD_FALLBACK_IMAGE;
 
   return (
     <Link
@@ -40,7 +40,7 @@ function CategoryCard({
       >
         <img
           src={src}
-          alt=""
+          alt={category}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.06]"
           loading="lazy"
           decoding="async"

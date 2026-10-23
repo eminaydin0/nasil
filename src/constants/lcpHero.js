@@ -1,3 +1,7 @@
-/** Ana sayfa kapak görseli. index.html ön yüklemesi bunu aynı adresten ekler. */
-export const LCP_HERO_IMAGE =
-  'https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/carousel/lcp-hero-0.webp';
+/** Ana sayfa kapak görseli. Kendi alan adımızdan gelir; Supabase kuyruğunda beklemez. */
+export const LCP_HERO_IMAGE = '/lcp-hero-0.webp';
+
+export function heroImageSrc(url) {
+  if (url && url.includes('carousel/lcp-hero-0.webp')) return LCP_HERO_IMAGE;
+  return url;
+}

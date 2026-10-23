@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Mail, Phone, ArrowUpRight } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { afterHeroImage } from '../../lib/afterHero';
 
 const HOME_TAGLINE =
   'Geleneksel Türk oyunlarının kurallarını anlatan dijital rehberiniz. Kültürümüzün değerli mirasını gelecek nesillere aktarıyoruz.';
@@ -54,7 +55,13 @@ function Footer() {
   });
 
   useEffect(() => {
-    loadContactInfo();
+    let cancelled = false;
+    afterHeroImage().then(() => {
+      if (!cancelled) loadContactInfo();
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const loadContactInfo = async () => {
@@ -92,8 +99,8 @@ function Footer() {
                 className="h-11 w-auto object-contain sm:h-12"
                 loading="lazy"
                 decoding="async"
-                width="480"
-                height="160"
+                width="288"
+                height="96"
               />
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-warm-600">

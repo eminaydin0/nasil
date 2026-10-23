@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Users, Star, ArrowUpRight } from 'lucide-react';
 import { Badge } from '../ui';
-import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
+import { CARD_FALLBACK_IMAGE, displayImage, handleImageFallback } from '../../constants/media';
 
 /**
  * GameCard - tek kaynaklı oyun kartı.
@@ -16,7 +16,7 @@ function GameCard({ game, rating = 0, commentCount = 0, variant = 'default' }) {
   const ratingNumber = Number(rating) || 0;
   const ratingDisplay = ratingNumber > 0 ? ratingNumber.toFixed(1) : null;
   const isFeatured = variant === 'featured';
-  const imageSrc = game.image || CARD_FALLBACK_IMAGE;
+  const imageSrc = displayImage(game.image) || CARD_FALLBACK_IMAGE;
 
   return (
     <Link

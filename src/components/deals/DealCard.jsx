@@ -16,7 +16,7 @@ function DealCard({ deal }) {
       <div className="relative aspect-[460/215] overflow-hidden bg-warm-100">
         <img
           src={imageSrc}
-          alt=""
+          alt={deal.title || 'Oyun indirimi'}
           loading="lazy"
           decoding="async"
           onError={handleImageFallback}

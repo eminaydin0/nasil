@@ -102,8 +102,7 @@ function NewsDetailPage() {
       <header className="news-article-hero">
         <img
           src={coverImage}
-          alt=""
-          aria-hidden
+          alt={post.title || 'Haber görseli'}
           className="news-article-hero-bg"
           onError={(e) => {
             e.target.onerror = null;

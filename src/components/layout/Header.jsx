@@ -92,8 +92,9 @@ function Header() {
   }, []);
 
   useEffect(() => {
+    if (!searchFocused || games.length > 0) return;
     loadGames();
-  }, []);
+  }, [searchFocused, games.length]);
 
   useEffect(() => {
     syncHeaderMetrics();
@@ -231,8 +232,8 @@ function Header() {
               loading="eager"
               decoding="async"
               fetchPriority="low"
-              width="480"
-              height="160"
+              width="288"
+              height="96"
             />
           </Link>
 

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ArrowRight, ArrowLeft, ChevronRight, Compass, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { LCP_HERO_IMAGE } from '../../constants/lcpHero';
+import { LCP_HERO_IMAGE, heroImageSrc } from '../../constants/lcpHero';
 
 const AUTO_MS = 6500;
 
@@ -157,7 +157,7 @@ function HeroCarousel() {
         <div className="hero-carousel relative h-[min(72vh,440px)] overflow-hidden rounded-2xl bg-charcoal-900 sm:h-[480px] sm:rounded-3xl md:h-[560px]">
           <img
             src={LCP_HERO_IMAGE}
-            alt=""
+            alt="Geleneksel Türk oyunlarını keşfet"
             className="h-full w-full object-cover"
             loading="eager"
             decoding="async"
@@ -233,8 +233,8 @@ function HeroCarousel() {
               <div className={`absolute inset-0 hero-carousel-ken ${isActive ? 'is-active' : ''}`}>
                 {showImage && (
                   <img
-                    src={slide.image_url}
-                    alt=""
+                    src={heroImageSrc(slide.image_url)}
+                    alt={slide.title || 'Kuralı Ne?'}
                     className="h-full w-full object-cover"
                     loading={index === 0 ? 'eager' : 'lazy'}
                     decoding={index === 0 ? 'auto' : 'async'}
@@ -346,8 +346,8 @@ function HeroCarousel() {
                   >
                     {heroReady && (index === 0 || bufferedIds.has(slide.id)) ? (
                       <img
-                        src={slide.image_url}
-                        alt=""
+                        src={heroImageSrc(slide.image_url)}
+                        alt={slide.title || 'Kuralı Ne?'}
                         className="h-full w-full object-cover"
                         loading="lazy"
                         decoding="async"

@@ -30,7 +30,7 @@ function FreeGameCard({ game, compact = false }) {
       <div className="free-game-card-media">
         <img
           src={game.image || CARD_FALLBACK_IMAGE}
-          alt=""
+          alt={game.title || 'Bedava oyun'}
           loading="lazy"
           decoding="async"
           className="free-game-card-img"
