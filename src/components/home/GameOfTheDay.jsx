@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { CARD_FALLBACK_IMAGE, displayImage, handleImageFallback } from '../../constants/media';
+import { CARD_FALLBACK_IMAGE, cardImage, handleImageFallback } from '../../constants/media';
 import { afterHeroImage } from '../../lib/afterHero';
 
 /** Label zaten "Günün oyunu" — başlıktan tekrarlayan öneki düşür */
@@ -102,7 +102,7 @@ function GameOfTheDay({ games }) {
       <div className="group relative min-h-[340px] overflow-hidden rounded-2xl bg-charcoal-950 shadow-soft-xl sm:min-h-[420px] sm:rounded-3xl md:min-h-[480px]">
         <div className="absolute inset-0">
           <img
-            src={displayImage(gameOfTheDay.image) || CARD_FALLBACK_IMAGE}
+            src={cardImage(gameOfTheDay.image, 1200) || CARD_FALLBACK_IMAGE}
             alt={gameOfTheDay.name || 'Günün oyunu'}
             className="h-full w-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.03]"
             loading="lazy"
