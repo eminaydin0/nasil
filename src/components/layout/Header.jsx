@@ -225,14 +225,14 @@ function Header() {
             aria-label="Kuralı Ne? - Ana Sayfa"
           >
             <img
-              src="/logo.png"
+              src="/logo.webp"
               alt="Kuralı Ne?"
               className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02] sm:h-11 md:h-12"
               loading="eager"
               decoding="async"
               fetchPriority="low"
-              width="1200"
-              height="400"
+              width="480"
+              height="160"
             />
           </Link>
 

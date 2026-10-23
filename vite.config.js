@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import dotenv from 'dotenv';
@@ -20,8 +21,59 @@ function googleSiteVerificationPlugin() {
   };
 }
 
+function lcpPreloadPlugin() {
+  let href = '';
+  try {
+    const src = fs.readFileSync(new URL('./src/constants/lcpHero.js', import.meta.url), 'utf8');
+    href = src.match(/LCP_HERO_IMAGE\s*=\s*'([^']+)'/)?.[1] || '';
+  } catch {
+    href = '';
+  }
+  return {
+    name: 'lcp-preload',
+    transformIndexHtml(html) {
+      if (!href || html.includes('rel="preload" as="image"')) return html;
+      return html.replace(
+        '</head>',
+        `    <link rel="preload" as="image" href="${href}" fetchpriority="high" />\n  </head>`
+      );
+    },
+  };
+}
+
+/** Giriş CSS dosyasını HTML içine alır; ilk çizimi ayrı bir engelleyici istek beklemez. */
+function inlineEntryCssPlugin() {
+  return {
+    name: 'inline-entry-css',
+    apply: 'build',
+    enforce: 'post',
+    generateBundle(_, bundle) {
+      const htmlKey = Object.keys(bundle).find((name) => name.endsWith('index.html'));
+      const htmlAsset = htmlKey ? bundle[htmlKey] : null;
+      if (!htmlAsset || typeof htmlAsset.source !== 'string') return;
+
+      let html = htmlAsset.source;
+      const linkRe = /<link rel="stylesheet"[^>]*href="(\/assets\/[^"]+\.css)"[^>]*>/g;
+      const used = new Set();
+      html = html.replace(linkRe, (tag, href) => {
+        const key = href.replace(/^\//, '');
+        const cssAsset = bundle[key];
+        if (!cssAsset) return tag;
+        const css = (typeof cssAsset.source === 'string' ? cssAsset.source : cssAsset.source?.toString?.() || '').replace(
+          /<\/style/gi,
+          '<\\/style'
+        );
+        used.add(key);
+        return `<style>${css}</style>`;
+      });
+      htmlAsset.source = html;
+      for (const key of used) delete bundle[key];
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), localApiPlugin(), googleSiteVerificationPlugin()],
+  plugins: [react(), localApiPlugin(), googleSiteVerificationPlugin(), lcpPreloadPlugin(), inlineEntryCssPlugin()],
   resolve: {
     dedupe: ['react', 'react-dom'],
   },

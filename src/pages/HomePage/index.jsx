@@ -27,6 +27,7 @@ import {
 } from '../../constants/seo';
 import { buildHomeSeoMeta, buildHomeFaqs } from '../../lib/seoEngine';
 import { generateHomeSitelinkSchemas } from '../../constants/siteNavigation';
+import WhenVisible from '../../components/common/WhenVisible';
 
 const MOBILE_QUICK_LINKS = [
   { to: '/oyunlar', label: 'Oyunlar', icon: Gamepad2 },
@@ -184,7 +185,9 @@ function HomePage() {
           <GameOfTheDay games={games} />
         </section>
 
-        <FreeGamesSection limit={8} />
+        <WhenVisible>
+          <FreeGamesSection limit={8} />
+        </WhenVisible>
 
         <section
           className="border-t border-warm-200/60 py-8 md:py-16"
@@ -218,24 +221,34 @@ function HomePage() {
           {renderGameGrid(newGames)}
         </section>
 
-        <NewsSection />
+        <WhenVisible>
+          <NewsSection />
+        </WhenVisible>
 
-        <section className="border-t border-warm-200/60 py-8 md:py-16">
-          <ToolsSection />
-        </section>
+        <WhenVisible>
+          <section className="border-t border-warm-200/60 py-8 md:py-16">
+            <ToolsSection />
+          </section>
+        </WhenVisible>
 
-        <section className="border-t border-warm-200/60 py-8 md:py-16">
-          <TestimonialsSection />
-        </section>
+        <WhenVisible>
+          <section className="border-t border-warm-200/60 py-8 md:py-16">
+            <TestimonialsSection />
+          </section>
+        </WhenVisible>
 
-        <section className="border-t border-warm-200/60 py-8 md:py-16">
-          <AboutSection />
-        </section>
+        <WhenVisible>
+          <section className="border-t border-warm-200/60 py-8 md:py-16">
+            <AboutSection />
+          </section>
+        </WhenVisible>
       </div>
 
-      <section className="mt-4 sm:mt-8">
-        <NewsletterSection />
-      </section>
+      <WhenVisible>
+        <section className="mt-4 sm:mt-8">
+          <NewsletterSection />
+        </section>
+      </WhenVisible>
         </>
       )}
     </div>

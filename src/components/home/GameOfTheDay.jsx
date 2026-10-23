@@ -100,6 +100,7 @@ function GameOfTheDay({ games }) {
             className="h-full w-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.03]"
             loading="lazy"
             decoding="async"
+            fetchPriority="low"
             width="1200"
             height="480"
             onError={handleImageFallback}

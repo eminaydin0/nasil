@@ -21,7 +21,7 @@ import {
   PanelLeftOpen,
 } from 'lucide-react';
 
-const LOGO_URL = '/logo.png';
+const LOGO_URL = '/logo.webp';
 
 const NAV_GROUPS = [
   {

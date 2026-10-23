@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ArrowRight, ArrowLeft, ChevronRight, Compass, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { LCP_HERO_IMAGE } from '../../constants/lcpHero';
 
 const AUTO_MS = 6500;
 
@@ -153,8 +154,17 @@ function HeroCarousel() {
   if (loading) {
     return (
       <div className="mx-auto w-full max-w-[1400px] px-3 sm:px-4">
-        <div className="hero-carousel flex h-[min(72vh,440px)] animate-pulse items-center justify-center overflow-hidden rounded-2xl bg-charcoal-900 sm:h-[480px] sm:rounded-3xl md:h-[560px]">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-orange-400" />
+        <div className="hero-carousel relative h-[min(72vh,440px)] overflow-hidden rounded-2xl bg-charcoal-900 sm:h-[480px] sm:rounded-3xl md:h-[560px]">
+          <img
+            src={LCP_HERO_IMAGE}
+            alt=""
+            className="h-full w-full object-cover"
+            loading="eager"
+            decoding="async"
+            width="1400"
+            height="560"
+            fetchPriority="high"
+          />
         </div>
       </div>
     );

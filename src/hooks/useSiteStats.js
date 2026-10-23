@@ -75,8 +75,23 @@ export function useSiteStats() {
   const stats = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   useEffect(() => {
-    if (cachedStats) return;
-    loadOnce();
+    if (cachedStats) return undefined;
+    let cancelled = false;
+    const start = () => {
+      if (!cancelled) loadOnce();
+    };
+    if (typeof requestIdleCallback === 'function') {
+      const id = requestIdleCallback(start, { timeout: 1800 });
+      return () => {
+        cancelled = true;
+        cancelIdleCallback(id);
+      };
+    }
+    const timer = setTimeout(start, 400);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, []);
 
   return { stats, loading: !cachedStats };

@@ -149,7 +149,7 @@ function AuthPage() {
           <div className="relative z-10 flex h-full flex-col justify-between px-10 py-12 xl:px-14 xl:py-14">
             <Link to="/" className="inline-flex w-fit items-center gap-3 transition-opacity hover:opacity-90">
               <img
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Kuralı Ne?"
                 className="h-14 w-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)] animate-float"
               />
@@ -185,7 +185,7 @@ function AuthPage() {
             <div className="mb-5 flex items-center justify-center gap-3 lg:hidden">
               <Link to="/" className="shrink-0">
                 <img
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="Kuralı Ne?"
                   className="h-11 w-auto rounded-xl bg-charcoal-950 p-1.5 shadow-soft"
                 />
