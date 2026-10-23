@@ -38,6 +38,7 @@ function GameCard({ game, rating = 0, commentCount = 0, variant = 'default' }) {
             alt={game.name}
             loading="lazy"
             decoding="async"
+            fetchPriority="low"
             width="640"
             height="400"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.06]"

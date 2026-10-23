@@ -43,6 +43,10 @@ function CategoryCard({
           alt=""
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.06]"
           loading="lazy"
+          decoding="async"
+          fetchPriority="low"
+          width="480"
+          height="600"
           onError={(e) => handleImageFallback(e)}
         />
 

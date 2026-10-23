@@ -87,13 +87,13 @@ function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <Link to="/" className="inline-flex items-center" aria-label="Kuralı Ne? - Ana Sayfa">
               <img
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Kuralı Ne?"
                 className="h-11 w-auto object-contain sm:h-12"
                 loading="lazy"
                 decoding="async"
-                width="1200"
-                height="400"
+                width="480"
+                height="160"
               />
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-warm-600">
