@@ -30,7 +30,7 @@ function NewsCard({ post, variant = 'default', showTrend = false, rank }) {
           </p>
         </div>
         <div className="news-card-minimal-thumb">
-          <img src={image} alt="" loading="lazy" onError={handleImageFallback} />
+          <img src={image} alt={post.title} loading="lazy" onError={handleImageFallback} />
         </div>
       </Link>
     );

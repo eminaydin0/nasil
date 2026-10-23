@@ -1,5 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react';
 import { supabase } from '../lib/supabase';
+import { afterHeroImage } from '../lib/afterHero';
 
 /**
  * useSiteStats - global site istatistiklerini tek seferde çeker.
@@ -80,17 +81,9 @@ export function useSiteStats() {
     const start = () => {
       if (!cancelled) loadOnce();
     };
-    if (typeof requestIdleCallback === 'function') {
-      const id = requestIdleCallback(start, { timeout: 1800 });
-      return () => {
-        cancelled = true;
-        cancelIdleCallback(id);
-      };
-    }
-    const timer = setTimeout(start, 400);
+    afterHeroImage().then(start);
     return () => {
       cancelled = true;
-      clearTimeout(timer);
     };
   }, []);
 

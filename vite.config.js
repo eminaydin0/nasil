@@ -22,17 +22,18 @@ function googleSiteVerificationPlugin() {
 }
 
 function lcpPreloadPlugin() {
-  let href = '';
-  try {
-    const src = fs.readFileSync(new URL('./src/constants/lcpHero.js', import.meta.url), 'utf8');
-    href = src.match(/LCP_HERO_IMAGE\s*=\s*'([^']+)'/)?.[1] || '';
-  } catch {
-    href = '';
-  }
   return {
     name: 'lcp-preload',
     transformIndexHtml(html) {
-      if (!href || html.includes('rel="preload" as="image"')) return html;
+      if (html.includes('rel="preload" as="image"')) return html;
+      let href = '';
+      try {
+        const src = fs.readFileSync(new URL('./src/constants/lcpHero.js', import.meta.url), 'utf8');
+        href = src.match(/LCP_HERO_IMAGE\s*=\s*'([^']+)'/)?.[1] || '';
+      } catch {
+        href = '';
+      }
+      if (!href) return html;
       return html.replace(
         '</head>',
         `    <link rel="preload" as="image" href="${href}" fetchpriority="high" />\n  </head>`

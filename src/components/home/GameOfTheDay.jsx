@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
+import { CARD_FALLBACK_IMAGE, displayImage, handleImageFallback } from '../../constants/media';
+import { afterHeroImage } from '../../lib/afterHero';
 
 /** Label zaten "Günün oyunu" — başlıktan tekrarlayan öneki düşür */
 function resolveDailyTitle(customTitle, gameName) {
@@ -22,7 +23,13 @@ function GameOfTheDay({ games }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchGameOfTheDay();
+    let cancelled = false;
+    afterHeroImage().then(() => {
+      if (!cancelled) fetchGameOfTheDay();
+    });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [games]);
 
@@ -95,8 +102,8 @@ function GameOfTheDay({ games }) {
       <div className="group relative min-h-[340px] overflow-hidden rounded-2xl bg-charcoal-950 shadow-soft-xl sm:min-h-[420px] sm:rounded-3xl md:min-h-[480px]">
         <div className="absolute inset-0">
           <img
-            src={gameOfTheDay.image || CARD_FALLBACK_IMAGE}
-            alt=""
+            src={displayImage(gameOfTheDay.image) || CARD_FALLBACK_IMAGE}
+            alt={gameOfTheDay.name || 'Günün oyunu'}
             className="h-full w-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.03]"
             loading="lazy"
             decoding="async"
