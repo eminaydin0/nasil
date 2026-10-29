@@ -138,6 +138,8 @@ function HomePage() {
         </div>
       </section>
 
+      <StatsSection />
+
       {loading ? (
         <div className="container mx-auto px-3 py-8 sm:px-4">
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
@@ -148,8 +150,6 @@ function HomePage() {
         </div>
       ) : (
         <>
-      <StatsSection />
-
       <div className="container mx-auto px-3 sm:px-4">
         {/* Kategoriler — mobilde yatay kaydırma */}
         <section className="py-8 md:py-16" aria-labelledby="categories-title">

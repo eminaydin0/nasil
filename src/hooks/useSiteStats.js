@@ -1,6 +1,5 @@
 import { useEffect, useSyncExternalStore } from 'react';
 import { supabase } from '../lib/supabase';
-import { afterHeroImage } from '../lib/afterHero';
 
 /**
  * useSiteStats - global site istatistiklerini tek seferde çeker.
@@ -24,7 +23,34 @@ export function floorStat(n) {
 function sumCounts(rows) {
   return (rows || []).reduce((sum, row) => sum + (Number(row.view_count) || 0), 0);
 }
-let cachedStats = null;
+const CACHE_KEY = 'kuraline-site-stats-v1';
+
+function readSession() {
+  if (typeof sessionStorage === 'undefined') return null;
+  try {
+    const parsed = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
+    if (!parsed || typeof parsed !== 'object') return null;
+    const games = Number(parsed.games);
+    const reads = Number(parsed.reads);
+    const comments = Number(parsed.comments);
+    const categories = Number(parsed.categories);
+    if (![games, reads, comments, categories].every((n) => Number.isFinite(n) && n >= 0)) return null;
+    return { games, reads, comments, categories };
+  } catch {
+    return null;
+  }
+}
+
+function writeSession(stats) {
+  if (typeof sessionStorage === 'undefined') return;
+  try {
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify(stats));
+  } catch {
+    /* dolu depolama sayıyı engellemesin */
+  }
+}
+
+let cachedStats = typeof window !== 'undefined' ? readSession() : null;
 let inflight = null;
 const listeners = new Set();
 
@@ -33,7 +59,6 @@ function emit() {
 }
 
 async function loadOnce() {
-  if (cachedStats) return cachedStats;
   if (inflight) return inflight;
 
   inflight = (async () => {
@@ -51,9 +76,10 @@ async function loadOnce() {
         comments: commentsQ.count || 0,
         categories: categoriesQ.count || 0,
       };
+      writeSession(cachedStats);
     } catch (err) {
       console.error('useSiteStats error:', err);
-      cachedStats = { ...DEFAULT_STATS };
+      if (!cachedStats) cachedStats = { ...DEFAULT_STATS };
     }
     inflight = null;
     emit();
@@ -76,18 +102,14 @@ export function useSiteStats() {
   const stats = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   useEffect(() => {
-    if (cachedStats) return undefined;
-    let cancelled = false;
-    const start = () => {
-      if (!cancelled) loadOnce();
-    };
-    afterHeroImage().then(start);
-    return () => {
-      cancelled = true;
-    };
+    loadOnce();
   }, []);
 
   return { stats, loading: !cachedStats };
+}
+
+if (typeof window !== 'undefined') {
+  loadOnce();
 }
 
 export default useSiteStats;

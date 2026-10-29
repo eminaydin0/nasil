@@ -34,7 +34,8 @@ function truncate(text, max = 160) {
 }
 
 function injectMeta(html, { title, description, canonical, keywords, image, type = 'website' }) {
-  const fullTitle = title.includes('Kuralı Ne?') ? title : `${title} - Kuralı Ne?`;
+  const hasBrand = /kuralı\s*ne/i.test(title || '');
+  const fullTitle = hasBrand ? title : `${title} - Kuralı Ne?`;
   const desc = description || 'Kuralı Ne? oyun rehberi platformu.';
   const ogImage = image || `${SITE_URL}/og-image.jpg`;
   const kw = keywords || 'kuralı ne, oyun kuralları';
@@ -135,15 +136,14 @@ async function resolveGame(slug) {
 
   if (error || !data) return null;
 
-  const isDigital = /pc|konsol|mobil/i.test(data.category || '');
-  const title = isDigital ? `${data.name} Nasıl Oynanır?` : `${data.name} Kuralı Ne?`;
+  const title = `${data.name} Kuralı Ne`;
 
   return {
     title,
     description: truncate(
-      data.short_description || data.description || `${data.name} kuralları ve rehberi — Kuralı Ne?`
+      `${data.name} kuralı ne. ${data.short_description || data.description || 'Kurallar, nasıl oynanır ve ipuçları.'}`
     ),
-    keywords: `${data.name}, ${data.category || ''}, kuralı ne, nasıl oynanır`.replace(/,\s*,/g, ','),
+    keywords: `${data.name} kuralı ne, ${data.name} kuralları, ${data.name} nasıl oynanır, ${data.category || ''}, kuralı ne`.replace(/,\s*,/g, ','),
     image: data.image,
     canonical: `${SITE_URL}/oyun/${data.slug}`,
     type: 'article',

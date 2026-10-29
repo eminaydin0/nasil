@@ -41,7 +41,7 @@ function CategoryPage() {
       // Tam eşleşme ile kategoriye göre oyunları getir
       const { data, error } = await supabase
         .from('games')
-        .select('*')
+        .select('id,slug,name,category,players,difficulty,image,short_description,created_at')
         .eq('category', decodedCategoryName)
         .order('id', { ascending: true });
       
@@ -56,9 +56,7 @@ function CategoryPage() {
         difficulty: game.difficulty,
         image: game.image,
         shortDescription: game.short_description,
-        description: game.description,
-        rules: game.rules,
-        tips: game.tips
+        createdAt: game.created_at,
       }));
       
       setGames(formattedGames);
