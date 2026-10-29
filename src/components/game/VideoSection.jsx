@@ -45,7 +45,7 @@ export default function VideoSection({ game }) {
 
   if (!embedUrl) return null;
 
-  const title = game.videoTitle || `${game.name} Kuralı Ne? - Video Anlatım`;
+  const title = game.videoTitle || `${game.name} Kuralı Ne - Video Anlatım`;
 
   return (
     <section

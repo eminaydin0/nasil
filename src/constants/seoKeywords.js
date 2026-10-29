@@ -135,8 +135,7 @@ export const TOOL_PAGE_SEO = {
 /** Oyun detay meta şablonları */
 export function buildGameTitle(gameName, category) {
   if (!gameName) return 'Oyun Rehberi';
-  const digital = ['PC Oyunları', 'Konsol Oyunları', 'Mobil Oyunlar'].includes(category);
-  return digital ? `${gameName} Nasıl Oynanır?` : `${gameName} Kuralı Ne?`;
+  return `${gameName} Kuralı Ne`;
 }
 
 export function buildGameDescription(game) {
@@ -144,7 +143,7 @@ export function buildGameDescription(game) {
   const short = game?.shortDescription || game?.description?.slice(0, 120) || '';
   const players = game?.players ? ` ${game.players} kişi ·` : '';
   const diff = game?.difficulty ? ` ${game.difficulty} ·` : '';
-  const base = `${name} kuralı ne? ${short}`.trim();
+  const base = `${name} kuralı ne. ${short}`.trim();
   const suffix = `${players}${diff} Adım adım kurallar ve ipuçları.`.replace(/\s+/g, ' ');
   const combined = `${base} ${suffix}`.trim();
   return combined.length > 160 ? `${combined.slice(0, 157)}…` : combined;

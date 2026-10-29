@@ -152,21 +152,18 @@ export function buildGameDescription(game) {
   if (!g) return '';
 
   const isDigital = isDigitalGameCategory(g.category);
-  const parts = [];
+  const parts = [`${g.name} kuralı ne`];
   const intro = g.shortDescription || truncateText(g.description, 100);
+  if (intro) parts.push(intro);
 
   if (isDigital) {
     parts.push(`${g.name} nasıl oynanır?`);
-    if (intro) parts.push(intro);
     const metaBits = [];
     if (g.category) metaBits.push(g.category.replace(' Oyunları', '').replace(' Oyunlar', ''));
     if (g.players) metaBits.push(g.players);
     if (metaBits.length) parts.push(metaBits.join(' · '));
     parts.push('Sistem gereksinimleri, indirme linkleri, ipuçları.');
   } else {
-    parts.push(`${g.name} kuralı ne?`);
-    if (intro) parts.push(intro);
-
     const metaBits = [];
     if (g.players) metaBits.push(g.players);
     if (g.difficulty) metaBits.push(`${g.difficulty} seviye`);
@@ -180,7 +177,7 @@ export function buildGameDescription(game) {
     if (g.videoUrl) contentBits.push('video anlatım');
     if (g.faq?.length) contentBits.push(`${g.faq.length} SSS`);
     if (contentBits.length) parts.push(`${contentBits.join(', ')}.`);
-    if (!contentBits.length) parts.push('Adım adım kurallar, stratejiler ve püf noktaları.');
+    else parts.push('Adım adım kurallar, stratejiler ve püf noktaları.');
   }
 
   return truncateText(parts.join(' '), 160);
@@ -192,40 +189,42 @@ export function buildGameKeywords(game) {
 
   const name = g.name;
   const isDigital = isDigitalGameCategory(g.category);
-  const keywords = isDigital
-    ? [
-        `${name} nasıl oynanır`,
-        `${name} rehberi`,
-        `${name} sistem gereksinimleri`,
-        `${name} steam`,
-        `${name} türkçe rehber`,
-        `${name} indir`,
-        g.category,
-        g.category ? `${g.category.toLocaleLowerCase('tr-TR')} rehberi` : null,
-        ...getCategoryKeywords(g.category),
-        'oyun rehberi',
-        'nasıl oynanır',
-      ]
-    : [
-        `${name} kuralı ne`,
-        `${name} nasıl oynanır`,
-        `${name} kuralları`,
-        `${name} ipuçları`,
-        `${name} stratejileri`,
-        `${name} oyunu`,
-        `${name.toLocaleLowerCase('tr-TR')} kuralları`,
-        g.category,
-        g.category ? `${g.category.toLocaleLowerCase('tr-TR')} kuralları` : null,
-        g.difficulty ? `${g.difficulty} ${g.category || 'oyun'}`.toLocaleLowerCase('tr-TR') : null,
-        g.players,
-        ...getCategoryKeywords(g.category),
-        ...getNamePatternKeywords(name),
-        ...extractRuleKeywords(g.rules).map((w) => `${name} ${w}`),
-        'kuralı ne',
-        'nasıl oynanır',
-        'oyun kuralları',
-        'geleneksel türk oyunları',
-      ];
+  const keywords = [
+    `${name} kuralı ne`,
+    `${name.toLocaleLowerCase('tr-TR')} kuralı ne`,
+    `${name} nasıl oynanır`,
+    `${name} kuralları`,
+    ...(isDigital
+      ? [
+          `${name} rehberi`,
+          `${name} sistem gereksinimleri`,
+          `${name} steam`,
+          `${name} türkçe rehber`,
+          `${name} indir`,
+          g.category,
+          g.category ? `${g.category.toLocaleLowerCase('tr-TR')} rehberi` : null,
+          ...getCategoryKeywords(g.category),
+          'oyun rehberi',
+          'nasıl oynanır',
+        ]
+      : [
+          `${name} ipuçları`,
+          `${name} stratejileri`,
+          `${name} oyunu`,
+          `${name.toLocaleLowerCase('tr-TR')} kuralları`,
+          g.category,
+          g.category ? `${g.category.toLocaleLowerCase('tr-TR')} kuralları` : null,
+          g.difficulty ? `${g.difficulty} ${g.category || 'oyun'}`.toLocaleLowerCase('tr-TR') : null,
+          g.players,
+          ...getCategoryKeywords(g.category),
+          ...getNamePatternKeywords(name),
+          ...extractRuleKeywords(g.rules).map((w) => `${name} ${w}`),
+          'kuralı ne',
+          'nasıl oynanır',
+          'oyun kuralları',
+          'geleneksel türk oyunları',
+        ]),
+  ];
 
   return dedupeList(keywords.filter(Boolean)).slice(0, 25).join(', ');
 }
@@ -267,7 +266,17 @@ function generateAutoFaqs(game) {
   const g = normalizeGameInput(game);
   if (!g?.name) return [];
 
-  const faqs = [];
+  const faqs = [
+    {
+      question: `${g.name} kuralı ne`,
+      answer: g.shortDescription
+        ? `${g.name} kuralı ne: ${truncateText(g.shortDescription, 220, '…')}`
+        : g.rules?.length
+          ? `${g.name} kuralı ne, ${g.rules.length} adımda anlatılır. İlk adım: ${truncateText(g.rules[0], 160, '…')}`
+          : `${g.name} kuralı ne sorusunun yanıtı bu sayfada: kurallar, oyuncu sayısı ve ipuçları bir arada.`,
+      source: 'auto-query',
+    },
+  ];
   const players = parsePlayerCount(g.players);
 
   if (players?.label) {

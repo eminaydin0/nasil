@@ -309,12 +309,9 @@ function minutesToIso8601(minutes) {
 }
 
 // Oyun SEO başlık kalıbı — geleneksel vs dijital
-export function getGameSeoHeadline(gameName, category) {
+export function getGameSeoHeadline(gameName) {
   if (!gameName) return 'Oyun Rehberi';
-  if (isDigitalGameCategory(category)) {
-    return `${gameName} Nasıl Oynanır?`;
-  }
-  return `${gameName} Kuralı Ne?`;
+  return `${gameName} Kuralı Ne`;
 }
 
 // Oyun için HowTo schema oluşturucu
@@ -403,7 +400,7 @@ function getVideoEmbedUrl(url) {
 export function generateVideoSchema(game) {
   if (!game?.videoUrl) return null;
 
-  const name = game.videoTitle || `${game.name} Kuralı Ne? - Video Anlatım`;
+  const name = game.videoTitle || `${game.name} Kuralı Ne - Video Anlatım`;
   const description = game.shortDescription
     ? `${game.name} oyununun nasıl oynandığını adım adım anlatan video. ${game.shortDescription}`
     : `${game.name} oyununun nasıl oynandığını anlatan video.`;
@@ -488,7 +485,7 @@ export function generateArticleSchema(game) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${game.name} Kuralı Ne? Kuralları ve İpuçları`,
+    headline: `${game.name} Kuralı Ne`,
     description: game.shortDescription || game.description,
     image: game.image,
     author: {
@@ -676,7 +673,12 @@ export function buildComparisonPath(slugA, slugB) {
 // Title oluşturucu
 export function generateTitle(pageTitle, includeSiteName = true) {
   if (!pageTitle) return DEFAULT_META.title;
-  return includeSiteName ? `${pageTitle} - ${SITE_CONFIG.name}` : pageTitle;
+  if (!includeSiteName) return pageTitle;
+  const brand = String(SITE_CONFIG.name || '').replace(/\?+$/, '').trim();
+  if (brand && pageTitle.toLocaleLowerCase('tr-TR').includes(brand.toLocaleLowerCase('tr-TR'))) {
+    return pageTitle;
+  }
+  return `${pageTitle} - ${SITE_CONFIG.name}`;
 }
 
 // Open Graph image URL oluşturucu

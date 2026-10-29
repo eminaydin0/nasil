@@ -3,7 +3,7 @@ import { trackShare } from '../../utils/analytics';
 
 function SocialShare({ game }) {
   const url = `/oyun/${game.slug}`;
-  const title = `${game.name} Nasıl Oynanır? — Kuralı Ne?`;
+  const title = `${game.name} Kuralı Ne`;
 
   const handleShare = (platform) => {
     trackShare(platform, game.name, game.id);

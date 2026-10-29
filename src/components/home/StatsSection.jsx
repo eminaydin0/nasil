@@ -1,5 +1,4 @@
 import { Gamepad2, Eye, MessageCircle, LayoutGrid } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
 import { useSiteStats, floorStat } from '../../hooks/useSiteStats';
 
 const stats = [
@@ -8,50 +7,6 @@ const stats = [
   { id: 'comments', label: 'Kullanıcı Yorumu', icon: MessageCircle, accent: 'from-rose-500 to-red-500', bg: 'bg-rose-50' },
   { id: 'categories', label: 'Kategori', icon: LayoutGrid, accent: 'from-orange-400 to-amber-500', bg: 'bg-cream-200' },
 ];
-
-/**
- * Counter - 0'dan target sayıya rolling animasyon (IntersectionObserver tetikli)
- */
-function Counter({ target, duration = 1400 }) {
-  const [value, setValue] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started) {
-          setStarted(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.4 }
-    );
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [started]);
-
-  useEffect(() => {
-    if (!started) return;
-    const startTs = performance.now();
-    const startVal = 0;
-    const endVal = Number(target) || 0;
-
-    let raf;
-    const step = (now) => {
-      const elapsed = Math.min(1, (now - startTs) / duration);
-      // easeOutCubic
-      const eased = 1 - Math.pow(1 - elapsed, 3);
-      setValue(Math.round(startVal + (endVal - startVal) * eased));
-      if (elapsed < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [started, target, duration]);
-
-  return <span ref={ref}>{value.toLocaleString('tr-TR')}</span>;
-}
 
 function StatsSection() {
   const { stats: counts, loading } = useSiteStats();
@@ -84,7 +39,7 @@ function StatsSection() {
                   <div className="min-w-0">
                     <div className="flex items-baseline justify-center gap-0.5 leading-none sm:justify-start">
                       <span className="text-2xl font-extrabold tabular-nums tracking-tight text-warm-900 sm:text-4xl md:text-5xl">
-                        {loading ? '—' : <Counter target={count} />}
+                        {loading ? '—' : count.toLocaleString('tr-TR')}
                       </span>
                       {showPlus && (
                         <span

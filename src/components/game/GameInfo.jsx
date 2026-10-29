@@ -45,7 +45,7 @@ function printGameRules(game) {
   </style>
 </head>
 <body>
-  <h1>${escapeHtml(game.name)}</h1>
+  <h1>${escapeHtml(game.name)} Kuralı Ne</h1>
   <p class="meta">${escapeHtml(game.category)} · ${escapeHtml(game.players)} · ${escapeHtml(game.difficulty || '')}</p>
   <p>${escapeHtml(game.description || '')}</p>
   ${rules.length ? `<h2>${escapeHtml(rulesHeading)}</h2><ol>${rulesHtml}</ol>` : ''}
