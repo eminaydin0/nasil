@@ -105,7 +105,7 @@ function DealsManager() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {deal.image && (
-                          <img src={deal.image} alt="" className="h-10 w-16 rounded object-cover" />
+                          <img loading="lazy" width="64" height="64" src={deal.image} alt="" className="h-10 w-16 rounded object-cover" />
                         )}
                         <span className="line-clamp-2 font-semibold text-warm-900">{deal.title}</span>
                       </div>

@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Search, TrendingUp, Clock, Flame, Sparkles } from 'lucide-react';
+import { Search, TrendingUp, Clock, Flame } from 'lucide-react';
 import NewsCard from '../../components/news/NewsCard';
 import NewsFeaturedHero from '../../components/news/NewsFeaturedHero';
 import NewsSidebar from '../../components/news/NewsSidebar';
 import SEO from '../../components/common/SEO';
-import Breadcrumb from '../../components/common/Breadcrumb';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import { useNews } from '../../hooks/useNews';
 import { PAGE_SEO, SCHEMA_TEMPLATES, SITE_CONFIG } from '../../constants/seo';
@@ -129,37 +128,8 @@ function NewsPage() {
         breadcrumbs={breadcrumbs}
       />
 
-      {/* Editorial header */}
-      <header className="news-hub-header">
-        <div className="news-hub-header-glow" aria-hidden />
-        <div className="container mx-auto px-4">
-          <Breadcrumb items={breadcrumbs} className="news-hub-breadcrumb" />
-          <div className="news-hub-header-inner">
-            <div>
-              <p className="news-hub-eyebrow">
-                <Sparkles size={14} aria-hidden />
-                Oyun dünyasından son dakika
-              </p>
-              <h1 className="news-hub-title">Haberler</h1>
-              <p className="news-hub-subtitle">
-                Çıkış tarihleri, fiyatlar, güncellemeler ve trend haberler — tek adreste.
-              </p>
-            </div>
-            <div className="news-hub-header-stats">
-              <div className="news-hub-stat">
-                <span className="news-hub-stat-value">{rawPosts.length}</span>
-                <span className="news-hub-stat-label">haber</span>
-              </div>
-              <div className="news-hub-stat">
-                <span className="news-hub-stat-value">{categoryTabs.length - 1}</span>
-                <span className="news-hub-stat-label">kategori</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="container mx-auto px-4 pb-16 pt-6 sm:pt-8">
+        <h1 className="sr-only">Haberler</h1>
         {/* Toolbar */}
         <div className="news-hub-toolbar">
           <div className="news-hub-sort">

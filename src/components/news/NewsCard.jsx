@@ -30,7 +30,7 @@ function NewsCard({ post, variant = 'default', showTrend = false, rank }) {
           </p>
         </div>
         <div className="news-card-minimal-thumb">
-          <img src={image} alt={post.title} loading="lazy" onError={handleImageFallback} />
+          <img src={image} alt={post.title} width="160" height="120" loading="lazy" onError={handleImageFallback} />
         </div>
       </Link>
     );
@@ -40,7 +40,7 @@ function NewsCard({ post, variant = 'default', showTrend = false, rank }) {
     return (
       <Link to={`/haberler/${post.slug}`} className="news-card-horizontal group">
         <div className="news-card-horizontal-media">
-          <img src={image} alt={post.title} loading="lazy" onError={handleImageFallback} />
+          <img src={image} alt={post.title} width="160" height="120" loading="lazy" onError={handleImageFallback} />
           {isTrending && (
             <span className="news-chip news-chip-live">
               <Flame size={10} aria-hidden />
@@ -68,7 +68,7 @@ function NewsCard({ post, variant = 'default', showTrend = false, rank }) {
   if (variant === 'overlay') {
     return (
       <Link to={`/haberler/${post.slug}`} className="news-card-overlay group">
-        <img src={image} alt={post.title} loading="lazy" className="news-card-overlay-img" onError={handleImageFallback} />
+        <img src={image} alt={post.title} width="640" height="360" loading="lazy" className="news-card-overlay-img" onError={handleImageFallback} />
         <div className="news-card-overlay-shade" />
         <div className="news-card-overlay-content">
           <span className="news-chip news-chip-glass">{post.category}</span>
@@ -89,7 +89,7 @@ function NewsCard({ post, variant = 'default', showTrend = false, rank }) {
       aria-label={post.title}
     >
       <div className="news-card-media">
-        <img src={image} alt={post.title} loading="lazy" decoding="async" onError={handleImageFallback} />
+        <img src={image} alt={post.title} width="640" height="360" loading="lazy" decoding="async" onError={handleImageFallback} />
         <div className="news-card-media-shade" />
         <div className="news-card-badges">
           <span className="news-chip news-chip-glass">{post.category}</span>

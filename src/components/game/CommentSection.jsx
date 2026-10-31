@@ -76,7 +76,7 @@ function Avatar({ name, avatarUrl, size = 'md' }) {
       className={`${sizeClass} shrink-0 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden ${!avatarUrl ? color : ''}`}
     >
       {avatarUrl ? (
-        <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+        <img src={avatarUrl} alt={name} width="40" height="40" loading="lazy" className="w-full h-full object-cover" />
       ) : (
         getInitials(name)
       )}

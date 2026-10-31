@@ -3,6 +3,7 @@ import DifficultyBadge from './DifficultyBadge';
 import PlayTimeBadge from './PlayTimeBadge';
 import { Button } from '../ui';
 import { SITE_CONFIG } from '../../constants/seo';
+import { formatPlayTime } from '../../lib/seoMeta';
 import {
   isDigitalGameCategory,
   normalizeDigitalInfo,
@@ -64,13 +65,45 @@ function printGameRules(game) {
   }, 250);
 }
 
+function formatUpdated(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
 export default function GameInfo({ game }) {
   const isDigital = isDigitalGameCategory(game?.category);
   const digital = isDigital ? normalizeDigitalInfo(game.digitalInfo) : null;
   const downloads = digital ? getActiveDownloads(digital) : [];
+  const duration = formatPlayTime(game.playTimeMinutes);
+  const updated = formatUpdated(game.updatedAt);
+  const facts = [
+    game.players ? ['Oyuncu sayısı', game.players] : null,
+    game.difficulty ? ['Zorluk', game.difficulty] : null,
+    duration ? ['Süre', duration] : null,
+    updated ? ['Son güncelleme', updated] : null,
+  ].filter(Boolean);
 
   return (
-    <div className="mb-6 rounded-2xl border border-warm-200/70 bg-white p-4 shadow-soft sm:p-5 md:p-6">
+    <div id="hizli-bilgi" className="mb-6 scroll-mt-24 rounded-2xl border border-warm-200/70 bg-white p-4 shadow-soft sm:p-5 md:p-6">
+      {facts.length > 0 && (
+        <table className="mb-4 w-full text-sm">
+          <caption className="mb-2 text-left text-xs font-bold uppercase tracking-wider text-warm-500">
+            Hızlı bilgi
+          </caption>
+          <tbody>
+            {facts.map(([label, value]) => (
+              <tr key={label} className="border-b border-warm-100 last:border-0">
+                <th scope="row" className="w-36 py-2 pr-3 text-left font-semibold text-warm-600">
+                  {label}
+                </th>
+                <td className="py-2 text-warm-900">{value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
       <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-4">
         <div className="flex items-center gap-3">
           <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-warm-200/60 bg-cream-100 shadow-soft">

@@ -101,7 +101,7 @@ function AdminSidebar({
             title="Kuralı Ne?"
           >
             <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-charcoal-900 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-[1.03]">
-              <img src={LOGO_URL} alt="" className="h-full w-full object-cover" />
+              <img loading="lazy" width="64" height="64" src={LOGO_URL} alt="" className="h-full w-full object-cover" />
             </span>
             {!collapsed && (
               <div className="min-w-0 leading-tight">

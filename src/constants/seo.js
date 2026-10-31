@@ -11,6 +11,16 @@
  */
 
 import { isDigitalGameCategory } from './digitalGames.js';
+import { categoryPath } from '../utils/categorySlug.js';
+import { absoluteCover } from '../lib/coverImage.js';
+import {
+  categoryDescription,
+  categoryTitle,
+  comparisonDescription,
+  comparisonTitle,
+  gameTitle,
+  withBrand,
+} from '../lib/seoMeta.js';
 import { SITE_COMPANY, SITE_CONTACT_EMAIL, SITE_CREATOR } from './siteMeta.js';
 import {
   BRAND_PRIMARY,
@@ -308,10 +318,9 @@ function minutesToIso8601(minutes) {
   return `PT${hours}H${remaining}M`;
 }
 
-// Oyun SEO başlık kalıbı — geleneksel vs dijital
-export function getGameSeoHeadline(gameName) {
-  if (!gameName) return 'Oyun Rehberi';
-  return `${gameName} Kuralı Ne`;
+/** @deprecated gameTitle kullan. Eski çağrılar kategoriye göre doğru şablona düşsün. */
+export function getGameSeoHeadline(gameName, category) {
+  return gameTitle({ name: gameName, category });
 }
 
 // Oyun için HowTo schema oluşturucu
@@ -322,9 +331,9 @@ export function generateGameSchema(game, options = {}) {
   const schema = {
     '@context': 'https://schema.org',
     '@type': isDigital ? 'VideoGame' : 'HowTo',
-    name: getGameSeoHeadline(game.name, game.category),
+    name: gameTitle(game),
     description: game.description || game.shortDescription,
-    image: game.image,
+    image: absoluteCover(game) || game.image,
     totalTime: minutesToIso8601(game.playTimeMinutes),
     ...(isDigital
       ? {
@@ -411,7 +420,7 @@ export function generateVideoSchema(game) {
     '@type': 'VideoObject',
     name,
     description,
-    thumbnailUrl: game.image,
+    thumbnailUrl: absoluteCover(game) || game.image,
     contentUrl: game.videoUrl,
     embedUrl,
     uploadDate: game.createdAt || game.updatedAt || new Date().toISOString(),
@@ -432,14 +441,14 @@ export function generateComparisonPageSchema(gameA, gameB) {
   if (!gameA || !gameB) return null;
 
   const url = `${SITE_CONFIG.url}/karsilastir/${gameA.slug}-vs-${gameB.slug}`;
-  const title = `${gameA.name} vs ${gameB.name} - Hangisi Daha İyi?`;
+  const title = comparisonTitle(gameA, gameB);
 
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     name: title,
     url,
-    description: `${gameA.name} ile ${gameB.name} oyunlarının kuralları, oyuncu sayısı, zorluk seviyesi ve oyun süresi karşılaştırması.`,
+    description: comparisonDescription(gameA, gameB),
     inLanguage: SITE_CONFIG.language,
     isPartOf: {
       '@type': 'WebSite',
@@ -456,7 +465,7 @@ export function generateComparisonPageSchema(gameA, gameB) {
             '@type': 'Game',
             name: gameA.name,
             url: `${SITE_CONFIG.url}/oyun/${gameA.slug}`,
-            image: gameA.image,
+            image: absoluteCover(gameA) || gameA.image,
             genre: gameA.category,
             numberOfPlayers: { '@type': 'QuantitativeValue', value: gameA.players },
           },
@@ -468,7 +477,7 @@ export function generateComparisonPageSchema(gameA, gameB) {
             '@type': 'Game',
             name: gameB.name,
             url: `${SITE_CONFIG.url}/oyun/${gameB.slug}`,
-            image: gameB.image,
+            image: absoluteCover(gameB) || gameB.image,
             genre: gameB.category,
             numberOfPlayers: { '@type': 'QuantitativeValue', value: gameB.players },
           },
@@ -487,7 +496,7 @@ export function generateArticleSchema(game) {
     '@type': 'Article',
     headline: `${game.name} Kuralı Ne`,
     description: game.shortDescription || game.description,
-    image: game.image,
+    image: absoluteCover(game) || game.image,
     author: {
       '@type': 'Organization',
       name: SITE_CONFIG.name,
@@ -616,7 +625,7 @@ export function generateItemListSchema(games, listName = 'Oyun Listesi') {
         '@type': 'Game',
         name: game.name,
         description: game.shortDescription,
-        image: game.image,
+        image: absoluteCover(game) || game.image,
         url: `${SITE_CONFIG.url}/oyun/${game.slug}`,
         genre: game.category,
         numberOfPlayers: game.players,
@@ -632,9 +641,9 @@ export function generateCollectionPageSchema(category, games) {
   return {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: categoryInfo.title || `${category} - Kuralı Ne?`,
-    description: categoryInfo.description || `${category} kategorisindeki tüm oyunlar`,
-    url: `${SITE_CONFIG.url}/kategori/${encodeURIComponent(category)}`,
+    name: categoryTitle(category),
+    description: categoryDescription(category, games, categoryInfo.description),
+    url: `${SITE_CONFIG.url}${categoryPath(category)}`,
     isPartOf: {
       '@type': 'WebSite',
       name: SITE_CONFIG.name,
@@ -674,16 +683,14 @@ export function buildComparisonPath(slugA, slugB) {
 export function generateTitle(pageTitle, includeSiteName = true) {
   if (!pageTitle) return DEFAULT_META.title;
   if (!includeSiteName) return pageTitle;
-  const brand = String(SITE_CONFIG.name || '').replace(/\?+$/, '').trim();
-  if (brand && pageTitle.toLocaleLowerCase('tr-TR').includes(brand.toLocaleLowerCase('tr-TR'))) {
-    return pageTitle;
-  }
-  return `${pageTitle} - ${SITE_CONFIG.name}`;
+  return withBrand(pageTitle, DEFAULT_META.title);
 }
 
 // Open Graph image URL oluşturucu
 export function getOgImageUrl(customImage) {
-  return customImage || SITE_CONFIG.defaultImage;
+  if (!customImage) return SITE_CONFIG.defaultImage;
+  if (String(customImage).startsWith('/')) return `${SITE_CONFIG.url}${customImage}`;
+  return customImage;
 }
 
 // Arama motoru robots direktifleri

@@ -1,4 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { coverSrc } from '../../lib/coverImage';
 import {
   Menu,
   X,
@@ -26,24 +27,34 @@ import toast from 'react-hot-toast';
 import HeaderNavMenu from './HeaderNavMenu';
 import MobileNavMenu from './MobileNavMenu';
 
-function GameSearchDropdown({ games, searchTerm, searchResultsUrl, onNavigate }) {
+function GameSearchDropdown({ games, searchTerm, searchResultsUrl, onNavigate, night = false }) {
   if (!searchTerm) return null;
 
   return (
-    <div className="absolute top-[calc(100%+6px)] z-[120] w-full overflow-hidden rounded-xl border border-warm-200/80 bg-white p-1 shadow-soft-xl">
+    <div
+      className={`header-search-pop absolute top-[calc(100%+6px)] z-[120] w-full overflow-hidden rounded-xl border p-1 shadow-soft-xl ${
+        night ? 'border-white/10 bg-[#141210]' : 'border-warm-200/80 bg-white'
+      }`}
+    >
       {games.length > 0 ? (
         games.map((game) => (
           <Link
             key={game.id}
             to={`/oyun/${game.slug}`}
-            className="flex items-center gap-3 rounded-lg p-2.5 transition-colors hover:bg-cream-50"
+            className={`flex items-center gap-3 rounded-lg p-2.5 transition-colors ${
+              night ? 'hover:bg-white/[0.06]' : 'hover:bg-cream-50'
+            }`}
             onClick={onNavigate}
           >
             <img
-              src={game.image || '/card-fallback.png'}
-              alt={game.name}
+              src={coverSrc(game, 96)}
+              alt={`${game.name} nasıl oynanır`}
+              width="36"
+              height="36"
               loading="lazy"
-              className="h-9 w-9 shrink-0 rounded-lg object-cover ring-1 ring-warm-200/60"
+              className={`h-9 w-9 shrink-0 rounded-lg object-cover ring-1 ${
+                night ? 'ring-white/10' : 'ring-warm-200/60'
+              }`}
               onError={(e) => {
                 if (e.target.dataset.fallbackApplied === '1') return;
                 e.target.dataset.fallbackApplied = '1';
@@ -51,18 +62,28 @@ function GameSearchDropdown({ games, searchTerm, searchResultsUrl, onNavigate })
               }}
             />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-warm-900">{game.name}</p>
-              <p className="truncate text-xs text-warm-500">{game.shortDescription}</p>
+              <p className={`truncate text-sm font-semibold ${night ? 'text-white' : 'text-warm-900'}`}>
+                {game.name}
+              </p>
+              <p className={`truncate text-xs ${night ? 'text-white/50' : 'text-warm-500'}`}>
+                {game.shortDescription}
+              </p>
             </div>
           </Link>
         ))
       ) : (
-        <p className="px-3 py-2.5 text-xs text-warm-500">Eşleşen oyun bulunamadı</p>
+        <p className={`px-3 py-2.5 text-xs ${night ? 'text-white/50' : 'text-warm-500'}`}>
+          Eşleşen oyun bulunamadı
+        </p>
       )}
       {searchResultsUrl && (
         <Link
           to={searchResultsUrl}
-          className="mt-0.5 block rounded-b-lg border-t border-warm-100 px-3 py-2.5 text-center text-xs font-semibold text-orange-600 hover:bg-orange-50"
+          className={`mt-0.5 block rounded-b-lg border-t px-3 py-2.5 text-center text-xs font-semibold ${
+            night
+              ? 'border-white/10 text-orange-300 hover:bg-white/[0.04]'
+              : 'border-warm-100 text-orange-600 hover:bg-orange-50'
+          }`}
           onClick={onNavigate}
         >
           Tüm sonuçları gör
@@ -83,6 +104,7 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
+  const night = true;
   const confirm = useConfirm();
 
   const syncHeaderMetrics = useCallback(() => {
@@ -217,7 +239,11 @@ function Header() {
     <>
       <header
         ref={headerRef}
-        className={`safe-area-top safe-area-x sticky top-0 z-50 border-b border-warm-200/80 bg-white/92 font-sans shadow-[0_1px_0_rgba(28,25,23,0.04),0_4px_24px_-4px_rgba(28,25,23,0.06)] backdrop-blur-lg${mobileMenuOpen ? ' header--mobile-menu-open' : ''}`}
+        className={`safe-area-top safe-area-x sticky top-0 z-50 border-b font-sans backdrop-blur-lg ${
+          night
+            ? 'header--night border-white/[0.06] bg-[#0c0b09]/90 shadow-none'
+            : 'border-warm-200/80 bg-white/92 shadow-[0_1px_0_rgba(28,25,23,0.04),0_4px_24px_-4px_rgba(28,25,23,0.06)]'
+        }${mobileMenuOpen ? ' header--mobile-menu-open' : ''}`}
       >
         <div className="container mx-auto flex h-[4.25rem] items-center gap-3 px-3 sm:px-4">
           <Link
@@ -242,7 +268,9 @@ function Header() {
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <div className="relative hidden lg:block" ref={searchRef}>
               <Search
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-warm-400"
+                className={`pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 ${
+                  night ? 'text-white/40' : 'text-warm-400'
+                }`}
                 size={15}
                 aria-hidden
               />
@@ -253,7 +281,11 @@ function Header() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onKeyDown={handleSearchKeyDown}
-                className="w-40 rounded-full border border-warm-200/80 bg-cream-50 py-2 pl-9 pr-3 text-sm text-warm-900 placeholder:text-warm-400 transition-all focus:w-48 focus:border-orange-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 xl:w-44 xl:focus:w-52"
+                className={`w-40 rounded-full border py-2 pl-9 pr-3 text-sm transition-all focus:w-48 focus:outline-none focus:ring-2 xl:w-44 xl:focus:w-52 ${
+                  night
+                    ? 'border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 focus:border-orange-400/70 focus:bg-white/[0.07] focus:ring-orange-500/20'
+                    : 'border-warm-200/80 bg-cream-50 text-warm-900 placeholder:text-warm-400 focus:border-orange-300 focus:bg-white focus:ring-orange-100'
+                }`}
                 aria-label="Oyun ara"
               />
               {searchFocused && (
@@ -262,6 +294,7 @@ function Header() {
                   searchTerm={searchTerm}
                   searchResultsUrl={searchResultsUrl}
                   onNavigate={clearSearch}
+                  night={night}
                 />
               )}
             </div>
@@ -269,7 +302,7 @@ function Header() {
             <div className="hidden items-center gap-1.5 lg:flex">
               {user ? (
                 <>
-                  <NotificationBell />
+                  <NotificationBell tone={night ? 'night' : 'light'} />
                   <Dropdown
                     align="right"
                     width="w-60"
@@ -278,20 +311,28 @@ function Header() {
                         type="button"
                         onClick={toggle}
                         className={`flex items-center gap-2 rounded-full border py-1 pl-1 pr-2.5 transition-all ${
-                          open
-                            ? 'border-orange-200 bg-orange-50/80'
-                            : 'border-warm-200/80 bg-cream-50 hover:border-warm-300 hover:bg-white'
+                          night
+                            ? open
+                              ? 'border-orange-400/40 bg-orange-500/15'
+                              : 'border-white/10 bg-white/[0.04] hover:bg-white/[0.08]'
+                            : open
+                              ? 'border-orange-200 bg-orange-50/80'
+                              : 'border-warm-200/80 bg-cream-50 hover:border-warm-300 hover:bg-white'
                         }`}
                         aria-label="Profil menüsü"
                         aria-expanded={open}
                       >
                         <Avatar src={avatarUrl} name={displayName} size="sm" />
-                        <span className="hidden max-w-[5.5rem] truncate text-xs font-semibold text-warm-800 xl:inline">
+                        <span
+                          className={`hidden max-w-[5.5rem] truncate text-xs font-semibold xl:inline ${
+                            night ? 'text-white/90' : 'text-warm-800'
+                          }`}
+                        >
                           {displayName}
                         </span>
                         <ChevronDown
                           size={14}
-                          className={`text-warm-400 transition-transform ${open ? 'rotate-180' : ''}`}
+                          className={`transition-transform ${night ? 'text-white/45' : 'text-warm-400'} ${open ? 'rotate-180' : ''}`}
                           aria-hidden
                         />
                       </button>
@@ -343,14 +384,18 @@ function Header() {
             </div>
 
             <div className="flex items-center gap-1 lg:hidden">
-              {user && <NotificationBell />}
+              {user && <NotificationBell tone={night ? 'night' : 'light'} />}
               <button
                 type="button"
                 onClick={() => (mobileMenuOpen ? setMobileMenuOpen(false) : openMobileMenu())}
                 className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${
                   mobileMenuOpen
-                    ? 'border-orange-200 bg-orange-50 text-orange-700'
-                    : 'border-warm-200/80 bg-cream-50 text-warm-700 hover:bg-white'
+                    ? night
+                      ? 'border-orange-400/40 bg-orange-500/15 text-orange-200'
+                      : 'border-orange-200 bg-orange-50 text-orange-700'
+                    : night
+                      ? 'border-white/10 bg-white/[0.04] text-white hover:bg-white/[0.08]'
+                      : 'border-warm-200/80 bg-cream-50 text-warm-700 hover:bg-white'
                 }`}
                 aria-label={mobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
                 aria-expanded={mobileMenuOpen}
@@ -392,6 +437,7 @@ function Header() {
                 games={filteredGames}
                 searchTerm={searchTerm}
                 searchResultsUrl={searchResultsUrl}
+                night={night}
                 onNavigate={() => {
                   clearSearch();
                   setMobileMenuOpen(false);

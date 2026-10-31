@@ -248,7 +248,7 @@ function CommentsManager({ games }) {
                 <div className="flex items-start gap-4">
                   {/* Avatar */}
                   {comment.avatarUrl ? (
-                    <img
+                    <img width="64" height="64"
                       src={comment.avatarUrl}
                       alt={comment.name}
                       loading="lazy"
@@ -365,7 +365,7 @@ function ReplyDisplay({ reply, commentId, onDelete, depth }) {
           <div className="min-w-0 flex-1">
             <div className="mb-1.5 flex items-center gap-2">
               {reply.avatar ? (
-                <img
+                <img width="64" height="64"
                   src={reply.avatar}
                   alt={reply.name}
                   loading="lazy"

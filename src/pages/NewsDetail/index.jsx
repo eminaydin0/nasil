@@ -1,10 +1,11 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
 import { Calendar, Clock, Eye, Gamepad2, ArrowLeft, User, Tag } from 'lucide-react';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import SkeletonLoader from '../../components/common/SkeletonLoader';
 import ErrorPage from '../ErrorPage';
+import { coverSrc } from '../../lib/coverImage';
 import { useNewsPost } from '../../hooks/useNewsPost';
 import { useNews } from '../../hooks/useNews';
 import NewsCard from '../../components/news/NewsCard';
@@ -17,9 +18,11 @@ import { buildNewsSeoMeta, buildNewsStructuredData } from '../../lib/seoEngine';
 import { getRelatedNewsPosts } from '../../lib/newsAlgorithm';
 import { formatNewsDate, NEWS_FALLBACK_IMAGE } from '../../utils/newsContent';
 import { trackNewsView } from '../../utils/analytics';
+import { canonicalNewsSlug } from '../../constants/newsSlugRedirects';
 
 function NewsDetailPage() {
   const { slug } = useParams();
+  const canonicalSlug = canonicalNewsSlug(slug);
   const { post, loading, error } = useNewsPost(slug);
   const { rawPosts: allPosts } = useNews({ sort: 'trending' });
 
@@ -46,6 +49,10 @@ function NewsDetailPage() {
     () => (post ? getRelatedNewsPosts(post, allPosts, 3) : []),
     [post, allPosts]
   );
+
+  if (canonicalSlug && canonicalSlug !== slug) {
+    return <Navigate to={`/haberler/${canonicalSlug}`} replace />;
+  }
 
   if (loading) {
     return (
@@ -104,6 +111,11 @@ function NewsDetailPage() {
           src={coverImage}
           alt={post.title || 'Haber görseli'}
           className="news-article-hero-bg"
+          width="1600"
+          height="900"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = NEWS_FALLBACK_IMAGE;
@@ -135,7 +147,7 @@ function NewsDetailPage() {
           <div className="news-article-byline">
             <div className="news-article-author">
               {post.authorAvatar ? (
-                <img src={post.authorAvatar} alt="" className="news-article-avatar" />
+                <img src={post.authorAvatar} alt="" width="40" height="40" loading="lazy" className="news-article-avatar" />
               ) : (
                 <span className="news-article-avatar news-article-avatar-fallback">
                   <User size={16} aria-hidden />
@@ -181,7 +193,7 @@ function NewsDetailPage() {
 
           <article className="news-article-sheet">
             <figure className="news-article-cover">
-              <img src={coverImage} alt={post.title} width="1200" height="630" />
+              <img src={coverImage} alt={post.title} width="1200" height="630" loading="lazy" decoding="async" />
             </figure>
 
             <div className="news-article-content-wrap">
@@ -216,7 +228,13 @@ function NewsDetailPage() {
                 </p>
                 <Link to={`/oyun/${post.relatedGame.slug}`} className="news-article-game-card group">
                   {post.relatedGame.image && (
-                    <img src={post.relatedGame.image} alt={post.relatedGame.name} />
+                    <img
+                      src={coverSrc(post.relatedGame, 160)}
+                      alt={`${post.relatedGame.name} nasıl oynanır`}
+                      width="80"
+                      height="60"
+                      loading="lazy"
+                    />
                   )}
                   <div>
                     <p className="news-article-game-name">{post.relatedGame.name}</p>

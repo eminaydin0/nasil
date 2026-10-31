@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight, GitCompareArrows } from 'lucide-react';
 import { buildComparisonPath } from '../../constants/seo';
+import { isSameFamily } from '../../constants/comparisonFamilies';
+import { coverSrc } from '../../lib/coverImage';
 import GameRecommendations from '../../components/home/GameRecommendations';
 
 function pickComparisonCandidates(currentGame, allGames, max = 3) {
@@ -8,11 +10,7 @@ function pickComparisonCandidates(currentGame, allGames, max = 3) {
   const others = allGames.filter((g) => g && g.id !== currentGame.id && g.slug);
   if (others.length === 0) return [];
 
-  const sameCategory = others.filter((g) => g.category === currentGame.category);
-  const ordered = [
-    ...sameCategory,
-    ...others.filter((g) => !sameCategory.includes(g)),
-  ];
+  const ordered = others.filter((g) => isSameFamily(currentGame, g));
 
   return ordered.slice(0, max);
 }
@@ -71,8 +69,8 @@ export default function GameSidebar({ game, games }) {
               <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-cream-50 transition-colors">
                 <div className="w-14 h-14 shrink-0 bg-warm-100 rounded-lg overflow-hidden">
                   <img
-                    src={prevGame.image}
-                    alt={prevGame.name}
+                    src={coverSrc(prevGame, 112)}
+                    alt={`${prevGame.name} nasıl oynanır`}
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
@@ -97,8 +95,8 @@ export default function GameSidebar({ game, games }) {
               <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-cream-50 transition-colors">
                 <div className="w-14 h-14 shrink-0 bg-warm-100 rounded-lg overflow-hidden">
                   <img
-                    src={nextGame.image}
-                    alt={nextGame.name}
+                    src={coverSrc(nextGame, 112)}
+                    alt={`${nextGame.name} nasıl oynanır`}
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"

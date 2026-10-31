@@ -7,13 +7,14 @@ Disallow: /admin-panel
 Disallow: /admin-panel/
 Disallow: /profil
 Disallow: /auth
-# Duplicate content — filtre/sıralama
-Disallow: /*?*page=
+# Duplicate content — sıralama ve filtre. Sayfalama (page) taranabilir.
 Disallow: /*?*sort=
 Disallow: /*?*filter=
 
 User-agent: Googlebot
 Allow: /
+Disallow: /*?*sort=
+Disallow: /*?*filter=
 
 User-agent: Googlebot-Image
 Allow: /
@@ -40,5 +41,4 @@ Disallow: /
 User-agent: BLEXBot
 Disallow: /
 
-Sitemap: https://kuraline.xyz/sitemap-index.xml
 Sitemap: https://kuraline.xyz/sitemap.xml

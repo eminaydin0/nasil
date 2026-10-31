@@ -23,7 +23,7 @@ function TopGameRow({ game, index, metric, formatter }) {
       >
         {index < 3 ? <Trophy size={14} /> : index + 1}
       </span>
-      <img
+      <img width="64" height="64"
         src={game.image}
         alt={game.name}
         loading="lazy"

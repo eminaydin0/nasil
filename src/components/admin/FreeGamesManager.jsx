@@ -184,7 +184,7 @@ function FreeGamesManager() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {game.image && (
-                          <img
+                          <img loading="lazy" width="64" height="64"
                             src={game.image}
                             alt=""
                             className="h-10 w-16 rounded object-cover"

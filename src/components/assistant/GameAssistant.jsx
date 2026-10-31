@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Bot, X, Send, Loader2, Sparkles, Trash2 } from 'lucide-react';
-import { fetchChatAvailability, sendChatMessage } from '../../lib/ai/chatClient';
+import { sendChatMessage } from '../../lib/ai/chatClient';
 
 const STORAGE_KEY = 'kuraline_kurali_messages_v3';
 
@@ -135,7 +135,6 @@ function isMobileViewport() {
 function GameAssistant() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
-  const [available, setAvailable] = useState(false);
   const [messages, setMessages] = useState(loadStoredMessages);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -146,12 +145,6 @@ function GameAssistant() {
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
-
-  useEffect(() => {
-    fetchChatAvailability()
-      .then(setAvailable)
-      .catch(() => setAvailable(false));
-  }, []);
 
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-30)));
@@ -233,13 +226,21 @@ function GameAssistant() {
     sendMessage(text);
   };
 
+  useEffect(() => {
+    const onOpen = (event) => {
+      setOpen(true);
+      const prompt = event.detail?.prompt;
+      if (prompt) sendMessage(prompt);
+    };
+    window.addEventListener('kurali:open', onOpen);
+    return () => window.removeEventListener('kurali:open', onOpen);
+  }, [sendMessage]);
+
   const clearChat = () => {
     messagesRef.current = [WELCOME];
     setMessages([WELCOME]);
     sessionStorage.removeItem(STORAGE_KEY);
   };
-
-  if (!available) return null;
 
   return (
     <div className={`game-assistant${open ? ' game-assistant--open' : ''}`} aria-live="polite">
@@ -251,13 +252,13 @@ function GameAssistant() {
           aria-label={`${ASSISTANT_NAME} sohbet`}
         >
           <header className="game-assistant-header">
-            <div className="flex items-center gap-2.5">
+            <div className="flex min-w-0 items-center gap-2.5">
               <span className="game-assistant-avatar">
-                <Bot size={20} aria-hidden />
+                <Bot size={16} aria-hidden />
               </span>
-              <div>
-                <p className="text-sm font-bold text-white">{ASSISTANT_NAME}</p>
-                <p className="text-[11px] text-orange-100/90">Kuralı Ne? · AI asistan</p>
+              <div className="min-w-0">
+                <p className="game-assistant-name">{ASSISTANT_NAME}</p>
+                <p className="game-assistant-role">Kuralı Ne? · AI asistan</p>
               </div>
             </div>
             <div className="flex items-center gap-1">

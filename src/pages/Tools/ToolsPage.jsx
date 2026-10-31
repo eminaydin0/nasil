@@ -1,63 +1,149 @@
 import { useEffect, useMemo } from 'react';
 import SEO from '../../components/common/SEO';
 import Breadcrumb from '../../components/common/Breadcrumb';
-import { ArrowRight, Wrench, Zap, Smartphone, Gift, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PAGE_SEO, generateFAQSchema, SITE_CONFIG } from '../../constants/seo';
-import {
-  SITE_TOOLS,
-  TOOL_HIGHLIGHTS,
-  groupToolsByCategory,
-  getFeaturedTool,
-} from '../../constants/tools';
+import { SITE_TOOLS } from '../../constants/tools';
 import { TOOLS_HUB_FAQS } from '../../constants/toolLandingCopy';
 
-const colorMap = {
-  orange: { bg: 'bg-orange-50', text: 'text-orange-600', accent: 'from-orange-500 to-red-500' },
-  red: { bg: 'bg-red-50', text: 'text-red-600', accent: 'from-red-500 to-rose-600' },
-  amber: { bg: 'bg-amber-50', text: 'text-amber-600', accent: 'from-amber-500 to-orange-500' },
-  rose: { bg: 'bg-rose-50', text: 'text-rose-600', accent: 'from-rose-500 to-pink-600' },
-  emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', accent: 'from-emerald-500 to-teal-600' },
-  sky: { bg: 'bg-sky-50', text: 'text-sky-600', accent: 'from-sky-500 to-blue-600' },
-  indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600', accent: 'from-indigo-500 to-violet-600' },
-  violet: { bg: 'bg-violet-50', text: 'text-violet-600', accent: 'from-violet-500 to-purple-600' },
-  fuchsia: { bg: 'bg-fuchsia-50', text: 'text-fuchsia-600', accent: 'from-fuchsia-500 to-pink-600' },
-};
+const BOARD = [
+  {
+    id: '101-yazboz',
+    job: 'Ceza puanını yaz, toplam kendiliğinden gelsin',
+    photo: '/media/tools/101-yazboz.jpg',
+  },
+  {
+    id: 'okey-sayaci',
+    job: 'Elin cezasını kaydet',
+    photo: '/media/cards/perişan-okey.webp',
+  },
+  {
+    id: 'batak-yazboz',
+    job: 'Tur puanını yaz, toplam otomatik',
+    photo: '/media/cards/eşli-batak.webp',
+  },
+  { id: 'halisaha-takim-olusturucu', job: 'Dizilişi kur, PNG olarak indir', photo: '/media/tools/halisaha.jpg' },
+  { id: 'takim-olusturucu', job: 'İsimleri yaz, takımlar karışsın', still: 'split' },
+  { id: 'karar-carki', job: 'Seçenekleri yaz, çarkı çevir', still: 'wheel' },
+  { id: 'kura-cek', job: 'Kutudan bir isim çek', photo: '/media/tools/kura.jpg' },
+  { id: 'zar-at', job: 'Tek veya çift zar at', still: 'dice' },
+  { id: 'skor-tablosu', job: 'İsimleri yaz, sırayı gör', still: 'score' },
+];
 
-const HIGHLIGHT_ICONS = [Zap, Gift, Smartphone, Clock];
+const PITCH = [
+  [18, 28],
+  [38, 22],
+  [62, 22],
+  [82, 28],
+  [30, 48],
+  [50, 42],
+  [70, 48],
+  [40, 70],
+  [60, 70],
+  [50, 86],
+];
 
-function ToolCard({ title, description, icon: Icon, link, badge, color = 'orange' }) {
-  const c = colorMap[color] || colorMap.orange;
+function Still({ kind }) {
+  if (kind === 'pitch') {
+    return (
+      <div className="tools-still tools-pitch" aria-hidden>
+        {PITCH.map(([x, y]) => (
+          <i key={`${x}-${y}`} style={{ left: `${x}%`, top: `${y}%` }} />
+        ))}
+      </div>
+    );
+  }
+
+  if (kind === 'dice') {
+    const five = [1, 0, 1, 0, 1, 0, 1, 0, 1];
+    const two = [1, 0, 0, 0, 0, 0, 0, 0, 1];
+    return (
+      <div className="tools-still tools-dice" aria-hidden>
+        <b className="tools-die">
+          {five.map((on, i) => (
+            <i key={i} className={on ? '' : 'is-off'} />
+          ))}
+        </b>
+        <b className="tools-die tools-die--tilt">
+          {two.map((on, i) => (
+            <i key={i} className={on ? '' : 'is-off'} />
+          ))}
+        </b>
+      </div>
+    );
+  }
+
+  if (kind === 'wheel') {
+    return (
+      <div className="tools-still tools-wheel" aria-hidden>
+        <b />
+        <i />
+      </div>
+    );
+  }
+
+  if (kind === 'draw') {
+    return (
+      <div className="tools-still tools-draw" aria-hidden>
+        <span>Ayşe</span>
+        <span className="is-pick">Veli</span>
+        <span>Ali</span>
+      </div>
+    );
+  }
+
+  if (kind === 'score') {
+    return (
+      <ul className="tools-still tools-score" aria-hidden>
+        <li>
+          Ali <b>42</b>
+        </li>
+        <li>
+          Veli <b>37</b>
+        </li>
+        <li>
+          Ayşe <b>29</b>
+        </li>
+      </ul>
+    );
+  }
 
   return (
-    <Link
-      to={link}
-      className="group relative flex h-full min-w-0 flex-col rounded-2xl border border-warm-200/70 bg-white p-4 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-200 hover:shadow-soft-md focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 sm:p-6"
-    >
-      <div
-        className={`pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br ${c.accent} opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-10`}
-      />
+    <div className="tools-still tools-split" aria-hidden>
+      <b>
+        <i />
+        <i />
+        <i />
+      </b>
+      <b>
+        <i />
+        <i />
+        <i />
+      </b>
+    </div>
+  );
+}
 
-      {badge ? (
-        <span className="absolute right-4 top-4 rounded-full bg-orange-600 px-2 py-0.5 text-[10px] font-bold text-white">
-          {badge}
-        </span>
-      ) : null}
-
-      <div
-        className={`relative mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl ${c.bg} transition-transform duration-300 group-hover:scale-105`}
-      >
-        <Icon className={`h-6 w-6 ${c.text}`} aria-hidden />
-      </div>
-
-      <h3 className="mb-1.5 text-base font-extrabold tracking-tight text-warm-900 group-hover:text-orange-700">
-        {title}
-      </h3>
-      <p className="mb-4 flex-1 text-sm leading-relaxed text-warm-600">{description}</p>
-
-      <span className="inline-flex items-center gap-1.5 text-sm font-bold text-orange-600">
-        Araca git
-        <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" aria-hidden />
+function Shot({ tool, spec, eager }) {
+  return (
+    <Link to={tool.link} className="tools-shot">
+      <span className="tools-shot-visual">
+        {spec.photo ? (
+          <img
+            src={spec.photo}
+            alt=""
+            width="640"
+            height="400"
+            loading={eager ? 'eager' : 'lazy'}
+            fetchPriority={eager ? 'high' : 'auto'}
+          />
+        ) : (
+          <Still kind={spec.still} />
+        )}
+      </span>
+      <span className="tools-shot-copy">
+        <strong>{tool.title}</strong>
+        <span>{spec.job}</span>
       </span>
     </Link>
   );
@@ -68,8 +154,7 @@ export default function ToolsPage() {
     window.scrollTo(0, 0);
   }, []);
 
-  const grouped = groupToolsByCategory(SITE_TOOLS);
-  const featured = getFeaturedTool();
+  const byId = useMemo(() => Object.fromEntries(SITE_TOOLS.map((tool) => [tool.id, tool])), []);
   const breadcrumbs = [{ name: 'Oyun Araçları', url: null }];
 
   const structuredData = useMemo(
@@ -99,7 +184,7 @@ export default function ToolsPage() {
   );
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-cream-50 py-6 sm:py-12">
+    <div className="home-night min-h-screen overflow-x-clip">
       <SEO
         title={PAGE_SEO.tools.title}
         description={PAGE_SEO.tools.description}
@@ -109,122 +194,32 @@ export default function ToolsPage() {
         breadcrumbs={breadcrumbs}
       />
 
-      <div className="container mx-auto min-w-0 px-3 sm:px-4">
-        <Breadcrumb items={breadcrumbs} className="mb-6" />
+      <div className="container mx-auto min-w-0 px-3 py-6 sm:px-4 sm:py-8">
+        <Breadcrumb items={breadcrumbs} className="mb-4" />
 
-        <div className="mb-8">
-          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
-            <div className="self-start rounded-xl bg-orange-100 p-3">
-              <Wrench className="text-orange-600" size={32} aria-hidden />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-2xl font-black text-warm-900 sm:text-3xl">
-                Oyun Araçları — Yazboz, Sayaç & Takım
-              </h1>
-              <p className="text-sm text-warm-600 sm:text-base">
-                {SITE_TOOLS.length} ücretsiz araç · kayıt gerektirmez · mobil uyumlu
-              </p>
-            </div>
-          </div>
+        <header className="tools-hub-hero">
+          <h1>Oyun Araçları — Yazboz, Sayaç &amp; Takım</h1>
+          <p>Masada aç, puanı yaz, takımı kur.</p>
+        </header>
 
-          <div className="rounded-2xl border border-warm-200/70 bg-white p-5 shadow-sm sm:p-6">
-            <p className="text-sm leading-relaxed text-warm-600 sm:text-base">
-              <strong>101 yazboz</strong>, <strong>okey sayacı</strong>, <strong>batak yazboz</strong>,{' '}
-              <strong>halı saha takım oluşturucu</strong>, zar, kura ve skor tablosu — masa başı ve
-              saha öncesi ihtiyaçların hepsi tek yerde. Uygulama indirmeden tarayıcıda açın; tamamen
-              ücretsiz.
-            </p>
-          </div>
+        <div className="tools-board">
+          {BOARD.map((spec, index) => (
+            <Shot key={spec.id} tool={byId[spec.id]} spec={spec} eager={index === 0} />
+          ))}
         </div>
 
-        {featured && (
-          <Link
-            to={featured.link}
-            className="tools-featured-card group mb-10 block overflow-hidden rounded-3xl border border-emerald-200/80 bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-6 text-white shadow-soft-xl transition-transform hover:-translate-y-0.5 sm:p-8"
-          >
-            <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0">
-                <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wider">
-                  Öne çıkan araç
-                </span>
-                <h2 className="text-2xl font-black sm:text-3xl">{featured.title}</h2>
-                <p className="mt-2 max-w-xl text-sm leading-relaxed text-emerald-50/90 sm:text-base">
-                  {featured.description}
-                </p>
-              </div>
-              <span className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-white px-5 py-3 text-sm font-bold text-emerald-700 transition-colors group-hover:bg-emerald-50 sm:self-center">
-                Hemen dene
-                <ArrowRight size={16} aria-hidden />
-              </span>
-            </div>
-            <div className="tools-featured-pitch" aria-hidden />
+        <section className="tools-hub-panel">
+          <h2>Sıkça Sorulan Sorular</h2>
+          {TOOLS_HUB_FAQS.map((item) => (
+            <details key={item.question}>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+          <Link to="/oyunlar" className="tools-hub-more">
+            Oyun kurallarına bak
           </Link>
-        )}
-
-        <div className="mb-10 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:grid-cols-4">
-          {TOOL_HIGHLIGHTS.map(({ label, sub }, i) => {
-            const Icon = HIGHLIGHT_ICONS[i];
-            return (
-              <div
-                key={label}
-                className="rounded-xl border border-warm-200/70 bg-white px-4 py-3 shadow-soft"
-              >
-                <Icon className="mb-2 h-5 w-5 text-orange-600" aria-hidden />
-                <p className="text-sm font-bold text-warm-900">{label}</p>
-                <p className="text-xs text-warm-500">{sub}</p>
-              </div>
-            );
-          })}
-        </div>
-
-        {grouped.map(({ key, label, items }) => (
-          <section key={key} className="mb-10">
-            <h2 className="mb-4 text-lg font-extrabold text-warm-900">{label}</h2>
-            <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-              {items.map((tool) => (
-                <ToolCard key={tool.id} {...tool} />
-              ))}
-            </div>
-          </section>
-        ))}
-
-        <section className="mb-10 rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft sm:p-8">
-          <h2 className="mb-4 text-lg font-extrabold text-warm-900">Sıkça Sorulan Sorular</h2>
-          <div className="divide-y divide-warm-200/70">
-            {TOOLS_HUB_FAQS.map((item) => (
-              <details key={item.question} className="group py-3">
-                <summary className="cursor-pointer list-none font-semibold text-warm-900 marker:content-none [&::-webkit-details-marker]:hidden">
-                  {item.question}
-                </summary>
-                <p className="mt-2 text-sm leading-relaxed text-warm-600">{item.answer}</p>
-              </details>
-            ))}
-          </div>
         </section>
-
-        <div className="rounded-2xl border border-warm-200/70 bg-white p-6 shadow-soft sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-8">
-          <div>
-            <h2 className="text-lg font-extrabold text-warm-900">Oyun kurallarını da öğren</h2>
-            <p className="mt-1 text-sm text-warm-600">
-              Araçları kullanırken kurallarda takılırsan arşivimizde 50+ geleneksel oyun rehberi var.
-            </p>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-3 sm:mt-0 sm:shrink-0">
-            <Link
-              to="/oyunlar"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange-700"
-            >
-              Oyunları keşfet
-              <ArrowRight size={16} aria-hidden />
-            </Link>
-            <Link
-              to="/iletisim"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-warm-200 bg-cream-50 px-5 py-2.5 text-sm font-semibold text-warm-700 transition-colors hover:bg-white"
-            >
-              Araç öner
-            </Link>
-          </div>
-        </div>
       </div>
     </div>
   );

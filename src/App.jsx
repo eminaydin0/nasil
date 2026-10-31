@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import ErrorBoundary from './components/common/ErrorBoundary';
@@ -21,8 +21,13 @@ function SiteShell({ children }) {
   const { pathname } = useLocation();
   const isAuth = pathname === '/auth';
 
+  useEffect(() => {
+    document.body.classList.add('home-night-body');
+    return () => document.body.classList.remove('home-night-body');
+  }, []);
+
   return (
-    <div className="flex min-h-screen min-w-0 flex-col overflow-x-clip bg-white">
+    <div className="home-night-shell flex min-h-screen min-w-0 flex-col overflow-x-clip bg-[#0c0b09]">
       {!isAuth && <Header />}
       <AnalyticsRouteTracker />
       <ScrollToTop />
@@ -99,15 +104,15 @@ function App() {
                 duration: 3000,
                 className: 'font-sans !max-w-none sm:!max-w-[420px]',
                 style: {
-                  background: '#ffffff',
-                  color: '#1c1917',
+                  background: '#141210',
+                  color: '#fafaf9',
                   fontFamily:
                     "Manrope, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
                   fontSize: '14px',
                   fontWeight: 600,
                   padding: '12px 16px',
                   borderRadius: '14px',
-                  border: '1px solid rgba(231, 229, 228, 0.7)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   boxShadow:
                     '0 10px 25px -5px rgba(28, 25, 23, 0.1), 0 8px 10px -6px rgba(28, 25, 23, 0.05)',
                   maxWidth: '100%',

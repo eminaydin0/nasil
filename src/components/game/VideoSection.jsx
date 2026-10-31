@@ -59,7 +59,7 @@ export default function VideoSection({ game }) {
         </div>
         <div>
           <h2 id="video-anlatim-baslik" className="text-lg font-bold text-warm-900">
-            Video Anlatım
+            {game?.name} nasıl oynanır, video var mı?
           </h2>
           <p className="text-xs text-warm-500">{title}</p>
         </div>

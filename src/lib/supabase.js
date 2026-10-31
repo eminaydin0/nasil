@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { slugify } from '../utils/slugify';
+import { toWebpFile } from './imageFile';
 
 // Supabase proje bilgileri
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://yjnipjcevnxrzlgfmeci.supabase.co';
@@ -218,17 +219,17 @@ export const getTotalComments = async () => {
 // Storage: Haber kapak görseli yükleme
 export const uploadNewsImage = async (file, newsSlug) => {
   try {
-    const slug =
-      (newsSlug && String(newsSlug).replace(/[^a-z0-9-]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')) ||
-      'haber';
+    const image = await toWebpFile(file);
+    const slug = slugify(newsSlug) || 'haber';
     const timestamp = Date.now();
-    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const fileExt = image.name.split('.').pop()?.toLowerCase() || 'webp';
     const fileName = `${slug}-${timestamp}.${fileExt}`;
     const filePath = `news/${fileName}`;
 
-    const { error } = await supabase.storage.from('game-images').upload(filePath, file, {
+    const { error } = await supabase.storage.from('game-images').upload(filePath, image, {
       cacheControl: '3600',
       upsert: false,
+      contentType: image.type || 'image/webp',
     });
 
     if (error) {
@@ -247,15 +248,17 @@ export const uploadNewsImage = async (file, newsSlug) => {
 // Storage: Kategori görseli yükleme
 export const uploadCategoryImage = async (file, categoryName) => {
   try {
+    const image = await toWebpFile(file);
     const slug = slugify(categoryName) || 'kategori';
     const timestamp = Date.now();
-    const fileExt = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const fileExt = (image.name.split('.').pop() || 'webp').toLowerCase().replace(/[^a-z0-9]/g, '') || 'webp';
     const fileName = `${slug}-${timestamp}.${fileExt}`;
     const filePath = `categories/${fileName}`;
 
-    const { error } = await supabase.storage.from('game-images').upload(filePath, file, {
+    const { error } = await supabase.storage.from('game-images').upload(filePath, image, {
       cacheControl: '3600',
       upsert: false,
+      contentType: image.type || 'image/webp',
     });
 
     if (error) {
@@ -274,19 +277,19 @@ export const uploadCategoryImage = async (file, categoryName) => {
 // Storage: Resim yükleme
 export const uploadGameImage = async (file, gameSlug) => {
   try {
-    // Slug temizle (boş veya geçersiz karakterler için)
-    const slug = (gameSlug && String(gameSlug).replace(/[^a-z0-9-]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')) || 'game';
+    const image = await toWebpFile(file);
+    const slug = slugify(gameSlug) || 'game';
     const timestamp = Date.now();
-    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const fileExt = image.name.split('.').pop()?.toLowerCase() || 'webp';
     const fileName = `${slug}-${timestamp}.${fileExt}`;
     const filePath = `games/${fileName}`;
 
-    // Dosyayı yükle
     const { data, error } = await supabase.storage
       .from('game-images')
-      .upload(filePath, file, {
+      .upload(filePath, image, {
         cacheControl: '3600',
-        upsert: false
+        upsert: false,
+        contentType: image.type || 'image/webp',
       });
 
     if (error) {

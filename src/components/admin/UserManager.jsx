@@ -165,7 +165,7 @@ function UserManager() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {user.avatar_url ? (
-                          <img
+                          <img width="64" height="64"
                             src={user.avatar_url}
                             alt={user.full_name || ''}
                             loading="lazy"
@@ -259,7 +259,7 @@ function UserManager() {
               >
                 <div className="flex items-start gap-3">
                   {user.avatar_url ? (
-                    <img
+                    <img width="64" height="64"
                       src={user.avatar_url}
                       alt={user.full_name || ''}
                       loading="lazy"

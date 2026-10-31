@@ -4,6 +4,7 @@
  */
 
 import { SITE_CONFIG } from './seo.js';
+import { gameDescription, gameTitle } from '../lib/seoMeta.js';
 
 export const KEYWORD_TIERS = {
   head: [
@@ -132,21 +133,13 @@ export const TOOL_PAGE_SEO = {
   },
 }
 
-/** Oyun detay meta şablonları */
+/** Oyun detay meta şablonları — seoMeta ile aynı çıktı. */
 export function buildGameTitle(gameName, category) {
-  if (!gameName) return 'Oyun Rehberi';
-  return `${gameName} Kuralı Ne`;
+  return gameTitle({ name: gameName, category });
 }
 
 export function buildGameDescription(game) {
-  const name = game?.name || 'Oyun';
-  const short = game?.shortDescription || game?.description?.slice(0, 120) || '';
-  const players = game?.players ? ` ${game.players} kişi ·` : '';
-  const diff = game?.difficulty ? ` ${game.difficulty} ·` : '';
-  const base = `${name} kuralı ne. ${short}`.trim();
-  const suffix = `${players}${diff} Adım adım kurallar ve ipuçları.`.replace(/\s+/g, ' ');
-  const combined = `${base} ${suffix}`.trim();
-  return combined.length > 160 ? `${combined.slice(0, 157)}…` : combined;
+  return gameDescription(game);
 }
 
 export function buildGameKeywords(game) {
@@ -207,17 +200,18 @@ export const FAQ_TEMPLATES = (gameName, players, difficulty) => [
   },
 ];
 
-/** WebApplication schema — araç sayfaları */
+/** Ücretsiz, tarayıcıda çalışan araç. */
 export function generateWebApplicationSchema({ name, description, url }) {
+  const path = String(url || '').startsWith('http') ? url : `${SITE_CONFIG.url}${url}`;
   return {
     '@context': 'https://schema.org',
-    '@type': 'WebApplication',
+    '@type': ['SoftwareApplication', 'WebApplication'],
     name,
     description,
-    url: `${SITE_CONFIG.url}${url}`,
+    url: path,
     applicationCategory: 'GameApplication',
-    operatingSystem: 'Any',
-    browserRequirements: 'Requires JavaScript',
+    operatingSystem: 'Web tarayıcısı',
+    browserRequirements: 'JavaScript açık bir tarayıcı. Hesap açmak gerekmez.',
     offers: {
       '@type': 'Offer',
       price: '0',

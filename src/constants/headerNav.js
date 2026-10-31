@@ -16,6 +16,7 @@ import {
   Mail,
 } from 'lucide-react';
 import { CATEGORIES } from './categories';
+import { categoryPath } from '../utils/categorySlug';
 import { SITE_TOOLS, groupToolsByCategory } from './tools';
 
 const CATEGORY_ICONS = {
@@ -31,7 +32,7 @@ const CATEGORY_ICONS = {
 };
 
 function categoryHref(name) {
-  return `/kategori/${encodeURIComponent(name)}`;
+  return categoryPath(name);
 }
 
 function buildGamesSections() {

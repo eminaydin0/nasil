@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
 import { TOOL_LANDING } from '../../constants/toolLandingCopy';
 
-/**
- * Araç sayfası altı indexlenebilir SEO makalesi + FAQ verisi.
- */
 export function getToolLanding(slug) {
   return TOOL_LANDING[slug] || null;
+}
+
+export function toolHowToWordCount(data) {
+  if (!data) return 0;
+  const parts = [...(data.paragraphs || []), ...(data.steps || [])];
+  return parts.join(' ').split(/\s+/).filter(Boolean).length;
 }
 
 export function ToolSeoArticle({ slug }) {
@@ -14,35 +17,24 @@ export function ToolSeoArticle({ slug }) {
 
   return (
     <>
-      <h2>{data.h2}</h2>
-      <p>{data.intro}</p>
-      {data.bullets?.length ? (
-        <>
-          <h3>Öne çıkanlar</h3>
-          <ul>
-            {data.bullets.map((b) => (
-              <li key={b}>{b}</li>
-            ))}
-          </ul>
-        </>
-      ) : null}
+      <h2>{data.h2 || 'Nasıl kullanılır?'}</h2>
+      {data.paragraphs?.map((paragraph) => (
+        <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+      ))}
       {data.steps?.length ? (
-        <>
-          <h3>Nasıl kullanılır?</h3>
-          <ol className="list-decimal space-y-1 pl-5">
-            {data.steps.map((s) => (
-              <li key={s}>{s}</li>
-            ))}
-          </ol>
-        </>
+        <ol className="list-decimal space-y-1 pl-5">
+          {data.steps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
       ) : null}
       {data.related?.length ? (
         <p>
-          İlgili:{' '}
-          {data.related.map((r, i) => (
-            <span key={r.to}>
-              {i > 0 ? ' · ' : null}
-              <Link to={r.to}>{r.label}</Link>
+          İlgili rehberler:{' '}
+          {data.related.map((item, index) => (
+            <span key={item.to}>
+              {index > 0 ? ' · ' : null}
+              <Link to={item.to}>{item.label}</Link>
             </span>
           ))}
         </p>

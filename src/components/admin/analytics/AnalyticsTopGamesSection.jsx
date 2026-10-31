@@ -18,7 +18,7 @@ function GameRow({ game, rank, metric, maxValue, totalValue }) {
       <RankBadge rank={rank} />
 
       {game.image ? (
-        <img
+        <img width="64" height="64"
           src={game.image}
           alt={game.name}
           loading="lazy"

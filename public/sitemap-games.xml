@@ -2,652 +2,565 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
+    <loc>https://kuraline.xyz/oyun/football-manager</loc>
+    <lastmod>2026-10-31T21:17:48.829Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/football-manager-1793481300586.webp</image:loc>
+      <image:title>Football Manager Rehberi: Nasıl Oynanır | Kuralı Ne</image:title>
+      <image:caption>Kendi kadronuzu kurup taktik hamlelerle rakip kaleye gol aradığınız, futbol tutkusunu masaya taşıyan keyifli bir kart oyunu. 1+ kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/yagli-gures</loc>
+    <lastmod>2026-10-23T14:30:11.246Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/yagli-gures-1792765669924.jpeg</image:loc>
+      <image:title>Yağlı güreş Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>İki oyuncunun minderde güç ve dengeyle rakibinin sırtını yere getirmeye çalıştığı geleneksel ata sporumuz. 2 kişi ile oynanır. Hazırlayın: Oyun alanını sert ve</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/tabu</loc>
+    <lastmod>2026-10-23T09:21:25.380Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/optimized/games-tabu-1790411363874.webp</image:loc>
+      <image:title>Tabu Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Yasaklı kelimeleri kullanmadan hedeflenen kelimeyi süresi bitmeden takımına anlatıp en çok puanı toplamaya çalışın. 4+ oyuncu (takımlar) ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/control-resonant</loc>
+    <lastmod>2026-10-23T09:21:20.323Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/control-resonant.webp</image:loc>
+      <image:title>CONTROL Resonant Rehberi: Nasıl Oynanır | Kuralı Ne</image:title>
+      <image:caption>CONTROL Resonant, Remedy Entertainment tarafından geliştirilen tek oyunculu aksiyon-macera RPG oyunudur. 1 kişi ile oynanır. Dylan Faden&apos;ın paranormale dönüşen</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/uzun-e%C5%9Fek</loc>
+    <lastmod>2026-10-23T09:21:17.983Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/uzun-eşek.webp</image:loc>
+      <image:title>Uzun Eşek Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Uzun Eşek, iki takım arasında oynanan, yatan takımın sırtına atlayarak yıkmaya çalıştığınız eğlenceli bir grup oyunudur. 8+ kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/saklamba%C3%A7</loc>
+    <lastmod>2026-10-23T09:21:11.661Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/saklambac.webp</image:loc>
+      <image:title>Saklambaç Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Evde en az üç kişiyle oynanan Saklambaçta amaç, ebeye yakalanmadan hedef noktaya ulaşıp güvenle sobelemektir. 3+ kişi ile oynanır. Belirleyin ev içindeki oyun</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/gta-v</loc>
+    <lastmod>2026-10-23T09:21:01.368Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/gta-v.webp</image:loc>
+      <image:title>Grand Theft Auto V Rehberi: Nasıl Oynanır | Kuralı Ne</image:title>
+      <image:caption>Los Santos&apos;ta kendi suç imparatorluğunuzu kurup tek başınıza veya arkadaşlarınızla aksiyon dolu görevleri tamamlayın. 1-30 oyuncu (GTA Online) ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/genshin-impact</loc>
+    <lastmod>2026-10-23T09:20:55.478Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/genshin-impact.webp</image:loc>
+      <image:title>Genshin Impact Rehberi: Nasıl Oynanır, İpuçları | Kuralı Ne</image:title>
+      <image:caption>Teyvat dünyasında kayıp ikizinizi ararken elementleri birleştirip ister tek ister arkadaşlarınızla macera yaşayın. 1-4 oyuncu (co-op) ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/cyberpunk-2077</loc>
+    <lastmod>2026-10-23T09:20:49.701Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/optimized/games-cyberpunk-2077-1784209284328.webp</image:loc>
+      <image:title>Cyberpunk 2077 Rehberi: Nasıl Oynanır, İpuçları | Kuralı Ne</image:title>
+      <image:caption>Night City&apos;de açık dünya aksiyon-RPG. Tek oyunculu ile oynanır. Süre yaklaşık 1 saat. Cyberware, hikaye seçimleri ve kehanet seni bekliyor. Steam veya GOG&apos;dan</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/counter-strike-2</loc>
+    <lastmod>2026-10-23T09:20:44.555Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/counter-strike-2.webp</image:loc>
+      <image:title>Counter-Strike 2 Rehberi: Nasıl Oynanır | Kuralı Ne</image:title>
+      <image:caption>Valve&apos;ın efsanevi taktiksel FPS oyunu. 5v5 çevrimiçi ile oynanır. Süre yaklaşık 45 dakika. Bomba kur, imha et, takımınla zafer kazan. Steam üzerinden ücretsiz</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/monopoly</loc>
+    <lastmod>2026-10-23T09:20:40.057Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/monopoly.webp</image:loc>
+      <image:title>Monopoly Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Dünyaca ünlü emlak ve strateji oyunu. 2-8 oyuncu ile oynanır. Mülk alın, ev ve otel inşa edin, zengin olun! Oyun 2-8 oyuncu ile oynanır. Her oyuncu bir figür ve</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/golge-hafizasi</loc>
+    <lastmod>2026-09-26T08:36:01.281Z</lastmod>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/8204995/pexels-photo-8204995.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=1200</image:loc>
+      <image:title>Gölge Hafızası Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Gölgeleri hafızada tutup eksilen nesneleri bilerek puan toplamayı hedefleyen sürükleyici bir ev oyunudur. 4+ kişi ile oynanır. Hazırlayın: Odayı loş hale</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/twister</loc>
+    <lastmod>2026-09-26T08:35:12.076Z</lastmod>
+    <image:image>
+      <image:loc>https://m.media-amazon.com/images/S/aplus-media-library-service-media/d86e47be-24ac-4ade-a3e9-f757de2fa182.__CR0,0,300,300_PT0_SX300_V1___.jpg</image:loc>
+      <image:title>Twister Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Renkli daireler üzerinde dengede kalarak rakipleri devirmeye çalıştığınız, kahkaha dolu klasik bir aile oyunu. 2-4 oyuncu ile oynanır. Matı düz ve kaymayan bir</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/scrabble</loc>
+    <lastmod>2026-09-26T08:33:18.376Z</lastmod>
+    <image:image>
+      <image:loc>https://cdn.duyumarket.com.tr/images/product/30-346613056.jpg?quality=70&amp;sharpen=false</image:loc>
+      <image:title>Scrabble Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Harf taşlarıyla kelimeler oluşturarak puan kazandığınız, aile ve arkadaşlarınızla keyifli vakit geçirebileceğiniz klasik bir kelime oyunudur.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/risk</loc>
+    <lastmod>2026-09-26T08:32:01.838Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/dixit</loc>
+    <lastmod>2026-09-26T08:30:46.827Z</lastmod>
+    <image:image>
+      <image:loc>https://upload.wikimedia.org/wikipedia/commons/9/97/Dixit_game_0001.jpg?utm_source=tr.wikipedia.org&amp;utm_campaign=index&amp;utm_content=original</image:loc>
+      <image:title>Dixit Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Rüya gibi çizimlerle hayal gücünü konuşturan Dixit, aile ve arkadaşlarla sezgileri sınayan ödüllü bir anlatım oyunudur. 3-6 oyuncu ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/king</loc>
+    <lastmod>2026-09-26T08:26:51.329Z</lastmod>
+    <image:image>
+      <image:loc>https://img-s1.onedio.com/id-5a941bc4d3be306e1552337d/rev-0/w-600/h-397/f-jpg/s-10dc0ffaa90b08d5ccbb9ba8c07259e1f6ae8b5f.jpg</image:loc>
+      <image:title>King (Rifkı) Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Çeşitli turlardan oluşan kağıt oyunu. 4 kişi ile oynanır. 8 farklı tur vardır: kızlar kaçar, erkekler kaçar, king kaçar, son 2 el kaçar, vb.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/g%C3%B6mmeli-batak</loc>
+    <lastmod>2026-09-26T08:25:26.070Z</lastmod>
+    <image:image>
+      <image:loc>https://imgrosetta.mynet.com.tr/file/12306009/1200xauto.jpg</image:loc>
+      <image:title>Gömmeli Batak Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Yerdeki 4 kartı alıp kozu belirlediğiniz ve hedefinize ulaşıp batmamaya çalıştığınız 4 kişilik klasik kağıt oyunudur. Hazırlayın: 52 kartlık standart tek bir</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/ihalesiz-batak</loc>
+    <lastmod>2026-09-26T08:24:20.989Z</lastmod>
+    <image:image>
+      <image:loc>https://upload.wikimedia.org/wikipedia/commons/4/49/Aceofspades.svg?utm_source=tr.wikipedia.org&amp;utm_campaign=index&amp;utm_content=original</image:loc>
+      <image:title>İhalesiz Batak Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Kozun daima maça olduğu, aile ve arkadaş ortamlarının vazgeçilmezi İhalesiz Batak&apos;ta amaç söylediğin eli tam almaktır. 4 kişi ile oynanır. Hazırlayın: Standart</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/minecraft</loc>
+    <lastmod>2026-09-25T08:27:49.413Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/minecraft.webp</image:loc>
+      <image:title>Minecraft Rehberi: Nasıl Oynanır, İpuçları | Kuralı Ne</image:title>
+      <image:caption>Bloklarla dolu sonsuz bir dünyada hayatta kalıp hayal gücünüzü inşa ettiğiniz, ailecek oynanan eşsiz bir macera. 1-10 oyuncu (çevrimiçi) ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/sessiz-sinema</loc>
+    <lastmod>2026-09-22T09:03:22.354Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/sessiz-sinema.webp</image:loc>
+      <image:title>Sessiz Sinema Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Sessiz Sinema, kelimeleri hareketlerle anlatarak takım arkadaşlarına tahmin ettirmeye dayalı, tüm ailenin eğlenerek oynayabileceği klasik bir tahmin oyunudur.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/vampir-koylu</loc>
+    <lastmod>2026-09-19T16:26:30.628Z</lastmod>
+    <image:image>
+      <image:loc>https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOlKzbh8ddIvCLl8T7hMdOw-zeCR-GUzKzm6Ap8XccgKXKIgH7vzA35i-_&amp;s=10</image:loc>
+      <image:title>Vampir Köylü Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Vampirler köylüleri avlarken, köylülerin katilleri bulmaya çalıştığı, arkadaşlarınla dolu dolu sohbet ve gerilim yaşayacağın eğlenceli bir dedektiflik oyunu.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/el-kizartmaca-oyunu</loc>
+    <lastmod>2026-09-15T12:30:03.493Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/el-kizartmaca.webp</image:loc>
+      <image:title>El Kızartmaca Oyunu Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Hızlı refleksler ve dikkat isteyen El Kızartmaca, ailenizle eğlenceli vakit geçirmek için ideal, basit bir kart oyunudur. 2+ kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/god-of-war-ragnarok</loc>
+    <lastmod>2026-09-15T12:26:37.200Z</lastmod>
+    <image:image>
+      <image:loc>https://storage.oyungezer.com.tr/ogz-public/public/content/2022/11/03/content_6363d89b35209_76753.jpg</image:loc>
+      <image:title>God of War Ragnarök Rehberi: Nasıl Oynanır | Kuralı Ne</image:title>
+      <image:caption>Dokuz Diyar&apos;da Kratos ve Atreus ile destansı bir maceraya atılın, mitolojik düşmanlarla yüzleşin ve Ragnarök&apos;u deneyimleyin. Tek oyunculu ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/spider-man-2</loc>
+    <lastmod>2026-09-15T12:06:45.549Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/api/og?name=Marvel%27s+Spider-Man+2&amp;category=Konsol+Oyunlar%C4%B1&amp;players=Tek+oyunculu&amp;minutes=30</image:loc>
+      <image:title>Marvel&apos;s Spider-Man 2 Rehberi: Nasıl Oynanır | Kuralı Ne</image:title>
+      <image:caption>Örümcek Adam olarak New York&apos;u kurtar, yeni güçlerini keşfet ve ikonik düşmanlara karşı savaş. Tek oyunculu ile oynanır. Süre yaklaşık 30 dakika.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/ea-fc-25</loc>
+    <lastmod>2026-09-15T11:55:50.496Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/api/og?name=EA+Sports+FC+26&amp;category=Konsol+Oyunlar%C4%B1&amp;players=1-22+oyuncu+%28Ultimate+Team+online%29&amp;minutes=20</image:loc>
+      <image:title>EA Sports FC 26 Rehberi: Nasıl Oynanır, İpuçları | Kuralı Ne</image:title>
+      <image:caption>EA Sports FC 26, sanal sahada gerçekçi futbol deneyimi sunan, ister yalnız ister arkadaşlarınla oynayabileceğin heyecan verici bir spor oyunudur.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/the-last-of-us-part-ii</loc>
+    <lastmod>2026-09-15T11:54:48.317Z</lastmod>
+    <image:image>
+      <image:loc>https://image.api.playstation.com/vulcan/img/rnd/202010/2618/w48z6bzefZPrRcJHc7L8SO66.png</image:loc>
+      <image:title>The Last of Us Part II Rehberi: Nasıl Oynanır | Kuralı Ne</image:title>
+      <image:caption>Hayatta kalma mücadelesiyle dolu, duygu yüklü bir intikam hikayesi yaşamak isteyen tek kişilik oyunseverler için. Tek oyunculu ile oynanır. Süre yaklaşık 25</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/ticket-to-ride</loc>
+    <lastmod>2026-09-15T11:46:21.729Z</lastmod>
+    <image:image>
+      <image:loc>https://assetsio.gnwcdn.com/ticket-to-ride-board-game-gameplay-layout.png?width=1200&amp;height=900&amp;fit=crop&amp;quality=100&amp;format=png&amp;enable=upscale&amp;auto=webp</image:loc>
+      <image:title>Ticket to Ride Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Türkiye&apos;nin şehirlerini trenle bağla, en uzun rotayı kur ve en çok puanı toplayarak ailece keyifli bir yolculuğa çık! 2-5 oyuncu ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/codenames</loc>
+    <lastmod>2026-09-15T11:43:17.980Z</lastmod>
+    <image:image>
+      <image:loc>https://i.etsystatic.com/20386064/r/il/4ca653/4072943882/il_1080xN.4072943882_tuqc.jpg</image:loc>
+      <image:title>Codenames Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>İki takıma ayrılıp tek kelimelik zekice ipuçlarıyla gizli ajanlarınızı rakip takımdan önce bulmaya çalışın. 4+ oyuncu (takımlar) ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/catan</loc>
+    <lastmod>2026-09-15T11:42:07.563Z</lastmod>
+    <image:image>
+      <image:loc>https://m.media-amazon.com/images/I/91GEbUtG37L.jpg</image:loc>
+      <image:title>Catan (Yerleşimciler) Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Strateji ve ticaret oyunu. 3-4 oyuncu ile oynanır. Adada yerleşimler kurun, kaynakları yönetin ve kazanın! Başlangıç yerleşimleri kurulur. Zarlar atılır</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/ihaleli-batak</loc>
+    <lastmod>2026-09-15T11:40:03.418Z</lastmod>
+    <image:image>
+      <image:loc>https://i.ytimg.com/vi/1NlX49wxJf8/sddefault.jpg</image:loc>
+      <image:title>İhaleli Batak Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>4 kişiyle oynanan İhaleli Batak&apos;ta amaç, taahhüt ettiğiniz el sayısını alıp batmadan en yüksek puana ulaşmaktır. Hazırlayın 52 kartlık standart bir iskambil</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/papaz-ka%C3%A7t%C4%B1</loc>
+    <lastmod>2026-09-15T11:39:08.395Z</lastmod>
+    <image:image>
+      <image:loc>https://blog.ofix.com/wp-content/uploads/2022/01/papaz_kacti_ofix_blog.jpg</image:loc>
+      <image:title>Papaz Kaçtı Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Papaz Kaçtı, aile ve arkadaşlarla oynanan, elinizde kalan son kartın bir Papaz olmamasını hedeflediğiniz keyifli bir kart oyunudur. 3-7 kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/mangala</loc>
+    <lastmod>2026-09-15T11:37:49.745Z</lastmod>
+    <image:image>
+      <image:loc>https://ankaraegitimsertifika.com/wp-content/uploads/Ahsap-Mangala-resim-731.jpg</image:loc>
+      <image:title>Mangala Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Geleneksel Türk zeka oyunu Mangala ile taşlarınızı doğru yönetin, en çok taşı toplayarak rakibinizi alt edin. 2 kişi ile oynanır. Tahtayı iki oyuncunun arasına</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/dama</loc>
+    <lastmod>2026-09-15T11:36:29.038Z</lastmod>
+    <image:image>
+      <image:loc>https://www.mevlidhediyesi.com/img/products/zeka-oyun-dama_td_1.jpg</image:loc>
+      <image:title>Dama Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Rakip taşları toplayıp dama yaparak tahtayı ele geçirmeyi hedefleyen, iki kişilik zamansız ve çekişmeli bir zeka oyunu. 2 kişi ile oynanır. Hazırlayın: 8x8</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/satran%C3%A7</loc>
+    <lastmod>2026-09-15T11:34:12.976Z</lastmod>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/260024/pexels-photo-260024.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200&amp;dpr=1</image:loc>
+      <image:title>Satranç Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Satranç, iki oyuncunun stratejik zekalarını konuşturarak rakibin şahını mat etmeye çalıştığı, nesillerdir sevilen bir masa oyunudur. 2 kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/league-of-legends</loc>
+    <lastmod>2026-09-14T07:10:45.481Z</lastmod>
+    <image:image>
+      <image:loc>https://media-cdn.t24.com.tr/media/library/2021/03/1614849266035-1.jpg</image:loc>
+      <image:title>League of Legends Rehberi: Nasıl Oynanır | Kuralı Ne</image:title>
+      <image:caption>Şampiyonunu seç, takım arkadaşlarınla strateji kur ve rakip üssünü yok et! 5 kişi ile oynanır. Arkadaşlarınla eğlenceli bir rekabete atıl. Hazırlık ve</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/pubg-mobile</loc>
+    <lastmod>2026-08-14T08:04:57.558Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/pubg-mobile-1786694652233.jpeg</image:loc>
+      <image:title>PUBG Mobile Rehberi: Nasıl Oynanır, İpuçları | Kuralı Ne</image:title>
+      <image:caption>PUBG Mobile, yüz oyuncunun hayatta kalma mücadelesi verdiği, nefes kesen bir battle royale oyunudur. 100 oyuncu battle royale ile oynanır. Süre yaklaşık 25</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/brawl-stars</loc>
+    <lastmod>2026-08-14T07:59:11.366Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/brawl-stars-1786694331709.png</image:loc>
+      <image:title>Brawl Stars Rehberi: Nasıl Oynanır, İpuçları | Kuralı Ne</image:title>
+      <image:caption>Brawl Stars, rengarenk karakterlerle dolu arenalarda 3&apos;e 3 veya tek başına rakiplerle kapıştığın hızlı ve eğlenceli bir mobil aksiyon oyunu.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/uno</loc>
+    <lastmod>2026-08-14T07:57:46.305Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/uno-1786694249954.svg</image:loc>
+      <image:title>UNO Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Renk ve sayıları eşleştirerek elindeki kartları ilk bitiren olmaya çalıştığın, aile boyu eğlenceli bir kart oyunu. 2-10 oyuncu ile oynanır. Karıştırın kart</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/jenga</loc>
+    <lastmod>2026-08-14T07:56:24.946Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/jenga.webp</image:loc>
+      <image:title>Jenga Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Jenga, dengeyi test eden, kuleyi yıkanın kaybettiği ve herkesin keyif alacağı basit ama heyecanlı bir beceri oyunudur. 1+ oyuncu ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/e%C5%9Fli-batak</loc>
+    <lastmod>2026-08-14T07:55:24.471Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/eşli-batak.webp</image:loc>
+      <image:title>Eşli Batak Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Karşılıklı eşleşerek en çok eli toplamayı ve batmadan taahhüt edilen sayıya ulaşmayı amaçlayan klasik bir kart oyunu. 4 kişi ile oynanır. Hazırlanın ve oturun</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/batak</loc>
+    <lastmod>2026-08-14T07:50:40.371Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/batak-1786693830754.jpg</image:loc>
+      <image:title>Batak Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Batak, 4 oyuncuyla oynanan ve doğru tahminlerle en çok eli almaya çalıştığınız, Türkiye&apos;nin en sevilen ve stratejik kart oyunlarından biridir.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/istop</loc>
+    <lastmod>2026-07-26T22:01:34.197Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/istop.webp</image:loc>
+      <image:title>İstop Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Havaya atılan topu yakalayıp rakipleri vurmayı amaçlayan, en az 3 kişiyle oynanan hareketli bir açık alan oyunudur. Geniş bir açık alanda en az 3 oyuncuyla bir</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/sek-sek</loc>
+    <lastmod>2026-07-26T22:01:34.197Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/sek-sek-1784901747687.jpg</image:loc>
+      <image:title>Sek Sek Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Sek sek, taş atıp karelerde tek ayak üstünde ilerleyerek tüm numaraları tamamlamayı hedefleyen keyifli bir sokak oyunudur. 1+ kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/yakan-top</loc>
+    <lastmod>2026-07-26T22:01:34.197Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/yakan-top.webp</image:loc>
+      <image:title>Yakan Top Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Rakipleri topla vurarak elemeyi ve hayatta kalmayı amaçlayan, aile ve arkadaş grupları için harika bir açık hava oyunu. 6+ kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/mendil-kapmaca</loc>
+    <lastmod>2026-07-26T22:01:34.197Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/mendil-kapmaca.webp</image:loc>
+      <image:title>Mendil Kapmaca Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>İki takımın ortadaki mendili alıp yakalanmadan kendi alanına kaçmaya çalıştığı, hıza dayalı eğlenceli bir oyundur. 6+ kişi ile oynanır. Hazırlayın: Geniş bir</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/bilye</loc>
+    <lastmod>2026-07-26T22:01:34.197Z</lastmod>
+    <image:image>
+      <image:loc>https://images.pexels.com/photos/2923034/pexels-photo-2923034.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200&amp;dpr=1</image:loc>
+      <image:title>Bilye Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Nişan alma ve bilye oyunu. 2+ kişi ile oynanır. Her oyuncunun bilyeleri vardır. Başlangıç çizgisi belirlenir. Oyuncular sırayla bilyeleri hedef çukura atmaya</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/alman-kale</loc>
+    <lastmod>2026-07-26T22:01:34.197Z</lastmod>
+    <image:image>
+      <image:loc>https://i.ytimg.com/vi/4tDRlpi6eWk/sddefault.jpg</image:loc>
+      <image:title>Alman Kale Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Alman Kale, çocukluğumuzda mahallede en çok oynanan ve sevilen geleneksel sokak oyunlarından biridir. 3+ kişi ile oynanır. Oyuncular en az iki takıma ayrılır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/pi%C5%9Fti</loc>
+    <lastmod>2026-07-24T14:50:27.600Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/pi-ti-1784904614529.jpg</image:loc>
+      <image:title>Pişti Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Standart 52&apos;lik desteyle oynanan Pişti, yerdeki kartları eşleyip en yüksek puanı toplamayı hedefleyen klasik bir oyundur. 2-4 kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/peri%C5%9Fan-okey</loc>
+    <lastmod>2026-07-24T14:49:17.877Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/perişan-okey.webp</image:loc>
+      <image:title>Perişan Okey Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Elinizdeki grupları masaya açıp taş işleyerek elinizi en hızlı bitirmeyi hedefleyen keyifli bir ev Okeyi türüdür. 2-4 kişi ile oynanır. Hazırlayın: 106 adet</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/birdirbir</loc>
+    <lastmod>2026-07-24T14:48:28.713Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/birdirbir-1784904471568.jpg</image:loc>
+      <image:title>Birdirbir Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Birdirbir, bir oyuncunun eğilip diğerinin üzerinden atlamasına dayanan, refleks ve denge geliştiren klasik bir oyundur. 2 + kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/51-okey</loc>
+    <lastmod>2026-07-24T14:45:34.537Z</lastmod>
+    <image:image>
+      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/51-okey-1784904327886.jpg</image:loc>
+      <image:title>51 Okey Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Elinizdeki taşlarla en az 51 puana ulaşıp perleri dizerek elinizi bitirmeye çalıştığınız keyifli bir taş oyunudur. 2-4 kişi ile oynanır. Masaya 106 Okey taşını</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/be%C5%9F-ta%C5%9F</loc>
+    <lastmod>2026-07-24T13:57:05.096Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/media/cards/beş-taş.webp</image:loc>
+      <image:title>Beş Taş (Dikdik) Nasıl Oynanır? | Kuralı Ne</image:title>
+      <image:caption>Pürüzsüz beş taşla el becerisini yarıştıran Beş Taş&apos;ta amaç, yerdeki taşları havaya atılan taşı düşürmeden toplamaktır. 1+ kişi ile oynanır.</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://kuraline.xyz/oyun/d%C3%BCz-okey</loc>
     <lastmod>2026-07-22T19:58:44.460Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
     <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/d-z-okey-1784750299216.jpg</image:loc>
-      <image:title>Düz Okey - Kuralı Ne?</image:title>
-      <image:caption>Düz Okey oyun rehberi</image:caption>
+      <image:loc>https://kuraline.xyz/media/cards/düz-okey.webp</image:loc>
+      <image:title>Düz Okey Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Düz Okey, taşları seriler veya çiftler halinde dizip elinizi bitirmeye çalıştığınız 2-4 kişilik eğlenceli bir ev oyunudur. Hazırlayın: 106 adet okey taşını yüzü</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://kuraline.xyz/oyun/101-okey</loc>
     <lastmod>2026-07-22T19:57:25.540Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
     <image:image>
       <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/101-okey-1784750182512.webp</image:loc>
-      <image:title>101 Okey - Kuralı Ne?</image:title>
-      <image:caption>101 Okey oyun rehberi</image:caption>
+      <image:title>101 Okey Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>101 Okey, 101 barajını aşıp elinizi en az puanla tamamlamayı hedeflediğiniz 4 kişilik keyifli bir masa oyunudur. Hazırlayın: 106 taştan oluşan Okey takımını</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://kuraline.xyz/oyun/elden-ring</loc>
     <lastmod>2026-07-16T13:57:02.930Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
     <image:image>
       <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/elden-ring-1784210213262.jpg</image:loc>
-      <image:title>Elden Ring - Kuralı Ne?</image:title>
-      <image:caption>Elden Ring oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/cyberpunk-2077</loc>
-    <lastmod>2026-07-16T13:43:19.342Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/cyberpunk-2077-1784209284328.jpg</image:loc>
-      <image:title>Cyberpunk 2077 - Kuralı Ne?</image:title>
-      <image:caption>Cyberpunk 2077 oyun rehberi</image:caption>
+      <image:title>Elden Ring Rehberi: Nasıl Oynanır, İpuçları | Kuralı Ne</image:title>
+      <image:caption>FromSoftware&apos;in açık dünya souls-like başyapıtı. 1-4 oyuncu (co-op) ile oynanır. Süre yaklaşık 1 saat 20 dk. Keşfet, öğren, boss&apos;ları yen. Steam&apos;den indir, yeni</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://kuraline.xyz/oyun/valorant</loc>
     <lastmod>2026-07-16T13:40:37.484Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
     <image:image>
       <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/valorant-1784209136333.jfif</image:loc>
-      <image:title>Valorant - Kuralı Ne?</image:title>
-      <image:caption>Valorant oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/counter-strike-2</loc>
-    <lastmod>2026-07-16T13:38:12.543Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/counter-strike-2-1784209069007.jpg</image:loc>
-      <image:title>Counter-Strike 2 - Kuralı Ne?</image:title>
-      <image:caption>Counter-Strike 2 oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/minecraft</loc>
-    <lastmod>2026-07-16T13:36:10.786Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/minecraft-1784208886533.avif</image:loc>
-      <image:title>Minecraft - Kuralı Ne?</image:title>
-      <image:caption>Minecraft oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/gta-v</loc>
-    <lastmod>2026-07-14T07:33:16.290Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/gta-v-1784014199342.jpg</image:loc>
-      <image:title>Grand Theft Auto V - Kuralı Ne?</image:title>
-      <image:caption>Grand Theft Auto V oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/yakan-top</loc>
-    <lastmod>2026-07-13T06:43:30.591Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/yakan-top-1783924998660.jpg</image:loc>
-      <image:title>Yakan Top - Kuralı Ne?</image:title>
-      <image:caption>Yakan Top oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/istop</loc>
-    <lastmod>2026-07-13T06:40:25.138Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/istop-1783924814320.avif</image:loc>
-      <image:title>İstop - Kuralı Ne?</image:title>
-      <image:caption>İstop oyun rehberi</image:caption>
+      <image:title>Valorant Rehberi: Nasıl Oynanır, İpuçları | Kuralı Ne</image:title>
+      <image:caption>Riot Games&apos;in taktiksel ajan tabanlı FPS oyunu. 5v5 çevrimiçi ile oynanır. Süre yaklaşık 40 dakika. Yetenekler + nişancılık bir arada. Riot Client üzerinden</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://kuraline.xyz/oyun/k%C3%B6rebe</loc>
     <lastmod>2026-07-13T06:36:39.155Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
     <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/k-rebe-1783924537839.jpg</image:loc>
-      <image:title>Körebe - Kuralı Ne?</image:title>
-      <image:caption>Körebe oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/saklamba%C3%A7</loc>
-    <lastmod>2026-07-13T06:33:20.505Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/saklamba-1783924302127.png</image:loc>
-      <image:title>Saklambaç - Kuralı Ne?</image:title>
-      <image:caption>Saklambaç oyun rehberi</image:caption>
+      <image:loc>https://kuraline.xyz/media/cards/körebe.webp</image:loc>
+      <image:title>Körebe Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Gözü kapalı ebenin diğerlerini yakalamaya çalıştığı, en az 4 kişiyle oynanan klasik ve eğlenceli bir ev oyunudur. Belirleyin güvenli bir oyun alanı ve etraftaki</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://kuraline.xyz/oyun/clash-royale</loc>
     <lastmod>2026-06-28T21:15:32.675Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1606167668584-78701c57f13d?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
-      <image:title>Clash Royale - Kuralı Ne?</image:title>
-      <image:caption>Clash Royale oyun rehberi</image:caption>
+      <image:loc>https://kuraline.xyz/api/og?name=Clash+Royale&amp;category=Mobil+Oyunlar&amp;players=1v1+%2F+2v2+%C3%A7evrimi%C3%A7i&amp;minutes=5</image:loc>
+      <image:title>Clash Royale Rehberi: Nasıl Oynanır, İpuçları | Kuralı Ne</image:title>
+      <image:caption>Supercell&apos;in gerçek zamanlı kart savaşı oyunu. 1v1 / 2v2 çevrimiçi ile oynanır. Süre yaklaşık 5 dakika. Desteni kur, kuleleri yık, arena yükselt.</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://kuraline.xyz/oyun/zelda-tears-of-the-kingdom</loc>
     <lastmod>2026-06-28T21:09:58.982Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
     <image:image>
-      <image:loc>https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
-      <image:title>The Legend of Zelda: Tears of the Kingdom - Kuralı Ne?</image:title>
-      <image:caption>The Legend of Zelda: Tears of the Kingdom oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/spider-man-2</loc>
-    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
-      <image:title>Marvel&apos;s Spider-Man 2 - Kuralı Ne?</image:title>
-      <image:caption>Marvel&apos;s Spider-Man 2 oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/pubg-mobile</loc>
-    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
-      <image:title>PUBG Mobile - Kuralı Ne?</image:title>
-      <image:caption>PUBG Mobile oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/genshin-impact</loc>
-    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
-      <image:title>Genshin Impact - Kuralı Ne?</image:title>
-      <image:caption>Genshin Impact oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/brawl-stars</loc>
-    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1563906267088-b029e7101114?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
-      <image:title>Brawl Stars - Kuralı Ne?</image:title>
-      <image:caption>Brawl Stars oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/the-last-of-us-part-ii</loc>
-    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1493711664972-8a8e9778441b?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
-      <image:title>The Last of Us Part II - Kuralı Ne?</image:title>
-      <image:caption>The Last of Us Part II oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/god-of-war-ragnarok</loc>
-    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1486401899862-0fca89898f85?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
-      <image:title>God of War Ragnarök - Kuralı Ne?</image:title>
-      <image:caption>God of War Ragnarök oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/ea-fc-25</loc>
-    <lastmod>2026-06-28T21:09:58.982Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&amp;w=2070&amp;auto=format&amp;fit=crop</image:loc>
-      <image:title>EA Sports FC 25 - Kuralı Ne?</image:title>
-      <image:caption>EA Sports FC 25 oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/ahbdas</loc>
-    <lastmod>2026-06-24T21:51:48.069Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/ahbdas-1782337811194.jpeg</image:loc>
-      <image:title>ahbdas - Kuralı Ne?</image:title>
-      <image:caption>ahbdas oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/golge-hafizasi</loc>
-    <lastmod>2026-02-01T15:01:02.007Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/8204995/pexels-photo-8204995.jpeg</image:loc>
-      <image:title>Gölge Hafızası - Kuralı Ne?</image:title>
-      <image:caption>Gölge Hafızası oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/codenames</loc>
-    <lastmod>2026-01-30T13:58:43.597Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/codenames-1769781488239.png</image:loc>
-      <image:title>Codenames - Kuralı Ne?</image:title>
-      <image:caption>Codenames oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/%C3%A7anak</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Çanak - Kuralı Ne?</image:title>
-      <image:caption>Çanak oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/papaz-ka%C3%A7t%C4%B1</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Papaz Kaçtı - Kuralı Ne?</image:title>
-      <image:caption>Papaz Kaçtı oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/51-okey</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/4226149/pexels-photo-4226149.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>51 Okey - Kuralı Ne?</image:title>
-      <image:caption>51 Okey oyun rehberi</image:caption>
+      <image:loc>https://kuraline.xyz/api/og?name=The+Legend+of+Zelda%3A+Tears+of+the+Kingdom&amp;category=Konsol+Oyunlar%C4%B1&amp;players=Tek+oyunculu&amp;minutes=60</image:loc>
+      <image:title>The Legend of Zelda: Tears of the Kingd… Rehberi | Kuralı Ne</image:title>
+      <image:caption>Hyrule&apos;un gökyüzüne ve yeraltına açılan açık dünya macerası. Tek oyunculu ile oynanır. Süre yaklaşık 1 saat. Ultrahand ile yarat. Nintendo eShop&apos;tan dijital</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://kuraline.xyz/oyun/tavla</loc>
     <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
     <image:image>
-      <image:loc>https://images.pexels.com/photos/1796794/pexels-photo-1796794.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Tavla - Kuralı Ne?</image:title>
-      <image:caption>Tavla oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/peri%C5%9Fan-okey</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/4226264/pexels-photo-4226264.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Perişan Okey - Kuralı Ne?</image:title>
-      <image:caption>Perişan Okey oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/satran%C3%A7</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/260024/pexels-photo-260024.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Satranç - Kuralı Ne?</image:title>
-      <image:caption>Satranç oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/dama</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/5794050/pexels-photo-5794050.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Dama - Kuralı Ne?</image:title>
-      <image:caption>Dama oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/mangala</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/6256604/pexels-photo-6256604.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Mangala - Kuralı Ne?</image:title>
-      <image:caption>Mangala oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/jenga</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://kuraline.xyz/images/games/jenga.jpg</image:loc>
-      <image:title>Jenga - Kuralı Ne?</image:title>
-      <image:caption>Jenga oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/uno</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://kuraline.xyz/images/games/uno.jpg</image:loc>
-      <image:title>UNO - Kuralı Ne?</image:title>
-      <image:caption>UNO oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/tabu</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/tabu-1767198746305.webp</image:loc>
-      <image:title>Tabu - Kuralı Ne?</image:title>
-      <image:caption>Tabu oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/risk</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://kuraline.xyz/images/games/risk.jpg</image:loc>
-      <image:title>Risk - Kuralı Ne?</image:title>
-      <image:caption>Risk oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/e%C5%9Fli-batak</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Eşli Batak - Kuralı Ne?</image:title>
-      <image:caption>Eşli Batak oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/catan</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://kuraline.xyz/images/games/catan.jpg</image:loc>
-      <image:title>Catan (Yerleşimciler) - Kuralı Ne?</image:title>
-      <image:caption>Catan (Yerleşimciler) oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/ticket-to-ride</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://kuraline.xyz/images/games/ticket-to-ride.jpg</image:loc>
-      <image:title>Ticket to Ride - Kuralı Ne?</image:title>
-      <image:caption>Ticket to Ride oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/dixit</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://kuraline.xyz/images/games/dixit.jpg</image:loc>
-      <image:title>Dixit - Kuralı Ne?</image:title>
-      <image:caption>Dixit oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/twister</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://kuraline.xyz/images/games/twister.jpg</image:loc>
-      <image:title>Twister - Kuralı Ne?</image:title>
-      <image:caption>Twister oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/monopoly</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/monopoly-1767198706585.jpg</image:loc>
-      <image:title>Monopoly - Kuralı Ne?</image:title>
-      <image:caption>Monopoly oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/scrabble</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/scrabble-1767374609043.jpg</image:loc>
-      <image:title>Scrabble - Kuralı Ne?</image:title>
-      <image:caption>Scrabble oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/birdirbir</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/163036/mario-luigi-yoschi-figures-163036.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Birdirbir - Kuralı Ne?</image:title>
-      <image:caption>Birdirbir oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/be%C5%9F-ta%C5%9F</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Beş Taş (Dikdik) - Kuralı Ne?</image:title>
-      <image:caption>Beş Taş (Dikdik) oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/pi%C5%9Fti</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Pişti - Kuralı Ne?</image:title>
-      <image:caption>Pişti oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/ihaleli-batak</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>İhaleli Batak - Kuralı Ne?</image:title>
-      <image:caption>İhaleli Batak oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/mustafa-cacan-test</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://yjnipjcevnxrzlgfmeci.supabase.co/storage/v1/object/public/game-images/games/mustafa-cacan-test-1768236584139.png</image:loc>
-      <image:title>mustafa çaçan test - Kuralı Ne?</image:title>
-      <image:caption>mustafa çaçan test oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/mendil-kapmaca</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1104014/pexels-photo-1104014.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Mendil Kapmaca - Kuralı Ne?</image:title>
-      <image:caption>Mendil Kapmaca oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/sek-sek</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1170979/pexels-photo-1170979.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Sek Sek - Kuralı Ne?</image:title>
-      <image:caption>Sek Sek oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/uzun-e%C5%9Fek</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1619779/pexels-photo-1619779.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Uzun Eşek - Kuralı Ne?</image:title>
-      <image:caption>Uzun Eşek oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/k%C3%B6%C5%9Fe-kapmaca</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1094072/pexels-photo-1094072.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Köşe Kapmaca - Kuralı Ne?</image:title>
-      <image:caption>Köşe Kapmaca oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/alman-kale</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://i.ytimg.com/vi/4tDRlpi6eWk/maxresdefault.jpg</image:loc>
-      <image:title>Alman Kale - Kuralı Ne?</image:title>
-      <image:caption>Alman Kale oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/batak</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Batak - Kuralı Ne?</image:title>
-      <image:caption>Batak oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/bilye</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/2923034/pexels-photo-2923034.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Bilye - Kuralı Ne?</image:title>
-      <image:caption>Bilye oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/ihalesiz-batak</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>İhalesiz Batak - Kuralı Ne?</image:title>
-      <image:caption>İhalesiz Batak oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/g%C3%B6mmeli-batak</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Gömmeli Batak - Kuralı Ne?</image:title>
-      <image:caption>Gömmeli Batak oyun rehberi</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://kuraline.xyz/oyun/king</loc>
-    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>King (Rifkı) - Kuralı Ne?</image:title>
-      <image:caption>King (Rifkı) oyun rehberi</image:caption>
+      <image:loc>https://images.pexels.com/photos/1796794/pexels-photo-1796794.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200&amp;dpr=1</image:loc>
+      <image:title>Tavla Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Türkiye&apos;nin en eski masa oyunu. 2 kişi ile oynanır. İki oyuncu karşılıklı oynar. Her oyuncunun 15 pulü vardır. Zar atılır ve pullar hareket ettirilir.</image:caption>
     </image:image>
   </url>
   <url>
     <loc>https://kuraline.xyz/oyun/dost-kaz%C4%B1%C4%9F%C4%B1</loc>
     <lastmod>2026-01-30T12:56:38.647Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
     <image:image>
-      <image:loc>https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800&amp;h=600&amp;dpr=1</image:loc>
-      <image:title>Dost Kazığı - Kuralı Ne?</image:title>
-      <image:caption>Dost Kazığı oyun rehberi</image:caption>
+      <image:loc>https://kuraline.xyz/api/og?name=Dost+Kaz%C4%B1%C4%9F%C4%B1&amp;category=Ka%C4%9F%C4%B1t+Oyunlar%C4%B1&amp;players=3-4+ki%C5%9Fi</image:loc>
+      <image:title>Dost Kazığı Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Basit ve eğlenceli takma oyunu. 3-4 kişi ile oynanır. 52 kağıtlık deste kullanılır. Her oyuncuya eşit kağıt dağıtılır. İlk oyuncu bir kağıt atar, diğerleri aynı</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://kuraline.xyz/oyun/%C3%A7anak</loc>
+    <lastmod>2026-01-30T12:56:38.647Z</lastmod>
+    <image:image>
+      <image:loc>https://kuraline.xyz/api/og?name=%C3%87anak&amp;category=Ka%C4%9F%C4%B1t+Oyunlar%C4%B1&amp;players=2-4+ki%C5%9Fi</image:loc>
+      <image:title>Çanak Nasıl Oynanır? Kuralları ve Puanlama | Kuralı Ne</image:title>
+      <image:caption>Hızlı refleks gerektiren oyun. 2-4 kişi ile oynanır. Deste oyunculara eşit dağıtılır. Oyuncular sırayla ellerinden birer kağıt ortaya atar. Üst üste aynı</image:caption>
     </image:image>
   </url>
 </urlset>

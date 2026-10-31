@@ -1,22 +1,20 @@
 import { Lightbulb, BookOpen, ListOrdered, Sparkles } from 'lucide-react';
-import { isDigitalGameCategory } from '../../constants/digitalGames';
 
 export default function GameContent({ game }) {
   const rules = Array.isArray(game?.rules) ? game.rules : [];
   const tips = Array.isArray(game?.tips) ? game.tips : [];
-  const isDigital = isDigitalGameCategory(game?.category);
-  const rulesTitle = isDigital ? 'Nasıl Oynanır' : 'Oyun Kuralları';
+  const rulesTitle = `${game?.name || 'Bu oyun'} nasıl oynanır?`;
 
   return (
     <div className="lg:col-span-2 space-y-6">
       {/* Oyun Hakkında */}
-      <article className="bg-white rounded-2xl shadow-soft border border-warm-200/70 p-6 md:p-8">
+      <article id="nedir" className="scroll-mt-24 bg-white rounded-2xl shadow-soft border border-warm-200/70 p-6 md:p-8">
         <header className="flex items-center gap-3 mb-4">
           <span className="inline-flex items-center justify-center w-10 h-10 bg-orange-50 text-orange-600 rounded-xl shadow-soft">
             <BookOpen size={18} aria-hidden="true" />
           </span>
           <h2 className="text-2xl md:text-[1.75rem] font-extrabold text-warm-900 tracking-tight leading-tight">
-            Oyun Hakkında
+            {game?.name} nedir?
           </h2>
         </header>
         <p className="game-description text-warm-700 text-[15px] md:text-base leading-[1.75] tracking-[-0.005em]">
@@ -26,7 +24,7 @@ export default function GameContent({ game }) {
 
       {/* Oyun Kuralları */}
       {rules.length > 0 && (
-        <article className="game-rules bg-white rounded-2xl shadow-soft border border-warm-200/70 p-6 md:p-8">
+        <article id="nasil-oynanir" className="game-rules scroll-mt-24 bg-white rounded-2xl shadow-soft border border-warm-200/70 p-6 md:p-8">
           <header className="flex items-center gap-3 mb-5">
             <span className="inline-flex items-center justify-center w-10 h-10 bg-rose-50 text-rose-600 rounded-xl shadow-soft">
               <ListOrdered size={18} aria-hidden="true" />
@@ -54,13 +52,13 @@ export default function GameContent({ game }) {
 
       {/* İpuçları */}
       {tips.length > 0 && (
-        <article className="bg-white rounded-2xl shadow-soft border border-warm-200/70 p-6 md:p-8">
+        <article id="ipuclari" className="scroll-mt-24 bg-white rounded-2xl shadow-soft border border-warm-200/70 p-6 md:p-8">
           <header className="flex items-center gap-3 mb-5">
             <span className="inline-flex items-center justify-center w-10 h-10 bg-amber-50 text-amber-600 rounded-xl shadow-soft">
               <Sparkles size={18} aria-hidden="true" />
             </span>
             <h2 className="text-2xl md:text-[1.75rem] font-extrabold text-warm-900 tracking-tight leading-tight">
-              İpuçları
+              {game?.name} oynarken nelere dikkat edilmeli?
             </h2>
           </header>
 

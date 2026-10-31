@@ -3,6 +3,20 @@
  * Destek: news | game | category | compare
  */
 import { createClient } from '@supabase/supabase-js';
+import { getGameSeoHeadline } from '../src/constants/seo.js';
+import { absoluteCover } from '../src/lib/coverImage.js';
+import {
+  categoryDescription,
+  categoryTitle,
+  comparisonDescription,
+  comparisonTitle,
+  gameDescription,
+  withBrand,
+} from '../src/lib/seoMeta.js';
+import { canonicalNewsSlug, storedNewsSlug } from '../src/constants/newsSlugRedirects.js';
+import { categoryToSlug } from '../src/utils/categorySlug.js';
+import { isSameFamily } from '../src/constants/comparisonFamilies.js';
+import { isPublishableGame } from '../src/constants/sitemapRoutes.js';
 
 const SITE_URL = 'https://kuraline.xyz';
 const SUPABASE_URL =
@@ -33,9 +47,8 @@ function truncate(text, max = 160) {
   return `${clean.slice(0, max - 1)}…`;
 }
 
-function injectMeta(html, { title, description, canonical, keywords, image, type = 'website' }) {
-  const hasBrand = /kuralı\s*ne/i.test(title || '');
-  const fullTitle = hasBrand ? title : `${title} - Kuralı Ne?`;
+function injectMeta(html, { title, description, canonical, keywords, image, type = 'website', robots }) {
+  const fullTitle = withBrand(title);
   const desc = description || 'Kuralı Ne? oyun rehberi platformu.';
   const ogImage = image || `${SITE_URL}/og-image.jpg`;
   const kw = keywords || 'kuralı ne, oyun kuralları';
@@ -80,6 +93,17 @@ function injectMeta(html, { title, description, canonical, keywords, image, type
     out = out.replace(re, replacement);
   }
 
+  if (robots) {
+    if (/<meta name="robots" content="[^"]*"\s*\/?>/.test(out)) {
+      out = out.replace(
+        /<meta name="robots" content="[^"]*"\s*\/?>/,
+        `<meta name="robots" content="${escapeHtml(robots)}" />`
+      );
+    } else {
+      out = out.replace('</head>', `<meta name="robots" content="${escapeHtml(robots)}" /></head>`);
+    }
+  }
+
   const bodySnippet = `<div id="prerender-content"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(desc)}</p></div>`;
   if (out.includes('id="prerender-content"')) {
     out = out.replace(/<div id="prerender-content">[\s\S]*?<\/div>/, bodySnippet);
@@ -106,12 +130,29 @@ function notFoundHtml({ titlePath, listPath, listLabel }) {
 }
 
 async function resolveNews(slug) {
-  const { data, error } = await supabase
+  const canonical = canonicalNewsSlug(slug);
+  if (canonical !== slug) {
+    return { redirect: `${SITE_URL}/haberler/${canonical}` };
+  }
+
+  const lookup = storedNewsSlug(slug);
+  let { data, error } = await supabase
     .from('news_posts')
     .select('slug, title, excerpt, seo_title, seo_description, cover_image, tags, category, is_published')
     .eq('slug', slug)
     .eq('is_published', true)
     .maybeSingle();
+
+  if (!data && !error && lookup !== slug) {
+    const fallback = await supabase
+      .from('news_posts')
+      .select('slug, title, excerpt, seo_title, seo_description, cover_image, tags, category, is_published')
+      .eq('slug', lookup)
+      .eq('is_published', true)
+      .maybeSingle();
+    data = fallback.data;
+    error = fallback.error;
+  }
 
   if (error || !data) return null;
 
@@ -122,7 +163,7 @@ async function resolveNews(slug) {
       .filter(Boolean)
       .join(', '),
     image: data.cover_image,
-    canonical: `${SITE_URL}/haberler/${data.slug}`,
+    canonical: `${SITE_URL}/haberler/${canonical}`,
     type: 'article',
   };
 }
@@ -130,21 +171,20 @@ async function resolveNews(slug) {
 async function resolveGame(slug) {
   const { data, error } = await supabase
     .from('games')
-    .select('slug, name, short_description, description, image, category')
+    .select('slug, name, short_description, description, image, category, players, difficulty, play_time_minutes, rules')
     .eq('slug', slug)
     .maybeSingle();
 
   if (error || !data) return null;
 
-  const title = `${data.name} Kuralı Ne`;
+  const title = getGameSeoHeadline(data.name, data.category);
 
   return {
     title,
-    description: truncate(
-      `${data.name} kuralı ne. ${data.short_description || data.description || 'Kurallar, nasıl oynanır ve ipuçları.'}`
-    ),
+    robots: isPublishableGame(data) ? undefined : 'noindex, follow',
+    description: gameDescription(data),
     keywords: `${data.name} kuralı ne, ${data.name} kuralları, ${data.name} nasıl oynanır, ${data.category || ''}, kuralı ne`.replace(/,\s*,/g, ','),
-    image: data.image,
+    image: absoluteCover(data),
     canonical: `${SITE_URL}/oyun/${data.slug}`,
     type: 'article',
   };
@@ -154,26 +194,41 @@ async function resolveCategory(name) {
   const decoded = decodeURIComponent(name).trim();
   if (!decoded) return null;
 
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('name')
+    .eq('is_active', true);
+  let categoryNames = (categories || []).map((row) => row.name).filter(Boolean);
+  if (!categoryNames.length) {
+    const { data: categoryRows } = await supabase.from('games').select('category');
+    categoryNames = [...new Set((categoryRows || []).map((row) => row.category).filter(Boolean))];
+  }
+  const resolved =
+    categoryNames.find((item) => categoryToSlug(item) === decoded) ||
+    categoryNames.find((item) => item === decoded) ||
+    categoryNames.find((item) => categoryToSlug(item) === categoryToSlug(decoded));
+  if (!resolved) return null;
+
+  const canonical = categoryToSlug(resolved);
+  if (decoded !== canonical) {
+    return { redirect: `${SITE_URL}/kategori/${canonical}` };
+  }
+
   const { data: games } = await supabase
     .from('games')
-    .select('name, image')
-    .eq('category', decoded)
+    .select('name, short_description, image')
+    .eq('category', resolved)
     .limit(8);
 
-  const names = (games || []).map((g) => g.name).filter(Boolean);
-  const title = `${decoded} Oyunları — Kurallar & Rehber`;
-  const description = truncate(
-    names.length
-      ? `${decoded} kategorisinde ${names.slice(0, 5).join(', ')} ve daha fazlası. Kurallar, ipuçları — Kuralı Ne?.`
-      : `${decoded} oyunlarının kuralları ve rehberleri. Kuralı Ne? arşivi.`
-  );
+  const title = categoryTitle(resolved);
+  const description = categoryDescription(resolved, games || []);
 
   return {
     title,
     description,
-    keywords: `${decoded}, ${decoded} oyunları, nasıl oynanır, kuralı ne, oyun rehberi`,
+    keywords: `${resolved}, ${resolved} oyunları, nasıl oynanır, kuralı ne, oyun rehberi`,
     image: games?.[0]?.image || null,
-    canonical: `${SITE_URL}/kategori/${encodeURIComponent(decoded)}`,
+    canonical: `${SITE_URL}/kategori/${canonical}`,
     type: 'website',
   };
 }
@@ -186,24 +241,26 @@ async function resolveCompare(param) {
   if (!slugA || !slugB) return null;
 
   const [{ data: a }, { data: b }] = await Promise.all([
-    supabase.from('games').select('slug, name, short_description, image, category').eq('slug', slugA).maybeSingle(),
-    supabase.from('games').select('slug, name, short_description, image, category').eq('slug', slugB).maybeSingle(),
+    supabase.from('games').select('slug, name, short_description, description, image, category, players, play_time_minutes').eq('slug', slugA).maybeSingle(),
+    supabase.from('games').select('slug, name, short_description, description, image, category, players, play_time_minutes').eq('slug', slugB).maybeSingle(),
   ]);
 
   if (!a || !b) return null;
 
-  const title = `${a.name} vs ${b.name} — Hangisi Daha İyi?`;
-  const description = truncate(
-    `${a.name} ile ${b.name} karşılaştırması: kurallar, oyuncu, zorluk. Hangisini seçmelisin? Detaylı rehber.`
-  );
+  const title = comparisonTitle(a, b);
+  const description = comparisonDescription(a, b);
 
   return {
     title,
     description,
     keywords: `${a.name} vs ${b.name}, ${a.name}, ${b.name}, oyun karşılaştırma, kuralı ne`,
-    image: a.image || b.image,
+    image: absoluteCover(a) || absoluteCover(b),
     canonical: `${SITE_URL}/karsilastir/${a.slug}${COMPARISON_SEPARATOR}${b.slug}`,
     type: 'article',
+    robots:
+      isSameFamily(a, b) && isPublishableGame(a) && isPublishableGame(b)
+        ? undefined
+        : 'noindex, follow',
   };
 }
 
@@ -225,6 +282,13 @@ export default async function handler(req, res) {
     else if (type === 'game') meta = await resolveGame(slug);
     else if (type === 'category') meta = await resolveCategory(slug);
     else if (type === 'compare') meta = await resolveCompare(slug);
+
+    if (meta?.redirect) {
+      res.statusCode = 301;
+      res.setHeader('Location', meta.redirect);
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+      return res.end();
+    }
 
     if (!meta) {
       const map = {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { formatNewsPost } from './useNews';
+import { storedNewsSlug } from '../constants/newsSlugRedirects';
 
 export function useNewsPost(slug) {
   const [post, setPost] = useState(null);
@@ -14,17 +15,28 @@ export function useNewsPost(slug) {
     setError(null);
 
     try {
-      const { data, error: fetchError } = await supabase
-        .from('news_posts')
-        .select(`
+      const select = `
           *,
           related_game:games!related_game_id(id, slug, name, image, short_description)
-        `)
-        .eq('slug', slug)
-        .eq('is_published', true)
-        .single();
+        `;
+      const fetchBySlug = (value) =>
+        supabase
+          .from('news_posts')
+          .select(select)
+          .eq('slug', value)
+          .eq('is_published', true)
+          .maybeSingle();
+
+      let { data, error: fetchError } = await fetchBySlug(slug);
+      const stored = storedNewsSlug(slug);
+      if (!data && !fetchError && stored !== slug) {
+        const fallback = await fetchBySlug(stored);
+        data = fallback.data;
+        fetchError = fallback.error;
+      }
 
       if (fetchError) throw fetchError;
+      if (!data) throw new Error('Haber bulunamadı');
       setPost(formatNewsPost(data));
     } catch (err) {
       console.error('Error loading news post:', err);
@@ -46,7 +58,7 @@ export function useNewsPost(slug) {
     if (sessionStorage.getItem(key)) return;
 
     sessionStorage.setItem(key, '1');
-    supabase.rpc('increment_news_view', { post_slug: slug }).then(({ error: rpcError }) => {
+    supabase.rpc('increment_news_view', { post_slug: post.slug || slug }).then(({ error: rpcError }) => {
       if (!rpcError) {
         setPost((prev) =>
           prev ? { ...prev, viewCount: (prev.viewCount || 0) + 1 } : prev

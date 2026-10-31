@@ -25,10 +25,7 @@ function shouldBypassCache(url) {
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+      .then((cache) => cache.addAll(urlsToCache))
   );
   self.skipWaiting();
 });
@@ -40,7 +37,6 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -142,8 +138,6 @@ self.addEventListener('sync', (event) => {
 async function syncComments() {
   // Get pending comments from IndexedDB
   // Send them to server
-  // This is a placeholder for actual implementation
-  console.log('Syncing comments...');
 }
 
 // Periodic sync event (for updating content)
@@ -156,5 +150,4 @@ self.addEventListener('periodicsync', (event) => {
 async function updateGames() {
   // Fetch latest games from server
   // Update cache
-  console.log('Updating games...');
 }

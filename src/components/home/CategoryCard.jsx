@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { CARD_FALLBACK_IMAGE, cardImage, handleImageFallback } from '../../constants/media';
+import { categoryPath } from '../../utils/categorySlug';
 
 const ACCENT = {
   red: 'from-rose-600/90 via-rose-900/55 to-warm-950/80',
@@ -24,13 +25,13 @@ function CategoryCard({
   compact = false,
   image,
 }) {
-  const categoryUrl = encodeURIComponent(category);
+  const categoryUrl = categoryPath(category);
   const overlay = ACCENT[color] || ACCENT.orange;
   const src = cardImage(image, 640) || CARD_FALLBACK_IMAGE;
 
   return (
     <Link
-      to={`/kategori/${categoryUrl}`}
+      to={categoryUrl}
       className="category-tile group block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
     >
       <article

@@ -10,11 +10,13 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build:sitemap": "node scripts/generate-sitemap.js",
-    "dev:sitemap": "node scripts/generate-sitemap.js"
+    "dev:sitemap": "node scripts/generate-sitemap.js",
+    "test:seo": "node --test tests/seoMeta.test.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.89.0",
+    "@vercel/og": "^1.0.3",
     "axios": "^1.13.2",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",

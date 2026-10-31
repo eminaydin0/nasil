@@ -210,7 +210,7 @@ export default function GameOfTheDayManager() {
           {currentSelection ? (
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="relative h-48">
-                <img 
+                <img loading="lazy" width="64" height="64" 
                   src={currentSelection.game?.image} 
                   alt={currentSelection.game?.name}
                   className="w-full h-full object-cover"

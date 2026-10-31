@@ -13,21 +13,13 @@ import {
   cleanDigitalInfoForSave,
   isDigitalGameCategory,
 } from '../../constants/digitalGames';
+import { slugify } from '../../utils/slugify';
+import { isStockImageUrl } from '../../constants/media';
+import { isBundledGameImage, needsWebpReupload } from '../../lib/coverImage';
+import { toWebpFile } from '../../lib/imageFile';
 
-// Slug oluşturma (Türkçe karakterleri normalize eder)
 function generateSlug(name) {
-  if (!name || typeof name !== 'string') return 'game';
-  const turkishMap = {
-    'ç': 'c', 'Ç': 'C', 'ğ': 'g', 'Ğ': 'G', 'ı': 'i', 'İ': 'I',
-    'ö': 'o', 'Ö': 'O', 'ş': 's', 'Ş': 'S', 'ü': 'u', 'Ü': 'U'
-  };
-  return name
-    .split('')
-    .map(char => turkishMap[char] || char)
-    .join('')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || 'game';
+  return slugify(name) || 'game';
 }
 
 // Oyun verisini form formatına normalleştir (eski oyunlar için uyumluluk)
@@ -109,6 +101,7 @@ function GameModal({ game, categories = [], onSave, onClose }) {
 
   const [formData, setFormData] = useState(initialFormData);
   const [uploading, setUploading] = useState(false);
+  const [converting, setConverting] = useState(false);
   const [imagePreview, setImagePreview] = useState(initialFormData.image || '');
 
   // Oyun değiştiğinde formu senkronize et (eski oyunlar için önemli)
@@ -152,6 +145,29 @@ function GameModal({ game, categories = [], onSave, onClose }) {
       toast.error('Resim yüklenirken hata oluştu!');
     } finally {
       setUploading(false);
+    }
+  };
+
+  const reconvertCover = async () => {
+    const url = formData.image;
+    if (!needsWebpReupload(url)) return;
+    setConverting(true);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('fetch');
+      const blob = await response.blob();
+      const file = new File([blob], 'kapak', { type: blob.type || 'image/jpeg' });
+      const webp = await toWebpFile(file);
+      const slug = (formData.slug || generateSlug(formData.name) || 'game').replace(/[^a-z0-9-]/g, '-');
+      const uploaded = await uploadGameImage(webp, slug);
+      if (!uploaded) throw new Error('upload');
+      setFormData((prev) => ({ ...prev, image: uploaded }));
+      setImagePreview(uploaded);
+      toast.success('Webp hazır. Kaydet’e basınca yazılır.');
+    } catch {
+      toast.error('Çevrilemedi. Bilgisayardan yükle.');
+    } finally {
+      setConverting(false);
     }
   };
 
@@ -374,6 +390,13 @@ function GameModal({ game, categories = [], onSave, onClose }) {
                 className="w-full rounded-xl border-2 border-warm-200 px-4 py-2.5 text-sm outline-none focus:border-orange-400"
                 placeholder="https://example.com/image.jpg veya dosya yükleyin"
               />
+              {(!formData.image || isStockImageUrl(formData.image) || isBundledGameImage(formData.image)) && (
+                <p className="text-xs font-semibold text-red-700">
+                  {!formData.image
+                    ? 'Kapak boş. Kaydetmeden önce kendi görselini yükle.'
+                    : 'Bu adres stok, ortak ya da sitede olmayan bir dosya. Ziyaretçi üretilen kapağı görür. Kendi görselini yükle.'}
+                </p>
+              )}
 
               {/* Dosya Yükleme */}
               <div className="flex items-center gap-3">
@@ -392,6 +415,16 @@ function GameModal({ game, categories = [], onSave, onClose }) {
                     disabled={uploading}
                   />
                 </label>
+                {needsWebpReupload(formData.image) && (
+                  <button
+                    type="button"
+                    onClick={reconvertCover}
+                    disabled={converting || uploading}
+                    className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700"
+                  >
+                    {converting ? 'Çevriliyor...' : 'Yeniden yükle ve webp’e çevir'}
+                  </button>
+                )}
               </div>
 
               {/* Önizleme */}
@@ -399,7 +432,10 @@ function GameModal({ game, categories = [], onSave, onClose }) {
                 <div className="relative inline-block">
                   <img 
                     src={imagePreview} 
-                    alt="Preview" 
+                    alt="Önizleme" 
+                    width="160"
+                    height="128"
+                    loading="lazy"
                     className="w-40 h-32 object-cover rounded-lg border-2 border-gray-200" 
                   />
                 </div>
@@ -436,9 +472,12 @@ function GameModal({ game, categories = [], onSave, onClose }) {
               <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mt-4">
                 {formData.gallery.map((imgUrl, index) => (
                   <div key={index} className="relative group">
-                    <img 
-                      src={imgUrl} 
-                      alt={`Gallery ${index + 1}`}
+                    <img
+                      src={imgUrl}
+                      alt={`Galeri ${index + 1}`}
+                      width="160"
+                      height="96"
+                      loading="lazy"
                       className="w-full h-24 object-cover rounded-lg border-2 border-gray-200"
                     />
                     <button

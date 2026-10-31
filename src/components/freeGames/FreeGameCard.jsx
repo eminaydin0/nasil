@@ -31,6 +31,8 @@ function FreeGameCard({ game, compact = false }) {
         <img
           src={game.image || CARD_FALLBACK_IMAGE}
           alt={game.title || 'Bedava oyun'}
+          width="640"
+          height="360"
           loading="lazy"
           decoding="async"
           className="free-game-card-img"

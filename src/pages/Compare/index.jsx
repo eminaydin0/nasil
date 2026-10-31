@@ -20,11 +20,14 @@ import {
   buildComparisonStructuredData,
 } from '../../lib/seoEngine';
 import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
+import { coverSrc } from '../../lib/coverImage';
 import {
   parseComparisonParam,
   buildComparisonPath,
   getCanonicalUrl,
 } from '../../constants/seo';
+import { isSameFamily } from '../../constants/comparisonFamilies';
+import { isPublishableGame } from '../../constants/sitemapRoutes';
 
 const DIFFICULTY_RANK = { Kolay: 1, Orta: 2, Zor: 3 };
 
@@ -125,8 +128,8 @@ function GameHeaderCard({ game }) {
     >
       <div className="aspect-[16/9] bg-warm-100 overflow-hidden">
         <img
-          src={game.image || CARD_FALLBACK_IMAGE}
-          alt={game.name}
+          src={coverSrc(game, 960) || CARD_FALLBACK_IMAGE}
+          alt={`${game.name} nasıl oynanır`}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           decoding="async"
@@ -293,6 +296,7 @@ export default function ComparePage() {
         image={seoMeta.image}
         structuredData={structuredData}
         breadcrumbs={breadcrumbs}
+        noindex={!isSameFamily(gameA, gameB) || !isPublishableGame(gameA) || !isPublishableGame(gameB)}
       />
 
       <div className="container mx-auto max-w-5xl px-4 py-6 sm:py-8">
@@ -307,7 +311,9 @@ export default function ComparePage() {
             {gameA.name} <span className="text-orange-500">vs</span> {gameB.name}
           </h1>
           <p className="text-warm-600 mt-2 max-w-2xl mx-auto">
-            İki oyunun kuralları, oyuncu sayısı, zorluk seviyesi ve süresi yan yana. Sana hangisi daha uygun?
+            {gameA.shortDescription || `${gameA.name} kuralları bu sayfada.`}{' '}
+            {gameB.shortDescription || `${gameB.name} kuralları bu sayfada.`}{' '}
+            Oyuncu sayısı, zorluk ve süre yan yana.
           </p>
         </header>
 

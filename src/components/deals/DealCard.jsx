@@ -17,6 +17,8 @@ function DealCard({ deal }) {
         <img
           src={imageSrc}
           alt={deal.title || 'Oyun indirimi'}
+          width="460"
+          height="215"
           loading="lazy"
           decoding="async"
           onError={handleImageFallback}
