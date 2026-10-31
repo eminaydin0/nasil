@@ -31,6 +31,27 @@
     }
   ],
   "redirects": [
+    { "source": "/sitemap-index.xml", "destination": "/sitemap.xml", "permanent": true },
+    {
+      "source": "/haberler/playstation-plus-abonelerini-sevindirecek-yeni-kampanya-baslad",
+      "destination": "/haberler/playstation-plus-abonelerini-sevindirecek-yeni-kampanya-basladi",
+      "permanent": true
+    },
+    {
+      "source": "/haberler/steamde-hafta-sonu-indirimi-baslad-yuzlerce-oyunda-buyuk-frsatlar",
+      "destination": "/haberler/steamde-hafta-sonu-indirimi-basladi-yuzlerce-oyunda-buyuk-firsatlar",
+      "permanent": true
+    },
+    {
+      "source": "/haberler/gears-of-war-e-dayin-pc-sistem-gereksinimleri-ackland",
+      "destination": "/haberler/gears-of-war-e-dayin-pc-sistem-gereksinimleri-aciklandi",
+      "permanent": true
+    },
+    {
+      "source": "/haberler/gta-6cikistarihi-bellioldu",
+      "destination": "/haberler/gta-6-cikis-tarihi-belli-oldu",
+      "permanent": true
+    },
     { "source": "/admin", "destination": "/admin-panel", "permanent": true },
     { "source": "/admin/", "destination": "/admin-panel", "permanent": true },
     {

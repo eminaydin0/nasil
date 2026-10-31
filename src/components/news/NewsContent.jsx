@@ -134,7 +134,7 @@ function NewsContent({ content }) {
           const [, alt, src] = imageMatch;
           return (
             <figure key={i} className="news-prose-figure">
-              <img src={src} alt={alt || ''} loading="lazy" className="news-prose-img" />
+              <img src={src} alt={alt || ''} width="1200" height="675" loading="lazy" className="news-prose-img" />
               {alt && <figcaption className="news-prose-caption">{alt}</figcaption>}
             </figure>
           );

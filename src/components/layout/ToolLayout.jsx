@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Maximize2, Minimize2 } from 'lucide-react';
 import SEO from '../common/SEO';
 import Breadcrumb from '../common/Breadcrumb';
-import { TOOL_FEATURES } from '../../constants/tools';
 import { ToolFeaturesCard, RelatedToolsCard, RelatedToolsStrip } from '../tools/ToolExtras';
 import { buildToolSeoMeta, buildToolStructuredData } from '../../lib/seoEngine';
 import { generateFAQSchema } from '../../constants/seo';
@@ -28,10 +27,61 @@ export default function ToolLayout({
   seoDescription,
   seoUrl,
 }) {
+  const stageRef = useRef(null);
+  const nativeFullRef = useRef(false);
+  const [full, setFull] = useState(false);
   const breadcrumbs = [
     { name: 'Oyun Araçları', url: '/araclar' },
     { name: title, url: null },
   ];
+
+  useEffect(() => {
+    if (!full) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (event) => {
+      if (event.key === 'Escape') setFull(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [full]);
+
+  useEffect(() => {
+    const onChange = () => {
+      if (document.fullscreenElement) return;
+      if (!nativeFullRef.current) return;
+      nativeFullRef.current = false;
+      setFull(false);
+    };
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  const enterFull = async () => {
+    setFull(true);
+    const node = stageRef.current;
+    if (!node?.requestFullscreen) return;
+    try {
+      await node.requestFullscreen();
+      nativeFullRef.current = true;
+    } catch {
+      nativeFullRef.current = false;
+    }
+  };
+
+  const exitFull = async () => {
+    setFull(false);
+    nativeFullRef.current = false;
+    if (!document.fullscreenElement) return;
+    try {
+      await document.exitFullscreen();
+    } catch {
+      /* yoksay */
+    }
+  };
 
   const toolSeo = useMemo(
     () => buildToolSeoMeta(seoUrl, { seoTitle, seoDescription, title, description, seoUrl }),
@@ -52,7 +102,7 @@ export default function ToolLayout({
   }, [seoUrl, seoTitle, seoDescription, title, description, faqItems]);
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-cream-50 py-6 sm:py-12">
+    <div className="min-h-screen overflow-x-clip bg-cream-50 py-4 sm:py-6">
       <SEO
         title={toolSeo.title}
         description={toolSeo.description}
@@ -63,48 +113,34 @@ export default function ToolLayout({
       />
 
       <div className="container mx-auto min-w-0 px-3 sm:px-4">
-        <Breadcrumb items={breadcrumbs} className="mb-6" />
+        <Breadcrumb items={breadcrumbs} className="mb-3" />
 
-        {/* Başlık */}
-        <div className="mb-6">
-          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start">
-            {Icon && (
-              <div className="shrink-0 self-start rounded-xl bg-orange-100 p-3">
-                <Icon className="text-orange-600" size={32} aria-hidden />
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <div className="flex min-w-0 items-center gap-2.5">
+            {Icon ? (
+              <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-orange-100">
+                <Icon className="text-orange-600" size={16} aria-hidden />
               </div>
-            )}
-            <div className="min-w-0 flex-1">
+            ) : null}
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-black text-warm-900 sm:text-3xl">{title}</h1>
+                <h1 className="text-lg font-extrabold tracking-tight text-warm-900 sm:text-xl">{title}</h1>
                 {badge ? (
-                  <span className="rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-bold text-orange-700">
+                  <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-700">
                     {badge}
                   </span>
                 ) : null}
               </div>
               {description ? (
-                <p className="mt-1 text-sm leading-relaxed text-warm-600 sm:text-base">
-                  {description}
-                </p>
+                <p className="text-sm leading-snug text-warm-600">{description}</p>
               ) : null}
-              <div className="mt-3 flex flex-wrap gap-2">
-                {TOOL_FEATURES.map(({ label }) => (
-                  <span
-                    key={label}
-                    className="rounded-full border border-warm-200/80 bg-white px-2.5 py-1 text-xs font-medium text-warm-600"
-                  >
-                    {label}
-                  </span>
-                ))}
-              </div>
             </div>
           </div>
-
           <Link
             to="/araclar"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-orange-600 transition-colors hover:text-orange-700"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-orange-600 transition-colors hover:text-orange-700"
           >
-            <ArrowLeft size={16} aria-hidden />
+            <ArrowLeft size={14} aria-hidden />
             Tüm araçlara dön
           </Link>
         </div>
@@ -112,8 +148,24 @@ export default function ToolLayout({
         {/* İçerik + yan panel */}
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
           <div className="min-w-0 space-y-6 overflow-x-clip">
-            <div className="min-w-0 overflow-x-clip rounded-2xl border border-warm-200/70 bg-white shadow-soft">
-              {children}
+            <div
+              ref={stageRef}
+              className={`tool-stage min-w-0 rounded-2xl border border-warm-200/70 bg-white shadow-soft${
+                full ? ' tool-stage--full' : ' overflow-x-clip'
+              }`}
+            >
+              <div className="tool-stage-bar">
+                <button
+                  type="button"
+                  className="tool-fullscreen-btn"
+                  onClick={full ? exitFull : enterFull}
+                  aria-pressed={full}
+                >
+                  {full ? <Minimize2 size={15} aria-hidden /> : <Maximize2 size={15} aria-hidden />}
+                  {full ? 'Küçült' : 'Tam ekran'}
+                </button>
+              </div>
+              <div className="tool-stage-body">{children}</div>
             </div>
 
             {helpContent ? (

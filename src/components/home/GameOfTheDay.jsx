@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { CARD_FALLBACK_IMAGE, cardImage, handleImageFallback } from '../../constants/media';
+import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
+import { coverSrc } from '../../lib/coverImage';
 import { afterHeroImage } from '../../lib/afterHero';
 
 /** Label zaten "Günün oyunu" — başlıktan tekrarlayan öneki düşür */
@@ -18,7 +19,7 @@ function resolveDailyTitle(customTitle, gameName) {
 /**
  * GameOfTheDay — carousel editorial dili, sade iç hiyerarşi.
  */
-function GameOfTheDay({ games }) {
+function GameOfTheDay({ games, variant = 'banner' }) {
   const [gameOfTheDay, setGameOfTheDay] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -84,6 +85,47 @@ function GameOfTheDay({ games }) {
     setGameOfTheDay(games[index]);
   };
 
+  if (variant === 'panel' || variant === 'stage') {
+    const stage = variant === 'stage';
+    if (loading) {
+      return <div className={`${stage ? 'home-guide' : 'home-panel'} home-skeleton`} aria-hidden />;
+    }
+    if (!gameOfTheDay) return null;
+
+    const cardClass = stage ? 'home-guide' : 'home-panel';
+    const shadeClass = stage ? 'home-guide-shade' : 'home-panel-shade';
+    const bodyClass = stage ? 'home-guide-body' : 'home-panel-body';
+    const Title = stage ? 'h2' : 'h3';
+
+    return (
+      <Link to={`/oyun/${gameOfTheDay.slug}`} className={`${cardClass} group`}>
+        <img
+          src={coverSrc(gameOfTheDay, stage ? 1200 : 800) || CARD_FALLBACK_IMAGE}
+          alt=""
+          width={stage ? 1200 : 800}
+          height={stage ? 800 : 1000}
+          loading="lazy"
+          decoding="async"
+          onError={handleImageFallback}
+        />
+        <div className={shadeClass} aria-hidden />
+        <div className={bodyClass}>
+          <p className="home-kicker">Bugünün oyunu</p>
+          <Title>{gameOfTheDay.name}</Title>
+          {(gameOfTheDay.shortDescription || gameOfTheDay.description) && (
+            <p className={stage ? 'home-guide-lead' : undefined}>
+              {gameOfTheDay.shortDescription || gameOfTheDay.description}
+            </p>
+          )}
+          <span className={stage ? 'home-guide-cta' : undefined}>
+            Kuralına git
+            <ArrowRight size={15} aria-hidden />
+          </span>
+        </div>
+      </Link>
+    );
+  }
+
   if (loading) return null;
   if (!gameOfTheDay) return null;
 
@@ -102,7 +144,7 @@ function GameOfTheDay({ games }) {
       <div className="group relative min-h-[340px] overflow-hidden rounded-2xl bg-charcoal-950 shadow-soft-xl sm:min-h-[420px] sm:rounded-3xl md:min-h-[480px]">
         <div className="absolute inset-0">
           <img
-            src={cardImage(gameOfTheDay.image, 1200) || CARD_FALLBACK_IMAGE}
+            src={coverSrc(gameOfTheDay, 1200) || CARD_FALLBACK_IMAGE}
             alt={gameOfTheDay.name || 'Günün oyunu'}
             className="h-full w-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.03]"
             loading="lazy"

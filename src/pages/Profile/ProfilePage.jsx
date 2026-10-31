@@ -459,7 +459,7 @@ function ProfilePage() {
                             : 'border-warm-200 hover:border-orange-300'
                         }`}
                       >
-                        <img src={avatar} alt="" className="h-full w-full object-cover" />
+                        <img src={avatar} alt="" width="96" height="96" loading="lazy" className="h-full w-full object-cover" />
                       </button>
                     ))}
                   </div>

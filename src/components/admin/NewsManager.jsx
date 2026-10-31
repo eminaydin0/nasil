@@ -16,6 +16,8 @@ import {
   X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { needsWebpReupload, isUnsplashUrl, isSharedPexelsUrl } from '../../lib/coverImage';
+import { toWebpFile } from '../../lib/imageFile';
 import { supabase, uploadNewsImage, deleteGameImage } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 import { useConfirm, Modal, Button } from '../ui';
@@ -56,6 +58,7 @@ function NewsManager() {
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [slugManual, setSlugManual] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [converting, setConverting] = useState(false);
   const [coverPreview, setCoverPreview] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -124,6 +127,29 @@ function NewsManager() {
       toast.error('Yükleme hatası');
     } finally {
       setUploading(false);
+    }
+  };
+
+  const reconvertCover = async () => {
+    const url = formData.cover_image;
+    if (!needsWebpReupload(url)) return;
+    setConverting(true);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('fetch');
+      const blob = await response.blob();
+      const file = new File([blob], 'kapak', { type: blob.type || 'image/jpeg' });
+      const webp = await toWebpFile(file);
+      const slug = formData.slug || slugify(formData.title) || 'haber';
+      const uploaded = await uploadNewsImage(webp, slug);
+      if (!uploaded) throw new Error('upload');
+      setFormData((prev) => ({ ...prev, cover_image: uploaded }));
+      setCoverPreview(uploaded);
+      toast.success('Webp hazır. Kaydet’e basınca yazılır.');
+    } catch {
+      toast.error('Çevrilemedi. Bilgisayardan yükle.');
+    } finally {
+      setConverting(false);
     }
   };
 
@@ -542,6 +568,11 @@ function NewsManager() {
                 className="mb-2 w-full rounded-lg border border-warm-200 px-3 py-2 text-sm"
                 placeholder="URL veya aşağıdan yükle"
               />
+              {(isUnsplashUrl(formData.cover_image) || isSharedPexelsUrl(formData.cover_image)) && (
+                <p className="mb-2 text-xs font-semibold text-red-700">
+                  Bu kapak stok ya da ortak fotoğraf. Kendi görselini yükle.
+                </p>
+              )}
               <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-warm-200 px-4 py-6 transition hover:border-orange-400">
                 <Upload size={20} className="text-warm-400" />
                 <span className="text-sm text-warm-600">
@@ -555,11 +586,24 @@ function NewsManager() {
                   onChange={handleCoverUpload}
                 />
               </label>
+              {needsWebpReupload(formData.cover_image) && (
+                <button
+                  type="button"
+                  onClick={reconvertCover}
+                  disabled={converting || uploading}
+                  className="mt-2 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700"
+                >
+                  {converting ? 'Çevriliyor...' : 'Yeniden yükle ve webp’e çevir'}
+                </button>
+              )}
               {(coverPreview || formData.cover_image) && (
                 <div className="relative mt-3 inline-block">
                   <img
                     src={coverPreview || formData.cover_image}
                     alt="Kapak önizleme"
+                    width="320"
+                    height="180"
+                    loading="lazy"
                     className="h-36 w-auto max-w-full rounded-lg border border-warm-200 object-cover"
                   />
                   <button
@@ -626,7 +670,7 @@ function NewsManager() {
                 <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
               </label>
               {formData.author_avatar && (
-                <img src={formData.author_avatar} alt="" className="mt-2 h-12 w-12 rounded-full object-cover" />
+                <img loading="lazy" width="64" height="64" src={formData.author_avatar} alt="" className="mt-2 h-12 w-12 rounded-full object-cover" />
               )}
             </div>
 

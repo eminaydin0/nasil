@@ -1,3 +1,8 @@
+/** Unsplash / Pexels stok adresi — oyuna özel kapak yerine geçmemeli. */
+export function isStockImageUrl(url) {
+  return /images\.unsplash\.com|images\.pexels\.com/i.test(String(url || ''));
+}
+
 /** Kart / kapak görselleri için ortak fallback (logo) */
 export const CARD_FALLBACK_IMAGE = '/card-fallback.png';
 

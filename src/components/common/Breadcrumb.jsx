@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
+import { categoryPath } from '../../utils/categorySlug';
 
 /**
  * SEO-Friendly Breadcrumb Bileşeni
@@ -148,7 +149,7 @@ export const BREADCRUMB_TEMPLATES = {
   // Oyun detay sayfası
   gameDetail: (gameName, category) => [
     { name: 'Tüm Oyunlar', url: '/oyunlar' },
-    ...(category ? [{ name: category, url: `/kategori/${encodeURIComponent(category)}` }] : []),
+    ...(category ? [{ name: category, url: categoryPath(category) }] : []),
     { name: gameName, url: null }, // Son öğe, URL yok
   ],
 

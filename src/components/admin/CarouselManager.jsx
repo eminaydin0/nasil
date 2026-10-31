@@ -315,7 +315,7 @@ function CarouselManager({ games = [] }) {
                               onClick={() => handleGameSelect(game)}
                               className="group flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-orange-50"
                             >
-                              <img
+                              <img loading="lazy" width="64" height="64"
                                 src={game.image}
                                 alt=""
                                 className="h-8 w-8 rounded-lg bg-warm-100 object-cover"
@@ -438,7 +438,7 @@ function CarouselManager({ games = [] }) {
                 <div className="rounded-xl border-2 border-dashed border-warm-200 p-3 text-center">
                   {currentSlide.image_url ? (
                     <div className="group relative">
-                      <img
+                      <img loading="lazy" width="64" height="64"
                         src={currentSlide.image_url}
                         alt=""
                         className="h-48 w-full rounded-lg object-cover"
@@ -544,7 +544,7 @@ function CarouselManager({ games = [] }) {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <img
+                    <img loading="lazy" width="64" height="64"
                       src={slide.image_url}
                       alt=""
                       className="h-12 w-20 rounded-lg bg-warm-100 object-cover"

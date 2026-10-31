@@ -238,7 +238,7 @@ function GamesTable({
                     </td>
                     <td>
                       <div className="flex items-center gap-3">
-                        <img
+                        <img width="64" height="64"
                           src={game.image}
                           alt={game.name}
                           loading="lazy"
@@ -331,7 +331,7 @@ function GamesTable({
           filtered.map((game) => (
             <AdminCard key={game.id} padding={false}>
               <div className="flex gap-3 p-3">
-                <img
+                <img width="64" height="64"
                   src={game.image}
                   alt={game.name}
                   loading="lazy"

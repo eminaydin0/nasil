@@ -19,6 +19,11 @@ function NewsFeaturedHero({ post, className = '' }) {
       <img
         src={image}
         alt={post.title}
+        width="1200"
+        height="630"
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
         className="news-masthead-hero-img"
         onError={handleImageFallback}
       />

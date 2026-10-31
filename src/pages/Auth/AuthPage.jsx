@@ -151,6 +151,9 @@ function AuthPage() {
               <img
                 src="/logo.webp"
                 alt="Kuralı Ne?"
+                width="56"
+                height="56"
+                loading="eager"
                 className="h-14 w-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)] animate-float"
               />
             </Link>
@@ -187,6 +190,9 @@ function AuthPage() {
                 <img
                   src="/logo.webp"
                   alt="Kuralı Ne?"
+                  width="44"
+                  height="44"
+                  loading="eager"
                   className="h-11 w-auto rounded-xl bg-charcoal-950 p-1.5 shadow-soft"
                 />
               </Link>

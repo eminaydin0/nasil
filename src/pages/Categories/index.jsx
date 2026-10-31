@@ -13,6 +13,7 @@ import {
   buildCategorySeoMeta,
   buildCategoryStructuredData,
 } from '../../lib/seoEngine';
+import { categoryToSlug, resolveCategoryName } from '../../utils/categorySlug';
 
 function CategoryPage() {
   const { categoryName } = useParams();
@@ -22,6 +23,12 @@ function CategoryPage() {
   const [loading, setLoading] = useState(true);
 
   const decodedCategoryName = decodeURIComponent(categoryName || '');
+  const categoryNames = useMemo(() => {
+    const fromDb = dbCategories?.filter((c) => c.isActive !== false).map((c) => c.name) || [];
+    return fromDb.length > 0 ? fromDb : CATEGORY_NAMES;
+  }, [dbCategories]);
+  const resolvedCategoryName = resolveCategoryName(categoryName, categoryNames) || '';
+  const displayCategoryName = resolvedCategoryName || decodedCategoryName;
   const gameIds = useMemo(() => games.map((g) => g.id), [games]);
   const { statsMap } = useGameStats(gameIds);
 
@@ -29,20 +36,21 @@ function CategoryPage() {
     setLoading(true);
     try {
       // Sadece aktif kategorileri kontrol et
-      const validNames = dbCategories?.length > 0
-        ? dbCategories.filter((c) => c.isActive !== false).map((c) => c.name)
-        : CATEGORY_NAMES;
-      if (!validNames.includes(decodedCategoryName)) {
+      const name = resolveCategoryName(categoryName, categoryNames);
+      if (!name) {
         setGames([]);
         setLoading(false);
         return;
       }
 
-      // Tam eşleşme ile kategoriye göre oyunları getir
+      if (decodeURIComponent(categoryName || '') !== categoryToSlug(name)) {
+        navigate(`/kategori/${categoryToSlug(name)}`, { replace: true });
+      }
+
       const { data, error } = await supabase
         .from('games')
         .select('id,slug,name,category,players,difficulty,image,short_description,created_at')
-        .eq('category', decodedCategoryName)
+        .eq('category', name)
         .order('id', { ascending: true });
       
       if (error) throw error;
@@ -66,15 +74,15 @@ function CategoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [decodedCategoryName, dbCategories]);
+  }, [categoryName, categoryNames, navigate]);
 
   useEffect(() => {
     loadGames();
     window.scrollTo(0, 0);
   }, [loadGames, categoryName]);
 
-  const config = getCategoryConfig(decodedCategoryName, dbCategories);
-  const description = getCategoryDescription(decodedCategoryName, dbCategories);
+  const config = getCategoryConfig(displayCategoryName, dbCategories);
+  const description = getCategoryDescription(displayCategoryName, dbCategories);
   const IconComponent = config.icon;
   
   // Renk class mapping - Tailwind için
@@ -94,17 +102,17 @@ function CategoryPage() {
   const colorClass = colorClasses[config.color] || colorClasses.gray;
 
   const seoMeta = useMemo(
-    () => buildCategorySeoMeta(decodedCategoryName, games, { description }),
-    [decodedCategoryName, games, description]
+    () => buildCategorySeoMeta(displayCategoryName, games, { description }),
+    [displayCategoryName, games, description]
   );
 
   const structuredData = useMemo(
-    () => buildCategoryStructuredData(decodedCategoryName, games),
-    [decodedCategoryName, games]
+    () => buildCategoryStructuredData(displayCategoryName, games),
+    [displayCategoryName, games]
   );
 
   // Breadcrumb
-  const breadcrumbs = BREADCRUMB_TEMPLATES.category(decodedCategoryName);
+  const breadcrumbs = BREADCRUMB_TEMPLATES.category(displayCategoryName);
 
   if (loading) {
     return (
@@ -145,9 +153,12 @@ function CategoryPage() {
               <div className="aspect-video w-full bg-warm-100 rounded-xl overflow-hidden relative">
                 <img 
                   src={config.image} 
-                  alt={`${decodedCategoryName} Oyunları`}
+                  alt={`${displayCategoryName} Oyunları`}
                   className="w-full h-full object-cover"
-                  loading="lazy"
+                  width="640"
+                  height="360"
+                  loading="eager"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                 <div className="absolute bottom-4 left-4">
@@ -162,14 +173,14 @@ function CategoryPage() {
             <div className="md:col-span-2 flex flex-col justify-center">
               <div className="flex items-center space-x-2 mb-3">
                 <span className={`px-3 py-1 ${colorClass.bg} ${colorClass.text} text-xs font-medium rounded-lg`}>
-                  {decodedCategoryName}
+                  {displayCategoryName}
                 </span>
                 <span className="flex items-center text-warm-500 text-xs">
                   <Eye size={14} className="mr-1" aria-hidden="true" />
                   {games.length} oyun
                 </span>
               </div>
-              <h1 className="mb-2 text-2xl font-bold text-warm-900 sm:text-3xl">{decodedCategoryName} Oyunları</h1>
+              <h1 className="mb-2 text-2xl font-bold text-warm-900 sm:text-3xl">{displayCategoryName} Oyunları</h1>
               <p className="text-warm-600 text-sm leading-relaxed">{description}</p>
             </div>
           </div>

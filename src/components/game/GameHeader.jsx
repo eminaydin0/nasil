@@ -5,6 +5,7 @@ import SocialShare from './SocialShare';
 import { Badge } from '../ui';
 import { getToolForGame } from '../../constants/gameTools';
 import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
+import { coverSrc } from '../../lib/coverImage';
 
 export default function GameHeader({ game, viewCount, selectedImage, setSelectedImage }) {
   const navigate = useNavigate();
@@ -12,8 +13,16 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const thumbnailScrollRef = useRef(null);
 
-  const allImages = [game.image, ...(game.gallery || [])].filter(Boolean);
-  const currentImage = selectedImage || game.image || CARD_FALLBACK_IMAGE;
+  const cover = coverSrc(game, 1200) || CARD_FALLBACK_IMAGE;
+  const extras = (game.gallery || []).filter((img) => img && img !== game.image);
+  const allImages = [cover, ...extras];
+  const rules = Array.isArray(game.rules) ? game.rules : [];
+  const answer = [game.shortDescription, game.players ? `Oyuncu sayısı: ${game.players}.` : '', rules[0] || '']
+    .map((part) => String(part || '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+    .slice(0, 3)
+    .join(' ');
+  const currentImage = selectedImage || cover;
   const currentIndex = allImages.indexOf(currentImage) >= 0 ? allImages.indexOf(currentImage) : 0;
 
   const openLightbox = (index = 0) => {
@@ -69,7 +78,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
             >
               <img
                 src={currentImage}
-                alt={game.name}
+                alt={`${game.name} nasıl oynanır — kapak görseli`}
                 className="w-full h-full object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.04]"
                 loading="eager"
                 fetchpriority="high"
@@ -133,7 +142,7 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
                       >
                         <img
                           src={img}
-                          alt={`${game.name} ${index + 1}`}
+                          alt={`${game.name} galeri görseli ${index + 1}`}
                           className="w-full h-full object-cover"
                           loading="lazy"
                           decoding="async"
@@ -166,12 +175,13 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
               </div>
             </div>
             <h1 className="mb-3 text-2xl font-extrabold leading-[1.08] tracking-tight text-warm-900 sm:text-3xl md:text-4xl lg:text-5xl">
-              {game.name}{' '}
-              <span className="text-orange-600">Kuralı Ne</span>
+              {game.name} Nasıl Oynanır?
             </h1>
-            <p className="text-warm-600 text-base md:text-lg leading-relaxed">
-              {game.shortDescription}
-            </p>
+            {answer ? (
+              <p className="game-answer text-warm-600 text-base md:text-lg leading-relaxed">
+                {answer}
+              </p>
+            ) : null}
 
             {relatedTool && (
               <button
@@ -246,10 +256,12 @@ export default function GameHeader({ game, viewCount, selectedImage, setSelected
           >
             <img
               src={allImages[lightboxIndex]}
-              alt={`${game.name} - Fotoğraf ${lightboxIndex + 1}`}
+              alt={`${game.name} büyük görsel ${lightboxIndex + 1}`}
               className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
               loading="eager"
               decoding="async"
+              width="1200"
+              height="800"
             />
           </div>
 

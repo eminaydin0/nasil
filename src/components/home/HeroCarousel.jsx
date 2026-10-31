@@ -7,7 +7,7 @@ import { LCP_HERO_IMAGE, heroImageSrc } from '../../constants/lcpHero';
 const AUTO_MS = 6500;
 
 /** Eski #oyunlar formatını ve göreli yolları SPA rotasına çevirir */
-function normalizeSlideHref(link) {
+export function normalizeSlideHref(link) {
   if (!link || !String(link).trim()) return '/oyunlar';
   const raw = String(link).trim();
   if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
@@ -41,7 +41,7 @@ function padIndex(n) {
 let slidesPromise = null;
 
 /** İlk slayt adresi gelince kapak görseli, React çizimini beklemeden istenir. */
-function getSlides() {
+export function getSlides() {
   if (!slidesPromise) {
     slidesPromise = supabase
       .from('carousel_slides')
@@ -351,6 +351,8 @@ function HeroCarousel() {
                         className="h-full w-full object-cover"
                         loading="lazy"
                         decoding="async"
+                        width="80"
+                        height="48"
                         fetchPriority="low"
                       />
                     ) : (

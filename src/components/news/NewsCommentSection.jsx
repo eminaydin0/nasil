@@ -213,7 +213,7 @@ function NewsCommentSection({ newsPostId, newsTitle }) {
             className={`news-comment-avatar ${!authorAvatar ? getAvatarColor(authorName) : ''}`}
           >
             {authorAvatar ? (
-              <img src={authorAvatar} alt="" />
+              <img src={authorAvatar} alt="" width="40" height="40" loading="lazy" />
             ) : (
               getInitials(authorName)
             )}
@@ -260,7 +260,7 @@ function NewsCommentSection({ newsPostId, newsTitle }) {
                 }`}
               >
                 {comment.avatar ? (
-                  <img src={comment.avatar} alt="" />
+                  <img src={comment.avatar} alt="" width="32" height="32" loading="lazy" />
                 ) : (
                   getInitials(comment.name)
                 )}

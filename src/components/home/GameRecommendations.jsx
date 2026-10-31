@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { coverSrc } from '../../lib/coverImage';
 import { Sparkles } from 'lucide-react';
 
 function GameRecommendations({ currentGame, allGames }) {
@@ -67,13 +68,13 @@ function GameRecommendations({ currentGame, allGames }) {
           >
             <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all border border-orange-100">
               <img
-                src={game.image}
-                alt={game.name}
-                className="w-16 h-16 rounded-lg object-cover"
-                loading="lazy"
-                decoding="async"
+                src={coverSrc(game, 112)}
+                alt={`${game.name} nasıl oynanır`}
                 width="64"
                 height="64"
+                loading="lazy"
+                decoding="async"
+                className="w-16 h-16 rounded-lg object-cover"
               />
               <div className="flex-1 min-w-0">
                 <h4 className="font-semibold text-warm-900 group-hover:text-orange-600 transition-colors text-sm mb-1 truncate">

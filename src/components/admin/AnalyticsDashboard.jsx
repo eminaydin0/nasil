@@ -418,7 +418,7 @@ function AnalyticsDashboard({ games }) {
                         }`}>
                           #{index + 1}
                         </div>
-                        <img src={game.image} alt={game.name} className="w-12 h-12 rounded-lg object-cover shadow-sm" />
+                        <img loading="lazy" width="64" height="64" src={game.image} alt={game.name} className="w-12 h-12 rounded-lg object-cover shadow-sm" />
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-gray-900 truncate">{game.name}</p>
                           <div className="flex items-center gap-3 text-sm text-gray-500">

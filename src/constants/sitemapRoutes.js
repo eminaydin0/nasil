@@ -5,11 +5,25 @@
 
 import { PAGE_SEO } from './seo.js';
 import { TOOL_PAGE_SEO } from './seoKeywords.js';
+import { toolDescription, toolTitle } from '../lib/seoMeta.js';
+import { comparisonFamily } from './comparisonFamilies.js';
 
 export const SITEMAP_BASE_URL = 'https://kuraline.xyz';
 
 /** Sitemap'e dahil edilmeyecek test / taslak oyunlar */
-export const JUNK_GAME_SLUGS = new Set(['test', 'emin', 'deneme', 'demo', 'asdf', 'aaa']);
+export const JUNK_GAME_SLUGS = new Set([
+  'test',
+  'emin',
+  'deneme',
+  'demo',
+  'asdf',
+  'aaa',
+  'mustafa-cacan-test',
+  'ahbdas',
+]);
+
+/** Statik sayfalar elle güncellenir. Üretim anındaki saat lastmod olmaz. */
+export const STATIC_SITEMAP_LASTMOD = '2026-10-31';
 export const JUNK_SLUG_PATTERN = /^(test|demo|deneme)(-|_|$)/i;
 
 export function isPublishableGame(game) {
@@ -54,13 +68,10 @@ export const TOOL_SITEMAP_SLUGS = [
 export function getToolSitemapPages() {
   return TOOL_SITEMAP_SLUGS.map((slug) => {
     const seo = TOOL_PAGE_SEO[slug] || {};
-    const hot = new Set(['101-yazboz', 'halisaha-takim-olusturucu', 'okey-sayaci', 'batak-yazboz']);
     return {
       path: `/araclar/${slug}`,
-      changefreq: 'weekly',
-      priority: hot.has(slug) ? '0.92' : '0.88',
-      title: seo.title || slug,
-      description: seo.description || '',
+      title: toolTitle(slug),
+      description: toolDescription(seo.description || ''),
       keywords: seo.keywords || '',
     };
   });
@@ -85,29 +96,31 @@ export function getStaticPrerenderRoutes() {
 }
 
 /**
- * Karşılaştırma sayfası çiftleri.
- * Her oyun için ayni kategoride en fazla 3 komşu ile esler.
+ * Karşılaştırma çiftleri — yalnızca aynı aile (okey, batak, satranç/dama…).
+ * Kategori komşuluğu kullanılmaz.
  */
 export function generateComparisonPairs(games) {
   const pairs = new Set();
   const result = [];
-  const byCategory = {};
+  const byFamily = {};
 
-  games.forEach((g) => {
-    if (!g.category) return;
-    if (!byCategory[g.category]) byCategory[g.category] = [];
-    byCategory[g.category].push(g);
+  games.forEach((game) => {
+    const family = comparisonFamily(game);
+    if (!family) return;
+    if (!byFamily[family]) byFamily[family] = [];
+    byFamily[family].push(game);
   });
 
-  Object.values(byCategory).forEach((bucket) => {
+  Object.values(byFamily).forEach((bucket) => {
     bucket.forEach((gameA, i) => {
-      bucket.slice(i + 1, i + 4).forEach((gameB) => {
+      bucket.slice(i + 1).forEach((gameB) => {
         const [slugA, slugB] = [gameA.slug, gameB.slug].sort();
         const key = `${slugA}-vs-${slugB}`;
-        if (!pairs.has(key)) {
-          pairs.add(key);
-          result.push({ slugA, slugB, gameA, gameB });
-        }
+        if (pairs.has(key)) return;
+        pairs.add(key);
+        const orderedA = slugA === gameA.slug ? gameA : gameB;
+        const orderedB = slugA === gameA.slug ? gameB : gameA;
+        result.push({ slugA, slugB, gameA: orderedA, gameB: orderedB });
       });
     });
   });

@@ -20,6 +20,7 @@ function FreeGamesPage() {
         description={PAGE_SEO.freeGames.description}
         keywords={PAGE_SEO.freeGames.keywords}
         url="/ucretsiz-oyunlar"
+        breadcrumbs={breadcrumbs}
       />
 
       <div className="container mx-auto min-w-0 px-3 sm:px-4">

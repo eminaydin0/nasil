@@ -18,11 +18,11 @@ export default function FAQAccordion({ game }) {
       aria-labelledby="sss-baslik"
       itemScope
       itemType="https://schema.org/FAQPage"
-      className="bg-white rounded-2xl border border-warm-200/80 overflow-hidden w-full"
+      className="scroll-mt-24 bg-white rounded-2xl border border-warm-200/80 overflow-hidden w-full"
     >
       <div className="px-4 sm:px-6 pt-5 pb-3">
         <h2 id="sss-baslik" className="text-lg sm:text-xl font-bold text-warm-900">
-          Sık Sorulan Sorular
+          {game.name} hakkında en çok sorulanlar neler?
         </h2>
         <p className="text-sm text-warm-500 mt-1">
           <span className="font-medium text-warm-700">{game.name}</span> hakkında en çok merak edilenler

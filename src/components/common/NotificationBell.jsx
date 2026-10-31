@@ -28,7 +28,7 @@ function formatTime(createdAt) {
   return date.toLocaleDateString('tr-TR');
 }
 
-export default function NotificationBell() {
+export default function NotificationBell({ tone = 'light' }) {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -130,7 +130,11 @@ export default function NotificationBell() {
       <button
         type="button"
         onClick={handleBellClick}
-        className="relative flex h-11 w-11 items-center justify-center rounded-full text-warm-700 transition-colors hover:bg-orange-50 hover:text-orange-600"
+        className={`relative flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
+          tone === 'night'
+            ? 'text-white/80 hover:bg-white/10 hover:text-orange-300'
+            : 'text-warm-700 hover:bg-orange-50 hover:text-orange-600'
+        }`}
         title="Bildirimler"
         aria-label="Bildirimler"
       >

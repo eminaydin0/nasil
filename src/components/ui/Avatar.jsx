@@ -35,6 +35,8 @@ function Avatar({
       <img
         src={src}
         alt={name || 'avatar'}
+        width="40"
+        height="40"
         loading="lazy"
         className={`${s} shrink-0 rounded-full object-cover ${ringClass} ${activeRingClass} ${className}`}
         {...rest}

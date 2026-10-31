@@ -78,7 +78,7 @@ function AdminLogin({ onLogin }) {
           <div className="relative">
             <div className="flex items-center gap-3">
               <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 shadow-warm-glow">
-                <img src={LOGO_URL} alt="" className="h-9 w-9 object-contain" />
+                <img loading="lazy" width="64" height="64" src={LOGO_URL} alt="" className="h-9 w-9 object-contain" />
               </span>
               <div className="leading-tight">
                 <div className="text-lg font-bold">Kuralı Ne?</div>
@@ -130,7 +130,7 @@ function AdminLogin({ onLogin }) {
             {/* Mobil brand */}
             <div className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-warm-glow">
-                <img src={LOGO_URL} alt="" className="h-8 w-8 object-contain" />
+                <img loading="lazy" width="64" height="64" src={LOGO_URL} alt="" className="h-8 w-8 object-contain" />
               </span>
               <div className="text-left leading-tight">
                 <div className="text-base font-bold text-charcoal-900">Kuralı Ne?</div>

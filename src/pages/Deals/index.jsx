@@ -51,6 +51,7 @@ function DealsPage() {
         keywords={PAGE_SEO.deals.keywords}
         url="/indirimler"
         structuredData={FAQ_SCHEMA}
+        breadcrumbs={breadcrumbs}
       />
 
       <div className="container mx-auto min-w-0 px-3 sm:px-4">

@@ -415,7 +415,7 @@ function CategoryManager() {
               </label>
               {(imagePreview || formData.image_url) && (
                 <div className="relative mt-3 inline-block">
-                  <img
+                  <img loading="lazy" width="64" height="64"
                     src={imagePreview || formData.image_url}
                     alt="Kategori önizleme"
                     className="h-28 w-auto max-w-full rounded-xl border border-warm-200 object-cover"
@@ -538,7 +538,7 @@ function CategoryManager() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {cat.image_url ? (
-                          <img
+                          <img loading="lazy" width="64" height="64"
                             src={cat.image_url}
                             alt=""
                             className="h-9 w-9 shrink-0 rounded-xl object-cover"

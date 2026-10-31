@@ -371,7 +371,7 @@ export default function Okey101Score() {
   }
 
   const thInputClass =
-    'w-full min-w-0 text-center font-bold text-sm sm:text-base md:text-lg text-charcoal-900 bg-white border-2 border-warm-200 rounded-xl px-2 py-2 sm:py-2.5 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 placeholder:text-warm-400';
+    'w-full min-w-0 text-center font-semibold text-xs sm:text-sm text-charcoal-900 bg-white border-2 border-warm-200 rounded-lg px-2 py-1.5 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 placeholder:text-warm-400';
 
   const columnLabels = isPartners
     ? teamNames
@@ -469,7 +469,7 @@ export default function Okey101Score() {
                     type="text"
                     value={teamNames[idx]}
                     onChange={(e) => updateTeamName(idx, e.target.value)}
-                    className="w-full min-w-0 truncate bg-transparent text-center text-base font-bold text-charcoal-900 outline-none"
+                    className="w-full min-w-0 truncate bg-transparent text-center text-sm font-semibold text-charcoal-900 outline-none"
                     placeholder={`${idx + 1}. Takım`}
                   />
                 ) : (
@@ -477,11 +477,11 @@ export default function Okey101Score() {
                     type="text"
                     value={players[idx]}
                     onChange={(e) => updateName(idx, e.target.value)}
-                    className="w-full min-w-0 truncate bg-transparent text-center text-base font-bold text-charcoal-900 outline-none"
+                    className="w-full min-w-0 truncate bg-transparent text-center text-sm font-semibold text-charcoal-900 outline-none"
                     placeholder={`Oyuncu ${idx + 1}`}
                   />
                 )}
-                <p className="mt-1 text-lg font-black tabular-nums text-orange-700">
+                <p className="mt-0.5 text-sm font-bold tabular-nums text-orange-700">
                   {isPartners ? teamTotals[idx] : totals[idx]}
                 </p>
               </div>
@@ -533,7 +533,7 @@ export default function Okey101Score() {
                       {displayScores.map((score, sIdx) => (
                         <div key={sIdx} className="rounded-lg bg-cream-50 px-2 py-1.5 text-center">
                           <p className="truncate text-[10px] font-medium text-warm-500">{columnLabels[sIdx]}</p>
-                          <p className={`text-base font-bold tabular-nums ${score < 0 ? 'text-orange-600' : score > 0 ? 'text-rose-600' : 'text-warm-400'}`}>
+                          <p className={`text-sm font-bold tabular-nums ${score < 0 ? 'text-orange-600' : score > 0 ? 'text-rose-600' : 'text-warm-400'}`}>
                             {score === 0 ? '—' : score}
                           </p>
                         </div>
@@ -567,7 +567,7 @@ export default function Okey101Score() {
                       }
                     }}
                     onKeyDown={(e) => e.key === 'Enter' && addRound()}
-                    className="w-full rounded-lg border-2 border-warm-200 bg-white p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                    className="w-full rounded-lg border-2 border-warm-200 bg-white p-1.5 text-center text-sm font-semibold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                   />
                   {renderPresetRowCompact(idx)}
                 </div>
@@ -602,7 +602,7 @@ export default function Okey101Score() {
           <table className="w-full min-w-[520px]">
             <thead>
               <tr>
-              <th className="w-12 border-r border-warm-100 bg-gradient-to-b from-orange-50 to-amber-50/50 p-2 text-center text-xs font-black uppercase tracking-wide text-orange-900 sm:w-16 md:w-20 md:text-sm">
+              <th className="w-10 border-r border-warm-100 bg-gradient-to-b from-orange-50 to-amber-50/50 p-1.5 text-center text-[10px] font-bold uppercase tracking-wide text-orange-900 sm:w-12">
                   El
                 </th>
                 {isPartners ? (
@@ -681,7 +681,7 @@ export default function Okey101Score() {
 
                     return (
                       <tr key={rIdx} className={`border-b border-orange-100/80 hover:bg-orange-50/30 transition-colors ${isPenalty ? 'bg-orange-50/50' : 'bg-white'}`}>
-                        <td className="p-2 sm:p-3 md:p-4 w-12 sm:w-16 md:w-20 text-center font-semibold text-xs sm:text-sm text-warm-600 border-r border-orange-100 bg-orange-50/30">
+                        <td className="w-10 border-r border-orange-100 bg-orange-50/30 p-1.5 text-center text-[11px] font-semibold text-warm-600 sm:w-12">
                           {isPenalty ? <span className="text-orange-500">-</span> : <span className="text-warm-700">{elNumber}</span>}
                         </td>
                         {displayScores.map((score, sIdx) => {
@@ -690,7 +690,7 @@ export default function Okey101Score() {
                           const isNegative = score < 0;
                           
                           return (
-                            <td key={sIdx} className={`p-2 sm:p-3 md:p-4 text-center font-bold text-sm sm:text-base md:text-lg ${
+                            <td key={sIdx} className={`p-1.5 text-center text-xs font-semibold sm:text-sm ${
                               isNegative ? 'text-orange-600' : 
                               isPositive ? 'text-rose-600' : 
                               'text-warm-400'
@@ -714,15 +714,15 @@ export default function Okey101Score() {
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-orange-200 bg-gradient-to-r from-orange-50/80 to-white">
-                  <td className="p-2 sm:p-3 md:p-4 w-12 sm:w-16 md:w-20 text-center font-bold text-xs sm:text-sm md:text-base text-orange-900 border-r border-orange-100">Toplam</td>
+                  <td className="w-10 border-r border-orange-100 p-1.5 text-center text-[11px] font-bold text-orange-900 sm:w-12">Toplam</td>
                   {isPartners ? (
                     <>
-                      <td className="p-2 sm:p-3 md:p-4 text-center font-black text-base sm:text-lg md:text-xl text-warm-900">{teamTotals[0]}</td>
-                      <td className="p-2 sm:p-3 md:p-4 text-center font-black text-base sm:text-lg md:text-xl text-warm-900">{teamTotals[1]}</td>
+                      <td className="p-2 sm:p-3 md:p-4 text-center font-bold text-sm text-warm-900">{teamTotals[0]}</td>
+                      <td className="p-2 sm:p-3 md:p-4 text-center font-bold text-sm text-warm-900">{teamTotals[1]}</td>
                     </>
                   ) : (
                     totals.map((total, idx) => (
-                      <td key={idx} className="p-2 sm:p-3 md:p-4 text-center font-black text-base sm:text-lg md:text-xl text-warm-900">{total}</td>
+                      <td key={idx} className="p-2 sm:p-3 md:p-4 text-center font-bold text-sm text-warm-900">{total}</td>
                     ))
                   )}
                   <td className="p-2 sm:p-3 md:p-4"></td>
@@ -751,7 +751,7 @@ export default function Okey101Score() {
                           newInputs[0] = e.target.value;
                           setTeamInputs(newInputs);
                         }}
-                        className="w-full rounded-xl border-2 border-warm-200 p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:p-2.5 md:p-3 sm:text-lg md:text-xl"
+                        className="w-full rounded-lg border-2 border-warm-200 p-1.5 text-center text-sm font-semibold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                       />
                       <div className="flex gap-1 sm:gap-1.5 mt-2 sm:mt-2.5">
                         <button onClick={() => setPreset(0, PRESETS.BITTI)} className="flex-1 rounded-lg bg-orange-100 px-1.5 py-1.5 text-[10px] font-bold text-orange-800 shadow-sm transition-colors hover:bg-orange-200 sm:px-2 sm:py-2 md:px-2.5 sm:text-xs">Bitti</button>
@@ -770,7 +770,7 @@ export default function Okey101Score() {
                           newInputs[1] = e.target.value;
                           setTeamInputs(newInputs);
                         }}
-                        className="w-full rounded-xl border-2 border-warm-200 p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:p-2.5 md:p-3 sm:text-lg md:text-xl"
+                        className="w-full rounded-lg border-2 border-warm-200 p-1.5 text-center text-sm font-semibold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                       />
                       <div className="flex gap-1 sm:gap-1.5 mt-2 sm:mt-2.5">
                         <button onClick={() => setPreset(1, PRESETS.BITTI)} className="flex-1 rounded-lg bg-orange-100 px-1.5 py-1.5 text-[10px] font-bold text-orange-800 shadow-sm transition-colors hover:bg-orange-200 sm:px-2 sm:py-2 md:px-2.5 sm:text-xs">Bitti</button>
@@ -789,7 +789,7 @@ export default function Okey101Score() {
                         placeholder="0"
                         onChange={(e) => updateCurrentScore(idx, e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && addRound()}
-                        className="w-full rounded-xl border-2 border-warm-200 p-2 text-center text-base font-bold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:p-2.5 md:p-3 sm:text-lg md:text-xl"
+                        className="w-full rounded-lg border-2 border-warm-200 p-1.5 text-center text-sm font-semibold focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                       />
                       <div className="flex gap-1 sm:gap-1.5 mt-2 sm:mt-2.5">
                         <button onClick={() => setPreset(idx, PRESETS.BITTI)} className="flex-1 rounded-lg bg-orange-100 px-1.5 py-1.5 text-[10px] font-bold text-orange-800 shadow-sm transition-colors hover:bg-orange-200 sm:px-2 sm:py-2 md:px-2.5 sm:text-xs">Bitti</button>

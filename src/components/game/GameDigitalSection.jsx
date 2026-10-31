@@ -57,7 +57,7 @@ function GameDigitalSection({ game }) {
   const downloads = getActiveDownloads(info);
 
   return (
-    <section className="digital-game-section" aria-labelledby="digital-game-title">
+    <section id="sistem" className="digital-game-section scroll-mt-24" aria-labelledby="digital-game-title">
       <header className="digital-game-header">
         <span className="digital-game-icon" aria-hidden>
           <Monitor size={20} />

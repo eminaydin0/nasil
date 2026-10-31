@@ -572,7 +572,7 @@ export default function AdminDashboardTab({ stats, sortedGames, games, onTabChan
                 className="group flex flex-col overflow-hidden rounded-xl border border-warm-200/60 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-200 hover:shadow-soft-md"
               >
                 <div className="aspect-[16/10] overflow-hidden bg-warm-100">
-                  <img
+                  <img width="64" height="64"
                     src={game.image}
                     alt={game.name}
                     loading="lazy"

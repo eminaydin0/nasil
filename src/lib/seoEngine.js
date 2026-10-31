@@ -6,7 +6,6 @@
 import {
   SITE_CONFIG,
   CATEGORY_SEO,
-  getGameSeoHeadline,
   generateGameSchema,
   generateArticleSchema,
   generateNewsArticleSchema,
@@ -17,7 +16,22 @@ import {
   generateComparisonPageSchema,
 } from '../constants/seo.js';
 import { TOOL_PAGE_SEO, generateWebApplicationSchema } from '../constants/seoKeywords.js';
-import { isDigitalGameCategory } from '../constants/digitalGames.js';
+import { hasDigitalInfoContent, isDigitalGameCategory } from '../constants/digitalGames.js';
+import { categoryPath } from '../utils/categorySlug.js';
+import { canonicalNewsSlug } from '../constants/newsSlugRedirects.js';
+import {
+  categoryDescription,
+  categoryTitle,
+  comparisonDescription,
+  comparisonTitle,
+  gameDescription,
+  questionParticle,
+  gameTitle,
+  TOOL_NAMES,
+  toolDescription,
+  toolTitle,
+} from './seoMeta.js';
+import { absoluteCover } from './coverImage.js';
 import { BRAND_FAQS, BRAND_SEARCH_VARIANTS } from '../constants/brandAliases.js';
 
 // ─── Yardımcılar ───────────────────────────────────────────────────────────
@@ -67,6 +81,7 @@ function normalizeGameInput(raw) {
     videoTitle: raw.videoTitle ?? raw.video_title ?? '',
     playTimeMinutes: raw.playTimeMinutes ?? raw.play_time_minutes ?? null,
     faq: Array.isArray(raw.faq) ? raw.faq.filter((f) => f?.question || f?.answer) : [],
+    digitalInfo: raw.digitalInfo ?? raw.digital_info ?? null,
     createdAt: raw.createdAt ?? raw.created_at,
     updatedAt: raw.updatedAt ?? raw.updated_at,
   };
@@ -143,44 +158,14 @@ function extractRuleKeywords(rules, limit = 6) {
 
 export function buildGameTitle(game) {
   const g = normalizeGameInput(game);
-  if (!g?.name) return 'Oyun Rehberi';
-  return getGameSeoHeadline(g.name, g.category);
+  if (!g?.name) return gameTitle({ name: '' });
+  return gameTitle(g);
 }
 
 export function buildGameDescription(game) {
   const g = normalizeGameInput(game);
   if (!g) return '';
-
-  const isDigital = isDigitalGameCategory(g.category);
-  const parts = [`${g.name} kuralı ne`];
-  const intro = g.shortDescription || truncateText(g.description, 100);
-  if (intro) parts.push(intro);
-
-  if (isDigital) {
-    parts.push(`${g.name} nasıl oynanır?`);
-    const metaBits = [];
-    if (g.category) metaBits.push(g.category.replace(' Oyunları', '').replace(' Oyunlar', ''));
-    if (g.players) metaBits.push(g.players);
-    if (metaBits.length) parts.push(metaBits.join(' · '));
-    parts.push('Sistem gereksinimleri, indirme linkleri, ipuçları.');
-  } else {
-    const metaBits = [];
-    if (g.players) metaBits.push(g.players);
-    if (g.difficulty) metaBits.push(`${g.difficulty} seviye`);
-    const time = formatPlayTime(g.playTimeMinutes);
-    if (time) metaBits.push(`~${time}`);
-    if (metaBits.length) parts.push(metaBits.join(' · '));
-
-    const contentBits = [];
-    if (g.rules?.length) contentBits.push(`${g.rules.length} adımlık kurallar`);
-    if (g.tips?.length) contentBits.push(`${g.tips.length} ipucu`);
-    if (g.videoUrl) contentBits.push('video anlatım');
-    if (g.faq?.length) contentBits.push(`${g.faq.length} SSS`);
-    if (contentBits.length) parts.push(`${contentBits.join(', ')}.`);
-    else parts.push('Adım adım kurallar, stratejiler ve püf noktaları.');
-  }
-
-  return truncateText(parts.join(' '), 160);
+  return gameDescription(g);
 }
 
 export function buildGameKeywords(game) {
@@ -251,7 +236,7 @@ export function buildGameSeoMeta(game, options = {}) {
     description: buildGameDescription(g),
     keywords: buildGameKeywords(g),
     tags: buildGameTags(g),
-    image: g.image || SITE_CONFIG.defaultImage,
+    image: absoluteCover(g) || SITE_CONFIG.defaultImage,
     imageAlt: `${g.name} oyun kuralları — ${g.category || 'Kuralı Ne?'}`,
     url: `/oyun/${g.slug}`,
     section: g.category,
@@ -341,6 +326,32 @@ function generateAutoFaqs(game) {
   }
 
   return faqs;
+}
+
+/** Sayfada gerçekten duran bölümler. Boş başlık üretilmez. */
+export function buildGameSections(game) {
+  const g = normalizeGameInput(game);
+  if (!g?.name) return [];
+  const sections = [];
+  if (g.players || g.difficulty || g.playTimeMinutes) {
+    sections.push({ id: 'hizli-bilgi', name: 'Hızlı bilgi' });
+  }
+  if (String(g.description || '').trim()) {
+    sections.push({ id: 'nedir', name: `${g.name} nedir?` });
+  }
+  if (g.rules.length) {
+    sections.push({ id: 'nasil-oynanir', name: `${g.name} nasıl oynanır?` });
+  }
+  if (g.tips.length) {
+    sections.push({ id: 'ipuclari', name: `${g.name} oynarken nelere dikkat edilmeli?` });
+  }
+  if (isDigitalGameCategory(g.category) && hasDigitalInfoContent(g.digitalInfo)) {
+    sections.push({ id: 'sistem', name: 'Sistem gereksinimleri' });
+  }
+  if (buildGameFaqs(g).length) {
+    sections.push({ id: 'sik-sorulan-sorular', name: `${g.name} hakkında en çok sorulanlar neler?` });
+  }
+  return sections;
 }
 
 export function buildGameFaqs(game) {
@@ -448,7 +459,7 @@ function generateSpeakableSchema(game) {
     url: `${SITE_CONFIG.url}/oyun/${g.slug}`,
     speakable: {
       '@type': 'SpeakableSpecification',
-      cssSelector: ['.game-description', '.game-rules', 'h1'],
+      cssSelector: ['.game-answer', '.game-description', '.game-rules', 'h1'],
     },
   };
 }
@@ -462,6 +473,21 @@ export function buildGameStructuredData(game, options = {}) {
     ? options.aggregateRating
     : null;
 
+  const sections = buildGameSections(g);
+  const toc = sections.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'İçindekiler',
+        itemListElement: sections.map((section, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: section.name,
+          url: `${SITE_CONFIG.url}/oyun/${g.slug}#${section.id}`,
+        })),
+      }
+    : null;
+
   return [
     generateGameSchema(g, { aggregateRating }),
     generateArticleSchema(g),
@@ -469,6 +495,7 @@ export function buildGameStructuredData(game, options = {}) {
     faqs.length > 0 ? generateFAQSchema(faqs) : null,
     generateGameEntitySchema(g, { aggregateRating }),
     generateSpeakableSchema(g),
+    toc,
   ].filter(Boolean);
 }
 
@@ -477,25 +504,15 @@ export function buildGameStructuredData(game, options = {}) {
 export function buildCategorySeoMeta(categoryName, games = [], options = {}) {
   const staticData = CATEGORY_SEO[categoryName] || {};
   const list = games.filter((g) => g?.name);
-  const count = list.length;
   const topNames = list.slice(0, 5).map((g) => g.name);
   const customDesc = options.description;
 
-  let title = staticData.title || `${categoryName} Oyunları - Kuralı Ne?`;
-  if (count > 0 && !staticData.title) {
-    title = `${categoryName} Oyunları (${count}) - Kuralı Ne?`;
-  }
-
-  let description = staticData.description || customDesc || '';
-  if (count > 0) {
-    const namesSnippet = topNames.join(', ');
-    const dynamicPart = count <= 5
-      ? `${namesSnippet} — ${count} oyunun kuralları ve ipuçları tek sayfada.`
-      : `${namesSnippet}${count > 5 ? ` ve ${count - 5} oyun daha` : ''}. Toplam ${count} ${categoryName.toLowerCase()} rehberi.`;
-    description = staticData.description
-      ? `${staticData.description} ${count} oyun: ${namesSnippet}.`
-      : dynamicPart;
-  }
+  const title = categoryTitle(categoryName);
+  const description = categoryDescription(
+    categoryName,
+    list,
+    staticData.description || customDesc || ''
+  );
 
   const keywords = dedupeList([
     categoryName,
@@ -511,9 +528,9 @@ export function buildCategorySeoMeta(categoryName, games = [], options = {}) {
 
   return {
     title,
-    description: truncateText(description, 160),
+    description,
     keywords,
-    url: `/kategori/${encodeURIComponent(categoryName)}`,
+    url: categoryPath(categoryName),
   };
 }
 
@@ -534,25 +551,13 @@ export function buildComparisonSeoMeta(gameA, gameB) {
   const b = normalizeGameInput(gameB);
   if (!a || !b) return {};
 
-  const title = `${a.name} vs ${b.name} - Hangisi Daha İyi?`;
-  const parts = [`${a.name} ile ${b.name} karşılaştırması:`];
-
-  if (a.players || b.players) parts.push(`oyuncu (${a.players || '?'} / ${b.players || '?'})`);
-  if (a.difficulty || b.difficulty) parts.push(`zorluk (${a.difficulty || '?'} / ${b.difficulty || '?'})`);
-  const timeA = formatPlayTime(a.playTimeMinutes);
-  const timeB = formatPlayTime(b.playTimeMinutes);
-  if (timeA || timeB) parts.push(`süre (${timeA || '?'} / ${timeB || '?'})`);
-  if (a.rules?.length || b.rules?.length) {
-    parts.push(`${a.rules?.length || 0} vs ${b.rules?.length || 0} kural`);
-  }
-
-  parts.push('Hangisi size uygun? Detaylı yan yana rehber.');
+  const title = comparisonTitle(a, b);
 
   const keywords = dedupeList([
     `${a.name} vs ${b.name}`,
     `${a.name} ${b.name} karşılaştırma`,
-    `${a.name} mı ${b.name} mi`,
-    `${a.name} mı yoksa ${b.name} mi`,
+    `${a.name} ${questionParticle(a.name)} ${b.name} ${questionParticle(b.name)}`,
+    `${a.name} ${questionParticle(a.name)} yoksa ${b.name} ${questionParticle(b.name)}`,
     `${a.name} farkları`,
     `${b.name} farkları`,
     `${a.name} ${b.name} fark`,
@@ -564,10 +569,10 @@ export function buildComparisonSeoMeta(gameA, gameB) {
 
   return {
     title,
-    description: truncateText(parts.join(' '), 160),
+    description: comparisonDescription(a, b),
     keywords,
     url: `/karsilastir/${a.slug}-vs-${b.slug}`,
-    image: a.image || b.image,
+    image: absoluteCover(a) || absoluteCover(b),
   };
 }
 
@@ -623,9 +628,12 @@ export function buildToolSeoMeta(toolSlugOrUrl, overrides = {}) {
     : toolSlugOrUrl;
   const preset = slug ? TOOL_PAGE_SEO[slug] : null;
 
+  const toolName = overrides.title || preset?.title;
   return {
-    title: overrides.seoTitle || preset?.title || overrides.title,
-    description: overrides.seoDescription || preset?.description || overrides.description,
+    title: toolTitle(slug || toolName),
+    description: toolDescription(
+      overrides.seoDescription || preset?.description || overrides.description
+    ),
     keywords: preset?.keywords,
     url: overrides.seoUrl || (slug ? `/araclar/${slug}` : ''),
   };
@@ -634,8 +642,9 @@ export function buildToolSeoMeta(toolSlugOrUrl, overrides = {}) {
 export function buildToolStructuredData(toolSlugOrUrl, overrides = {}) {
   const meta = buildToolSeoMeta(toolSlugOrUrl, overrides);
   if (!meta.url || !meta.title) return null;
+  const slug = resolveToolSlugFromUrl(meta.url);
   return generateWebApplicationSchema({
-    name: meta.title.replace(/ - .*$/, ''),
+    name: TOOL_NAMES[slug] || meta.title.replace(/ - .*$/, ''),
     description: meta.description,
     url: meta.url,
   });
@@ -678,7 +687,7 @@ function normalizeNewsInput(post) {
   if (!post) return null;
   return {
     title: post.title,
-    slug: post.slug,
+    slug: canonicalNewsSlug(post.slug),
     subtitle: post.subtitle,
     excerpt: post.excerpt,
     content: post.content,

@@ -17,8 +17,10 @@ import { useGame } from '../../hooks/useGame';
 import { supabase } from '../../lib/supabase';
 import {
   buildGameSeoMeta,
+  buildGameSections,
   buildGameStructuredData,
 } from '../../lib/seoEngine';
+import { isPublishableGame } from '../../constants/sitemapRoutes';
 
 function GameDetail() {
   const { slug } = useParams();
@@ -106,6 +108,8 @@ function GameDetail() {
     return buildGameSeoMeta(game, { aggregateRating });
   }, [game, aggregateRating]);
 
+  const sections = useMemo(() => (game ? buildGameSections(game) : []), [game]);
+
   if (loading) {
     return (
       <>
@@ -145,6 +149,7 @@ function GameDetail() {
         modifiedTime={seoMeta.modifiedTime}
         section={seoMeta.section}
         tags={seoMeta.tags}
+        noindex={!isPublishableGame(game)}
       />
 
       <GameHeader
@@ -157,6 +162,21 @@ function GameDetail() {
       <div className="container mx-auto px-4 py-6 sm:py-8 md:py-12">
         {/* Breadcrumb */}
         <Breadcrumb items={breadcrumbs} className="mb-6" />
+
+        {sections.length > 1 && (
+          <nav aria-label="İçindekiler" className="mb-6 rounded-2xl border border-warm-200/70 bg-white px-4 py-3 shadow-soft">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-warm-500">İçindekiler</p>
+            <ol className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+              {sections.map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`} className="font-semibold text-orange-700 hover:text-orange-800">
+                    {section.name}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
 
         <GameInfo game={game} />
 
