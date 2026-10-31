@@ -1,7 +1,9 @@
 import React from 'react';
 import { ImageResponse } from '@vercel/og';
 
-export const config = { runtime: 'edge' };
+// Node runtime: @vercel/og 1.x edge bundle imports `module` and `*.wasm?module`,
+// which the Edge deploy rejects. Node ImageResponse still returns a Response.
+export const config = { runtime: 'nodejs', maxDuration: 15 };
 
 function text(value, fallback = '') {
   const clean = String(value || '').replace(/\s+/g, ' ').trim();
