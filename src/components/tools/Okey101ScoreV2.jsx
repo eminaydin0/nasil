@@ -16,9 +16,11 @@ export default function Okey101Score() {
   const [teamInputs, setTeamInputs] = useState(['', '']); // For partners mode
   const [isPartners, setIsPartners] = useState(false);
   const [partnerIdx] = useState(2); // Default partner for Player 1 is Player 3 (index 2)
-  const [gameLimit, setGameLimit] = useState(11); // Default game limit
+  const [gameLimit, setGameLimit] = useState(11); // 0 = sınırsız
+  const [finishedByHand, setFinishedByHand] = useState(false);
   const [isPenaltyRound, setIsPenaltyRound] = useState(false);
   const historyRef = useRef(null);
+  const deskHistoryRef = useRef(null);
   const winnerShownRef = useRef(false);
 
   // Derived state for current mode
@@ -30,8 +32,8 @@ export default function Okey101Score() {
 
   // Auto-scroll to bottom of history when round added
   useEffect(() => {
-    if (historyRef.current) {
-      historyRef.current.scrollTop = historyRef.current.scrollHeight;
+    for (const node of [historyRef.current, deskHistoryRef.current]) {
+      if (node) node.scrollTop = node.scrollHeight;
     }
   }, [rounds]);
 
@@ -59,7 +61,7 @@ export default function Okey101Score() {
     const playedRounds = rounds.filter(r => !r.isPenalty).length;
     
     // Only check limit if it's NOT a penalty round
-    if (!isPenaltyRound && playedRounds >= gameLimit) {
+    if (finishedByHand || (gameLimit > 0 && !isPenaltyRound && playedRounds >= gameLimit)) {
         showInfo('Oyun bitti! Yeni oyun başlatmak için sıfırlayın.');
         return;
     }
@@ -150,7 +152,16 @@ export default function Okey101Score() {
     setCurrentScores(['', '', '', '']);
     setTeamInputs(['', '']);
     setIsPenaltyRound(false);
+    setFinishedByHand(false);
     showInfo('Oyun sıfırlandı');
+  };
+
+  const finishGame = () => {
+    if (rounds.length === 0) {
+      showInfo('Bitirmek için en az bir el girin.');
+      return;
+    }
+    setFinishedByHand(true);
   };
 
   const calculateTotals = () => {
@@ -187,7 +198,7 @@ export default function Okey101Score() {
     return !r.isPenalty;
   }).length;
 
-  const isGameFinished = gameLimit > 0 && playedRoundsCount >= gameLimit;
+  const isGameFinished = finishedByHand || (gameLimit > 0 && playedRoundsCount >= gameLimit);
 
   // Check for winner when game finishes
   useEffect(() => {
@@ -282,7 +293,7 @@ export default function Okey101Score() {
           <div className="mb-4 sm:mb-6">
             <label className="mb-2 block text-sm font-semibold text-warm-700 sm:mb-3">Kaç el?</label>
             <div className="flex flex-wrap gap-2">
-              {[5, 7, 9, 11, 13, 15].map((limit) => (
+              {[5, 7, 9, 11, 13, 15, 0].map((limit) => (
                 <button
                   type="button"
                   key={limit}
@@ -293,7 +304,7 @@ export default function Okey101Score() {
                       : 'border border-warm-200 bg-white text-warm-800 hover:bg-cream-100'
                   }`}
                 >
-                  {limit} el
+                  {limit === 0 ? 'Sınırsız' : `${limit} el`}
                 </button>
               ))}
             </div>
@@ -358,20 +369,34 @@ export default function Okey101Score() {
   // Get winner info
   let winnerName = '';
   let winnerScore = null;
+  let winnerIndex = -1;
+  let winnerMargin = null;
   if (isGameFinished && rounds.length > 0) {
+    const board = isPartners ? teamTotals : totals;
+    winnerIndex = board.indexOf(Math.min(...board));
+    const rest = board.filter((_, index) => index !== winnerIndex);
+    winnerMargin = rest.length ? Math.min(...rest) - board[winnerIndex] : null;
+    winnerScore = board[winnerIndex];
     if (isPartners) {
-      const winnerTeamIdx = teamTotals[0] < teamTotals[1] ? 0 : 1;
-      winnerName = teamNames[winnerTeamIdx] || `${winnerTeamIdx + 1}. Takım`;
-      winnerScore = teamTotals[winnerTeamIdx];
+      winnerName = teamNames[winnerIndex] || `${winnerIndex + 1}. Takım`;
     } else {
-      const winnerIdx = totals.indexOf(minScore);
-      winnerName = players[winnerIdx] || `Oyuncu ${winnerIdx + 1}`;
-      winnerScore = totals[winnerIdx];
+      winnerName = players[winnerIndex] || `Oyuncu ${winnerIndex + 1}`;
     }
   }
 
   const thInputClass =
     'w-full min-w-0 text-center font-semibold text-xs sm:text-sm text-charcoal-900 bg-white border-2 border-warm-200 rounded-lg px-2 py-1.5 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 placeholder:text-warm-400';
+
+  const scoreColumnCount = isPartners ? 2 : players.length;
+  const sheetCols = () => (
+    <colgroup>
+      <col className="okey101-col-el" />
+      {Array.from({ length: scoreColumnCount }, (_, index) => (
+        <col key={index} />
+      ))}
+      <col className="okey101-col-act" />
+    </colgroup>
+  );
 
   const columnLabels = isPartners
     ? teamNames
@@ -418,8 +443,8 @@ export default function Okey101Score() {
     );
 
   return (
-    <div className="min-w-0 overflow-x-clip">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-warm-100 bg-cream-50 px-4 py-3 sm:gap-3 sm:px-6">
+    <div className="okey101-board min-w-0">
+        <div className="okey101-board-top flex flex-wrap items-center justify-between gap-2 border-b border-warm-100 bg-cream-50 px-4 py-3 sm:gap-3 sm:px-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             <span className="inline-flex items-center gap-2 rounded-xl border-2 border-orange-500 bg-orange-50 px-3 py-2 text-sm font-bold text-orange-800">
               <Users className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
@@ -428,10 +453,21 @@ export default function Okey101Score() {
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-medium text-warm-600">Kaç el?</span>
               <span className="rounded-lg bg-orange-600 px-3 py-1.5 text-sm font-bold text-white shadow-sm">
-                {gameLimit} el
+                {gameLimit > 0 ? `${gameLimit} el` : 'Sınırsız'}
               </span>
             </div>
           </div>
+          <div className="flex items-center gap-1">
+          {gameLimit === 0 && !isGameFinished && (
+            <button
+              type="button"
+              onClick={finishGame}
+              className="inline-flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-sm font-medium text-warm-200 transition-colors hover:bg-white/5"
+            >
+              <Award size={16} />
+              Bitir
+            </button>
+          )}
           <button
             type="button"
             onClick={resetGame}
@@ -441,20 +477,23 @@ export default function Okey101Score() {
             <RotateCcw size={16} />
             Yeni oyun
           </button>
+          </div>
         </div>
 
         {/* Winner Banner */}
         {isGameFinished && rounds.length > 0 && winnerName && (
-          <div className="border-b border-orange-200 bg-orange-600 px-4 py-3 text-white sm:px-6 sm:py-4">
-            <div className="flex items-center justify-center gap-2 sm:gap-3">
-              <Award className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
-              <div className="text-center">
-                <div className="font-bold text-base sm:text-lg">Oyun Bitti!</div>
-                <div className="text-xs sm:text-sm mt-1 opacity-95">
-                  Kazanan: <span className="font-bold text-base sm:text-lg">{winnerName}</span>
-                  {winnerScore !== null && <span className="ml-1 sm:ml-2">({winnerScore} puan)</span>}
-                </div>
-              </div>
+          <div className="okey101-winner">
+            <span className="okey101-winner-mark" aria-hidden>
+              <Award size={18} />
+            </span>
+            <div className="okey101-winner-copy">
+              <p>Oyun bitti</p>
+              <strong>{winnerName}</strong>
+            </div>
+            <div className="okey101-winner-score">
+              <b>{winnerScore}</b>
+              <span>puan</span>
+              {winnerMargin > 0 && <em>{winnerMargin} fark</em>}
             </div>
           </div>
         )}
@@ -596,18 +635,19 @@ export default function Okey101Score() {
         </div>
 
         {/* Masaüstü — tablo */}
-        <div className="hidden md:block">
+        <div className="okey101-desk hidden md:flex">
         {/* Tablo başlığı — kurulumdaki input kutularıyla aynı köşe/border */}
-        <ToolTableScroll showHint={false} className="border-b border-warm-100">
-          <table className="w-full min-w-[520px]">
+        <ToolTableScroll showHint={false} className="okey101-desk-head border-b border-warm-100">
+          <table className="okey101-sheet">
+            {sheetCols()}
             <thead>
               <tr>
-              <th className="w-10 border-r border-warm-100 bg-gradient-to-b from-orange-50 to-amber-50/50 p-1.5 text-center text-[10px] font-bold uppercase tracking-wide text-orange-900 sm:w-12">
+              <th className="okey101-el border-r border-warm-100 bg-gradient-to-b from-orange-50 to-amber-50/50 text-center text-[10px] font-bold uppercase tracking-wide text-orange-900">
                   El
                 </th>
                 {isPartners ? (
                   <>
-                    <th className="p-2 sm:p-3 md:p-4 text-center">
+                    <th className={`p-2 text-center sm:p-3 md:p-4${winnerIndex === 0 ? ' is-winner' : ''}`}>
                       <input
                         type="text"
                         value={teamNames[0]}
@@ -616,7 +656,7 @@ export default function Okey101Score() {
                         placeholder="1. Takım"
                       />
                     </th>
-                    <th className="p-2 sm:p-3 md:p-4 text-center">
+                    <th className={`p-2 text-center sm:p-3 md:p-4${winnerIndex === 1 ? ' is-winner' : ''}`}>
                       <input
                         type="text"
                         value={teamNames[1]}
@@ -628,7 +668,7 @@ export default function Okey101Score() {
                   </>
                 ) : (
                   players.map((player, idx) => (
-                    <th key={idx} className="p-2 sm:p-3 md:p-4 text-center">
+                    <th key={idx} className={`p-2 text-center sm:p-3 md:p-4${winnerIndex === idx ? ' is-winner' : ''}`}>
                       <input
                         type="text"
                         value={player}
@@ -648,15 +688,16 @@ export default function Okey101Score() {
         </ToolTableScroll>
 
         {/* Geçmiş */}
-        <div className="max-h-[min(360px,50vh)] overflow-y-auto bg-cream-50/50">
+        <div ref={deskHistoryRef} className="okey101-desk-history bg-cream-50/50">
           {rounds.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full min-h-[120px] text-warm-400 px-4 py-8">
               <p className="text-sm font-medium text-warm-500">Henüz el girilmedi</p>
               <p className="text-xs text-warm-400 mt-1 text-center">Aşağıdan puanları girip kaydedin</p>
             </div>
           ) : (
-            <ToolTableScroll showHint={false} className="p-2 sm:p-3">
-              <table className="w-full min-w-[520px]">
+            <ToolTableScroll showHint={false}>
+              <table className="okey101-sheet">
+                {sheetCols()}
                 <tbody>
                   {rounds.map((roundData, rIdx) => {
                     const isLegacy = Array.isArray(roundData);
@@ -681,7 +722,7 @@ export default function Okey101Score() {
 
                     return (
                       <tr key={rIdx} className={`border-b border-orange-100/80 hover:bg-orange-50/30 transition-colors ${isPenalty ? 'bg-orange-50/50' : 'bg-white'}`}>
-                        <td className="w-10 border-r border-orange-100 bg-orange-50/30 p-1.5 text-center text-[11px] font-semibold text-warm-600 sm:w-12">
+                        <td className="okey101-el border-r border-orange-100 bg-orange-50/30 text-center text-[11px] font-semibold text-warm-600">
                           {isPenalty ? <span className="text-orange-500">-</span> : <span className="text-warm-700">{elNumber}</span>}
                         </td>
                         {displayScores.map((score, sIdx) => {
@@ -690,7 +731,9 @@ export default function Okey101Score() {
                           const isNegative = score < 0;
                           
                           return (
-                            <td key={sIdx} className={`p-1.5 text-center text-xs font-semibold sm:text-sm ${
+                            <td key={sIdx} className={`p-1.5 text-center text-xs font-semibold tabular-nums sm:text-sm ${
+                              winnerIndex === sIdx ? 'is-winner ' : ''
+                            }${
                               isNegative ? 'text-orange-600' : 
                               isPositive ? 'text-rose-600' : 
                               'text-warm-400'
@@ -714,15 +757,15 @@ export default function Okey101Score() {
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-orange-200 bg-gradient-to-r from-orange-50/80 to-white">
-                  <td className="w-10 border-r border-orange-100 p-1.5 text-center text-[11px] font-bold text-orange-900 sm:w-12">Toplam</td>
+                  <td className="okey101-el border-r border-orange-100 text-center text-[11px] font-bold text-orange-900">Toplam</td>
                   {isPartners ? (
                     <>
-                      <td className="p-2 sm:p-3 md:p-4 text-center font-bold text-sm text-warm-900">{teamTotals[0]}</td>
-                      <td className="p-2 sm:p-3 md:p-4 text-center font-bold text-sm text-warm-900">{teamTotals[1]}</td>
+                      <td className={`p-2 text-center text-sm font-bold sm:p-3 md:p-4${winnerIndex === 0 ? ' is-winner' : ''}`}>{teamTotals[0]}</td>
+                      <td className={`p-2 text-center text-sm font-bold sm:p-3 md:p-4${winnerIndex === 1 ? ' is-winner' : ''}`}>{teamTotals[1]}</td>
                     </>
                   ) : (
                     totals.map((total, idx) => (
-                      <td key={idx} className="p-2 sm:p-3 md:p-4 text-center font-bold text-sm text-warm-900">{total}</td>
+                      <td key={idx} className={`p-2 text-center text-sm font-bold sm:p-3 md:p-4${winnerIndex === idx ? ' is-winner' : ''}`}>{total}</td>
                     ))
                   )}
                   <td className="p-2 sm:p-3 md:p-4"></td>
@@ -734,11 +777,13 @@ export default function Okey101Score() {
         </div>
 
         {/* Alt giriş — kurulumdaki input stilleri */}
-        <div className="hidden border-t border-warm-100 bg-white md:block p-2 sm:p-3 md:p-4">
+        <div className="okey101-desk-dock hidden border-t border-warm-100 bg-white py-3 md:block md:py-4">
         <ToolTableScroll showHint={false}>
-          <table className="w-full min-w-[520px]">
+          <table className="okey101-sheet">
+            {sheetCols()}
             <tbody>
               <tr>
+                <td className="okey101-el" aria-hidden />
                 {isPartners ? (
                   <>
                     <td className="p-2 sm:p-3">

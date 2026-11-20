@@ -174,7 +174,7 @@ function AuthPage() {
           </div>
         </aside>
 
-        <section className="relative flex h-full flex-1 flex-col items-center justify-center overflow-hidden bg-[#f7f3ec] px-5 py-6 sm:px-8 lg:px-12 xl:px-16">
+        <section className="auth-panel relative flex h-full flex-1 flex-col items-center justify-center overflow-hidden px-5 py-6 sm:px-8 lg:px-12 xl:px-16">
           <div
             className="pointer-events-none absolute inset-0 opacity-60"
             style={{
@@ -213,7 +213,7 @@ function AuthPage() {
             </div>
 
             <div
-              className="mb-5 grid grid-cols-2 gap-1 rounded-2xl bg-charcoal-900/5 p-1"
+              className="auth-tabs mb-5 grid grid-cols-2 gap-1 rounded-2xl p-1"
               role="tablist"
               aria-label="Giriş veya kayıt"
             >
