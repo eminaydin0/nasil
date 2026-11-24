@@ -24,7 +24,7 @@ export const SITE_TOOLS = [
     badge: 'Yeni',
     color: 'orange',
     category: 'scoreboard',
-    photo: '/media/tools/101-yazboz.jpg',
+    photo: '/media/tools/101-yazboz.jpg?v=2',
   },
   {
     id: 'okey-sayaci',
@@ -34,7 +34,7 @@ export const SITE_TOOLS = [
     link: '/araclar/okey-sayaci',
     color: 'red',
     category: 'scoreboard',
-    photo: '/media/tools/okey-sayaci.jpg',
+    photo: '/media/tools/okey-sayaci.jpg?v=2',
   },
   {
     id: 'batak-yazboz',
@@ -44,7 +44,7 @@ export const SITE_TOOLS = [
     link: '/araclar/batak-yazboz',
     color: 'amber',
     category: 'scoreboard',
-    photo: '/media/tools/batak-yazboz.jpg',
+    photo: '/media/tools/batak-yazboz.jpg?v=2',
   },
   {
     id: 'takim-olusturucu',
@@ -54,7 +54,7 @@ export const SITE_TOOLS = [
     link: '/araclar/takim-olusturucu',
     color: 'rose',
     category: 'team',
-    photo: '/media/tools/takim-olusturucu.jpg',
+    photo: '/media/tools/takim-olusturucu.jpg?v=2',
   },
   {
     id: 'halisaha-takim-olusturucu',
@@ -66,7 +66,7 @@ export const SITE_TOOLS = [
     color: 'emerald',
     category: 'team',
     featured: true,
-    photo: '/media/tools/halisaha.jpg',
+    photo: '/media/tools/halisaha.jpg?v=2',
   },
   {
     id: 'karar-carki',
@@ -77,7 +77,7 @@ export const SITE_TOOLS = [
     badge: 'Yeni',
     color: 'violet',
     category: 'utility',
-    photo: '/media/tools/karar-carki.jpg',
+    photo: '/media/tools/karar-carki.jpg?v=2',
   },
   {
     id: 'kura-cek',
@@ -88,7 +88,7 @@ export const SITE_TOOLS = [
     badge: 'Yeni',
     color: 'fuchsia',
     category: 'utility',
-    photo: '/media/tools/kura.jpg',
+    photo: '/media/tools/kura.jpg?v=2',
   },
   {
     id: 'zar-at',
@@ -98,7 +98,7 @@ export const SITE_TOOLS = [
     link: '/araclar/zar-at',
     color: 'sky',
     category: 'utility',
-    photo: '/media/tools/zar-at.jpg',
+    photo: '/media/tools/zar-at.jpg?v=2',
   },
   {
     id: 'skor-tablosu',
@@ -108,7 +108,7 @@ export const SITE_TOOLS = [
     link: '/araclar/skor-tablosu',
     color: 'indigo',
     category: 'utility',
-    photo: '/media/tools/skor-tablosu.jpg',
+    photo: '/media/tools/skor-tablosu.jpg?v=2',
   },
 ];
 

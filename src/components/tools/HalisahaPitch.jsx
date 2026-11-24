@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { clampPitchPosition, colorToTextContrast, getPlayerJerseyColor } from './halisahaFormations';
 
-const PITCH_BG = '/media/tools/halisaha-pitch.jpg';
+const PITCH_BG = '/media/tools/halisaha-pitch.jpg?v=2';
 
 function DraggablePlayer({
   player,

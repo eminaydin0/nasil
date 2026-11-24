@@ -43,7 +43,7 @@ function loadPitchImage() {
       resolve(img);
     };
     img.onerror = () => resolve(null);
-    img.src = '/media/tools/halisaha-pitch.jpg';
+    img.src = '/media/tools/halisaha-pitch.jpg?v=2';
   });
 }
 

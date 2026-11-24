@@ -8137,6 +8137,302 @@ body.home-night-body .mobile-nav-user-card p {
   min-height: 5.6rem;
 }
 
+/* ═══ Site doküman sayfaları (gizlilik, çerez, reklam, koşullar) ═══ */
+.site-doc {
+  --doc-bg: #f3efe8;
+  --doc-surface: #fffcf7;
+  --doc-ink: #1a1714;
+  --doc-muted: #5c564f;
+  --doc-soft: #8a8278;
+  --doc-line: rgba(26, 23, 20, 0.1);
+  --doc-accent: #ea580c;
+  --doc-accent-soft: rgba(234, 88, 12, 0.12);
+  --doc-aura: rgba(234, 88, 12, 0.14);
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, var(--doc-aura), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(15, 118, 110, 0.08), transparent 50%),
+    var(--doc-bg);
+  color: var(--doc-ink);
+}
+
+.site-doc--teal {
+  --doc-accent: #0f766e;
+  --doc-accent-soft: rgba(15, 118, 110, 0.14);
+  --doc-aura: rgba(15, 118, 110, 0.16);
+}
+
+.site-doc--amber {
+  --doc-accent: #b45309;
+  --doc-accent-soft: rgba(180, 83, 9, 0.14);
+  --doc-aura: rgba(180, 83, 9, 0.15);
+}
+
+.site-doc--emerald {
+  --doc-accent: #047857;
+  --doc-accent-soft: rgba(4, 120, 87, 0.14);
+  --doc-aura: rgba(4, 120, 87, 0.15);
+}
+
+.site-doc-aura {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(26, 23, 20, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 23, 20, 0.03) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent 70%);
+  opacity: 0.55;
+}
+
+.site-doc-shell {
+  overflow: hidden;
+  border: 1px solid var(--doc-line);
+  border-radius: 1.35rem;
+  background: var(--doc-surface);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 18px 40px -24px rgba(26, 23, 20, 0.35);
+}
+
+.site-doc-hero {
+  position: relative;
+  padding: 1.35rem 1.35rem 1.2rem;
+  border-bottom: 1px solid var(--doc-line);
+  background:
+    linear-gradient(135deg, var(--doc-accent-soft), transparent 62%),
+    var(--doc-surface);
+}
+
+.site-doc-hero::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1rem;
+  bottom: 1rem;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--doc-accent);
+}
+
+.site-doc-hero-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.95rem;
+  padding-left: 0.65rem;
+}
+
+.site-doc-icon {
+  display: grid;
+  flex: none;
+  width: 3.15rem;
+  height: 3.15rem;
+  place-items: center;
+  border-radius: 0.95rem;
+  color: #fff;
+  background: linear-gradient(160deg, var(--doc-accent), color-mix(in srgb, var(--doc-accent) 70%, #111));
+  box-shadow: 0 10px 22px -12px var(--doc-accent);
+}
+
+.site-doc-kicker {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--doc-accent);
+}
+
+.site-doc-title {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.45rem, 3.2vw, 1.9rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--doc-ink);
+}
+
+.site-doc-subtitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.55rem 0 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--doc-muted);
+}
+
+.site-doc-body {
+  padding: 1.35rem 1.35rem 1.6rem;
+}
+
+@media (min-width: 640px) {
+  .site-doc-hero,
+  .site-doc-body {
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
+  }
+
+  .site-doc-hero {
+    padding-top: 1.6rem;
+    padding-bottom: 1.35rem;
+  }
+
+  .site-doc-body {
+    padding-top: 1.6rem;
+    padding-bottom: 1.85rem;
+  }
+}
+
+.site-doc-prose {
+  max-width: none;
+}
+
+@media (min-width: 1024px) {
+  .site-doc-hero,
+  .site-doc-body {
+    padding-left: 2.25rem;
+    padding-right: 2.25rem;
+  }
+
+  .site-doc-title {
+    font-size: clamp(1.65rem, 2.4vw, 2.15rem);
+  }
+
+  .site-doc-p {
+    font-size: 1.02rem;
+    line-height: 1.8;
+  }
+}
+
+.site-doc-h2 {
+  margin: 1.65rem 0 0.55rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--doc-accent);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--doc-ink);
+}
+
+.site-doc-h2:first-child {
+  margin-top: 0;
+}
+
+.site-doc-p {
+  margin: 0 0 0.95rem;
+  font-size: 0.975rem;
+  line-height: 1.75;
+  color: var(--doc-muted);
+  white-space: pre-line;
+}
+
+.site-doc-spinner {
+  color: var(--doc-accent);
+}
+
+.site-doc-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 0.9rem;
+  background: linear-gradient(160deg, var(--doc-accent), color-mix(in srgb, var(--doc-accent) 72%, #111));
+  color: #fff !important;
+  padding: 0.8rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 800;
+  box-shadow: 0 12px 28px -14px var(--doc-accent);
+  transition: transform 0.2s var(--ease-spring), filter 0.2s ease;
+}
+
+.site-doc-cta:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.site-doc-related {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.site-doc-related-link {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--doc-line);
+  border-radius: 999px;
+  background: var(--doc-surface);
+  color: var(--doc-ink) !important;
+  padding: 0.5rem 0.95rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.site-doc-related-link:hover {
+  border-color: color-mix(in srgb, var(--doc-accent) 45%, var(--doc-line));
+  background: var(--doc-accent-soft);
+  color: var(--doc-accent) !important;
+}
+
+/* Breadcrumb bu sayfada da okunur kalsın */
+body.home-night-body .site-doc .site-doc-crumb .text-warm-900,
+body.home-night-body .site-doc .site-doc-crumb .text-warm-500,
+body.home-night-body .site-doc .site-doc-crumb .text-warm-400,
+.site-doc .site-doc-crumb .text-warm-900,
+.site-doc .site-doc-crumb .text-warm-500,
+.site-doc .site-doc-crumb .text-warm-400,
+.site-doc .site-doc-crumb a,
+.site-doc .site-doc-crumb span {
+  color: var(--doc-muted) !important;
+}
+
+.site-doc .site-doc-crumb a:hover,
+.site-doc .site-doc-crumb a:hover span {
+  color: var(--doc-accent) !important;
+}
+
+.site-doc .site-doc-crumb [aria-current='page'] {
+  color: var(--doc-ink) !important;
+}
+
+body.home-night-body .site-doc {
+  --doc-bg: #100e0c;
+  --doc-surface: #181512;
+  --doc-ink: #f7f3ec;
+  --doc-muted: #c9c2b8;
+  --doc-soft: #9c948a;
+  --doc-line: rgba(255, 255, 255, 0.1);
+  --doc-accent-soft: color-mix(in srgb, var(--doc-accent) 22%, transparent);
+  --doc-aura: color-mix(in srgb, var(--doc-accent) 18%, transparent);
+}
+
+body.home-night-body .site-doc-shell {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 22px 48px -28px rgba(0, 0, 0, 0.75);
+}
+
+body.home-night-body .site-doc-aura {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  opacity: 0.35;
+}
+
+body.home-night-body .site-doc .text-warm-900,
+body.home-night-body .site-doc .text-warm-800,
+body.home-night-body .site-doc .text-warm-700,
+body.home-night-body .site-doc .text-warm-600,
+body.home-night-body .site-doc .text-warm-500,
+body.home-night-body .site-doc .text-charcoal-900 {
+  color: inherit;
+}
+
 /* Herkese açık sayfalar — ana sayfanın gece paleti */
 body.home-night-body {
   --tw-ring-offset-color: #0c0b09;
