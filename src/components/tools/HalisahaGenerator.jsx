@@ -369,27 +369,27 @@ export default function HalisahaGenerator() {
   };
 
   return (
-    <div className="min-w-0 overflow-x-clip">
-      <div className="flex flex-col lg:flex-row lg:items-start">
+    <div className="halisaha-app min-w-0 overflow-x-clip">
+      <div className="halisaha-app-layout flex flex-col lg:flex-row lg:items-start">
         {/* Saha — mobilde önce */}
         <div className="halisaha-studio relative order-1 flex min-w-0 flex-1 flex-col lg:order-2 lg:min-h-[540px]">
-          {/* Mobil üst bar */}
-          <div className="halisaha-toolbar relative z-20 sticky top-[var(--app-header-offset)]">
-            <div className="flex items-center gap-2 px-3 py-2.5 sm:px-4">
-              <div className="halisaha-team-switch flex min-w-0 flex-1 rounded-2xl p-1">
+          {/* Tek satır üst bar — sticky yok, saha ön planda */}
+          <div className="halisaha-toolbar relative z-20 flex-none">
+            <div className="flex items-center gap-2 px-2.5 py-2 sm:px-3 lg:px-3 lg:py-2">
+              <div className="halisaha-team-switch flex min-w-0 flex-1 rounded-xl p-0.5 lg:max-w-[280px]">
                 {teams.map((team, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setActiveTeamIdx(idx)}
-                    className={`halisaha-team-tab flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-bold sm:px-3 ${
+                    className={`halisaha-team-tab flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-xs font-bold sm:px-3 ${
                       activeTeamIdx === idx
-                        ? 'halisaha-team-tab--active text-charcoal-900'
+                        ? 'halisaha-team-tab--active'
                         : 'text-white/65 active:text-white'
                     }`}
                   >
                     <span
-                      className="h-3.5 w-3.5 shrink-0 rounded-full ring-2 ring-white/25"
+                      className="h-3 w-3 shrink-0 rounded-full ring-2 ring-white/25"
                       style={{ backgroundColor: team.color }}
                     />
                     <span className="truncate">{getTeamDisplayLabel(team.label, idx)}</span>
@@ -397,11 +397,17 @@ export default function HalisahaGenerator() {
                 ))}
               </div>
 
+              <p className="hidden shrink-0 text-xs font-semibold text-white/70 lg:block">
+                {format}v{format}
+                <span className="mx-1.5 text-white/25">·</span>
+                <span className="text-orange-300/90">{activePreset.label}</span>
+              </p>
+
               <div className="relative shrink-0 lg:hidden">
                 <select
                   value={format}
                   onChange={(e) => setFormat(Number(e.target.value))}
-                  className="halisaha-glass appearance-none rounded-xl py-2.5 pl-3 pr-8 text-xs font-black text-white outline-none"
+                  className="halisaha-glass appearance-none rounded-xl py-2 pl-3 pr-8 text-xs font-black text-white outline-none"
                   aria-label="Oyuncu sayısı"
                 >
                   {HALISAHA_FORMATS.map((f) => (
@@ -420,7 +426,7 @@ export default function HalisahaGenerator() {
               <button
                 type="button"
                 onClick={() => setMobileSettingsOpen((o) => !o)}
-                className={`halisaha-glass shrink-0 rounded-xl p-2.5 transition lg:hidden ${
+                className={`halisaha-glass shrink-0 rounded-xl p-2 transition lg:hidden ${
                   mobileSettingsOpen ? 'text-orange-300 ring-1 ring-orange-400/40' : 'text-white/75'
                 }`}
                 aria-label="Ayarlar"
@@ -428,42 +434,12 @@ export default function HalisahaGenerator() {
               >
                 <Settings2 size={18} />
               </button>
-            </div>
 
-            {/* Taktik şeridi */}
-            <div className="halisaha-tactic-scroll flex gap-2 overflow-x-auto px-3 pb-2.5 sm:px-4 lg:hidden">
-              {presets.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => applyTactic(preset.id)}
-                  className={`halisaha-pill shrink-0 rounded-full px-4 py-2 text-xs font-bold text-white/85 active:scale-95 ${
-                    tacticId === preset.id ? 'halisaha-pill--active text-white' : ''
-                  }`}
-                >
-                  {preset.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Masaüstü üst bar */}
-            <div className="relative z-10 hidden flex-wrap items-center justify-between gap-3 px-4 py-3 lg:flex">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-400/80">
-                  Diziliş stüdyosu
-                </p>
-                <p className="mt-0.5 text-sm font-semibold text-white/90">
-                  {format}v{format}
-                  <span className="mx-2 text-white/25">·</span>
-                  <span className="text-orange-300/90">{activePreset.label}</span>
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="ml-auto hidden shrink-0 items-center gap-1.5 lg:flex">
                 <button
                   type="button"
                   onClick={handleDownloadActive}
-                  className="halisaha-btn-primary inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white transition hover:brightness-110"
+                  className="halisaha-btn-primary inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold text-white transition hover:brightness-110"
                 >
                   <Download size={14} />
                   Dizilişi indir
@@ -471,21 +447,36 @@ export default function HalisahaGenerator() {
                 <button
                   type="button"
                   onClick={handleDownloadAll}
-                  className="halisaha-btn-ghost inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white/90 transition hover:bg-white/12"
+                  className="halisaha-btn-ghost inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold text-white/90 transition hover:bg-white/12"
                 >
                   <Download size={14} />
                   İkisini indir
                 </button>
               </div>
             </div>
+
+            {/* Taktik şeridi — sadece mobil */}
+            <div className="halisaha-tactic-scroll flex gap-2 overflow-x-auto px-2.5 pb-2 sm:px-3 lg:hidden">
+              {presets.map((preset) => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => applyTactic(preset.id)}
+                  className={`halisaha-pill shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold text-white/85 active:scale-95 ${
+                    tacticId === preset.id ? 'halisaha-pill--active text-white' : ''
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Saha alanı */}
-          <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-4 px-2 py-4 sm:px-4 sm:py-5">
+          {/* Saha alanı — ön planda */}
+          <div className="halisaha-field-area relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center gap-3 px-2 py-2 sm:px-3 sm:py-3">
             <HalisahaPitch
               players={activeTeam.players}
               color={activeTeam.color}
-              perspective
               formatLabel={`${format}v${format}`}
               tacticLabel={activePreset.label}
               onPlayerMove={handlePlayerMove}
@@ -493,12 +484,12 @@ export default function HalisahaGenerator() {
             />
 
             {/* Kadro */}
-            <div className="w-full max-w-lg">
-              <div className="mb-2 flex items-center justify-between px-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/40">
+            <div className="halisaha-roster w-full max-w-lg shrink-0">
+              <div className="mb-1.5 flex items-center justify-between px-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/45">
                   Kadro · kaptan seç
                 </p>
-                <p className="text-[10px] font-medium text-white/30">
+                <p className="text-[10px] font-medium text-white/35">
                   {activeTeam.players.filter((p) => p.name.trim()).length}/{activeTeam.players.length} isim
                 </p>
               </div>
@@ -512,7 +503,7 @@ export default function HalisahaGenerator() {
                           type="button"
                           onClick={() => handleToggleCaptain(p.id)}
                           title={p.isCaptain ? 'Kaptanlığı kaldır' : 'Kaptan yap'}
-                          className={`halisaha-roster-chip inline-flex min-h-[2.375rem] items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-white active:scale-95 ${
+                          className={`halisaha-roster-chip inline-flex min-h-[2.25rem] items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-white active:scale-95 ${
                             p.isCaptain ? 'halisaha-roster-chip--captain' : ''
                           }`}
                         >
@@ -564,7 +555,7 @@ export default function HalisahaGenerator() {
         </div>
 
         {/* Ayarlar paneli — masaüstü sol sütun */}
-        <aside className="order-2 hidden shrink-0 border-b border-warm-200/70 bg-gradient-to-b from-cream-50 to-white p-4 sm:p-6 lg:order-1 lg:block lg:w-[min(100%,300px)] lg:border-b-0 lg:border-r">
+        <aside className="halisaha-settings-aside order-2 hidden shrink-0 border-b border-warm-200/70 bg-gradient-to-b from-cream-50 to-white p-4 sm:p-6 lg:order-1 lg:block lg:w-[min(100%,300px)] lg:border-b-0 lg:border-r">
           <div className="mb-5 hidden lg:block">
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-warm-400">Stüdyo</p>
             <h3 className="mt-1 text-base font-bold text-warm-900">Takım ayarları</h3>
