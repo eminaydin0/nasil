@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 
 /** Kart listesi. Kurallar ve uzun açıklama oyun sayfasında ayrıca çekilir. */
 const LIST_SELECT = 'id,slug,name,category,players,difficulty,image,short_description,created_at';
-const CACHE_KEY = 'kuraline-game-cards-v1';
+const CACHE_KEY = 'kuraline-game-cards-v3';
 
 function formatGame(game) {
   return {

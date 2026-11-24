@@ -24,6 +24,7 @@ export const SITE_TOOLS = [
     badge: 'Yeni',
     color: 'orange',
     category: 'scoreboard',
+    photo: '/media/tools/101-yazboz.jpg',
   },
   {
     id: 'okey-sayaci',
@@ -33,6 +34,7 @@ export const SITE_TOOLS = [
     link: '/araclar/okey-sayaci',
     color: 'red',
     category: 'scoreboard',
+    photo: '/media/tools/okey-sayaci.jpg',
   },
   {
     id: 'batak-yazboz',
@@ -42,6 +44,7 @@ export const SITE_TOOLS = [
     link: '/araclar/batak-yazboz',
     color: 'amber',
     category: 'scoreboard',
+    photo: '/media/tools/batak-yazboz.jpg',
   },
   {
     id: 'takim-olusturucu',
@@ -51,6 +54,7 @@ export const SITE_TOOLS = [
     link: '/araclar/takim-olusturucu',
     color: 'rose',
     category: 'team',
+    photo: '/media/tools/takim-olusturucu.jpg',
   },
   {
     id: 'halisaha-takim-olusturucu',
@@ -62,6 +66,7 @@ export const SITE_TOOLS = [
     color: 'emerald',
     category: 'team',
     featured: true,
+    photo: '/media/tools/halisaha.jpg',
   },
   {
     id: 'karar-carki',
@@ -72,6 +77,7 @@ export const SITE_TOOLS = [
     badge: 'Yeni',
     color: 'violet',
     category: 'utility',
+    photo: '/media/tools/karar-carki.jpg',
   },
   {
     id: 'kura-cek',
@@ -82,6 +88,7 @@ export const SITE_TOOLS = [
     badge: 'Yeni',
     color: 'fuchsia',
     category: 'utility',
+    photo: '/media/tools/kura.jpg',
   },
   {
     id: 'zar-at',
@@ -91,6 +98,7 @@ export const SITE_TOOLS = [
     link: '/araclar/zar-at',
     color: 'sky',
     category: 'utility',
+    photo: '/media/tools/zar-at.jpg',
   },
   {
     id: 'skor-tablosu',
@@ -100,6 +108,7 @@ export const SITE_TOOLS = [
     link: '/araclar/skor-tablosu',
     color: 'indigo',
     category: 'utility',
+    photo: '/media/tools/skor-tablosu.jpg',
   },
 ];
 

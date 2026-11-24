@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { CARD_FALLBACK_IMAGE, handleImageFallback } from '../../constants/media';
 import { coverSrc } from '../../lib/coverImage';
+import { supabase } from '../../lib/supabase';
 
 function formatVisits(n) {
   const value = Number(n) || 0;
@@ -11,17 +12,58 @@ function formatVisits(n) {
   return value.toLocaleString('tr-TR');
 }
 
-function HomeTopPages({ games = [], loading = false }) {
-  const pages = useMemo(
-    () =>
-      [...games]
-        .filter((game) => game?.slug)
-        .sort((a, b) => (b.views || 0) - (a.views || 0))
-        .slice(0, 5),
-    [games]
-  );
+async function loadTopPages() {
+  const { data, error } = await supabase
+    .from('game_views')
+    .select('view_count, game:games(id, slug, name, category, image)')
+    .order('view_count', { ascending: false })
+    .limit(5);
 
-  if (!loading && pages.length === 0) return null;
+  if (error) throw error;
+
+  return (data || [])
+    .map((row) => {
+      const game = row.game;
+      if (!game?.slug) return null;
+      return {
+        id: game.id,
+        slug: game.slug,
+        name: game.name,
+        category: game.category,
+        image: game.image,
+        views: Number(row.view_count) || 0,
+      };
+    })
+    .filter(Boolean);
+}
+
+function HomeTopPages() {
+  const [pages, setPages] = useState([]);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let live = true;
+
+    loadTopPages()
+      .then((rows) => {
+        if (!live) return;
+        setPages(rows);
+      })
+      .catch((err) => {
+        console.error('Top pages load failed:', err);
+        if (!live) return;
+        setPages([]);
+      })
+      .finally(() => {
+        if (live) setReady(true);
+      });
+
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  if (ready && pages.length === 0) return null;
 
   return (
     <section className="home-block" aria-labelledby="home-top-pages-title">
@@ -37,7 +79,7 @@ function HomeTopPages({ games = [], loading = false }) {
       </div>
 
       <div className="home-top-pages">
-        {loading && pages.length === 0
+        {!ready
           ? [1, 2, 3, 4, 5].map((n) => <div key={n} className="home-top-card home-skeleton" aria-hidden />)
           : pages.map((game, index) => (
               <Link key={game.id} to={`/oyun/${game.slug}`} className="home-top-card">
@@ -57,14 +99,10 @@ function HomeTopPages({ games = [], loading = false }) {
                 </span>
                 <span className="home-top-copy">
                   <strong>{game.name}</strong>
-                  {(game.views || 0) > 0 ? (
-                    <em>
-                      <i />
-                      {formatVisits(game.views)} görüntülenme
-                    </em>
-                  ) : game.category ? (
-                    <em className="home-top-muted">{game.category}</em>
-                  ) : null}
+                  <em>
+                    <i />
+                    {formatVisits(game.views)} görüntülenme
+                  </em>
                 </span>
               </Link>
             ))}

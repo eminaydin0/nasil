@@ -3,11 +3,11 @@ import SEO from '../../components/common/SEO';
 import HomeHero from '../../components/home/HomeHero';
 import HomeCategoryRail from '../../components/home/HomeCategoryRail';
 import HomeSpotlight from '../../components/home/HomeSpotlight';
+import HomeToolRail from '../../components/home/HomeToolRail';
 import HomeNewsDesk from '../../components/home/HomeNewsDesk';
 import HomeTopPages from '../../components/home/HomeTopPages';
 import HomeDealFeed from '../../components/home/HomeDealFeed';
 import HomeFreeShelf from '../../components/home/HomeFreeShelf';
-import HomeKurAli from '../../components/home/HomeKurAli';
 import HomeAbout from '../../components/home/HomeAbout';
 import WhenVisible from '../../components/common/WhenVisible';
 import { useGames } from '../../hooks/useGames';
@@ -77,9 +77,9 @@ function HomePage() {
       <HomeHero games={games} />
       <div className="container mx-auto px-3 pb-6 sm:px-4 sm:pb-10">
         <HomeCategoryRail categories={categories} loading={loading} />
-        <HomeKurAli />
         <HomeSpotlight games={games} loading={loading} />
-        <HomeTopPages games={games} loading={loading} />
+        <HomeToolRail />
+        <HomeTopPages />
         <HomeNewsDesk />
         <WhenVisible className="home-reveal">
           <HomeDealFeed />
