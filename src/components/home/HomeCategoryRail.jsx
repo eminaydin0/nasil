@@ -55,18 +55,13 @@ function HomeCategoryRail({ categories = [], loading = false }) {
                 hint={typeof category.count === 'number' ? `${category.count} Oyun` : null}
               />
             ))}
-        {!loading && hidden > 0 && (
-          <Link to="/oyunlar" className="home-cat home-cat-more">
-            <span className="home-cat-icon" aria-hidden>
-              <LayoutGrid size={22} strokeWidth={1.75} />
-            </span>
-            <span className="home-cat-copy">
-              <strong>
-                Daha Fazlası
-                <ArrowRight size={16} aria-hidden />
-              </strong>
-            </span>
-          </Link>
+        {!loading && (
+          <Tile
+            to="/oyunlar"
+            icon={LayoutGrid}
+            label="Tüm Kategoriler"
+            hint={hidden > 0 ? `+${hidden} kategori` : 'Hepsini gör'}
+          />
         )}
       </div>
     </section>
