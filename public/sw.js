@@ -1,6 +1,6 @@
 // Service Worker for PWA
 
-const CACHE_NAME = 'kuraline-v5';
+const CACHE_NAME = 'kuraline-v6';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -18,6 +18,8 @@ function shouldBypassCache(url) {
     return true;
   }
   if (url.pathname.startsWith('/assets/') && url.pathname.endsWith('.js')) return true;
+  // Media: network-first — eski bozuk/HTML cache yüzünden araç fotoğrafları kaybolmasın
+  if (url.pathname.startsWith('/media/')) return true;
   return false;
 }
 
