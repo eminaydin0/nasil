@@ -1399,6 +1399,128 @@ header.header--mobile-menu-open {
   width: min(100%, 640px, calc(100dvh - 9rem));
 }
 
+/* Halı saha — tam ekran: saha sığsın, taşma yok */
+.tool-stage--full .tool-stage-body:has(.halisaha-app) {
+  overflow: hidden;
+  padding: 0;
+}
+
+.tool-stage--full .tool-stage-body > .halisaha-app {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+}
+
+.tool-stage--full .halisaha-app-layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tool-stage--full .halisaha-studio {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Sol ayarlar paneli tam ekranda kalsın; içeride kaydır */
+.tool-stage--full .halisaha-settings-aside {
+  display: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(180deg, #fffbf7 0%, #ffffff 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.tool-stage--full .halisaha-roster,
+.tool-stage--full .halisaha-pitch-meta,
+.tool-stage--full .halisaha-tactic-scroll {
+  display: none !important;
+}
+
+.tool-stage--full .halisaha-field-area {
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+  padding: 0.25rem;
+  overflow: hidden;
+}
+
+.tool-stage--full .halisaha-toolbar {
+  flex: none;
+  background: rgba(8, 12, 10, 0.72);
+  box-shadow: none;
+}
+
+.tool-stage--full .halisaha-dock {
+  flex: none;
+}
+
+.tool-stage--full .halisaha-pitch-root {
+  box-sizing: border-box;
+  width: min(100%, calc((100dvh - 6.5rem) * 682 / 1024), 560px);
+  max-width: 100%;
+  max-height: calc(100dvh - 6.5rem);
+  margin: 0 auto;
+  aspect-ratio: 682 / 1024;
+  height: auto;
+}
+
+@media (min-width: 1024px) {
+  .tool-stage--full .halisaha-app-layout {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .tool-stage--full .halisaha-settings-aside {
+    display: block !important;
+    order: 1;
+    flex: none;
+    width: min(260px, 24vw);
+    max-height: 100%;
+    padding: 0.85rem 0.75rem;
+    border-bottom: 0;
+    border-right: 1px solid rgba(28, 25, 23, 0.1);
+  }
+
+  .tool-stage--full .halisaha-studio {
+    order: 2;
+  }
+
+  .tool-stage--full .halisaha-pitch-root {
+    width: min(100%, calc((100dvh - 5rem) * 682 / 1024), 560px);
+    max-height: calc(100dvh - 5rem);
+  }
+}
+
+.tool-stage--full .halisaha-pitch-frame {
+  height: 100%;
+  padding: 0.2rem;
+  border-radius: 0.85rem;
+}
+
+.tool-stage--full .halisaha-pitch-inner,
+.tool-stage--full .halisaha-pitch-field {
+  height: 100%;
+}
+
+.tool-stage--full .halisaha-pitch-field {
+  aspect-ratio: unset;
+}
+
 /* Halı saha — mobil kaydırma şeritleri */
 .halisaha-tactic-scroll,
 .halisaha-roster-scroll {
@@ -1441,10 +1563,10 @@ header.header--mobile-menu-open {
 }
 
 .halisaha-toolbar {
-  background: rgba(8, 12, 10, 0.82);
+  position: relative;
+  background: rgba(8, 12, 10, 0.75);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(14px);
 }
 
 .halisaha-team-switch {
@@ -1459,9 +1581,14 @@ header.header--mobile-menu-open {
 
 .halisaha-team-tab--active {
   background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+  color: #16140f !important;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.8) inset,
     0 4px 14px rgba(0, 0, 0, 0.28);
+}
+
+body.home-night-body .halisaha-team-tab--active {
+  color: #16140f !important;
 }
 
 .halisaha-pill {
@@ -1480,13 +1607,13 @@ header.header--mobile-menu-open {
 
 .halisaha-pitch-frame {
   position: relative;
-  padding: 0.5rem;
-  border-radius: 1.25rem;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%);
+  padding: 0.35rem;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 24px 48px rgba(0, 0, 0, 0.45),
-    0 0 80px rgba(16, 185, 129, 0.08);
+    0 18px 40px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(16, 185, 129, 0.07);
 }
 
 .halisaha-pitch-frame::before,
@@ -1521,6 +1648,12 @@ header.header--mobile-menu-open {
   box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.25);
 }
 
+.halisaha-pitch-field {
+  aspect-ratio: 682 / 1024;
+  transform: none;
+  transition: none;
+}
+
 .halisaha-player-token {
   box-shadow:
     0 0 0 2px rgba(255, 255, 255, 0.95),
@@ -1537,10 +1670,14 @@ header.header--mobile-menu-open {
 }
 
 .halisaha-name-tag {
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  background: rgba(6, 10, 8, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 2px 10px rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 }
 
 .halisaha-roster-chip {
@@ -1700,29 +1837,12 @@ header.header--mobile-menu-open {
   }
 }
 
-/* Halı saha — hafif 3D perspektif (mobilde düz) */
-.pitch-perspective {
-  perspective: 900px;
-}
-
-@media (max-width: 639px) {
-  .pitch-perspective {
-    perspective: none;
-  }
-  .pitch-perspective-inner {
-    transform: none;
-  }
-}
-
-@media (min-width: 640px) {
-  .pitch-perspective-inner {
-    transform: rotateX(10deg);
-    transform-origin: center center;
-    transition: transform 0.35s ease;
-  }
-  .pitch-perspective:hover .pitch-perspective-inner {
-    transform: rotateX(6deg);
-  }
+/* Halı saha — düz saha (hover'da oynamasın) */
+.pitch-perspective,
+.pitch-perspective-inner {
+  perspective: none;
+  transform: none !important;
+  transition: none !important;
 }
 
 /* ═══ HABERLER — Editorial hub & article ═══════════════════════════════════ */

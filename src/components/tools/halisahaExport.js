@@ -15,6 +15,9 @@ const ROLE_LABELS = {
 const FONT = 'system-ui, -apple-system, "Segoe UI", sans-serif';
 
 let logoCache = null;
+let pitchCache = null;
+
+const PITCH_ASPECT = 1024 / 682;
 
 function loadLogo() {
   if (logoCache) return Promise.resolve(logoCache);
@@ -30,6 +33,20 @@ function loadLogo() {
   });
 }
 
+function loadPitchImage() {
+  if (pitchCache) return Promise.resolve(pitchCache);
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      pitchCache = img;
+      resolve(img);
+    };
+    img.onerror = () => resolve(null);
+    img.src = '/media/tools/halisaha-pitch.jpg';
+  });
+}
+
 function roundRect(ctx, x, y, w, h, r) {
   const radius = Math.min(r, w / 2, h / 2);
   ctx.beginPath();
@@ -41,7 +58,7 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-function drawPitch(ctx, field) {
+function drawPitchFallback(ctx, field) {
   const { x, y, w, h } = field;
   const stripeH = h / 12;
 
@@ -87,6 +104,19 @@ function drawPitch(ctx, field) {
   ctx.beginPath();
   ctx.arc(x + w / 2, y + boxH * 0.45, 3, 0, Math.PI * 2);
   ctx.fill();
+}
+
+function drawPitch(ctx, field, pitchImg) {
+  const { x, y, w, h } = field;
+  if (pitchImg) {
+    ctx.save();
+    roundRect(ctx, x, y, w, h, 10);
+    ctx.clip();
+    ctx.drawImage(pitchImg, x, y, w, h);
+    ctx.restore();
+    return;
+  }
+  drawPitchFallback(ctx, field);
 }
 
 function drawCaptainBadge(ctx, px, py, radius) {
@@ -138,14 +168,25 @@ function drawPlayer(ctx, player, teamColor, field, playerRadius = 22, fontSize =
     ? player.name.trim().split(' ')[0]
     : player.role;
 
-  ctx.font = `bold ${fontSize}px ${FONT}`;
+  const nameSize = Math.max(11, fontSize - 1);
+  ctx.font = `800 ${nameSize}px ${FONT}`;
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
+  ctx.textBaseline = 'middle';
+  const maxLabelW = field.w * 0.32;
+  const textW = Math.min(ctx.measureText(label).width, maxLabelW);
+  const pillW = textW + 14;
+  const pillH = nameSize + 10;
+  const pillY = py + playerRadius + 6 + pillH / 2;
+
+  roundRect(ctx, px - pillW / 2, pillY - pillH / 2, pillW, pillH, pillH / 2);
+  ctx.fillStyle = 'rgba(6, 10, 8, 0.9)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
   ctx.fillStyle = '#ffffff';
-  ctx.shadowColor = 'rgba(0,0,0,0.85)';
-  ctx.shadowBlur = 4;
-  ctx.fillText(label, px, py + playerRadius + 4, field.w * 0.35);
-  ctx.shadowColor = 'transparent';
+  ctx.fillText(label, px, pillY + 0.5, maxLabelW);
 }
 
 function drawBackground(ctx, width, height) {
@@ -365,10 +406,11 @@ export function renderSingleTeamCanvas(options) {
     color,
     players,
     logo,
+    pitchImg,
   } = options;
 
   const W = 720;
-  const field = { x: 120, y: 175, w: 480, h: Math.round(480 * (105 / 68)) };
+  const field = { x: 120, y: 175, w: 480, h: Math.round(480 * PITCH_ASPECT) };
   const rosterH = rosterCardHeight(players.length);
   const H = field.y + field.h + 28 + rosterH + 88;
   const canvas = document.createElement('canvas');
@@ -387,7 +429,7 @@ export function renderSingleTeamCanvas(options) {
 
   drawTeamBadge(ctx, 'Kadro', color, 48, 158);
 
-  drawPitch(ctx, field);
+  drawPitch(ctx, field, pitchImg);
   players.forEach((p) => drawPlayer(ctx, p, color, field));
 
   const rosterY = field.y + field.h + 28;
@@ -397,11 +439,11 @@ export function renderSingleTeamCanvas(options) {
   return canvas;
 }
 
-export function renderBothTeamsCanvas(teams, meta, logo) {
+export function renderBothTeamsCanvas(teams, meta, logo, pitchImg) {
   const W = 1320;
   const maxPlayers = Math.max(...teams.slice(0, 2).map((t) => t.players.length), 1);
   const fieldH = 680;
-  const fieldW = Math.round(fieldH * (68 / 105));
+  const fieldW = Math.round(fieldH / PITCH_ASPECT);
   const gap = 40;
   const totalW = fieldW * 2 + gap;
   const startX = (W - totalW) / 2;
@@ -431,7 +473,7 @@ export function renderBothTeamsCanvas(teams, meta, logo) {
   teams.slice(0, 2).forEach((team, i) => {
     const field = fields[i];
     drawTeamBadge(ctx, team.label, team.color, field.x, field.y - 22);
-    drawPitch(ctx, field);
+    drawPitch(ctx, field, pitchImg);
     team.players.forEach((p) => drawPlayer(ctx, p, team.color, field, 15, 13));
 
     const rosterY = field.y + field.h + 20;
@@ -443,14 +485,14 @@ export function renderBothTeamsCanvas(teams, meta, logo) {
 }
 
 export async function downloadLineupPng(options) {
-  const logo = await loadLogo();
-  const canvas = renderSingleTeamCanvas({ ...options, logo });
+  const [logo, pitchImg] = await Promise.all([loadLogo(), loadPitchImage()]);
+  const canvas = renderSingleTeamCanvas({ ...options, logo, pitchImg });
   const slug = slugify(options.teamLabel || 'takim');
   return triggerDownload(canvas, `dizilis-${slug}-${options.format}v${options.format}.png`);
 }
 
 export async function downloadBothTeamsLineupPng(teams, meta) {
-  const logo = await loadLogo();
-  const canvas = renderBothTeamsCanvas(teams, meta, logo);
+  const [logo, pitchImg] = await Promise.all([loadLogo(), loadPitchImage()]);
+  const canvas = renderBothTeamsCanvas(teams, meta, logo, pitchImg);
   return triggerDownload(canvas, `dizilis-${meta.format}v${meta.format}-iki-takim.png`);
 }

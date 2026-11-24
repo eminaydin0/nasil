@@ -1,56 +1,7 @@
-import { useRef, useState, useCallback, useEffect, useId } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { clampPitchPosition, colorToTextContrast, getPlayerJerseyColor } from './halisahaFormations';
 
-function PitchMarkings({ fieldId }) {
-  return (
-    <>
-      {Array.from({ length: 14 }).map((_, i) => (
-        <rect
-          key={i}
-          x="4"
-          y={4 + i * 9.6}
-          width="92"
-          height="9.6"
-          fill={i % 2 === 0 ? '#2f9340' : '#389e49'}
-        />
-      ))}
-
-      <rect x="4" y="4" width="92" height="132" rx="2" fill={`url(#${fieldId}-grassOverlay)`} />
-
-      <rect
-        x="4"
-        y="4"
-        width="92"
-        height="132"
-        rx="2"
-        fill="none"
-        stroke="#f1f5f9"
-        strokeWidth="0.6"
-        opacity="0.92"
-      />
-
-      <line x1="4" y1="70" x2="96" y2="70" stroke="#f1f5f9" strokeWidth="0.55" opacity="0.88" />
-      <circle cx="50" cy="70" r="11" fill="none" stroke="#f1f5f9" strokeWidth="0.55" opacity="0.88" />
-      <circle cx="50" cy="70" r="0.9" fill="#f1f5f9" opacity="0.9" />
-
-      <rect x="22" y="104" width="56" height="22" fill="none" stroke="#f1f5f9" strokeWidth="0.55" opacity="0.88" />
-      <rect x="34" y="118" width="32" height="8" fill="none" stroke="#f1f5f9" strokeWidth="0.48" opacity="0.82" />
-      <circle cx="50" cy="112" r="0.75" fill="#f1f5f9" opacity="0.85" />
-
-      <rect x="22" y="14" width="56" height="22" fill="none" stroke="#f1f5f9" strokeWidth="0.55" opacity="0.88" />
-      <rect x="34" y="14" width="32" height="8" fill="none" stroke="#f1f5f9" strokeWidth="0.48" opacity="0.82" />
-      <circle cx="50" cy="28" r="0.75" fill="#f1f5f9" opacity="0.85" />
-
-      <path d="M 4 10 A 6 6 0 0 0 10 4" fill="none" stroke="#f1f5f9" strokeWidth="0.42" opacity="0.72" />
-      <path d="M 90 4 A 6 6 0 0 0 96 10" fill="none" stroke="#f1f5f9" strokeWidth="0.42" opacity="0.72" />
-      <path d="M 4 130 A 6 6 0 0 1 10 136" fill="none" stroke="#f1f5f9" strokeWidth="0.42" opacity="0.72" />
-      <path d="M 96 130 A 6 6 0 0 1 90 136" fill="none" stroke="#f1f5f9" strokeWidth="0.42" opacity="0.72" />
-
-      <rect x="42" y="2" width="16" height="3" fill="none" stroke="#f1f5f9" strokeWidth="0.48" opacity="0.68" />
-      <rect x="42" y="135" width="16" height="3" fill="none" stroke="#f1f5f9" strokeWidth="0.48" opacity="0.68" />
-    </>
-  );
-}
+const PITCH_BG = '/media/tools/halisaha-pitch.jpg';
 
 function DraggablePlayer({
   player,
@@ -113,7 +64,7 @@ function DraggablePlayer({
             if (e.key === 'Enter' || e.key === 'Escape') onEndEdit();
           }}
           onPointerDown={(e) => e.stopPropagation()}
-          className="halisaha-name-tag mt-1.5 w-full max-w-[5.5rem] rounded-full px-2 py-1.5 text-center text-base font-bold text-white outline-none ring-2 ring-orange-400 sm:text-sm"
+          className="halisaha-name-tag mt-1.5 w-full max-w-[5.5rem] rounded-full px-2 py-1.5 text-center text-base font-extrabold text-white outline-none ring-2 ring-orange-400 sm:text-sm"
           placeholder="İsim"
         />
       ) : (
@@ -121,8 +72,8 @@ function DraggablePlayer({
           type="button"
           onClick={() => onStartEdit(player.id)}
           onPointerDown={(e) => e.stopPropagation()}
-          className={`halisaha-name-tag mt-1.5 max-w-full truncate rounded-full px-2 py-0.5 text-center font-semibold leading-tight text-white/95 ${
-            compact ? 'min-h-[1.25rem] text-[9px] sm:text-[10px]' : 'min-h-[1.5rem] text-[10px] sm:text-[11px]'
+          className={`halisaha-name-tag mt-1.5 max-w-full truncate rounded-full px-2 py-1 text-center font-extrabold leading-tight text-white ${
+            compact ? 'min-h-[1.35rem] text-[10px] sm:text-[11px]' : 'min-h-[1.55rem] text-[11px] sm:text-xs'
           }`}
         >
           {player.name.trim() ? label : `${player.role} · isim`}
@@ -135,14 +86,12 @@ function DraggablePlayer({
 export default function HalisahaPitch({
   players = [],
   color,
-  perspective = true,
   formatLabel,
   tacticLabel,
   onPlayerMove,
   onPlayerNameChange,
 }) {
   const fieldRef = useRef(null);
-  const fieldId = useId().replace(/:/g, '');
   const [draggingId, setDraggingId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const compact = players.length >= 9;
@@ -181,11 +130,9 @@ export default function HalisahaPitch({
   }, [draggingId, movePlayer]);
 
   return (
-    <div
-      className={`mx-auto w-full max-w-none sm:max-w-[min(100%,380px)] lg:max-w-[min(100%,440px)] ${perspective ? 'pitch-perspective' : ''}`}
-    >
+    <div className="halisaha-pitch-root mx-auto w-full max-w-[min(100%,420px)] lg:max-w-[min(100%,520px)]">
       {(formatLabel || tacticLabel) && (
-        <div className="mb-2 flex items-center justify-between gap-2 px-1 lg:hidden">
+        <div className="halisaha-pitch-meta mb-1.5 flex items-center justify-between gap-2 px-1 lg:hidden">
           {formatLabel ? <span className="halisaha-meta-badge">{formatLabel}</span> : <span />}
           {tacticLabel ? (
             <span className="halisaha-meta-badge text-orange-300/90">{tacticLabel}</span>
@@ -193,56 +140,37 @@ export default function HalisahaPitch({
         </div>
       )}
 
-      <div className={perspective ? 'pitch-perspective-inner' : ''}>
-        <div className="halisaha-pitch-frame">
-          <div className="halisaha-pitch-inner">
-            <div
-              ref={fieldRef}
-              className="relative aspect-[68/105] w-full touch-none bg-[#1a5c32]"
-            >
-              <svg viewBox="0 0 100 140" className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
-                <defs>
-                  <linearGradient id={`${fieldId}-grassOverlay`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#4ade80" stopOpacity="0.08" />
-                    <stop offset="45%" stopColor="#000" stopOpacity="0" />
-                    <stop offset="100%" stopColor="#052e16" stopOpacity="0.28" />
-                  </linearGradient>
-                  <radialGradient id={`${fieldId}-light`} cx="50%" cy="35%" r="65%">
-                    <stop offset="0%" stopColor="#bbf7d0" stopOpacity="0.14" />
-                    <stop offset="100%" stopColor="#000" stopOpacity="0" />
-                  </radialGradient>
-                  <radialGradient id={`${fieldId}-vignette`} cx="50%" cy="50%" r="70%">
-                    <stop offset="55%" stopColor="#000" stopOpacity="0" />
-                    <stop offset="100%" stopColor="#000" stopOpacity="0.35" />
-                  </radialGradient>
-                </defs>
-                <PitchMarkings fieldId={fieldId} />
-                <rect x="4" y="4" width="92" height="132" fill={`url(#${fieldId}-light)`} />
-                <rect x="4" y="4" width="92" height="132" fill={`url(#${fieldId}-vignette)`} />
-              </svg>
+      <div className="halisaha-pitch-frame">
+        <div className="halisaha-pitch-inner">
+          <div
+            ref={fieldRef}
+            className="halisaha-pitch-field relative w-full touch-none overflow-hidden bg-[#07140c]"
+          >
+            <img
+              src={PITCH_BG}
+              alt=""
+              draggable={false}
+              className="pointer-events-none absolute inset-0 h-full w-full select-none object-cover object-center"
+              aria-hidden
+            />
 
-              {players.map((player) => (
-                <DraggablePlayer
-                  key={player.id}
-                  player={player}
-                  teamColor={color}
-                  compact={compact}
-                  isDragging={draggingId === player.id}
-                  isEditing={editingId === player.id}
-                  onPointerDown={handlePointerDown}
-                  onNameChange={onPlayerNameChange}
-                  onStartEdit={setEditingId}
-                  onEndEdit={() => setEditingId(null)}
-                />
-              ))}
-            </div>
+            {players.map((player) => (
+              <DraggablePlayer
+                key={player.id}
+                player={player}
+                teamColor={color}
+                compact={compact}
+                isDragging={draggingId === player.id}
+                isEditing={editingId === player.id}
+                onPointerDown={handlePointerDown}
+                onNameChange={onPlayerNameChange}
+                onStartEdit={setEditingId}
+                onEndEdit={() => setEditingId(null)}
+              />
+            ))}
           </div>
         </div>
       </div>
-
-      <p className="mt-3 hidden text-center text-[10px] font-medium tracking-wide text-white/40 sm:block">
-        Sürükle · isme dokun · kadrodan kaptan seç
-      </p>
     </div>
   );
 }
